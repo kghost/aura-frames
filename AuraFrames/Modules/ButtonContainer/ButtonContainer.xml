@@ -1,0 +1,66 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+
+  <Script file="Module.lua" />
+  <Script file="Prototype.lua" />
+
+  <Frame name="AuraFramesButtonContainerTemplate" parent="UIParent" virtual="true" movable="true">
+  </Frame>
+  
+  <Frame name="AuraFramesButtonContainerConfigTemplate" frameStrata="MEDIUM" toplevel="true" virtual="true" enableMouse="true">
+    <Scripts>
+      <OnMouseDown>
+        self:GetParent():StartMoving();
+      </OnMouseDown>
+      <OnMouseUp>
+        self:GetParent():StopMovingOrSizing();
+      </OnMouseUp>
+    </Scripts>
+    <Layers>
+      <Layer level="ARTWORK">
+        <Texture> 
+          <Color r="0.5" g="0.8" b="1.0" a="0.6"/> 
+        </Texture>
+        <FontString name="$parent_Text" inherits="ChatFontNormal" text="" justifyV="MIDDLE" justifyH="CENTER">
+        </FontString>
+      </Layer>
+    </Layers>
+  </Frame>
+
+  <Button name="AuraFramesButtonTemplate" virtual="true">
+    <Size>
+      <AbsDimension x="36" y="36"/>
+    </Size>
+    <Layers>
+      <Layer level="BACKGROUND">
+        <Texture name="$parentIcon">
+          <TexCoords left="0.07" right="0.93" top="0.07" bottom="0.93"/>
+        </Texture>
+      </Layer>
+      <Layer level="ARTWORK">
+        <FontString name="$parentCount" inherits="NumberFontNormal" hidden="true" justifyH="RIGHT" />
+        <FontString name="$parentDuration" inherits="GameFontNormalSmall" hidden="true">
+          <Anchors>
+            <Anchor point="TOP" relativePoint="BOTTOM" />
+          </Anchors>
+        </FontString>
+      </Layer>
+      <Layer level="OVERLAY">
+        <Texture name="$parentBorder" file="Interface\Buttons\UI-ActionButton-Border" alphaMode="ADD">
+          <Size>
+            <AbsDimension x="32" y="32"/>
+          </Size>
+          <Anchors>
+            <Anchor point="CENTER">
+              <Offset>
+                <AbsDimension x="0" y="0"/>
+              </Offset>
+            </Anchor>
+          </Anchors>
+          <TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>
+        </Texture>
+      </Layer>
+    </Layers>
+  </Button>
+
+</Ui>
