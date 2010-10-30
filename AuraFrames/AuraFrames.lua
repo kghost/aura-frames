@@ -204,10 +204,17 @@ function AuraFrames:DisableBlizzardAuraFrames()
   -- Disable the events to the default buff frame
   BuffFrame:UnregisterAllEvents(); 
   TemporaryEnchantFrame:UnregisterAllEvents();
+  ConsolidatedBuffs:UnregisterAllEvents();
   
   -- Remove the OnUpdate call (shouldn't be called anyway because the frame is hidden, but just to make sure)
   BuffFrame:SetScript("OnUpdate", nil); 
   TemporaryEnchantFrame:SetScript("OnUpdate", nil);
-
+  ConsolidatedBuffs:SetScript("OnUpdate", nil);
+  
+  -- Make sure the buff frames are not shown.
+  BuffFrame:Hide();
+  TemporaryEnchantFrame:Hide();
+  ConsolidatedBuffs:Hide();
+  
 end
 
