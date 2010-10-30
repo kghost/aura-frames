@@ -1,5 +1,25 @@
 package-as: AuraFrames
 
+enable-nolib-creation: no
+
+ignore:
+  - AuraFrames/AuraFrames/Libs/LibStub
+  - AuraFrames/AuraFrames/Libs/CallbackHandler-1.0
+  - AuraFrames/AuraFrames/Libs/AceAddon-3.0
+  - AuraFrames/AuraFrames/Libs/AceConsole-3.0
+  - AuraFrames/AuraFrames/Libs/AceDB-3.0
+  - AuraFrames/AuraFrames/Libs/LibButtonFacade
+  - AuraFrames/AuraFrames/Libs/LibSharedMedia-3.0
+  - AuraFrames/AuraFramesOptions/Libs/AceConfig-3.0
+  - AuraFrames/AuraFramesOptions/Libs/AceGUI-3.0
+  - AuraFrames/AuraFramesOptions/Libs/AceSerializer-3.0
+  - AuraFrames/AuraFramesOptions/Libs/AceGUI-3.0-SharedMediaWidgets
+  - AuraFrames/AuraFramesOptions/Libs/AceGUI-3.0-Spell-EditBox
+
+move-folders:
+    AuraFrames/AuraFrames: AuraFrames
+    AuraFrames/AuraFramesOptions: AuraFramesOptions
+
 externals:
     AuraFrames/Libs/LibStub:
         url: svn://svn.wowace.com/wow/libstub/mainline/trunk
@@ -37,9 +57,3 @@ externals:
     AuraFramesOptions/Libs/AceGUI-3.0-Spell-EditBox:
         url: git://git.wowace.com/wow/ace-gui-3-0-spell-editbox/mainline.git
         tag: latest
-
-enable-nolib-creation: no
-
-move-folders:
-    AuraFrames/AuraFrames: AuraFrames
-    AuraFrames/AuraFramesOptions: AuraFramesOptions
