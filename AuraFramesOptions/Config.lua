@@ -402,31 +402,17 @@ function AuraFrames:GetConfigOptions()
             name = "Lock/unlock containers",
             order = 5,
           },
+          ConfigMode = {
+            type = "execute",
+            name = AuraFrames.ConfigMode and "Lock containers" or "Unlock containers",
+            func = function() AuraFrames:SetConfigMode(not AuraFrames.ConfigMode); end,
+            order = 6,
+          },
         },
       },
       Profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
     },
   };
-  
-  if AuraFrames.ConfigMode then
-  
-    Options.args.Containers.args.LeaveConfigMode = {
-      type = "execute",
-      name = "Lock containers",
-      func = function() AuraFrames:SetConfigMode(false); end,
-      order = 6,
-    };
-  
-  else
-  
-    Options.args.Containers.args.EnterConfigMode = {
-      type = "execute",
-      name = "Unlock containers",
-      func = function() AuraFrames:SetConfigMode(true); end,
-      order = 6,
-    };
-  
-  end
   
   for Type, Handler in pairs(AuraFrames.ContainerHandlers) do
     Options.args.Containers.args.Type.values[Type] = Handler:GetName();
@@ -458,7 +444,7 @@ function AuraFrames:GetConfigOptions()
         args = {
           ContainerEnabled = {
             type = "toggle",
-            name = "Enabled Container",
+            name = "Container Enabled",
             get = function(Info) return Container.Enabled; end,
             set = function(Info, Value) AuraFrames:SetContainerEnabled(Name, Value); end,
             order = 1,
@@ -510,7 +496,12 @@ function AuraFrames:GetConfigOptions()
             confirmText = "Are you sure you want to delete the container "..Name,
             order = 8,
           },
-          -- order 9 is for Lock/Unlock button.
+          ConfigMode = {
+            type = "execute",
+            name = AuraFrames.ConfigMode and "Lock containers" or "Unlock containers",
+            func = function() AuraFrames:SetConfigMode(not AuraFrames.ConfigMode); end,
+            order = 9,
+          },
           Sources = {
             type = "group",
             name = "Sources",
@@ -615,36 +606,8 @@ function AuraFrames:GetConfigOptions()
 
             },
           },
---[[
-          ImportExport = {
-            type = "group",
-            name = "Import/Export",
-            order = 2,
-            args = AuraFrames.ImportExport:BuildConfigOptions("Config", Container, function() Container:Update("ALL"); end),
-          },
-]]--
         },
       };
-      
-      if AuraFrames.ConfigMode then
-
-        Options.args.Containers.args["Container_"..Name].args.LeaveConfigMode = {
-          type = "execute",
-          name = "Lock containers",
-          func = function() AuraFrames:SetConfigMode(false); end,
-          order = 9,
-        };
-
-      else
-
-        Options.args.Containers.args["Container_"..Name].args.EnterConfigMode = {
-          type = "execute",
-          name = "Unlock containers",
-          func = function() AuraFrames:SetConfigMode(true); end,
-          order = 9,
-        };
-
-      end
       
       local ContainerOptions = self.Containers[Name]:GetConfigOptions();
       
@@ -663,7 +626,7 @@ function AuraFrames:GetConfigOptions()
         args = {
           ContainerEnabled = {
             type = "toggle",
-            name = "Enabled",
+            name = "Container Enabled",
             get = function(Info) return Container.Enabled; end,
             set = function(Info, Value) AuraFrames:SetContainerEnabled(Name, Value); end,
             order = 1,
@@ -674,9 +637,7 @@ function AuraFrames:GetConfigOptions()
     end
   
   end
-
   
   return Options;
 
 end
-

@@ -233,6 +233,8 @@ function Prototype:UpdateButton(Button)
     Button:RegisterForClicks("RightButtonUp");
     Button:SetScript("OnClick", ButtonOnClick);
     
+    Button:HookScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Button, Aura); end);
+    
   else
     
     Button:EnableMouse(false);

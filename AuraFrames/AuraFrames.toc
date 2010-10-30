@@ -11,6 +11,7 @@ Embeds.xml
 
 AuraFrames.lua
 AuraDefinition.lua
+CancelAura.lua
 Tooltip.lua
 Config.lua
 Code.lua

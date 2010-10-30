@@ -19,7 +19,7 @@
     <Layers>
       <Layer level="ARTWORK">
         <Texture> 
-          <Color r="0.5" g="0.8" b="1.0" a="0.6"/> 
+          <Color r="0.5" g="0.8" b="1.0" a="0.6"/>
         </Texture>
         <FontString name="$parent_Text" inherits="ChatFontNormal" text="" justifyV="MIDDLE" justifyH="CENTER">
         </FontString>

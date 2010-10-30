@@ -78,10 +78,6 @@ function AuraFrames:OnInitialize()
     self:DisableBlizzardAuraFrames();
   end
   
-  if self.db.profile.EnableTestUnit then
-    LibAura:EnableTestUnit();
-  end
-  
   self:RegisterChatCommand("af", "OpenConfigDialog");
   self:RegisterChatCommand("afreset", "ResetConfig");
   self:RegisterChatCommand("affixdb", "UpgradeDb");
