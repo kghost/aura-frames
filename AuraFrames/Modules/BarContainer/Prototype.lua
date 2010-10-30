@@ -108,22 +108,6 @@ local function BarOnClick(Bar, Button)
     return;
 
   end
-  
-
-  if Bar.Aura.Unit == "test" then
-
-    AuraFrames:Print("Test unit clicked");
-
-  elseif Bar.Aura.Type == "WEAPON" then
-  
-    --CancelItemTempEnchantment(Bar.Aura.Index - 15);
-
-  else
-
-    -- Patch 4.0 broke this :(
-    --CancelUnitBuff(Bar.Aura.Unit, Bar.Aura.Index, Bar.Aura.Type);
-
-  end
 
 
 end
@@ -138,7 +122,12 @@ function Prototype:Delete()
   LibAura:UnregisterObjectSource(self, nil, nil);
 
   self.Frame:Hide();
+  self.Frame:UnregisterAllEvents();
   self.Frame = nil;
+
+  if self.ConfigFrame then
+    self.ConfigFrame:Hide();
+  end
 
 end
 
@@ -238,7 +227,10 @@ function Prototype:UpdateBar(Bar)
   if self.Config.Layout.Clickable then
     
     Bar:EnableMouse(true);
+    Button:RegisterForClicks("RightButtonUp");
     Bar:SetScript("OnMouseUp", BarOnClick);
+    
+    Button:HookScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Button, Aura); end);
     
   else
     

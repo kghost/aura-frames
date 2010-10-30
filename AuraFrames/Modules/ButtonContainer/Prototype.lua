@@ -125,21 +125,6 @@ local function ButtonOnClick(Button)
 
   end
 
-  if Button.Aura.Unit == "test" then
-
-    AuraFrames:Print("Test unit clicked");
-
-  elseif Button.Aura.Type == "WEAPON" then
-  
-    --CancelItemTempEnchantment(Button.Aura.Index - 15);
-
-  else
-
-    -- Patch 4.0 broke this :(
-    --CancelUnitBuff(Button.Aura.Unit, Button.Aura.Index, Button.Aura.Type);
-
-  end
-
 end
 
 
@@ -152,6 +137,7 @@ function Prototype:Delete()
   LibAura:UnregisterObjectSource(self, nil, nil);
 
   self.Frame:Hide();
+  self.Frame:UnregisterAllEvents();
   self.Frame = nil;
   
   if self.ConfigFrame then
