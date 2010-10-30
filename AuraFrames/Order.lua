@@ -324,8 +324,6 @@ end
 -----------------------------------------------------------------
 function AuraFrames.OrderPrototype:Add(Item)
 
-  
-
   if tContains(self, Item) ~= nil then
     return;
   end
@@ -375,7 +373,7 @@ function AuraFrames.OrderPrototype:Update(Item)
     return;
   end
 
-  if Index ~= 0 and self.Compare(Item, self[Index - 1]) == false then
+  if Index ~= 1 and self.Compare(Item, self[Index - 1]) == false then
     tremove(self, Index);
     
     for i = Index - 1, 2, -1 do
