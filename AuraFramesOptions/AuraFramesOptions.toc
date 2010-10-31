@@ -11,6 +11,7 @@ Embeds.xml
 #@end-no-lib-strip@
 
 Config.lua
+CreateContainer.lua
 ImportExport.lua
 ListEditor.lua
 FilterConfig.lua

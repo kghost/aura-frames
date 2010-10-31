@@ -28,13 +28,82 @@ function deepcopy(object)
   return _copy(object)
 end
 
+
+-----------------------------------------------------------------
+-- Function ConfirmPopup
+-----------------------------------------------------------------
+function AuraFrames:ConfirmPopup(Message, Func)
+  
+  if not StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] then
+    StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] = {};
+  end
+  
+  local Popup = StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"];
+  Popup.text = Message;
+  Popup.button1 = "Accept";
+  Popup.button2 = "Cancel";
+
+  if Func then
+    Popup.OnAccept = function()
+      Func(true);
+    end
+  else
+    Popup.OnAccept = nil;
+  end
+  
+  if Func then
+    Popup.OnCancel = function()
+      Func(false);
+    end
+  else
+    Popup.OnCancel = nil;
+  end
+
+  Popup.timeout = 0;
+  Popup.whileDead = 1;
+  Popup.hideOnEscape = 1;
+
+  StaticPopup_Show("AURAFRAMESCONFIG_CONFIRM_DIALOG");
+
+end
+
+
+-----------------------------------------------------------------
+-- Function MessagePopup
+-----------------------------------------------------------------
+function AuraFrames:MessagePopup(Message, Func)
+
+  if not StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"] then
+    StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"] = {};
+  end
+
+  local Popup = StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"];
+  Popup.text = Message;
+  Popup.button1 = "Okay";
+
+  if Func then
+    Popup.OnAccept = function()
+      Func(true);
+    end
+  else
+    Popup.OnAccept = nil;
+  end
+
+  Popup.timeout = 0;
+  Popup.whileDead = 1;
+  Popup.hideOnEscape = 1;
+
+  StaticPopup_Show("AURAFRAMESCONFIG_MESSAGE_DIALOG");
+
+end
+
+
 -----------------------------------------------------------------
 -- Function InitializeConfig
 -----------------------------------------------------------------
 function AuraFrames:InitializeConfig()
 
   LibStub("AceConfig-3.0"):RegisterOptionsTable("AuraFrames", function() return AuraFrames:GetConfigOptions(); end);
-  --LibStub("AceConfigDialog-3.0"):SetDefaultSize("AuraFrames", 1100.0, 700.0);
 
   self.db.RegisterCallback(self, "OnProfileChanged", "RefreshConfig");
   self.db.RegisterCallback(self, "OnProfileCopied", "RefreshConfig");
@@ -43,6 +112,7 @@ function AuraFrames:InitializeConfig()
 
 end
 
+
 -----------------------------------------------------------------
 -- Function RefreshConfigDialog
 -----------------------------------------------------------------
@@ -50,7 +120,7 @@ function AuraFrames:RefreshConfigDialog(...)
 
   LibStub("AceConfigRegistry-3.0"):NotifyChange("AuraFrames");
   
-  if select('#', ...) then
+  if select('#', ...) > 0 then
     LibStub("AceConfigDialog-3.0"):SelectGroup("AuraFrames", ...);
   end
 
@@ -74,35 +144,6 @@ function AuraFrames:RefreshConfig()
   if self.db.profile.HideBlizzardAuraFrames then
     self:DisableBlizzardAuraFrames();
   end
-  
-  if self.db.profile.EnableTestUnit then
-    LibAura:EnableTestUnit();
-  end
-
-end
-
-
------------------------------------------------------------------
--- Function CreateContainerConfig
------------------------------------------------------------------
-function AuraFrames:CreateContainerConfig()
-
-  local Name, Type = NewContainerName, NewContainerType;
-  
-  if type(Name) ~= "string" or strlen(Name) == 0 then
-    message("Not a valid container name");
-    return false;
-  end
-  
-  if not self:CreateNewContainer(Name, Type) then
-    message("Failed to create a new container");
-    return;
-  end
-  
-  NewContainerName, NewContainerType = "", "";
-  
-  -- Refresh the config dialog and select the new created container.
-  self:RefreshConfigDialog("Containers", "Container_"..Name);
 
 end
 
@@ -110,23 +151,23 @@ end
 -----------------------------------------------------------------
 -- Function CopyContainerConfig
 -----------------------------------------------------------------
-function AuraFrames:CopyContainerConfig(Name)
+function AuraFrames:CopyContainerConfig(Id)
 
-  if not self.db.profile.Containers[Name] or not self.db.profile.Containers[CopySettingsFrom] then
-    message("Not a valid destination or source container");
+  if not self.db.profile.Containers[Id] or not self.db.profile.Containers[CopySettingsFrom] then
+    AuraFrames:MessagePopup("Not a valid destination or source container");
     return;
   end
 
   for Key, Value in pairs(AuraFrames.db.profile.Containers[CopySettingsFrom]) do
     if type(Value) == "table" and CopySettingsSelection[Key] and CopySettingsSelection[Key] == true then
-      self.db.profile.Containers[Name][Key] = deepcopy(Value);
+      self.db.profile.Containers[Id][Key] = deepcopy(Value);
     end
   end
   
-  self:DeleteContainer(Name);
-  self:CreateContainer(Name);
+  self:DeleteContainer(Id);
+  self:CreateContainer(Id);
   
-  self:RefreshConfigDialog("Containers", "Container_"..Name);
+  self:RefreshConfigDialog("Containers", "Container_"..Id);
 
 end
 
@@ -134,15 +175,15 @@ end
 -----------------------------------------------------------------
 -- Function DeleteContainerConfig
 -----------------------------------------------------------------
-function AuraFrames:DeleteContainerConfig(Name)
+function AuraFrames:DeleteContainerConfig(Id)
 
-  if not self.db.profile.Containers[Name] then
+  if not self.db.profile.Containers[Id] then
     return;
   end
 
-  self.Containers[Name]:Delete();
-  self.Containers[Name] = nil;
-  self.db.profile.Containers[Name] = nil;
+  self.Containers[Id]:Delete();
+  self.Containers[Id] = nil;
+  self.db.profile.Containers[Id] = nil;
   
   self:RefreshConfigDialog("Containers");
 
@@ -187,25 +228,25 @@ end
 -----------------------------------------------------------------
 -- Function SetContainerEnabled
 -----------------------------------------------------------------
-function AuraFrames:SetContainerEnabled(Name, Enabled)
+function AuraFrames:SetContainerEnabled(Id, Enabled)
   
-  if not self.db.profile.Containers[Name] or self.db.profile.Containers[Name].Enabled == Enabled then
+  if not self.db.profile.Containers[Id] or self.db.profile.Containers[Id].Enabled == Enabled then
     return;
   end
   
-  self.db.profile.Containers[Name].Enabled = Enabled;
+  self.db.profile.Containers[Id].Enabled = Enabled;
   
   if Enabled == true then
   
-    self:CreateContainer(Name);
+    self:CreateContainer(Id);
   
   else
   
-    self:DeleteContainer(Name);
+    self:DeleteContainer(Id);
   
   end
   
-  self:RefreshConfigDialog("Containers", "Container_"..Name);
+  self:RefreshConfigDialog("Containers", "Container_"..Id);
   
 end
 
@@ -213,33 +254,33 @@ end
 -----------------------------------------------------------------
 -- Function SetAuraSource
 -----------------------------------------------------------------
-function AuraFrames:SetAuraSource(Name, Unit, Type, Enabled)
+function AuraFrames:SetAuraSource(Id, Unit, Type, Enabled)
 
   if Enabled then
   
-    if not self.db.profile.Containers[Name].Sources[Unit] then
-      self.db.profile.Containers[Name].Sources[Unit] = {};
+    if not self.db.profile.Containers[Id].Sources[Unit] then
+      self.db.profile.Containers[Id].Sources[Unit] = {};
     end
         
-    self.db.profile.Containers[Name].Sources[Unit][Type] = true;
-    LibAura:RegisterObjectSource(self.Containers[Name], Unit, Type);
+    self.db.profile.Containers[Id].Sources[Unit][Type] = true;
+    LibAura:RegisterObjectSource(self.Containers[Id], Unit, Type);
 
   else
 
-    if self.db.profile.Containers[Name].Sources[Unit] then
+    if self.db.profile.Containers[Id].Sources[Unit] then
     
-      if self.db.profile.Containers[Name].Sources[Unit][Type] then
-        self.db.profile.Containers[Name].Sources[Unit][Type] = nil;
+      if self.db.profile.Containers[Id].Sources[Unit][Type] then
+        self.db.profile.Containers[Id].Sources[Unit][Type] = nil;
       end
       
-      if next(self.db.profile.Containers[Name].Sources[Unit]) == nil then
-        self.db.profile.Containers[Name].Sources[Unit] = nil;
+      if next(self.db.profile.Containers[Id].Sources[Unit]) == nil then
+        self.db.profile.Containers[Id].Sources[Unit] = nil;
       end
       
       
     end
     
-    LibAura:UnregisterObjectSource(self.Containers[Name], Unit, Type);
+    LibAura:UnregisterObjectSource(self.Containers[Id], Unit, Type);
     
   end
 
@@ -249,15 +290,15 @@ end
 -----------------------------------------------------------------
 -- Function GetAuraSource
 -----------------------------------------------------------------
-function AuraFrames:GetAuraSource(Name, Unit, Type)
+function AuraFrames:GetAuraSource(Id, Unit, Type)
 
-  return self.db.profile.Containers[Name].Sources[Unit] and self.db.profile.Containers[Name].Sources[Unit][Type];
+  return self.db.profile.Containers[Id].Sources[Unit] and self.db.profile.Containers[Id].Sources[Unit][Type];
 
 end
 
 
 -----------------------------------------------------------------
--- Function GetAuraSource
+-- Function ShowUnlockDialog
 -----------------------------------------------------------------
 function AuraFrames:ShowUnlockDialog()
 
@@ -367,39 +408,37 @@ function AuraFrames:GetConfigOptions()
         name = "Containers",
         order = 2,
         args = {
-          Header1 = {
-            type = "header",
-            name = "Create new containers",
+          ContainerInfo = {
+            type = "description",
+            name = "Containers are used for grouping aura's together. There are different kind of containers, every type with there own ways of displaying aura's. Click the button below to create a new container:\n\n",
+            fontSize = "medium",
             order = 1,
-          },
-          Name = {
-            type = "input",
-            name = "Container name",
-            desc = "Provide a name for the new container",
-            get = function(Info) return NewContainerName; end,
-            set = function(Info, Value) NewContainerName = Value; end,
-            pattern = "^%w+$",
-            usage = "Only alphanumeric characters are allowed",
-            order = 2,
-          },
-          Type = {
-            type = "select",
-            name = "Contaner type",
-            desc = "The type of the new container",
-            get = function(Info) return NewContainerType; end,
-            set = function(Info, Value) NewContainerType = Value; end,
-            values = {},
-            order = 3,
           },
           Create = {
             type = "execute",
             name = "Create container",
-            func = "CreateContainerConfig",
-            order = 4,
+            func = function()
+              LibStub("AceConfigDialog-3.0"):Close("AuraFrames");
+              -- AceConfigDialog is forgetting to close the game tooltip :(
+              GameTooltip:Hide();
+              AuraFrames:ShowCreateContainerWizard();
+            end,
+            order = 2,
+          },
+          Space1 = {
+            type = "description",
+            name = "\n",
+            order = 3,
           },
           Header2 = {
             type = "header",
-            name = "Lock/unlock containers",
+            name = "Move containers",
+            order = 4,
+          },
+          MoveInfo = {
+            type = "description",
+            name = "Containers can only be moved when they are unlocked. Unlock/lock the containers by using the button below:\n\n",
+            fontSize = "medium",
             order = 5,
           },
           ConfigMode = {
@@ -413,12 +452,8 @@ function AuraFrames:GetConfigOptions()
       Profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
     },
   };
-  
-  for Type, Handler in pairs(AuraFrames.ContainerHandlers) do
-    Options.args.Containers.args.Type.values[Type] = Handler:GetName();
-  end
-  
-  for Name, Container in pairs(AuraFrames.db.profile.Containers) do
+
+  for ContainerId, Container in pairs(AuraFrames.db.profile.Containers) do
   
     if Container.Enabled == true then
   
@@ -433,20 +468,20 @@ function AuraFrames:GetConfigOptions()
       local CopyFrom = {};
       
       for Key, Value in pairs(AuraFrames.db.profile.Containers) do
-        if Key ~= Name and Value.Type == Container.Type then
+        if Key ~= ContainerId and Value.Type == Container.Type then
           CopyFrom[Key] = Key;
         end
       end
     
-      Options.args.Containers.args["Container_"..Name] = {
+      Options.args.Containers.args["Container_"..ContainerId] = {
         type = "group",
-        name = Name .. " (" .. Container.Type .. ")",
+        name = Container.Name .. " (" .. Container.Type .. ")",
         args = {
           ContainerEnabled = {
             type = "toggle",
             name = "Container Enabled",
             get = function(Info) return Container.Enabled; end,
-            set = function(Info, Value) AuraFrames:SetContainerEnabled(Name, Value); end,
+            set = function(Info, Value) AuraFrames:SetContainerEnabled(ContainerId, Value); end,
             order = 1,
           },
           HeaderCopy = {
@@ -478,9 +513,9 @@ function AuraFrames:GetConfigOptions()
           CopySettings = {
             type = "execute",
             name = "Copy settings",
-            func = function() AuraFrames:CopyContainerConfig(Name); end,
+            func = function() AuraFrames:CopyContainerConfig(ContainerId); end,
             confirm = true,
-            confirmText = "Are you sure you want to over write the selected settings for the container "..Name,
+            confirmText = "Are you sure you want to over write the selected settings for the container "..Container.Name,
             order = 6,
           },
           HeaderMisc = {
@@ -491,9 +526,9 @@ function AuraFrames:GetConfigOptions()
           Delete = {
             type = "execute",
             name = "Delete this container",
-            func = function() AuraFrames:DeleteContainerConfig(Name); end,
+            func = function() AuraFrames:DeleteContainerConfig(ContainerId); end,
             confirm = true,
-            confirmText = "Are you sure you want to delete the container "..Name,
+            confirmText = "Are you sure you want to delete the container "..Container.Name,
             order = 8,
           },
           ConfigMode = {
@@ -529,8 +564,8 @@ function AuraFrames:GetConfigOptions()
                   mouseover = "Mouseover",
                   test = "Test",
                 },
-                get = function(Info, Unit) return AuraFrames:GetAuraSource(Name, Unit, "HELPFUL"); end,
-                set = function(Info, Unit, Value) AuraFrames:SetAuraSource(Name, Unit, "HELPFUL", Value); end,
+                get = function(Info, Unit) return AuraFrames:GetAuraSource(ContainerId, Unit, "HELPFUL"); end,
+                set = function(Info, Unit, Value) AuraFrames:SetAuraSource(ContainerId, Unit, "HELPFUL", Value); end,
                 order = 2,
               },
               HarmfulUnits = {
@@ -549,8 +584,8 @@ function AuraFrames:GetConfigOptions()
                   mouseover = "Mouseover",
                   test = "Test",
                 },
-                get = function(Info, Unit) return AuraFrames:GetAuraSource(Name, Unit, "HARMFUL"); end,
-                set = function(Info, Unit, Value) AuraFrames:SetAuraSource(Name, Unit, "HARMFUL", Value); end,
+                get = function(Info, Unit) return AuraFrames:GetAuraSource(ContainerId, Unit, "HARMFUL"); end,
+                set = function(Info, Unit, Value) AuraFrames:SetAuraSource(ContainerId, Unit, "HARMFUL", Value); end,
                 order = 3,
               },
               Misc = {
@@ -561,43 +596,43 @@ function AuraFrames:GetConfigOptions()
                   PlayerWeapons = {
                     type = "toggle",
                     name = "Weapon Enchantments",
-                    get = function(Info) return AuraFrames:GetAuraSource(Name, "player", "WEAPON"); end,
-                    set = function(Info, Value) AuraFrames:SetAuraSource(Name, "player", "WEAPON", Value); end,
+                    get = function(Info) return AuraFrames:GetAuraSource(ContainerId, "player", "WEAPON"); end,
+                    set = function(Info, Value) AuraFrames:SetAuraSource(ContainerId, "player", "WEAPON", Value); end,
                     order = 1,
                   },
                   InternalCooldownItem = {
                     type = "toggle",
                     name = "Item Cooldowns",
-                    get = function(Info) return AuraFrames:GetAuraSource(Name, "player", "INTERNALCOOLDOWNITEM"); end,
-                    set = function(Info, Value) AuraFrames:SetAuraSource(Name, "player", "INTERNALCOOLDOWNITEM", Value); end,
+                    get = function(Info) return AuraFrames:GetAuraSource(ContainerId, "player", "INTERNALCOOLDOWNITEM"); end,
+                    set = function(Info, Value) AuraFrames:SetAuraSource(ContainerId, "player", "INTERNALCOOLDOWNITEM", Value); end,
                     order = 2,
                   },
                   InternalCooldownTalents = {
                     type = "toggle",
                     name = "Talent Cooldowns",
-                    get = function(Info) return AuraFrames:GetAuraSource(Name, "player", "INTERNALCOOLDOWNTALENT"); end,
-                    set = function(Info, Value) AuraFrames:SetAuraSource(Name, "player", "INTERNALCOOLDOWNTALENT", Value); end,
+                    get = function(Info) return AuraFrames:GetAuraSource(ContainerId, "player", "INTERNALCOOLDOWNTALENT"); end,
+                    set = function(Info, Value) AuraFrames:SetAuraSource(ContainerId "player", "INTERNALCOOLDOWNTALENT", Value); end,
                     order = 3,
                   },
                   PlayerSpellCooldowns = {
                     type = "toggle",
                     name = "Spell Cooldowns",
-                    get = function(Info) return AuraFrames:GetAuraSource(Name, "player", "SPELLCOOLDOWN"); end,
-                    set = function(Info, Value) AuraFrames:SetAuraSource(Name, "player", "SPELLCOOLDOWN", Value); end,
+                    get = function(Info) return AuraFrames:GetAuraSource(ContainerId, "player", "SPELLCOOLDOWN"); end,
+                    set = function(Info, Value) AuraFrames:SetAuraSource(ContainerId, "player", "SPELLCOOLDOWN", Value); end,
                     order = 4,
                   },
                   PetSpellCooldowns = {
                     type = "toggle",
                     name = "Spell Cooldowns (Pet)",
-                    get = function(Info) return AuraFrames:GetAuraSource(Name, "pet", "SPELLCOOLDOWN"); end,
-                    set = function(Info, Value) AuraFrames:SetAuraSource(Name, "pet", "SPELLCOOLDOWN", Value); end,
+                    get = function(Info) return AuraFrames:GetAuraSource(ContainerId, "pet", "SPELLCOOLDOWN"); end,
+                    set = function(Info, Value) AuraFrames:SetAuraSource(ContainerId, "pet", "SPELLCOOLDOWN", Value); end,
                     order = 5,
                   },
                   PlayerTotems = {
                     type = "toggle",
                     name = "Totems",
-                    get = function(Info) return AuraFrames:GetAuraSource(Name, "player", "TOTEM"); end,
-                    set = function(Info, Value) AuraFrames:SetAuraSource(Name, "player", "TOTEM", Value); end,
+                    get = function(Info) return AuraFrames:GetAuraSource(ContainerId, "player", "TOTEM"); end,
+                    set = function(Info, Value) AuraFrames:SetAuraSource(ContainerId, "player", "TOTEM", Value); end,
                     order = 6,
                   },
                 },
@@ -609,26 +644,26 @@ function AuraFrames:GetConfigOptions()
         },
       };
       
-      local ContainerOptions = self.Containers[Name]:GetConfigOptions();
+      local ContainerOptions = self.Containers[ContainerId]:GetConfigOptions();
       
       for OptionName, OptionValue in pairs(ContainerOptions) do
         
-        Options.args.Containers.args["Container_"..Name].args[OptionName] = OptionValue;
-        Options.args.Containers.args["Container_"..Name].args[OptionName].order = 10 + Options.args.Containers.args["Container_"..Name].args[OptionName].order;
+        Options.args.Containers.args["Container_"..ContainerId].args[OptionName] = OptionValue;
+        Options.args.Containers.args["Container_"..ContainerId].args[OptionName].order = 10 + Options.args.Containers.args["Container_"..ContainerId].args[OptionName].order;
         
       end
       
     else
     
-      Options.args.Containers.args["Container_"..Name] = {
+      Options.args.Containers.args["Container_"..ContainerId] = {
         type = "group",
-        name = Name,
+        name = Container.Name,
         args = {
           ContainerEnabled = {
             type = "toggle",
             name = "Container Enabled",
             get = function(Info) return Container.Enabled; end,
-            set = function(Info, Value) AuraFrames:SetContainerEnabled(Name, Value); end,
+            set = function(Info, Value) AuraFrames:SetContainerEnabled(ContainerId, Value); end,
             order = 1,
           },
         }

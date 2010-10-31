@@ -243,3 +243,24 @@ function AuraFrames:ShowListEditor(List, Input, NotifyFunc, Add, Delete, Order)
   
 end
 
+
+-----------------------------------------------------------------
+-- Function IsListEditorShown
+-----------------------------------------------------------------
+function AuraFrames:IsListEditorShown()
+  
+  return ListWindow and ListWindow:IsShown() or 0;
+  
+end
+
+-----------------------------------------------------------------
+-- Function CloseListEditor
+-----------------------------------------------------------------
+function AuraFrames:CloseListEditor()
+  
+  if ListWindow then
+    ListWindow:SetCallback("OnClose", nil);
+    ListWindow:Hide();
+  end
+  
+end

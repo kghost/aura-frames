@@ -218,9 +218,8 @@ local function CreateRules(Filter, Parent, Rules)
           if not Rule.Args.List then
             Rule.Args.List = {};
           end
-          FilterWindow:Hide();
           AuraFrames:ShowListEditor(Rule.Args.List, AuraFrames.AuraDefinition[Rule.Subject].List or ValueType, function() FilterWindow:Show(); Filter:ApplyChange(); end, true, true, false);
-          
+          FilterWindow:Hide();
         end);
         Container:AddChild(Value);
         
@@ -321,7 +320,9 @@ local function CreateFilterWindow()
   FilterWindow:SetHeight(500);
   FilterWindow:EnableResize(false);
   FilterWindow:SetCallback("OnClose", function()
-    --LibStub("AceConfigDialog-3.0"):Open("AuraFrames");
+    if AuraFrames:IsListEditorShown() ~= 1 then
+      LibStub("AceConfigDialog-3.0"):Open("AuraFrames");
+    end
   end);
   FilterWindow:SetLayout("Flow");
   
@@ -348,7 +349,6 @@ local function CreateFilterWindow()
   ButtonDone:SetWidth(200);
   ButtonDone:SetCallback("OnClick", function()
     FilterWindow:Hide();
-    LibStub("AceConfigDialog-3.0"):Open("AuraFrames");
   end);
   FilterWindow:AddChild(ButtonDone);
 

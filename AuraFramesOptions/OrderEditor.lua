@@ -218,9 +218,8 @@ local function CreateRules(Order)
           if not Rule.Args.List then
             Rule.Args.List = {};
           end
-          OrderWindow:Hide();
           AuraFrames:ShowListEditor(Rule.Args.List, AuraFrames.AuraDefinition[Rule.Subject].List or "None", function() OrderWindow:Show(); Order:ApplyChange(); end, false, false, true);
-          
+          OrderWindow:Hide();
         end);
         Container:AddChild(Value);
       
@@ -294,7 +293,9 @@ local function CreateOrderWindow()
   OrderWindow:SetHeight(500);
   OrderWindow:EnableResize(false);
   OrderWindow:SetCallback("OnClose", function()
-    --LibStub("AceConfigDialog-3.0"):Open("AuraFrames");
+    if AuraFrames:IsListEditorShown() ~= 1 then
+      LibStub("AceConfigDialog-3.0"):Open("AuraFrames");
+    end
   end);
   OrderWindow:SetLayout("Flow");
   
@@ -321,7 +322,6 @@ local function CreateOrderWindow()
   ButtonDone:SetWidth(200);
   ButtonDone:SetCallback("OnClick", function()
     OrderWindow:Hide();
-    LibStub("AceConfigDialog-3.0"):Open("AuraFrames");
   end);
   OrderWindow:AddChild(ButtonDone);
 
