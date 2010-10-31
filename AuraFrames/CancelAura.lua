@@ -25,6 +25,10 @@ CancelAuraButton:HookScript("OnClick", function(self, ...) FireHandler("OnClick"
 -----------------------------------------------------------------
 function FireHandler(Handler, ...)
 
+  if not CancelAuraButton.Frame:HasScript(Handler) then
+    return;
+  end
+
   local Function = CancelAuraButton.Frame:GetScript(Handler);
   
   if Function then

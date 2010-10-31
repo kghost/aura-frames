@@ -109,7 +109,6 @@ local function BarOnClick(Bar, Button)
 
   end
 
-
 end
 
 
@@ -227,15 +226,14 @@ function Prototype:UpdateBar(Bar)
   if self.Config.Layout.Clickable then
     
     Bar:EnableMouse(true);
-    Button:RegisterForClicks("RightButtonUp");
-    Bar:SetScript("OnMouseUp", BarOnClick);
+    Bar:SetScript("OnClick", BarOnClick);
     
     Bar:HookScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Bar, Aura); end);
     
   else
     
     Bar:EnableMouse(false);
-    Bar:SetScript("OnMouseUp", nil);
+    Bar:SetScript("OnClick", nil);
     
   end
   
