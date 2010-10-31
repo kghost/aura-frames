@@ -20,8 +20,10 @@ CancelAuraButton:SetFrameStrata("HIGH")
 CancelAuraButton:RegisterForClicks("RightButtonUp");
 CancelAuraButton:SetScript("OnLeave", function(self, ...) self:Hide(); RestoreHandlers(); FireHandler("OnLeave", ...); end);
 CancelAuraButton:SetAttribute("type2", "cancelaura");
-CancelAuraButton:HookScript("OnClick", function(self, ...) FireHandler("OnClick", ...); end);
-CancelAuraButton:HookScript("OnMouseUp", function(self, ...) FireHandler("OnMouseUp", ...); end);
+
+for _, Handler in ipairs({"OnClick", "OnMouseDown", "OnMouseUp", "OnKeyDown", "OnKeyUp"}) do
+  CancelAuraButton:HookScript(Handler, function(self, ...) FireHandler(Handler, ...); end);
+end
 
 
 -----------------------------------------------------------------
@@ -76,7 +78,7 @@ end
 function AuraFrames:SetCancelAuraFrame(Frame, Aura)
 
   -- Check if we can cancel the aura.
-  if not (Aura.Type == "HELPFUL" and (Aura.Unit == "player" or Aura.Unit == "pet")) then
+  if not (Aura.Type == "HELPFUL" and (Aura.Unit == "player" or Aura.Unit == "pet" or Aura.Unit == "vehicle")) then
     return;
   end
 
