@@ -36,10 +36,6 @@ local ConfigDefaults = {
   },
 };
 
--- By default we are not in config mode.
-AuraFrames.ConfigMode = false;
-
-
 local BlizzardOptions = {
   name = "Aura Frames",
   handler = AuraFrames,
@@ -111,35 +107,36 @@ end
 -----------------------------------------------------------------
 -- Function UpdateContainer
 -----------------------------------------------------------------
-function AuraFrames:UpdateContainer(Name)
+function AuraFrames:UpdateContainer(Id)
 
-  self.Containers[Name]:Update();
+  self.Containers[Id]:Update();
 
 end
+
 
 -----------------------------------------------------------------
 -- Function CreateContainer
 -----------------------------------------------------------------
-function AuraFrames:CreateContainer(Name)
+function AuraFrames:CreateContainer(Id)
 
   -- We cant overwrite an container so lets delete it first then. This should never happen btw!
-  if self.Containers[Name] then
-    self:DeleteContainer(Name);
+  if self.Containers[Id] then
+    self:DeleteContainer(Id);
   end
   
-  if self.db.profile.Containers[Name].Enabled ~= true then
+  if self.db.profile.Containers[Id].Enabled ~= true then
     return;
   end
 
-  self.Containers[Name] = self.ContainerHandlers[self.db.profile.Containers[Name].Type]:New(self.db.profile.Containers[Name]);
+  self.Containers[Id] = self.ContainerHandlers[self.db.profile.Containers[Id].Type]:New(self.db.profile.Containers[Id]);
   
-  for Unit, _ in pairs(self.db.profile.Containers[Name].Sources) do
+  for Unit, _ in pairs(self.db.profile.Containers[Id].Sources) do
   
-    for Type, _ in pairs(self.db.profile.Containers[Name].Sources[Unit]) do
+    for Type, _ in pairs(self.db.profile.Containers[Id].Sources[Unit]) do
   
-      if self.db.profile.Containers[Name].Sources[Unit][Type] == true then
+      if self.db.profile.Containers[Id].Sources[Unit][Type] == true then
 
-        LibAura:RegisterObjectSource(self.Containers[Name], Unit, Type);
+        LibAura:RegisterObjectSource(self.Containers[Id], Unit, Type);
 
       end
 
@@ -149,41 +146,44 @@ function AuraFrames:CreateContainer(Name)
 
 end
 
+
 -----------------------------------------------------------------
 -- Function DeleteContainer
 -----------------------------------------------------------------
-function AuraFrames:DeleteContainer(Name)
+function AuraFrames:DeleteContainer(Id)
 
-  if not self.Containers[Name] then
+  if not self.Containers[Id] then
     return;
   end
 
-  self.Containers[Name]:Delete();
-  self.Containers[Name] = nil;
+  self.Containers[Id]:Delete();
+  self.Containers[Id] = nil;
 
 end
+
 
 -----------------------------------------------------------------
 -- Function CreateAllContainers
 -----------------------------------------------------------------
 function AuraFrames:CreateAllContainers()
 
-  for Name, _ in pairs(self.db.profile.Containers) do
+  for Id, _ in pairs(self.db.profile.Containers) do
   
-    self:CreateContainer(Name);
+    self:CreateContainer(Id);
     
   end
 
 end
+
 
 -----------------------------------------------------------------
 -- Function DeleteAllContainers
 -----------------------------------------------------------------
 function AuraFrames:DeleteAllContainers()
 
-  for Name, _ in pairs(self.Containers) do
+  for Id, _ in pairs(self.Containers) do
   
-    self:DeleteContainer(Name);
+    self:DeleteContainer(Id);
   
   end
 

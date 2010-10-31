@@ -1,6 +1,9 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
 
+-- By default we are not in config mode.
+AuraFrames.ConfigMode = false;
+
 -----------------------------------------------------------------
 -- Function OpenConfigDialog
 -----------------------------------------------------------------
@@ -108,35 +111,62 @@ function AuraFrames:UpgradeDb()
 
 end
 
+-----------------------------------------------------------------
+-- Function GenerateContainerId
+-----------------------------------------------------------------
+function AuraFrames:GenerateContainerId(Name)
+
+  local Id = "";
+  
+  for Part in string.gmatch(Name, "%w+") do
+    Id = Id..Part;
+  end
+
+  if type(rawget(self.db.profile.Containers, Id)) ~= "nil" then
+
+    Id = Id.."_";
+    local i = 2;
+
+    while type(rawget(self.db.profile.Containers, Id..i)) ~= "nil" do
+      i = i + 1;
+    end
+
+    Id = Id..i;
+
+  end
+  
+  return Id;
+
+end
+
 
 -----------------------------------------------------------------
 -- Function CreateContainerConfig
 -----------------------------------------------------------------
 function AuraFrames:CreateNewContainer(Name, Type)
 
-  if type(rawget(self.db.profile.Containers, Name)) ~= "nil" then
-    return false;
-  end
+  local Id = self:GenerateContainerId(Name);
   
   if type(self.ContainerHandlers[Type]) == "nil" then
-    return false;
+    return nil;
   end
   
   -- Create the default config.
-  self.db.profile.Containers[Name].Name = Name;
-  self.db.profile.Containers[Name].Type = Type;
+  self.db.profile.Containers[Id].Id = Id;
+  self.db.profile.Containers[Id].Name = Name;
+  self.db.profile.Containers[Id].Type = Type;
   
   -- Copy the container defaults into the new config.
-  CopyConfigDefaults(self.ContainerHandlers[Type]:GetConfigDefaults(), self.db.profile.Containers[Name]);
+  CopyConfigDefaults(self.ContainerHandlers[Type]:GetConfigDefaults(), self.db.profile.Containers[Id]);
   
   -- Create the container.
-  self.Containers[Name] = self.ContainerHandlers[Type]:New(self.db.profile.Containers[Name]);
+  self.Containers[Id] = self.ContainerHandlers[Type]:New(self.db.profile.Containers[Id]);
   
   -- If we are in ConfigMode, then directly set the correct mode for the container.
   if AuraFrames.ConfigMode then
-    self.Containers[Name]:SetConfigMode(true);
+    self.Containers[Id]:SetConfigMode(true);
   end
   
-  return true;
+  return Id;
 
 end

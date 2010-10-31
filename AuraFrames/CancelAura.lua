@@ -19,14 +19,6 @@ CancelAuraButton:SetScript("OnLeave", function(self, ...) self:Hide(); RestoreHa
 CancelAuraButton:SetAttribute("type2", "cancelaura");
 CancelAuraButton:HookScript("OnClick", function(self, ...) FireHandler("OnClick", ...); end);
 
---[[
-local t =CancelAuraButton:CreateTexture(nil,"OVERLAY");
-t:SetTexture("Interface\\Icons\\Spell_Nature_Thorns");
-t:SetAllPoints(CancelAuraButton);
-t:SetPoint("TOP", 0, 0)
-t:SetPoint("RIGHT", 0, 0)
-]]--
-
 
 -----------------------------------------------------------------
 -- Local Function FireHandler

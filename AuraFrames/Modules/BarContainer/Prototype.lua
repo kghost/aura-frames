@@ -230,7 +230,7 @@ function Prototype:UpdateBar(Bar)
     Button:RegisterForClicks("RightButtonUp");
     Bar:SetScript("OnMouseUp", BarOnClick);
     
-    Button:HookScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Button, Aura); end);
+    Bar:HookScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Bar, Aura); end);
     
   else
     
