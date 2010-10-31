@@ -7,6 +7,9 @@ protected so normal addons without secure templates cant cancel auras
 anymore. This script allows the user to cancel auras without using
 secure templates. This is only working outside combat!
 
+This script also handles the normal canceling of auras that are still
+working like totem auras.
+
 ]]--
 
 
@@ -72,8 +75,8 @@ end
 -----------------------------------------------------------------
 function AuraFrames:SetCancelAuraFrame(Frame, Aura)
 
-  -- Check if we can cancel the aura normaly.
-  if Aura.Type ~= "WEAPON" and not (Aura.Type == "HELPFUL" and (Aura.Unit == "player" or Aura.Unit == "pet")) then
+  -- Check if we can cancel the aura.
+  if not (Aura.Type == "HELPFUL" and (Aura.Unit == "player" or Aura.Unit == "pet")) then
     return;
   end
 
@@ -97,3 +100,26 @@ function AuraFrames:SetCancelAuraFrame(Frame, Aura)
   end
   
 end
+
+
+-----------------------------------------------------------------
+-- Function CancelAura
+-----------------------------------------------------------------
+function AuraFrames:CancelAura(Aura)
+
+  if Aura.Type == "TOTEM" then
+
+    DestroyTotem(Aura.Index);
+  
+  elseif Aura.Type == "WEAPON" then
+  
+    -- Not working at all it seems?
+    -- http://www.wowinterface.com/forums/showthread.php?t=36117&highlight=sigg
+    --CancelItemTempEnchantment((Aura.Index == 16 and 1) or 2);
+  
+  end
+
+end
+
+
+

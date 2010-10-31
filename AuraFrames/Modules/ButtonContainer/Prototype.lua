@@ -121,7 +121,10 @@ local function ButtonOnClick(Button)
   if IsModifierKeyDown() == 1 then
   
     AuraFrames:DumpAura(Button.Aura);
-    return;
+
+  else
+  
+    AuraFrames:CancelAura(Button.Aura);
 
   end
 

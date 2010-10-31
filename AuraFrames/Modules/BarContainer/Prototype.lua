@@ -105,7 +105,10 @@ local function BarOnMouseUp(Bar, Button)
   if IsModifierKeyDown() == 1 then
   
     AuraFrames:DumpAura(Bar.Aura);
-    return;
+
+  else
+  
+    AuraFrames:CancelAura(Bar.Aura);
 
   end
 
