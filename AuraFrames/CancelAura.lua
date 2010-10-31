@@ -18,6 +18,7 @@ CancelAuraButton:RegisterForClicks("RightButtonUp");
 CancelAuraButton:SetScript("OnLeave", function(self, ...) self:Hide(); RestoreHandlers(); FireHandler("OnLeave", ...); end);
 CancelAuraButton:SetAttribute("type2", "cancelaura");
 CancelAuraButton:HookScript("OnClick", function(self, ...) FireHandler("OnClick", ...); end);
+CancelAuraButton:HookScript("OnMouseUp", function(self, ...) FireHandler("OnMouseUp", ...); end);
 
 
 -----------------------------------------------------------------
