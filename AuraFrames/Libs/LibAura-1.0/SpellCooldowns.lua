@@ -218,7 +218,11 @@ function Module:ScanAllSpellCooldowns()
     
     while db.Auras[i] do
     
-      if db.Auras[i].ExpirationTime <= CurrentTime then
+      local Start, Duration, Active = GetSpellCooldown(db.Auras[i].SpellId);
+      
+      db.Auras[i].ExpirationTime = Start + Duration;
+    
+      if Active ~= 1 or db.Auras[i].ExpirationTime <= CurrentTime then
       
         LibAura:FireAuraOld(db.Auras[i]);
         tremove(db.Auras, i);

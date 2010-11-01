@@ -367,7 +367,6 @@ function Prototype:AuraNew(Aura)
   
   end
 
-
   -- Pop the last button out the pool.
   local Button = table.remove(ButtonPool);
 
@@ -492,8 +491,6 @@ end
 -----------------------------------------------------------------
 function Prototype:UpdateAnchors()
 
-  -- TODO: Optimize the placing code.
-
   -- Maximune number of buttons to anchor.
   local Max = min(#self.Order, self.Config.Layout.HorizontalSize * self.Config.Layout.VerticalSize);
 
@@ -503,13 +500,15 @@ function Prototype:UpdateAnchors()
   -- Anchor the buttons in the correct order.
   for i = 1, #self.Order do
 
+    self.Order[i]:ClearAllPoints();
+    
     if i > Max then
 
-      self.Order[i]:Hide();
+      if self.Order[i]:IsShown() then
+        self.Order[i]:Hide();
+      end
     
     else
-      
-      self.Order[i]:ClearAllPoints();
       
       if Direction[2] == "y" then
         x, y = ((i - 1) % self.Config.Layout.HorizontalSize), math_floor((i - 1) / self.Config.Layout.HorizontalSize);
@@ -525,7 +524,9 @@ function Prototype:UpdateAnchors()
         Direction[4] * (y * (Module.ButtonSizeY + (y and self.Config.Layout.SpaceY)))
       );
 
-      self.Order[i]:Show();
+      if not self.Order[i]:IsShown() then
+        self.Order[i]:Show();
+      end
     
     end
   

@@ -502,14 +502,16 @@ function Prototype:UpdateAnchors()
 
   -- Anchor the bars in the correct order.
   for i = 1, #self.Order do
+  
+    self.Order[i]:ClearAllPoints();
 
     if i > Max then
 
-      self.Order[i]:Hide();
+      if self.Order[i]:IsShown() then
+        self.Order[i]:Hide();
+      end
     
     else
-      
-      self.Order[i]:ClearAllPoints();
       
       self.Order[i]:SetPoint(
         Direction[1],
@@ -519,7 +521,9 @@ function Prototype:UpdateAnchors()
         Direction[2] * ((i - 1) * (Module.BarHeight + self.Config.Layout.Space))
       );
 
-      self.Order[i]:Show();
+      if not self.Order[i]:IsShown() then
+        self.Order[i]:Show();
+      end
     
     end
   
