@@ -79,14 +79,12 @@ end
 function Module:GetConfigDefaults()
 
   local ConfigDefaults = {
-
     Location= {
       OffsetX = 0,
       OffsetY = 0,
       FramePoint = "CENTER",
       RelativePoint = "CENTER",
     },
-    
     Layout = {
       Scale = 1.0,
       NumberOfBars = 10,
@@ -109,7 +107,6 @@ function Module:GetConfigDefaults()
       BarDirection = "LEFTSHRINK",
       Icon = "LEFT",
     },
-
     Colors = {
       Debuff = {
         None        = {0.8, 0.0, 0.0, 1.0},
@@ -122,9 +119,8 @@ function Module:GetConfigDefaults()
       Weapon        = {1.0, 1.0, 1.0, 0.0},
       Other         = {1.0, 1.0, 1.0, 0.0},
     },
-    
-    Order = {},
-    Filter = {},
+    Order = AuraFrames:GetConfigDefaultsOrder(),
+    Filter = AuraFrames:GetConfigDefaultsFilter(),
   };
   
   return ConfigDefaults;
