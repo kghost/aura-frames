@@ -22,20 +22,20 @@ AuraFrames.ContainerHandlers["Bars"] = Module;
 Module.Prototype = {};
 
 local StatusBarTextures = {
-  ["Aluminum"]    = [[Interface\Addons\AuraFrames\Textures\Aluminum.tga]],
-  ["Armory"]      = [[Interface\Addons\AuraFrames\Textures\Armory.tga]],
-  ["BantoBar"]    = [[Interface\Addons\AuraFrames\Textures\BantoBar.tga]],
-  ["DarkBottom"]  = [[Interface\Addons\AuraFrames\Textures\Darkbottom.tga]],
-  ["Default"]     = [[Interface\Addons\AuraFrames\Textures\Default.tga]],
-  ["Flat"]        = [[Interface\Addons\AuraFrames\Textures\Flat.tga]],
-  ["Glaze"]       = [[Interface\Addons\AuraFrames\Textures\Glaze.tga]],
-  ["Gloss"]       = [[Interface\Addons\AuraFrames\Textures\Gloss.tga]],
-  ["Graphite"]    = [[Interface\Addons\AuraFrames\Textures\Graphite.tga]],
-  ["Minimalist"]  = [[Interface\Addons\AuraFrames\Textures\Minimalist.tga]],
-  ["Otravi"]      = [[Interface\Addons\AuraFrames\Textures\Otravi.tga]],
-  ["Smooth"]      = [[Interface\Addons\AuraFrames\Textures\Smooth.tga]],
-  ["Smooth v2"]   = [[Interface\Addons\AuraFrames\Textures\Smoothv2.tga]],
-  ["Striped"]     = [[Interface\Addons\AuraFrames\Textures\Striped.tga]],
+  ["Aluminum"]    = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Aluminum.tga]],
+  ["Armory"]      = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Armory.tga]],
+  ["BantoBar"]    = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\BantoBar.tga]],
+  ["DarkBottom"]  = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Darkbottom.tga]],
+  ["Default"]     = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Default.tga]],
+  ["Flat"]        = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Flat.tga]],
+  ["Glaze"]       = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Glaze.tga]],
+  ["Gloss"]       = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Gloss.tga]],
+  ["Graphite"]    = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Graphite.tga]],
+  ["Minimalist"]  = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Minimalist.tga]],
+  ["Otravi"]      = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Otravi.tga]],
+  ["Smooth"]      = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Smooth.tga]],
+  ["Smooth v2"]   = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Smoothv2.tga]],
+  ["Striped"]     = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Striped.tga]],
 };
 
 -----------------------------------------------------------------
