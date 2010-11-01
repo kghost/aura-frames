@@ -615,6 +615,7 @@ function AuraFrames:GetConfigOptions()
                     set = function(Info, Value) AuraFrames:SetAuraSource(ContainerId, "player", "WEAPON", Value); end,
                     order = 1,
                   },
+--[[
                   InternalCooldownItem = {
                     type = "toggle",
                     name = "Item Cooldowns",
@@ -629,9 +630,10 @@ function AuraFrames:GetConfigOptions()
                     set = function(Info, Value) AuraFrames:SetAuraSource(ContainerId "player", "INTERNALCOOLDOWNTALENT", Value); end,
                     order = 3,
                   },
+]]--
                   PlayerSpellCooldowns = {
                     type = "toggle",
-                    name = "Spell Cooldowns",
+                    name = "Spell Cooldowns (Player)",
                     get = function(Info) return AuraFrames:GetAuraSource(ContainerId, "player", "SPELLCOOLDOWN"); end,
                     set = function(Info, Value) AuraFrames:SetAuraSource(ContainerId, "player", "SPELLCOOLDOWN", Value); end,
                     order = 4,
@@ -696,7 +698,7 @@ function AuraFrames:GetConfigOptions()
       type = "group",
       name = Module:GetName(),
       args = {
-        ContainerEnabled = {
+        Temp = {
           type = "toggle",
           name = "Container Enabled",
           get = function(Info) end,
@@ -707,7 +709,7 @@ function AuraFrames:GetConfigOptions()
     };
   
   end
-
+  
 ]]--
   
   return Options;
