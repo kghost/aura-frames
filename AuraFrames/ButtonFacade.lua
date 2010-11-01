@@ -11,6 +11,8 @@ function AuraFrames:CreateButtonFacadeGroup(ContainerId)
 
   local Group = LBF:Group("AuraFrames", ContainerId);
   
+--[[
+  
   if AuraFrames.db.profile.Containers[ContainerId].Layout.ButtonFacade then
   
     db = AuraFrames.db.profile.Containers[ContainerId].Layout.ButtonFacade;
@@ -24,6 +26,8 @@ function AuraFrames:CreateButtonFacadeGroup(ContainerId)
   if db then
     Group:SetSkin(db.SkinId, db.Gloss, db.Backdrop, db.Colors);
   end
+  
+]]--
   
   return Group;
 

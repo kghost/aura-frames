@@ -50,7 +50,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
 
     elseif Config.Layout.DurationLayout == "SEPCOLON" then
     
-      local Days, Hours, Minutes, Seconds = math_floor(TimeLeft / 86400), math_floor(TimeLeft / 3600), math_floor(TimeLeft / 60), TimeLeft % 60;
+      local Days, Hours, Minutes, Seconds = math_floor(TimeLeft / 86400), math_floor((TimeLeft % 86400) / 3600), math_floor((TimeLeft % 3600) / 60), TimeLeft % 60;
       
       if Days ~= 0 then
         Bar.Duration:SetFormattedText("%d:%.2d:%.2d:%.2d", Days, Hours, Minutes, Seconds);
@@ -62,7 +62,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
 
     elseif Config.Layout.DurationLayout == "SEPDOT" then
 
-      local Days, Hours, Minutes, Seconds = math_floor(TimeLeft / 86400), math_floor(TimeLeft / 3600), math_floor(TimeLeft / 60), TimeLeft % 60;
+      local Days, Hours, Minutes, Seconds = math_floor(TimeLeft / 86400), math_floor((TimeLeft % 86400) / 3600), math_floor((TimeLeft % 3600) / 60), TimeLeft % 60;
       
       if Days ~= 0 then
         Bar.Duration:SetFormattedText("%d.%.2d.%.2d.%.2d", Days, Hours, Minutes, Seconds);
