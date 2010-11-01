@@ -27,7 +27,6 @@ Module.Prototype = {};
 -----------------------------------------------------------------
 function Module:OnInitialize()
 
-  self.LBFGroup = LBF:Group("AuraFrames", "Button Container");
 
 end
 
@@ -41,6 +40,7 @@ function Module:GetName()
 
 end
 
+
 -----------------------------------------------------------------
 -- Function GetDescription
 -----------------------------------------------------------------
@@ -49,6 +49,7 @@ function Module:GetDescription()
   return "A container that use buttons to display aura's";
 
 end
+
 
 -----------------------------------------------------------------
 -- Function GetConfigDefaults
@@ -142,6 +143,8 @@ function Module:New(Config)
   Container.TooltipOptions = {};
   
   Container.Buttons = {};
+  
+  Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
   
   Container:Update();
   

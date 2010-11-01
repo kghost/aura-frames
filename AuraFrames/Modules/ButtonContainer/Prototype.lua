@@ -142,6 +142,10 @@ function Prototype:Delete()
   self.Frame:Hide();
   self.Frame:UnregisterAllEvents();
   self.Frame = nil;
+
+  if self.LBFGroup then
+    self.LBFGroup:Delete(true);
+  end
   
   if self.ConfigFrame then
     self.ConfigFrame:Hide();
@@ -272,6 +276,8 @@ function Prototype:Update(...)
     if not Changed == "ALL" then
       self:UpdateAnchors();
     end
+    
+    self.LBFGroup:ReSkin();
 
   end
 
@@ -396,7 +402,7 @@ function Prototype:AuraNew(Aura)
       
     end);
     
-    Module.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border});
+    self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border});
     
   else
   
@@ -423,7 +429,7 @@ function Prototype:AuraNew(Aura)
 
   self:UpdateAnchors();
   
-  Module.LBFGroup:ReSkin();
+  self.LBFGroup:ReSkin();
   
 end
 

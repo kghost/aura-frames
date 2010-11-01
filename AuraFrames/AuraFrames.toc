@@ -5,9 +5,7 @@
 ## Version: 1.0
 ## SavedVariables: AuraFramesDB
 
-#@no-lib-strip@
 Embeds.xml
-#@end-no-lib-strip@
 
 AuraFrames.lua
 AuraDefinition.lua
@@ -17,6 +15,6 @@ Config.lua
 Code.lua
 Filter.lua
 Order.lua
-
+ButtonFacade.lua
 
 Modules.xml
