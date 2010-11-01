@@ -10,7 +10,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DbVersion = 157;
+AuraFrames.DbVersion = 158;
 
 -- Expose the addon to the global namespace for debugging.
 _G["AuraFrames"] = AuraFrames;

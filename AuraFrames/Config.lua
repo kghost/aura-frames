@@ -104,6 +104,12 @@ function AuraFrames:UpgradeDb()
     
     end
     
+    if self.db.profile.DbVersion < 158 then
+    
+      Container.Id = Container.Name;
+    
+    end
+    
   end
 
 
