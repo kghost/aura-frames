@@ -270,11 +270,13 @@ function Prototype:GetConfigOptions()
           set = function(Info, Value) Config.Layout.TooltipShowClassification = Value; Container:Update("LAYOUT"); end,
           order = 30,
         },
+--[[
         ButtonFacadeHeader = {
           type = "header",
           name = "ButtonFacade",
           order = 31,
         },
+]]--
       },
     },
     Warnings = {
