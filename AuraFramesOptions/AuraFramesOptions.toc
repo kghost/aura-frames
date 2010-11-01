@@ -19,5 +19,6 @@ FilterEditor.lua
 OrderConfig.lua
 OrderEditor.lua
 Introduction.lua
+ButtonFacade.lua
 
 Modules.xml

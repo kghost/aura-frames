@@ -19,6 +19,22 @@ local function CreateContainerConfig()
     AuraFrames:MessagePopup("Please provide a container name, this is required!", function() WizardWindow:Show(); WizardWindow.IgnoreClose = false; end);
     return
   end
+  
+  local Found = false;
+  
+  for _, Container in AuraFrames.db.profile.Containers do
+  
+    if ContainerName == Container.Name then
+      Found = true;
+      break;
+    end
+  
+  end
+  
+  if Found == true then
+    AuraFrames:MessagePopup("The container name you provided is already used. Please provide an unique name!", function() WizardWindow:Show(); WizardWindow.IgnoreClose = false; end);
+    return
+  end
 
   if strlen(ContainerType) == 0 then
     AuraFrames:MessagePopup("Please select a container type, this is required!", function() WizardWindow:Show(); WizardWindow.IgnoreClose = false; end);

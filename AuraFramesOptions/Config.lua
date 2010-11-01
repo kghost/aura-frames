@@ -403,10 +403,25 @@ function AuraFrames:GetConfigOptions()
           },
         },
       },
+--[[
+      ContainerDefaults = {
+        type = "group",
+        name = "Container Defaults",
+        order = 2,
+        args = {
+          Info = {
+            type = "description",
+            name = "Container defaults are used for setting the default configuration for a container type.",
+            fontSize = "medium",
+            order = 1,
+          },
+        },
+      },
+]]--
       Containers = {
         type = "group",
         name = "Containers",
-        order = 2,
+        order = 3,
         args = {
           ContainerInfo = {
             type = "description",
@@ -672,6 +687,28 @@ function AuraFrames:GetConfigOptions()
     end
   
   end
+  
+--[[
+  
+  for ModuleId, Module in pairs(AuraFrames.ContainerHandlers) do
+  
+    Options.args.ContainerDefaults.args["Module_"..ModuleId] = {
+      type = "group",
+      name = Module:GetName(),
+      args = {
+        ContainerEnabled = {
+          type = "toggle",
+          name = "Container Enabled",
+          get = function(Info) end,
+          set = function(Info, Value) end,
+          order = 1,
+        },
+      },
+    };
+  
+  end
+
+]]--
   
   return Options;
 

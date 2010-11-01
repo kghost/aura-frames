@@ -270,6 +270,11 @@ function Prototype:GetConfigOptions()
           set = function(Info, Value) Config.Layout.TooltipShowClassification = Value; Container:Update("LAYOUT"); end,
           order = 30,
         },
+        ButtonFacadeHeader = {
+          type = "header",
+          name = "ButtonFacade",
+          order = 31,
+        },
       },
     },
     Warnings = {
@@ -376,6 +381,16 @@ function Prototype:GetConfigOptions()
       args = Container.Order:BuildConfigOptions();
     },
   };
+  
+--[[
+  -- Intergrate ButtonFacade options.
+  for Index, Option in pairs(AuraFrames:GetButtonFacadeContainerOptions(self)) do
+    
+    Options.Layout.args[Index] = Option;
+    Options.Layout.args[Index].order = Options.Layout.args[Index].order + 100;
+  
+  end
+]]--
   
   return Options;
 
