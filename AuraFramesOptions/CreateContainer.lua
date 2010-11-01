@@ -22,7 +22,7 @@ local function CreateContainerConfig()
   
   local Found = false;
   
-  for _, Container in AuraFrames.db.profile.Containers do
+  for _, Container in pairs(AuraFrames.db.profile.Containers) do
   
     if ContainerName == Container.Name then
       Found = true;
