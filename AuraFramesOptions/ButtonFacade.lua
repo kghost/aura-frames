@@ -34,50 +34,28 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
     
     };
   
-  
   end
 
   local SkinList, LBFGroup = LBF:ListSkins(), Container.LBFGroup;
   
+  if not AuraFrames.db.profile.Containers[Container.Id].Layout.ButtonFacade then
+
+    AuraFrames.db.profile.Containers[Container.Id].Layout.ButtonFacade = {SkinId = "Blizzard", Gloss = 0, Backdrop = false, Colors = {}};
+    LBFGroup:ReSkin();
+
+  end
+  
+  local db = AuraFrames.db.profile.Containers[Container.Id].Layout.ButtonFacade;
+  
+  
   local Options = {
     BFInfo = {
       type = "description",
-      name = "ButtonFacade provide the skinning of buttons.",
+      name = "ButtonFacade provide the skinning of buttons.\n",
       fontSize = "medium",
       order = 1,
     },
-    BFUseDefault = {
-      type = "toggle",
-      name = "Use default settings",
-      desc = "Use the default ButtonFacade settings that are set for the whole addon.",
-      get = function()
-        if AuraFrames.db.profile.Containers[Container.Id].Layout.ButtonFacade then
-          return false;
-        else
-          return true;
-        end;
-      end,
-      set = function(_, Value)
-        if Value == true then
-          AuraFrames.db.profile.Containers[Container.Id].Layout.ButtonFacade = nil;
-        else
-          AuraFrames.db.profile.Containers[Container.Id].Layout.ButtonFacade = {SkinId = "Blizzard", Gloss = 0, Backdrop = false, Colors = {}};
-        end
-      end,
-      order = 2,
-    },
-  };
-  
-  if AuraFrames.db.profile.Containers[Container.Id].Layout.ButtonFacade then
-  
-    local db = AuraFrames.db.profile.Containers[Container.Id].Layout.ButtonFacade;
-  
-    Options.BFSep = {
-      type = "description",
-      name = "\n",
-      order = 3,
-    };
-    Options.BFSkin = {
+    BFSkin = {
       type = "select",
       name = "Skin",
       desc = "The ButtonFacade skin that this container will use.",
@@ -85,8 +63,8 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
       get = function() return LBFGroup.SkinID; end,
       set = function(_, Value) LBFGroup:Skin(Value, LBFGroup.Gloss, LBFGroup.Backdrop); end,
       order = 4,
-    };
-    Options.BFGloss = {
+    },
+    BFGloss = {
       type = "group",
       inline = true,
       name = "Gloss Settings",
@@ -119,8 +97,8 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
           order = 2,
         },
       },
-    };
-    Options.BFBackdrop = {
+    },
+    BFBackdrop = {
       type = "group",
       inline = true,
       name = "Backdrop Settings",
@@ -148,9 +126,8 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
           order = 2,
         },
       },
-    };
-
-  end
+    },
+  };
   
   return Options;
 
