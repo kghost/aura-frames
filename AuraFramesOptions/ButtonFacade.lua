@@ -1,5 +1,5 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
-local LBF = LibStub("LibButtonFacade");
+local LBF = LibStub("LibButtonFacade", true);
 
 
 -----------------------------------------------------------------
@@ -9,9 +9,11 @@ local function GetState(info)
 
   -- Copied from ButtonFacade\Core.lua
 
-  local LBFGroup, layer = info.arg[1], info.arg[2]
-  local list = LBF:GetSkins()
-  return list[LBFGroup.SkinID][layer].Hide
+  local LBFGroup, layer = info.arg[1], info.arg[2];
+  local list = LBF:GetSkins();
+  
+  return list[LBFGroup.SkinID][layer].Hide;
+
 end
 
 -----------------------------------------------------------------
@@ -19,7 +21,23 @@ end
 -----------------------------------------------------------------
 function AuraFrames:GetButtonFacadeContainerOptions(Container)
 
-  local SkinList = LBF:ListSkins();
+  if not LBF then
+  
+    return {
+      
+      BFInfo = {
+        type = "description",
+        name = "ButtonFacade provide the skinning of buttons.\n\nThe ButtonFacade addon is not found, please install ButtonFacade if you want to use custom button skinning.",
+        fontSize = "medium",
+        order = 1,
+      },
+    
+    };
+  
+  
+  end
+
+  local SkinList, LBFGroup = LBF:ListSkins(), Container.LBFGroup;
   
   local Options = {
     BFInfo = {
@@ -32,7 +50,13 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
       type = "toggle",
       name = "Use default settings",
       desc = "Use the default ButtonFacade settings that are set for the whole addon.",
-      get = function() return AuraFrames.db.profile.Containers[Container.Id].Layout.ButtonFacade and true or false; end,
+      get = function()
+        if AuraFrames.db.profile.Containers[Container.Id].Layout.ButtonFacade then
+          return false;
+        else
+          return true;
+        end;
+      end,
       set = function(_, Value)
         if Value == true then
           AuraFrames.db.profile.Containers[Container.Id].Layout.ButtonFacade = nil;
@@ -42,7 +66,7 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
       end,
       order = 2,
     },
-  }
+  };
   
   if AuraFrames.db.profile.Containers[Container.Id].Layout.ButtonFacade then
   
@@ -58,8 +82,8 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
       name = "Skin",
       desc = "The ButtonFacade skin that this container will use.",
       values = SkinList,
-      get = function() return db.SkinId; end,
-      set = function(_, Value) db.SkinId = Value; Container:Update("LAYOUT"); end,
+      get = function() return LBFGroup.SkinID; end,
+      set = function(_, Value) LBFGroup:Skin(Value, LBFGroup.Gloss, LBFGroup.Backdrop); end,
       order = 4,
     };
     Options.BFGloss = {
@@ -73,9 +97,9 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
           name = "Color",
           desc = "Set the color of the gloss texture.",
           width = "full",
-          get = function() return end,
-          set = function() end,
-          arg = {Container.LBFGroup, "Gloss"},
+          get = function() return LBFGroup:GetLayerColor("Gloss"); end,
+          set = function(_, r, g, b, a) LBFGroup:SetLayerColor("Gloss", r, g, b, a); end,
+          arg = {LBFGroup, "Gloss"},
           disabled = GetState,
           hasAlpha = false,
           order = 1,
@@ -88,9 +112,9 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
           max = 1,
           step = 0.05,
           isPercent = true,
-          get = function() end,
-          set = function() end,
-          arg = {Container.LBFGroup, "Gloss"},
+          get = function() return LBFGroup.Gloss or 0; end,
+          set = function() LBFGroup:Skin(LBFGroup.SkinID, Value, LBFGroup.Backdrop); end,
+          arg = {LBFGroup, "Gloss"},
           disabled = GetState,
           order = 2,
         },
@@ -107,10 +131,9 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
           name = "Color",
           desc = "Set the backdrop color.",
           width = "full",
-          get = function() end,
-          set = function() end,
-          arg = {Container.LBFGroup, "Backdrop"},
-          disabled = GetState,
+          get = function() return LBFGroup:GetLayerColor("Backdrop"); end,
+          set = function(_, r, g, b, a) LBFGroup:SetLayerColor("Backdrop", r, g, b, a); end,
+          disabled = function() return not LBFGroup.Backdrop; end,
           hasAlpha = true,
           order = 1,
         },
@@ -118,8 +141,8 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
           type = "toggle",
           name = "Enabled",
           desc = "Enable the backdrop.",
-          get = function() end,
-          set = function() end,
+          get = function() return LBFGroup.Backdrop; end,
+          set = function(_, Value) LBFGroup:Skin(LBFGroup.SkinID, LBFGroup.Gloss, Value and true or false); end,
           arg = {Container.LBFGroup, "Backdrop"},
           disabled = GetState,
           order = 2,
