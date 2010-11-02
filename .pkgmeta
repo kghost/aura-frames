@@ -2,20 +2,6 @@ package-as: AuraFrames
 
 enable-nolib-creation: no
 
-ignore:
-  - AuraFrames/AuraFrames/Libs/LibStub
-  - AuraFrames/AuraFrames/Libs/CallbackHandler-1.0
-  - AuraFrames/AuraFrames/Libs/AceAddon-3.0
-  - AuraFrames/AuraFrames/Libs/AceConsole-3.0
-  - AuraFrames/AuraFrames/Libs/AceDB-3.0
-  - AuraFrames/AuraFrames/Libs/LibButtonFacade
-  - AuraFrames/AuraFrames/Libs/LibSharedMedia-3.0
-  - AuraFrames/AuraFramesOptions/Libs/AceConfig-3.0
-  - AuraFrames/AuraFramesOptions/Libs/AceGUI-3.0
-  - AuraFrames/AuraFramesOptions/Libs/AceSerializer-3.0
-  - AuraFrames/AuraFramesOptions/Libs/AceGUI-3.0-SharedMediaWidgets
-  - AuraFrames/AuraFramesOptions/Libs/AceGUI-3.0-Spell-EditBox
-
 move-folders:
     AuraFrames/AuraFrames: AuraFrames
     AuraFrames/AuraFramesOptions: AuraFramesOptions
@@ -35,9 +21,6 @@ externals:
         tag: latest
     AuraFrames/Libs/AceDB-3.0:
         url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDB-3.0
-        tag: latest
-    AuraFrames/Libs/LibButtonFacade:
-        url: svn://svn.wowace.com/wow/buttonfacade/mainline/trunk/Libs/LibButtonFacade
         tag: latest
     AuraFrames/Libs/LibSharedMedia-3.0:
         url: svn://svn.wowace.com/wow/libsharedmedia-3-0/mainline/trunk
