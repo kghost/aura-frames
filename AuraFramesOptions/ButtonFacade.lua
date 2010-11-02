@@ -3,6 +3,18 @@ local LBF = LibStub("LibButtonFacade");
 
 
 -----------------------------------------------------------------
+-- Local Function GetState
+-----------------------------------------------------------------
+local function GetState(info)
+
+  -- Copied from ButtonFacade\Core.lua
+
+  local LBFGroup, layer = info.arg[1], info.arg[2]
+  local list = LBF:GetSkins()
+  return list[LBFGroup.SkinID][layer].Hide
+end
+
+-----------------------------------------------------------------
 -- Function SkinCallback
 -----------------------------------------------------------------
 function AuraFrames:GetButtonFacadeContainerOptions(Container)
@@ -63,6 +75,8 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
           width = "full",
           get = function() return end,
           set = function() end,
+          arg = {Container.LBFGroup, "Gloss"},
+          disabled = GetState,
           hasAlpha = false,
           order = 1,
         },
@@ -71,11 +85,13 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
           name = "Opacity",
           desc = "Set the intensity of the gloss.",
           min = 0,
-          max = 100,
-          step = 1,
+          max = 1,
+          step = 0.05,
           isPercent = true,
           get = function() end,
           set = function() end,
+          arg = {Container.LBFGroup, "Gloss"},
+          disabled = GetState,
           order = 2,
         },
       },
@@ -93,6 +109,8 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
           width = "full",
           get = function() end,
           set = function() end,
+          arg = {Container.LBFGroup, "Backdrop"},
+          disabled = GetState,
           hasAlpha = true,
           order = 1,
         },
@@ -102,6 +120,8 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
           desc = "Enable the backdrop.",
           get = function() end,
           set = function() end,
+          arg = {Container.LBFGroup, "Backdrop"},
+          disabled = GetState,
           order = 2,
         },
       },

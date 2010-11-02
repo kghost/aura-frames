@@ -34,8 +34,8 @@ function Prototype:GetConfigOptions()
         },
         HorizontalSize = {
           type = "select",
-          name = "Rows",
-          desc = "The number of aura rows the container will display",
+          name = "Columns",
+          desc = "The number of aura columns the container will display",
           values = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
           get = function(Info) return Config.Layout.HorizontalSize; end,
           set = function(Info, Value) Config.Layout.HorizontalSize = Value; Container:Update("LAYOUT"); end,
@@ -43,8 +43,8 @@ function Prototype:GetConfigOptions()
         },
         VerticalSize = {
           type = "select",
-          name = "Columns",
-          desc = "The number of aura columns the container will display",
+          name = "Rows",
+          desc = "The number of aura rows the container will display",
           values = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
           get = function(Info) return Config.Layout.VerticalSize; end,
           set = function(Info, Value) Config.Layout.VerticalSize = Value; Container:Update("LAYOUT"); end,
@@ -270,13 +270,11 @@ function Prototype:GetConfigOptions()
           set = function(Info, Value) Config.Layout.TooltipShowClassification = Value; Container:Update("LAYOUT"); end,
           order = 30,
         },
---[[
         ButtonFacadeHeader = {
           type = "header",
           name = "ButtonFacade",
           order = 31,
         },
-]]--
       },
     },
     Warnings = {
@@ -384,7 +382,6 @@ function Prototype:GetConfigOptions()
     },
   };
   
---[[
   -- Intergrate ButtonFacade options.
   for Index, Option in pairs(AuraFrames:GetButtonFacadeContainerOptions(self)) do
     
@@ -392,7 +389,6 @@ function Prototype:GetConfigOptions()
     Options.Layout.args[Index].order = Options.Layout.args[Index].order + 100;
   
   end
-]]--
   
   return Options;
 
