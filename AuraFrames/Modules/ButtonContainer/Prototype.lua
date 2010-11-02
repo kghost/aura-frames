@@ -369,7 +369,8 @@ function Prototype:AuraNew(Aura)
 
   if self.Buttons[Aura.Id] then
   
-    af:Print("Double aura trying to be added!!! Id: "..Aura.Id);
+    AuraFrames:Print("Double aura trying to be added!!! Id: "..Aura.Id);
+    return;
   
   end
 
@@ -453,7 +454,7 @@ function Prototype:AuraOld(Aura)
     
   Button:Hide();
   Button:ClearAllPoints();
-  Button:SetParent(nil);
+  Button:SetParent(UIParent);
   
   -- Release the button back in the pool for later use.
   table.insert(ButtonPool, Button);

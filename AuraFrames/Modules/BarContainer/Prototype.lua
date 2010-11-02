@@ -376,6 +376,13 @@ function Prototype:AuraNew(Aura)
     return;
   end
   
+  if self.Bars[Aura.Id] then
+  
+    AuraFrames:Print("Double aura trying to be added!!! Id: "..Aura.Id);
+    return;
+  
+  end
+  
   -- Pop the last bar out the pool.
   local Bar = table.remove(BarPool);
 
