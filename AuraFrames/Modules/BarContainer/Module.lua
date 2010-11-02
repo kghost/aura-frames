@@ -1,7 +1,6 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:NewModule("BarContainer", AuraFrames.ContainerPrototype);
 local LSM = LibStub("LibSharedMedia-3.0");
-local LBF = LibStub("LibButtonFacade");
 
 -- Import most used functions into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
@@ -42,8 +41,6 @@ local StatusBarTextures = {
 -- Function OnInitialize
 -----------------------------------------------------------------
 function Module:OnInitialize()
-
-  self.LBFGroup = LBF:Group("AuraFrames", "Bar Container");
 
   for Name, Texture in pairs(StatusBarTextures) do
   
@@ -156,6 +153,8 @@ function Module:New(Config)
   Container.TooltipOptions = {};
   
   Container.Bars = {};
+  
+  Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
   
   Container:Update();
   

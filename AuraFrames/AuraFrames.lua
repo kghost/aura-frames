@@ -10,7 +10,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DbVersion = 158;
+AuraFrames.DbVersion = 159;
 
 -- Expose the addon to the global namespace for debugging.
 _G["AuraFrames"] = AuraFrames;
@@ -32,7 +32,6 @@ local ConfigDefaults = {
       },
     },
     HideBlizzardAuraFrames = false,
-    EnableTestUnit = false
   },
 };
 
@@ -129,6 +128,7 @@ function AuraFrames:CreateContainer(Id)
   end
 
   self.Containers[Id] = self.ContainerHandlers[self.db.profile.Containers[Id].Type]:New(self.db.profile.Containers[Id]);
+  self.Containers[Id].Id = Id;
   
   for Unit, _ in pairs(self.db.profile.Containers[Id].Sources) do
   

@@ -2,7 +2,7 @@ local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:GetModule("BarContainer");
 local LibAura = LibStub("LibAura-1.0");
 local LSM = LibStub("LibSharedMedia-3.0");
-local LBF = LibStub("LibButtonFacade");
+local LBF = LibStub("LibButtonFacade", true);
 
 -- Import most used functions into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
@@ -257,7 +257,7 @@ end
 function Prototype:Update(...)
 
   local Changed = select(1, ...) or "ALL";
-
+  
   if Changed == "ALL" or Changed == "LAYOUT" then
 
     self.Frame:SetWidth(self.Config.Layout.BarWidth);
@@ -303,6 +303,14 @@ function Prototype:Update(...)
   
     -- 1.0 is the min.
     self.WidthPerSecond = (self.BarWidth - 1) / self.Config.Layout.BarMaxTime;
+    
+    for _, Bar in pairs(self.Bars) do
+      self:UpdateBar(Bar);
+    end
+    
+    if Changed ~= "ALL" then
+      self:UpdateAnchors();
+    end
 
   end
   

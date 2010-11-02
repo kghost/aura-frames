@@ -10,7 +10,6 @@
 
   <Include file="Libs\LibAura-1.0\LibAura-1.0.xml" />
   
-  <Include file="Libs\LibButtonFacade\LibButtonFacade.xml" />
   <Include file="Libs\LibSharedMedia-3.0\lib.xml" />
   
 </Ui>

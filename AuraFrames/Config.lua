@@ -111,7 +111,12 @@ function AuraFrames:UpgradeDb()
     end
     
   end
-
+  
+  if self.db.profile.DbVersion < 159 then
+  
+    self.db.profile.EnableTestUnit = nil;
+  
+  end
 
   self.db.profile.DbVersion = AuraFrames.DbVersion;
 
@@ -167,6 +172,8 @@ function AuraFrames:CreateNewContainer(Name, Type)
   
   -- Create the container.
   self.Containers[Id] = self.ContainerHandlers[Type]:New(self.db.profile.Containers[Id]);
+  
+  self.Containers[Id].Id = Id;
   
   -- If we are in ConfigMode, then directly set the correct mode for the container.
   if AuraFrames.ConfigMode then

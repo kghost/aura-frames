@@ -34,7 +34,6 @@
     <Layers>
       <Layer level="BACKGROUND">
         <Texture name="$parentIcon">
-          <TexCoords left="0.07" right="0.93" top="0.07" bottom="0.93"/>
         </Texture>
       </Layer>
       <Layer level="ARTWORK">
@@ -46,9 +45,9 @@
         </FontString>
       </Layer>
       <Layer level="OVERLAY">
-        <Texture name="$parentBorder" file="Interface\Buttons\UI-ActionButton-Border" alphaMode="ADD">
+        <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">
           <Size>
-            <AbsDimension x="32" y="32"/>
+            <AbsDimension x="38" y="38"/>
           </Size>
           <Anchors>
             <Anchor point="CENTER">

@@ -1,6 +1,6 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:GetModule("ButtonContainer");
-local LBF = LibStub("LibButtonFacade");
+local LBF = LibStub("LibButtonFacade", true);
 local LibAura = LibStub("LibAura-1.0");
 
 -- Import most used functions into the local namespace.
@@ -183,28 +183,33 @@ function Prototype:UpdateButton(Button)
   end
   
   if Button.Border ~= nil then
+  
+    local Color;
     
     if Aura.Type == "HARMFUL" then
-
-      LBF:SetNormalVertexColor(Button, unpack(self.Config.Colors.Debuff[Aura.Classification]));
-      Button.Border:SetVertexColor(unpack(self.Config.Colors.Debuff[Aura.Classification]));
+    
+      Color = self.Config.Colors.Debuff[Aura.Classification];
 
     elseif Aura.Type == "HELPFUL" then
 
-      LBF:SetNormalVertexColor(Button, unpack(self.Config.Colors["Buff"]));
-      Button.Border:SetVertexColor(unpack(self.Config.Colors["Buff"]));
+      Color = self.Config.Colors["Buff"];
 
     elseif Aura.Type == "WEAPON" then
 
-      LBF:SetNormalVertexColor(Button, unpack(self.Config.Colors["Weapon"]));
-      Button.Border:SetVertexColor(unpack(self.Config.Colors["Weapon"]));
+      Color = self.Config.Colors["Weapon"];
 
     else
 
-      LBF:SetNormalVertexColor(Button, unpack(self.Config.Colors["Other"]));
-      Button.Border:SetVertexColor(unpack(self.Config.Colors["Other"]));
+      Color = self.Config.Colors["Other"];
 
     end
+    
+    
+    if LBF then
+      LBF:SetNormalVertexColor(Button, unpack(Color));
+    end
+    
+    Button.Border:SetVertexColor(unpack(Color));
   
   end
   
@@ -272,13 +277,15 @@ function Prototype:Update(...)
       ShowSpellId = self.Config.Layout.TooltipShowSpellId,
       ShowClassification = self.Config.Layout.TooltipShowClassification,
     };
+    
+    for _, Button in pairs(self.Buttons) do
+      self:UpdateButton(Button);
+    end
   
-    if not Changed == "ALL" then
+    if Changed ~= "ALL" then
       self:UpdateAnchors();
     end
     
-    self.LBFGroup:ReSkin();
-
   end
 
   if Changed == "ALL" or Changed == "WARNINGS" then
@@ -403,14 +410,16 @@ function Prototype:AuraNew(Aura)
       
     end);
     
-    self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border});
-    
   else
   
     ButtonId = Button:GetName();
     
     Button.Icon:SetAlpha(1.0);
   
+  end
+  
+  if LBF then
+    self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border});
   end
   
   Button.NewFlashTime = self.NewFlashTime;
@@ -429,8 +438,6 @@ function Prototype:AuraNew(Aura)
   self:UpdateButton(Button);
 
   self:UpdateAnchors();
-  
-  self.LBFGroup:ReSkin();
   
 end
 
@@ -451,7 +458,11 @@ function Prototype:AuraOld(Aura)
   
   -- Remove the button from the container order list.
   self.Order:Remove(Button);
-    
+  
+  if LBF then
+    self.LBFGroup:RemoveButton(Button, true);
+  end
+  
   Button:Hide();
   Button:ClearAllPoints();
   Button:SetParent(UIParent);

@@ -4,6 +4,7 @@
 ## Author: Alex <Nexiuz> Elderson
 ## Version: 1.0
 ## SavedVariables: AuraFramesDB
+## OptionalDeps: Ace3, ButtonFacade
 
 Embeds.xml
 
