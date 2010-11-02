@@ -418,10 +418,6 @@ function Prototype:AuraNew(Aura)
   
   end
   
-  if LBF then
-    self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border});
-  end
-  
   Button.NewFlashTime = self.NewFlashTime;
   Button.ExpireFlashTime = self.ExpireFlashTime;
   
@@ -435,10 +431,14 @@ function Prototype:AuraNew(Aura)
   self.Buttons[Aura.Id] = Button;
   self.Order:Add(Button);
   
+  if LBF then
+    self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border});
+  end
+  
   self:UpdateButton(Button);
 
   self:UpdateAnchors();
-  
+
 end
 
 

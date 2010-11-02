@@ -110,6 +110,26 @@ function AuraFrames:UpgradeDb()
     
     end
     
+    if self.db.profile.DbVersion < 160 then
+    
+      if Container.Layout and Container.Layout.Colors then
+        
+        local Colors = Container.Layout.Colors;
+        
+        Colors.Debuff.None[4] = 1.0;
+        Colors.Debuff.Magic[4] = 1.0;
+        Colors.Debuff.Curse[4] = 1.0;
+        Colors.Debuff.Disease[4] = 1.0;
+        Colors.Debuff.Poison[4] = 1.0;
+        
+        Colors.Buff[4] = 1.0;
+        Colors.Weapon[4] = 1.0;
+        Colors.Other[4] = 1.0;
+      
+      end
+    
+    end
+    
   end
   
   if self.db.profile.DbVersion < 159 then
