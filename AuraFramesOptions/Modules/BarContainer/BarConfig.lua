@@ -181,7 +181,7 @@ function Prototype:GetConfigOptions()
         },
         ColorsHeader = {
           type = "header",
-          name = "Colors",
+          name = "Border Colors",
           order = 19,
         },
         ColorDebuffNone = {
@@ -189,7 +189,7 @@ function Prototype:GetConfigOptions()
           name = "Unknown Debuff Type",
           get = function(Info) return unpack(Config.Colors.Debuff.None); end,
           set = function(Info, ...) Config.Colors.Debuff.None = {...}; Container:Update("LAYOUT"); end,
-          hasAlpha = true,
+          hasAlpha = false,
           order = 20,
         },
         ColorDebuffMagic = {
@@ -197,7 +197,7 @@ function Prototype:GetConfigOptions()
           name = "Debuff Type Magic",
           get = function(Info) return unpack(Config.Colors.Debuff.Magic); end,
           set = function(Info, ...) Config.Colors.Debuff.Magic = {...}; Container:Update("LAYOUT"); end,
-          hasAlpha = true,
+          hasAlpha = false,
           order = 21,
         },
         ColorDebuffCurse = {
@@ -205,7 +205,7 @@ function Prototype:GetConfigOptions()
           name = "Debuff Type Curse",
           get = function(Info) return unpack(Config.Colors.Debuff.Curse); end,
           set = function(Info, ...) Config.Colors.Debuff.Curse = {...}; Container:Update("LAYOUT"); end,
-          hasAlpha = true,
+          hasAlpha = false,
           order = 22,
         },
         ColorDebuffDisease = {
@@ -213,7 +213,7 @@ function Prototype:GetConfigOptions()
           name = "Debuff Type Disease",
           get = function(Info) return unpack(Config.Colors.Debuff.Disease); end,
           set = function(Info, ...) Config.Colors.Debuff.Disease = {...}; Container:Update("LAYOUT"); end,
-          hasAlpha = true,
+          hasAlpha = false,
           order = 23,
         },
         ColorDebuffPoison = {
@@ -221,7 +221,7 @@ function Prototype:GetConfigOptions()
           name = "Debuff Type Poison",
           get = function(Info) return unpack(Config.Colors.Debuff.Poison); end,
           set = function(Info, ...) Config.Colors.Debuff.Poison = {...}; Container:Update("LAYOUT"); end,
-          hasAlpha = true,
+          hasAlpha = false,
           order = 24,
         },
         ColorBuff = {
@@ -229,7 +229,7 @@ function Prototype:GetConfigOptions()
           name = "Buff",
           get = function(Info) return unpack(Config.Colors.Buff); end,
           set = function(Info, ...) Config.Colors.Buff = {...}; Container:Update("LAYOUT"); end,
-          hasAlpha = true,
+          hasAlpha = false,
           order = 25,
         },
         ColorWeapon = {
@@ -237,7 +237,7 @@ function Prototype:GetConfigOptions()
           name = "Weapon",
           get = function(Info) return unpack(Config.Colors.Weapon); end,
           set = function(Info, ...) Config.Colors.Weapon = {...}; Container:Update("LAYOUT"); end,
-          hasAlpha = true,
+          hasAlpha = false,
           order = 26,
         },
         ColorOther = {
@@ -245,7 +245,7 @@ function Prototype:GetConfigOptions()
           name = "Other",
           get = function(Info) return unpack(Config.Colors.Other); end,
           set = function(Info, ...) Config.Colors.Other = {...}; Container:Update("LAYOUT"); end,
-          hasAlpha = true,
+          hasAlpha = false,
           order = 27,
         },
         ResetColors = {

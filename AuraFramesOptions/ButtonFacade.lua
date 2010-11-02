@@ -91,7 +91,7 @@ function AuraFrames:GetButtonFacadeContainerOptions(Container)
           step = 0.05,
           isPercent = true,
           get = function() return LBFGroup.Gloss or 0; end,
-          set = function() LBFGroup:Skin(LBFGroup.SkinID, Value, LBFGroup.Backdrop); end,
+          set = function(_, Value) LBFGroup:Skin(LBFGroup.SkinID, Value, LBFGroup.Backdrop); end,
           arg = {LBFGroup, "Gloss"},
           disabled = GetState,
           order = 2,
