@@ -10,6 +10,7 @@ local GetTime = GetTime;
 
 
 -- The option table used for creating the config launch button.
+--[[
 local BlizzardOptions = {
   name = "Aura Frames",
   handler = AuraFrames,
@@ -27,7 +28,7 @@ local BlizzardOptions = {
     },
   },
 };
-
+]]--
 
 -- By default we are not in config mode.
 AuraFrames.ConfigMode = false;
@@ -37,9 +38,9 @@ AuraFrames.ConfigMode = false;
 -- Function RegisterBlizzardOptions
 -----------------------------------------------------------------
 function AuraFrames:RegisterBlizzardOptions()
-  
-  LibStub("AceConfig-3.0"):RegisterOptionsTable("AuraFramesBliz", function() return BlizzardOptions; end);
-  LibStub("AceConfigDialog-3.0"):AddToBlizOptions("AuraFramesBliz", "Aura Frames");
+
+  --LibStub("AceConfig-3.0"):RegisterOptionsTable("AuraFramesBliz", function() return BlizzardOptions; end);
+  --LibStub("AceConfigDialog-3.0"):AddToBlizOptions("AuraFramesBliz", "Aura Frames");
   
 end
 
