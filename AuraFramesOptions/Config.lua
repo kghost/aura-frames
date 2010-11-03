@@ -35,13 +35,19 @@ end
 function AuraFrames:ConfirmPopup(Message, Func)
   
   if not StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] then
-    StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] = {};
+
+    StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] = {
+      button1 = "Accept",
+      button2 = "Cancel",
+      timeout = 0,
+      whileDead = 1,
+      hideOnEscape = 1,
+    };
+    
   end
   
   local Popup = StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"];
   Popup.text = Message;
-  Popup.button1 = "Accept";
-  Popup.button2 = "Cancel";
 
   if Func then
     Popup.OnAccept = function()
@@ -59,10 +65,6 @@ function AuraFrames:ConfirmPopup(Message, Func)
     Popup.OnCancel = nil;
   end
 
-  Popup.timeout = 0;
-  Popup.whileDead = 1;
-  Popup.hideOnEscape = 1;
-
   StaticPopup_Show("AURAFRAMESCONFIG_CONFIRM_DIALOG");
 
 end
@@ -74,7 +76,14 @@ end
 function AuraFrames:MessagePopup(Message, Func)
 
   if not StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"] then
-    StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"] = {};
+
+    StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"] = {
+      button1 = "Okay",
+      timeout = 0,
+      whileDead = 1,
+      hideOnEscape = 1,
+    };
+
   end
 
   local Popup = StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"];
@@ -88,10 +97,6 @@ function AuraFrames:MessagePopup(Message, Func)
   else
     Popup.OnAccept = nil;
   end
-
-  Popup.timeout = 0;
-  Popup.whileDead = 1;
-  Popup.hideOnEscape = 1;
 
   StaticPopup_Show("AURAFRAMESCONFIG_MESSAGE_DIALOG");
 

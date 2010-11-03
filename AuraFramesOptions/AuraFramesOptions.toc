@@ -6,9 +6,9 @@
 ## Dependencies: AuraFrames
 ## LoadOnDemand: 1
 
-#@no-lib-strip@
 Embeds.xml
-#@end-no-lib-strip@
+
+AuraFramesOptions.lua
 
 Config.lua
 CreateContainer.lua
