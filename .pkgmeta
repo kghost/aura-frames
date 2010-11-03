@@ -28,6 +28,9 @@ externals:
     AuraFramesOptions/Libs/AceConfig-3.0:
         url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceConfig-3.0
         tag: latest
+    AuraFramesOptions/Libs/AceDBOptions-3.0:
+        url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceDBOptions-3.0
+        tag: latest
     AuraFramesOptions/Libs/AceGUI-3.0:
         url: svn://svn.wowace.com/wow/ace3/mainline/trunk/AceGUI-3.0
         tag: latest
