@@ -1,8 +1,71 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
+-- Import most used functions into the local namespace.
+local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
+local fmt, tostring = string.format, tostring;
+local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
+local loadstring, assert, error = loadstring, assert, error;
+local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
+local GetTime = GetTime;
+
+
+-- The option table used for creating the config launch button.
+local BlizzardOptions = {
+  name = "Aura Frames",
+  handler = AuraFrames,
+  type = "group",
+  args = {
+    LaunchConfiguration = {
+      type = "execute",
+      name = "Launch Configuration",
+      func = function()
+        InterfaceOptionsFrame:Hide();
+        HideUIPanel(GameMenuFrame);
+        GameTooltip:Hide();
+        AuraFrames:OpenConfigDialog()
+      end,
+    },
+  },
+};
+
 
 -- By default we are not in config mode.
 AuraFrames.ConfigMode = false;
+
+
+-----------------------------------------------------------------
+-- Function RegisterBlizzardOptions
+-----------------------------------------------------------------
+function AuraFrames:RegisterBlizzardOptions()
+  
+  LibStub("AceConfig-3.0"):RegisterOptionsTable("AuraFramesBliz", function() return BlizzardOptions; end);
+  LibStub("AceConfigDialog-3.0"):AddToBlizOptions("AuraFramesBliz", "Aura Frames");
+  
+end
+
+
+-----------------------------------------------------------------
+-- Function LoadOptionAddon
+-----------------------------------------------------------------
+function AuraFrames:LoadOptionAddon()
+
+  if IsAddOnLoaded("AuraFramesOptions") == 1 then
+    return;
+  end
+  
+  local Loaded, Reason = LoadAddOn("AuraFramesOptions");
+  
+  if not Loaded then
+  
+    self:Message("Failed to load the AuraFramesOptions addon because: "..getglobal("ADDON_"..Reason));
+    return;
+  
+  end
+  
+  self.AuraFramesOptions = LibStub("AceAddon-3.0"):GetAddon("AuraFramesOptions");
+  
+end
+
 
 -----------------------------------------------------------------
 -- Function OpenConfigDialog
@@ -43,22 +106,41 @@ end
 -----------------------------------------------------------------
 -- Function CopyConfigDefaults
 -----------------------------------------------------------------
-local function CopyConfigDefaults(src, dest) -- Shameless copied from AceDB and modified for our needs :)
-  if type(dest) ~= "table" then dest = {} end
-  if type(src) == "table" then
-    for k,v in pairs(src) do
-      if type(dest[k]) == "nil" then
-        if type(v) == "table" then
-          -- try to index the key first so that the metatable creates the defaults, if set, and use that table
-          v = CopyConfigDefaults(v, dest[k]);
-        end
-        dest[k] = v
-      elseif type(dest[k]) == "table" then
-        CopyConfigDefaults(v, dest[k]);
-      end
-    end
+function AuraFrames:CopyConfigDefaults(Source, Destination)
+
+  -- Shameless copied from AceDB and modified for our needs and style :)
+
+  if type(Destination) ~= "table" then
+    Destination = {};
   end
-  return dest
+
+  if type(Source) == "table" then
+
+    for Key, Value in pairs(Source) do
+
+      if type(Destination[Key]) == "nil" then
+      
+        if type(Value) == "table" then
+        
+          -- try to index the key first so that the metatable creates the defaults, if set, and use that table
+          Value = self:CopyConfigDefaults(Value, Destination[Key]);
+          
+        end
+      
+        Destination[Key] = Value;
+      
+      elseif type(Destination[k]) == "table" then
+      
+        self:CopyConfigDefaults(Value, Destination[Key]);
+      
+      end
+
+    end
+
+  end
+
+  return Destination
+
 end
 
 
@@ -75,7 +157,7 @@ function AuraFrames:UpgradeDb()
   for _, Container in pairs(self.db.profile.Containers) do
 
     -- Copy the container defaults into the new config.
-    CopyConfigDefaults(self.ContainerHandlers[Container.Type]:GetConfigDefaults(), Container);
+    self:CopyConfigDefaults(self.ContainerHandlers[Container.Type]:GetConfigDefaults(), Container);
 
     if self.db.profile.DbVersion < 153 then
     
@@ -142,64 +224,3 @@ function AuraFrames:UpgradeDb()
 
 end
 
------------------------------------------------------------------
--- Function GenerateContainerId
------------------------------------------------------------------
-function AuraFrames:GenerateContainerId(Name)
-
-  local Id = "";
-  
-  for Part in string.gmatch(Name, "%w+") do
-    Id = Id..Part;
-  end
-
-  if type(rawget(self.db.profile.Containers, Id)) ~= "nil" then
-
-    Id = Id.."_";
-    local i = 2;
-
-    while type(rawget(self.db.profile.Containers, Id..i)) ~= "nil" do
-      i = i + 1;
-    end
-
-    Id = Id..i;
-
-  end
-  
-  return Id;
-
-end
-
-
------------------------------------------------------------------
--- Function CreateContainerConfig
------------------------------------------------------------------
-function AuraFrames:CreateNewContainer(Name, Type)
-
-  local Id = self:GenerateContainerId(Name);
-  
-  if type(self.ContainerHandlers[Type]) == "nil" then
-    return nil;
-  end
-  
-  -- Create the default config.
-  self.db.profile.Containers[Id].Id = Id;
-  self.db.profile.Containers[Id].Name = Name;
-  self.db.profile.Containers[Id].Type = Type;
-  
-  -- Copy the container defaults into the new config.
-  CopyConfigDefaults(self.ContainerHandlers[Type]:GetConfigDefaults(), self.db.profile.Containers[Id]);
-  
-  -- Create the container.
-  self.Containers[Id] = self.ContainerHandlers[Type]:New(self.db.profile.Containers[Id]);
-  
-  self.Containers[Id].Id = Id;
-  
-  -- If we are in ConfigMode, then directly set the correct mode for the container.
-  if AuraFrames.ConfigMode then
-    self.Containers[Id]:SetConfigMode(true);
-  end
-  
-  return Id;
-
-end

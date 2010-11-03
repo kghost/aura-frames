@@ -1,5 +1,4 @@
 local AuraFrames = LibStub("AceAddon-3.0"):NewAddon("AuraFrames", "AceConsole-3.0");
-local LibAura = LibStub("LibAura-1.0");
 
 -- Import most used functions into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
@@ -18,7 +17,7 @@ _G["af"] = AuraFrames;
 
 AuraFrames.ContainerHandlers = {};
 AuraFrames.Containers = {};
-AuraFrames.ConfigMode = false;
+
 
 local ConfigDefaults = {
   profile = {
@@ -35,23 +34,7 @@ local ConfigDefaults = {
   },
 };
 
-local BlizzardOptions = {
-  name = "Aura Frames",
-  handler = AuraFrames,
-  type = "group",
-  args = {
-    LaunchConfiguration = {
-      type = "execute",
-      name = "Launch Configuration",
-      func = function()
-        InterfaceOptionsFrame:Hide();
-        HideUIPanel(GameMenuFrame);
-        GameTooltip:Hide();
-        AuraFrames:OpenConfigDialog()
-      end,
-    },
-  },
-};
+
 
 -----------------------------------------------------------------
 -- Function OnInitialize
@@ -77,8 +60,7 @@ function AuraFrames:OnInitialize()
   self:RegisterChatCommand("afreset", "ResetConfig");
   self:RegisterChatCommand("affixdb", "UpgradeDb");
   
-  LibStub("AceConfig-3.0"):RegisterOptionsTable("AuraFramesBliz", function() return BlizzardOptions; end);
-  LibStub("AceConfigDialog-3.0"):AddToBlizOptions("AuraFramesBliz", "Aura Frames");
+  self:RegisterBlizzardOptions();
 
 end
 
@@ -99,93 +81,6 @@ end
 function AuraFrames:OnDisable()
 
   self:DeleteAllContainers();
-
-end
-
-
------------------------------------------------------------------
--- Function UpdateContainer
------------------------------------------------------------------
-function AuraFrames:UpdateContainer(Id)
-
-  self.Containers[Id]:Update();
-
-end
-
-
------------------------------------------------------------------
--- Function CreateContainer
------------------------------------------------------------------
-function AuraFrames:CreateContainer(Id)
-
-  -- We cant overwrite an container so lets delete it first then. This should never happen btw!
-  if self.Containers[Id] then
-    self:DeleteContainer(Id);
-  end
-  
-  if self.db.profile.Containers[Id].Enabled ~= true then
-    return;
-  end
-
-  self.Containers[Id] = self.ContainerHandlers[self.db.profile.Containers[Id].Type]:New(self.db.profile.Containers[Id]);
-  self.Containers[Id].Id = Id;
-  
-  for Unit, _ in pairs(self.db.profile.Containers[Id].Sources) do
-  
-    for Type, _ in pairs(self.db.profile.Containers[Id].Sources[Unit]) do
-  
-      if self.db.profile.Containers[Id].Sources[Unit][Type] == true then
-
-        LibAura:RegisterObjectSource(self.Containers[Id], Unit, Type);
-
-      end
-
-    end
-
-  end
-
-end
-
-
------------------------------------------------------------------
--- Function DeleteContainer
------------------------------------------------------------------
-function AuraFrames:DeleteContainer(Id)
-
-  if not self.Containers[Id] then
-    return;
-  end
-
-  self.Containers[Id]:Delete();
-  self.Containers[Id] = nil;
-
-end
-
-
------------------------------------------------------------------
--- Function CreateAllContainers
------------------------------------------------------------------
-function AuraFrames:CreateAllContainers()
-
-  for Id, _ in pairs(self.db.profile.Containers) do
-  
-    self:CreateContainer(Id);
-    
-  end
-
-end
-
-
------------------------------------------------------------------
--- Function DeleteAllContainers
------------------------------------------------------------------
-function AuraFrames:DeleteAllContainers()
-
-  for Id, _ in pairs(self.Containers) do
-  
-    self:DeleteContainer(Id);
-  
-  end
 
 end
 
@@ -218,3 +113,76 @@ function AuraFrames:DisableBlizzardAuraFrames()
   
 end
 
+
+-----------------------------------------------------------------
+-- Function Confirm
+-----------------------------------------------------------------
+function AuraFrames:Confirm(Message, Func)
+  
+  if not StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] then
+
+    StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] = {
+      button1 = "Accept",
+      button2 = "Cancel",
+      timeout = 0,
+      whileDead = 1,
+      hideOnEscape = 1,
+    };
+    
+  end
+  
+  local Popup = StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"];
+  Popup.text = Message;
+
+  if Func then
+    Popup.OnAccept = function()
+      Func(true);
+    end
+  else
+    Popup.OnAccept = nil;
+  end
+  
+  if Func then
+    Popup.OnCancel = function()
+      Func(false);
+    end
+  else
+    Popup.OnCancel = nil;
+  end
+
+  StaticPopup_Show("AURAFRAMESCONFIG_CONFIRM_DIALOG");
+
+end
+
+
+-----------------------------------------------------------------
+-- Function Message
+-----------------------------------------------------------------
+function AuraFrames:Message(Message, Func)
+
+  if not StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"] then
+
+    StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"] = {
+      button1 = "Okay",
+      timeout = 0,
+      whileDead = 1,
+      hideOnEscape = 1,
+    };
+
+  end
+
+  local Popup = StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"];
+  Popup.text = Message;
+  Popup.button1 = "Okay";
+
+  if Func then
+    Popup.OnAccept = function()
+      Func(true);
+    end
+  else
+    Popup.OnAccept = nil;
+  end
+
+  StaticPopup_Show("AURAFRAMESCONFIG_MESSAGE_DIALOG");
+
+end
