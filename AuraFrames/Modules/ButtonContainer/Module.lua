@@ -1,5 +1,5 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
-local Module = AuraFrames:NewModule("ButtonContainer", AuraFrames.ContainerPrototype);
+local Module = AuraFrames:NewContainerModule("ButtonContainer", AuraFrames.ContainerPrototype);
 
 -- Import most used functions into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;

@@ -9,6 +9,7 @@
 Embeds.xml
 
 AuraFrames.lua
+Modules.lua
 Container.lua
 AuraDefinition.lua
 CancelAura.lua

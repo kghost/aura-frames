@@ -46,15 +46,15 @@ end
 
 
 -----------------------------------------------------------------
--- Function LoadOptionAddon
+-- Function LoadAddonConfig
 -----------------------------------------------------------------
-function AuraFrames:LoadOptionAddon()
+function AuraFrames:LoadAddonConfig()
 
-  if IsAddOnLoaded("AuraFramesOptions") == 1 then
+  if IsAddOnLoaded("AuraFramesConfig") == 1 then
     return;
   end
   
-  local Loaded, Reason = LoadAddOn("AuraFramesOptions");
+  local Loaded, Reason = LoadAddOn("AuraFramesConfig");
   
   if not Loaded then
   
@@ -63,7 +63,7 @@ function AuraFrames:LoadOptionAddon()
   
   end
   
-  self.AuraFramesOptions = LibStub("AceAddon-3.0"):GetAddon("AuraFramesOptions");
+  --self.AuraFramesOptions = LibStub("AceAddon-3.0"):GetAddon("AuraFramesOptions");
   
 end
 
@@ -72,7 +72,7 @@ end
 -- Function OpenConfigDialog
 -----------------------------------------------------------------
 function AuraFrames:OpenConfigDialog()
-  
+
   if not self.InitializeConfig then
   
     local Loaded, Reason = LoadAddOn("AuraFramesOptions");
@@ -89,7 +89,18 @@ function AuraFrames:OpenConfigDialog()
   end
   
   LibStub("AceConfigDialog-3.0"):Open("AuraFrames");
+
+--[[
+
+  self:LoadAddonConfig();
   
+  local Config = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
+  
+  if Config then
+    Config:Show();
+  end
+]]--
+
 end
 
 
