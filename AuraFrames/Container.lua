@@ -152,22 +152,26 @@ function AuraFrames:DeleteAllContainers()
 end
 
 
-
+-----------------------------------------------------------------
+-- Function TestBug
+-----------------------------------------------------------------
 function AuraFrames:TestBug()
 
   for Id, Container in pairs(self.Containers) do
   
     if Container.Config.Type == "Buttons" then
     
+      self:Print("Container: "..Container.Id);
+      
       for Index, Object in pairs(Container.Order) do
       
         if type(Object) == "table" then
       
-          self:Print(Index.." = "..((Object.Aura and Object.Aura.Name) or "not an aura").." ("..((Object.IsShown and Object:IsShown()) and "Shown" or "Hidden")..")");
+          self:Print("  "..Index.." = "..((Object.Aura and Object.Aura.Name) or "not an aura").." ("..((Object.IsShown and Object:IsShown()) and "Shown" or "Hidden")..")");
           
         else
         
-          self:Print(Index.." = "..type(Object));
+          self:Print("  "..Index.." = "..type(Object));
         
         end
       

@@ -103,6 +103,7 @@ function Module:DeactivateSource(Unit, Type)
   
   for _, Aura in ipairs(self.db[Unit].Auras) do
     LibAura:FireAuraOld(Aura);
+    Aura.Active = false;
   end
   
   self.db[Unit] = nil;
@@ -165,7 +166,7 @@ function Module:UpdateSpellBook(Unit)
     local _, SpellId = GetSpellBookItemInfo(i, BookType[Unit]);
 
     if not SpellId then
-      do break end
+      break;
     end
 
     if not self.db[Unit].Book[SpellId] then
@@ -181,6 +182,7 @@ function Module:UpdateSpellBook(Unit)
         IsStealable = false,
         IsCancelable = false,
         IsDispellable = false,
+        Active = false,
       };
     end
 
@@ -189,8 +191,14 @@ function Module:UpdateSpellBook(Unit)
     Aura.Index = i;
     Aura.Name, _, Aura.Icon = GetSpellInfo(SpellId);
     Aura.SpellId = SpellId;
-    Aura.Id = Unit.."SPELLCOOLDOWN"..Aura.Name;
+    Aura.Id = Unit.."SPELLCOOLDOWN"..Unit..SpellId;
     Aura.Old = nil;
+    
+    if not Aura.Name then
+    
+      af:Print("ERROR: The spell id "..SpellId.." doesn't seem to have a spell name! Please report this to the addon author.");
+    
+    end
     
     i = i + 1
   end
@@ -212,33 +220,28 @@ function Module:ScanAllSpellCooldowns()
 
   local CurrentTime = GetTime();
   
-  for _, db in pairs(self.db) do
+  for Unit, UnitDb in pairs(self.db) do
   
-    local i = 1;
+    for i = #UnitDb.Auras, 1, -1 do
     
-    while db.Auras[i] do
-    
-      local Start, Duration, Active = GetSpellCooldown(db.Auras[i].SpellId);
+      local Start, Duration, Active = GetSpellCooldown(UnitDb.Auras[i].SpellId);
       
-      db.Auras[i].ExpirationTime = Start + Duration;
-    
-      if Active ~= 1 or db.Auras[i].ExpirationTime <= CurrentTime then
+      if Active ~= 1 or Duration == 0 then
       
-        LibAura:FireAuraOld(db.Auras[i]);
-        tremove(db.Auras, i);
+        LibAura:FireAuraOld(UnitDb.Auras[i]);
+        UnitDb.Auras[i].Active = false;
+        tremove(UnitDb.Auras, i);
       
       else
       
-        i = i + 1;
+        UnitDb.Auras[i].ExpirationTime = Start + Duration;
       
       end
       
     end
     
-  end
-
-  for Unit, _ in pairs(self.db) do
     Module:ScanSpellCooldowns(Unit);
+    
   end
 
 end
@@ -261,17 +264,17 @@ function Module:ScanSpellCooldowns(Unit)
     
     if Active == 1 and Start > 0 and Duration > 3 then
     
-    
       local Aura = self.db[Unit].Book[self.db[Unit].History[i]];
 
       tremove(self.db[Unit].History, i);
       
       -- We can have an nil aura (profession cooldown that are not in the spell books).
       
-      if Aura then
+      if Aura and Aura.Active == false then
       
         Aura.Duration = Duration;
         Aura.ExpirationTime = Start + Duration;
+        Aura.Active = true;
         
         LibAura:FireAuraNew(Aura);
         
