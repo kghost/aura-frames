@@ -114,6 +114,14 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
 
 end
 
+-----------------------------------------------------------------
+-- Function IsTooltipOwner
+-----------------------------------------------------------------
+function AuraFrames:IsTooltipOwner(Frame)
+
+  return GameTooltip:GetOwner() == Frame;
+
+end
 
 -----------------------------------------------------------------
 -- Function HideTooltip

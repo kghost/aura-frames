@@ -12,33 +12,75 @@ working like totem auras.
 
 ]]--
 
+local RestoreHandlers, FireHandler;
 
 -- Create the secure button we use for canceling auras.
 local CancelAuraButton = CreateFrame("Button", "AuraFramesButtonContainerActionButton", UIParent, "SecureActionButtonTemplate");
 CancelAuraButton:Hide();
 CancelAuraButton:SetFrameStrata("HIGH")
 CancelAuraButton:RegisterForClicks("RightButtonUp");
-CancelAuraButton:SetScript("OnLeave", function(self, ...) self:Hide(); RestoreHandlers(); FireHandler("OnLeave", ...); end);
+CancelAuraButton:SetScript("OnLeave", function(self, ...)
+  CancelAuraButton:Hide();
+  CancelAuraButton:ClearAllPoints();
+  RestoreHandlers();
+  FireHandler("OnLeave", ...);
+end);
 CancelAuraButton:SetAttribute("type2", "cancelaura");
 
 for _, Handler in ipairs({"OnClick", "OnMouseDown", "OnMouseUp", "OnKeyDown", "OnKeyUp"}) do
   CancelAuraButton:HookScript(Handler, function(self, ...) FireHandler(Handler, ...); end);
 end
 
+-- The current frame that we are based on.
+local CancelAuraFrame = nil;
+
+-- The old handlers of the current frame that we are based on.
+local CancelAuraFrameHandlers = {};
+
+-- If we are in combat or not.
+local InCombat = false;
+
+-- Frame to track for enter/leaving combat.
+local EventFrame = CreateFrame("Frame");
+EventFrame:RegisterEvent("PLAYER_REGEN_DISABLED");
+EventFrame:RegisterEvent("PLAYER_REGEN_ENABLED");
+EventFrame:SetScript("OnEvent", function(self, Event)
+
+  if Event == "PLAYER_REGEN_DISABLED" then
+  
+    InCombat = true;
+    
+    if CancelAuraButton:IsShown() then
+    
+      -- When PLAYER_REGEN_DISABLED fires, we still can change secure buttons!
+      -- We disable the secure button so we don't have problems in combat with it.
+      CancelAuraButton:Hide();
+      CancelAuraButton:ClearAllPoints();
+      RestoreHandlers();
+    
+    end
+  
+  elseif Event == "PLAYER_REGEN_ENABLED" then
+  
+    InCombat = false;
+  
+  end
+
+end);
 
 -----------------------------------------------------------------
 -- Local Function FireHandler
 -----------------------------------------------------------------
 function FireHandler(Handler, ...)
 
-  if not CancelAuraButton.Frame:HasScript(Handler) then
+  if not CancelAuraFrame:HasScript(Handler) then
     return;
   end
 
-  local Function = CancelAuraButton.Frame:GetScript(Handler);
+  local Function = CancelAuraFrame:GetScript(Handler);
   
   if Function then
-    Function(CancelAuraButton.Frame, ...);
+    Function(CancelAuraFrame, ...);
   end
 
 end
@@ -49,11 +91,10 @@ end
 -----------------------------------------------------------------
 function BackupHandlers()
 
-  CancelAuraButton.FrameOnEnter = CancelAuraButton.Frame:GetScript("OnEnter");
-  CancelAuraButton.FrameOnLeave = CancelAuraButton.Frame:GetScript("OnLeave");
-
-  CancelAuraButton.Frame:SetScript("OnEnter", nil);
-  CancelAuraButton.Frame:SetScript("OnLeave", nil);
+  for _, Handler in ipairs({"OnEnter", "OnLeave"}) do
+    CancelAuraFrameHandlers[Handler] = CancelAuraFrame:GetScript(Handler);
+    CancelAuraFrame:SetScript(Handler, nil);
+  end
 
 end
 
@@ -63,11 +104,9 @@ end
 -----------------------------------------------------------------
 function RestoreHandlers()
 
-  CancelAuraButton.Frame:SetScript("OnEnter", CancelAuraButton.FrameOnEnter);
-  CancelAuraButton.Frame:SetScript("OnLeave", CancelAuraButton.FrameOnLeave);
-
-  CancelAuraButton.FrameOnEnter = nil;
-  CancelAuraButton.FrameOnLeave = nil;
+  for Handler, _ in pairs(CancelAuraFrameHandlers) do
+    CancelAuraFrame:SetScript(Handler, CancelAuraFrameHandlers[Handler]);
+  end
 
 end
 
@@ -77,12 +116,17 @@ end
 -----------------------------------------------------------------
 function AuraFrames:SetCancelAuraFrame(Frame, Aura)
 
+  -- We can't change secure buttons in combat.
+  if InCombat == true then
+    return;
+  end
+
   -- Check if we can cancel the aura.
   if not (Aura.Type == "HELPFUL" and (Aura.Unit == "player" or Aura.Unit == "pet" or Aura.Unit == "vehicle")) then
     return;
   end
 
-  CancelAuraButton.Frame = Frame;
+  CancelAuraFrame = Frame;
   
   BackupHandlers();
   
@@ -122,6 +166,4 @@ function AuraFrames:CancelAura(Aura)
   end
 
 end
-
-
 

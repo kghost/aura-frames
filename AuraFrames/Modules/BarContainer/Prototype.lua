@@ -467,7 +467,11 @@ function Prototype:AuraOld(Aura)
   
   -- Remove the bar from the container order list.
   self.Order:Remove(Bar);
-    
+  
+  if AuraFrames:IsTooltipOwner(Bar) then
+    AuraFrames:HideTooltip();
+  end
+  
   Bar:Hide();
   Bar:ClearAllPoints();
   Bar:SetParent(nil);

@@ -463,6 +463,10 @@ function Prototype:AuraOld(Aura)
     self.LBFGroup:RemoveButton(Button, true);
   end
   
+  if AuraFrames:IsTooltipOwner(Button) then
+    AuraFrames:HideTooltip();
+  end
+  
   Button:Hide();
   Button:ClearAllPoints();
   Button:SetParent(UIParent);
