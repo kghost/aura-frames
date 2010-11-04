@@ -262,7 +262,7 @@ function Module:ScanSpellCooldowns(Unit)
     
     local Start, Duration, Active = GetSpellCooldown(self.db[Unit].History[i]);
     
-    if Active == 1 and Start > 0 and Duration > 3 then
+    if Active == 1 and Start > 0 and Duration > 2 then
     
       local Aura = self.db[Unit].Book[self.db[Unit].History[i]];
 
