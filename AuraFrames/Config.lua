@@ -54,9 +54,9 @@ end
 
 
 -----------------------------------------------------------------
--- Function OpenConfigDialog
+-- Function OpenConfigDialogOld
 -----------------------------------------------------------------
-function AuraFrames:OpenConfigDialog()
+function AuraFrames:OpenConfigDialogOld()
 
   if not self.InitializeConfig then
   
@@ -75,35 +75,13 @@ function AuraFrames:OpenConfigDialog()
   
   LibStub("AceConfigDialog-3.0"):Open("AuraFrames");
 
-
---[[
-
-  if not self.AuraFramesConfig then
-  
-    local Loaded, Reason = LoadAddOn("AuraFramesConfig");
-    
-    if not Loaded then
-    
-      self:Message("Failed to load the AuraFramesConfig addon because: ".._G["ADDON_"..Reason]);
-      return;
-    
-    end
-    
-    self.AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
-  
-  end
-  
-  self.AuraFramesConfig:Show();
-  
-]]--
-
 end
 
 
 -----------------------------------------------------------------
 -- Function Test
 -----------------------------------------------------------------
-function AuraFrames:Test()
+function AuraFrames:OpenConfigDialog()
 
   if not self.AuraFramesConfig then
   

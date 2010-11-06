@@ -22,7 +22,8 @@ function AuraFrames:OnInitialize()
 
   self:CheckBlizzardAuraFrames();
   
-  self:RegisterChatCommand("af", "OpenConfigDialog");
+  self:RegisterChatCommand("afnew", "OpenConfigDialog");
+  self:RegisterChatCommand("af", "OpenConfigDialogOld");
   
   self:RegisterBlizzardOptions();
 
@@ -82,13 +83,11 @@ end
 -----------------------------------------------------------------
 -- Function Confirm
 -----------------------------------------------------------------
-function AuraFrames:Confirm(Message, Func)
+function AuraFrames:Confirm(Message, Func, ButtonText1, ButtonText2)
   
   if not StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] then
 
     StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] = {
-      button1 = "Yes",
-      button2 = "No",
       timeout = 0,
       whileDead = 1,
       hideOnEscape = 1,
@@ -98,6 +97,9 @@ function AuraFrames:Confirm(Message, Func)
   
   local Popup = StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"];
   Popup.text = Message;
+
+  button1 = ButtonText1 or "Yes";
+  button2 = ButtonText2 or "No";
 
   if Func then
     Popup.OnAccept = function()
@@ -123,7 +125,7 @@ end
 -----------------------------------------------------------------
 -- Function Message
 -----------------------------------------------------------------
-function AuraFrames:Message(Message, Func)
+function AuraFrames:Message(Message, Func, ButtonText)
 
   if not StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"] then
 
@@ -138,7 +140,8 @@ function AuraFrames:Message(Message, Func)
 
   local Popup = StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"];
   Popup.text = Message;
-  Popup.button1 = "Okay";
+  
+  Popup.button1 = ButtonText or "Okay";
 
   if Func then
     Popup.OnAccept = function()
