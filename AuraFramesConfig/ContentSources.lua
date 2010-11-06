@@ -4,24 +4,40 @@ local AceGUI = LibStub("AceGUI-3.0");
 
 local ExpertMode = false;
 
+local SimpleSourcelist = {
+  player = {
+    HELPFUL = true,
+    HARMFUL = true,
+    WEAPON = true,
+  },
+  target = {
+    HELPFUL = true,
+    HARMFUL = true,
+  },
+  test = {
+    HELPFUL = true,
+    HARMFUL = true,
+  },
+};
+
 local SimpleSources = {
   {
-    Name = "Buffs on your self",
+    Name = "|cff6af36aBuffs|r on your self",
     Unit = "player",
     Type = "HELPFUL",
   },
   {
-    Name = "Debuffs on your self",
+    Name = "|cfff36a6aDebuffs|r on your self",
     Unit = "player",
     Type = "HARMFUL",
   },
   {
-    Name = "Buffs on your target",
+    Name = "|cff6af36aBuffs|r on your target",
     Unit = "target",
     Type = "HELPFUL",
   },
   {
-    Name = "Debuffs on your target",
+    Name = "|cfff36a6aDebuffs|r on your target",
     Unit = "target",
     Type = "HARMFUL",
   },
@@ -56,7 +72,7 @@ local SimpleSources = {
 local AllSources = {
   {
     Group = true,
-    Title = "Helpful buffs",
+    Title = "|cff6af36aHelpful buffs|r",
     Width = 175,
     Childeren = {
       {
@@ -121,7 +137,7 @@ local AllSources = {
   },
   {
     Group = true,
-    Title = "Harmful debuffs",
+    Title = "|cfff36a6aHarmful debuffs|r",
     Width = 175,
     Childeren = {
       {
@@ -186,7 +202,7 @@ local AllSources = {
   },
   {
     Group = true,
-    Title = "Miscellaneous",
+    Title = "|cffffffffMiscellaneous|r",
     Width = 262,
     Childeren = {
       {
@@ -293,6 +309,9 @@ end
 -----------------------------------------------------------------
 function AuraFramesConfig:ContentSourcesRefresh(Content, ContainerId)
 
+  local SourceConfig = AuraFrames.db.profile.Containers[ContainerId].Sources;
+  local ContainerInstance = AuraFrames.Containers[ContainerId];
+
   Content:PauseLayout();
   Content:ReleaseChildren();
   
@@ -323,6 +342,32 @@ function AuraFramesConfig:ContentSourcesRefresh(Content, ContainerId)
   CheckBoxExpertMode:SetValue(ExpertMode);
   CheckBoxExpertMode:SetCallback("OnValueChanged", function(_, _, Value)
     ExpertMode = Value;
+    
+    if ExpertMode == false then
+    
+      -- Remove all sources that are not in the simple list.
+      
+      for Unit, List in pairs(SourceConfig) do
+      
+        for Type, Value in pairs(List) do
+        
+          if not SimpleSourcelist[Unit] or not SimpleSourcelist[Unit][Type] or SimpleSourcelist[Unit][Type] ~= true then
+          
+            SourceConfig[Unit][Type] = nil;
+            LibAura:UnregisterObjectSource(ContainerInstance, Unit, Type);
+          
+          end
+          
+          if next(SourceConfig[Unit]) == nil then
+            SourceConfig[Unit] = nil;
+          end
+        
+        end
+      
+      end
+    
+    end
+    
     AuraFramesConfig:ContentSourcesRefresh(Content, ContainerId);
   end);
   Content:AddChild(CheckBoxExpertMode);
@@ -339,6 +384,31 @@ end
 function AuraFramesConfig:ContentSources(ContainerId)
 
   ExpertMode = false;
+  
+  local SourceConfig = AuraFrames.db.profile.Containers[ContainerId].Sources;
+  
+  -- See if we have sources outside the simple list, if so
+  -- then directly activate the expert mode.
+  
+  for Unit, List in pairs(SourceConfig) do
+  
+    for Type, Value in pairs(List) do
+    
+      if not SimpleSourcelist[Unit] or not SimpleSourcelist[Unit][Type] or SimpleSourcelist[Unit][Type] ~= true then
+      
+        ExpertMode = true;
+        break;
+      
+      end
+    
+    end
+    
+    -- If we found a mismatch then break.
+    if ExpertMode == true then
+      break;
+    end
+    
+  end
 
   self.Content:SetLayout("Fill");
   

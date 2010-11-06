@@ -73,6 +73,8 @@ function AuraFramesConfig:ContentContainersRefresh(Content)
   Content:AddText("Containers\n", GameFontNormalLarge);
   Content:AddText("Containers are used for grouping aura's together. There are different kind of containers, every type with there own ways of displaying aura's.\n\n");
   
+  Content:AddHeader("Create new container");
+  
   Content:AddText("Every container must have is own unique name. This name is used to identity the container.\n");
 
   local LabelIdInfo;
@@ -90,9 +92,9 @@ function AuraFramesConfig:ContentContainersRefresh(Content)
 
   LabelIdInfo = Content:AddText("Container id: ", GameFontNormalSmall);
   
-  Content:AddSpace();
+  Content:AddSpace(2);
 
-  Content:AddText("There are different types of containers. Every type have his own way of displaying aura's. You must select an type for this container, this can not be changed after the container is created. Select a container type:\n");
+  Content:AddText("There are different types of containers. Every type have his own way of displaying aura's. You must select an type for this container, this can not be changed after the container is created.\n\nContainer type:\n");
 
   for Type, Module in pairs(AuraFrames.ContainerModules) do
   
@@ -124,6 +126,8 @@ function AuraFramesConfig:ContentContainersRefresh(Content)
     table.insert(ContainerTypeControls, TypeControl);
 
   end
+
+  Content:AddSpace();
 
   local ButtonCreate = AceGUI:Create("Button");
   ButtonCreate:SetText("Create");

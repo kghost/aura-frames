@@ -93,8 +93,8 @@ function AuraFramesConfig:UnlockContainers(Unlock)
   
   else
   
-    if self.UnlockDialog then
-      self.UnlockDialog:Hide();
+    if UnlockDialog then
+      UnlockDialog:Hide();
     end
     
     self:Show();

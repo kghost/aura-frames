@@ -100,6 +100,7 @@ function AuraFramesConfig:CreateWindow()
 
   self.Content = AceGUI:Create("TreeGroup");
   self.Content:SetRelativeWidth(1);
+  self.Content:SetTreeWidth(170, false);
   self.Content:SetCallback("OnGroupSelected", function(TreeControl, Event, Group)
     
     AuraFramesConfig.Content:PauseLayout();
@@ -115,6 +116,9 @@ function AuraFramesConfig:CreateWindow()
     AuraFramesConfig.Content:DoLayout();
     
   end);
+  
+  self.TreeStatus = {};
+  self.Content:SetStatusTable(self.TreeStatus);
   
   self:EnhanceContainer(self.Content);
   
@@ -160,7 +164,7 @@ function AuraFramesConfig:RefreshTree()
       
       table.insert(Containers, {
         value = Id,
-        text = Container.Name,
+        text = Container.Name.." ("..ContainerModule:GetName()..")",
         execute = function() AuraFramesConfig:ContentContainer(Id); end,
         children = ConfigModule:GetTree(Id),
       });
@@ -168,6 +172,8 @@ function AuraFramesConfig:RefreshTree()
     end
   
   end
+  
+  sort(Containers, function(Container1, Container2) return Container1.text < Container2.text; end);
   
   if #Containers == 0 then
     Containers = nil;
@@ -209,7 +215,25 @@ function AuraFramesConfig:SelectByPath(...)
   end
   
   self.Content:SelectByPath(...);
-
+  
+  -- Make sure that the selected path is visible.
+  
+  for i = 1, select("#", ...) do
+  
+    local Path = select(1, ...);
+    
+    for j = 2, i do
+    
+      Path = Path.."\001"..select(j, ...);
+    
+    end
+    
+    self.TreeStatus.groups[Path] = true;
+  
+  end
+  
+  self.Content:RefreshTree();
+  
 end
 
 
@@ -255,6 +279,7 @@ function AuraFramesConfig:Show()
 
     self:CreateWindow();
     self:RefreshTree();
+    --self:SelectByPath("Containers", "Test", "Filter");
     self:SelectByPath("General");
     
   else
@@ -262,6 +287,8 @@ function AuraFramesConfig:Show()
     self:RefreshTree();
   
   end
+  
+  self:CloseListEditor();
   
   self.Window:Show();
 
