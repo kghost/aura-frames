@@ -15,6 +15,14 @@ local LibAura, OldMinor = LibStub:NewLibrary(Major, Minor);
 
 if not LibAura then return; end -- No upgrade needed.
 
+-- Import most used functions into the local namespace.
+local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
+local fmt, tostring = string.format, tostring;
+local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
+local loadstring, assert, error = loadstring, assert, error;
+local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
+local GetTime = GetTime;
+
 -- Expose the library to the global namespace for debugging.
 _G["LibAura"] = LibAura;
 

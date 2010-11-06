@@ -3,7 +3,7 @@ local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 -- Import most used functions into the local namespace.
 local tinsert, tremove, tconcat, sort, tContains = tinsert, tremove, table.concat, sort, tContains;
 local fmt, tostring = string.format, tostring;
-local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
+local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
 local GetTime = GetTime;
@@ -13,51 +13,32 @@ AuraFrames.OrderPrototype = {};
 
 -- List of all the predefined filters. Used by the expresion builder and the configuration.
 AuraFrames.OrderPredefined = {
-  TypeNoTimeTimeDesc = {
-    Description = "Sort on Type, no expiration time and then descending on time left",
-    Order = 1,
+  TimeLeftDesc = {
     Rules = {
-      {Subject = "Type", Operator = "ListAsc", Args = {List = {"HELPFUL", "WEAPON", "HARMFUL"}}},
-      {Subject = "ExpirationTime", Operator = "First", Args = {Number = 0}},
       {Subject = "ExpirationTime", Operator = "NumberDesc", Args = {}},
-    },
-  },
-  TypeNoTimeTimeAsc = {
-    Description = "Sort on Type, no expiration time and then ascending on time left",
-    Order = 2,
-    Rules = {
-      {Subject = "Type", Operator = "ListAsc", Args = {List = {"HELPFUL", "WEAPON", "HARMFUL"}}},
-      {Subject = "ExpirationTime", Operator = "First", Args = {Number = 0}},
-      {Subject = "ExpirationTime", Operator = "NumberAsc", Args = {}},
     },
   },
   NoTimeTimeLeftDesc = {
-    Description = "No expiration time and then descending on time left",
-    Order = 3,
     Rules = {
       {Subject = "ExpirationTime", Operator = "First", Args = {Number = 0}},
       {Subject = "ExpirationTime", Operator = "NumberDesc", Args = {}},
     },
   },
-  NoTimeTimeLeftAsc = {
-    Description = "No expiration time and then ascending on time left",
-    Order = 4,
+  TypeNoTimeTimeDesc = {
     Rules = {
+      {Subject = "Type", Operator = "ListAsc", Args = {List = {"HELPFUL", "WEAPON", "HARMFUL"}}},
       {Subject = "ExpirationTime", Operator = "First", Args = {Number = 0}},
-      {Subject = "ExpirationTime", Operator = "NumberAsc", Args = {}},
-    },
-  },
-  TimeLeftDesc = {
-    Description = "Descending on time left",
-    Order = 5,
-    Rules = {
       {Subject = "ExpirationTime", Operator = "NumberDesc", Args = {}},
     },
   },
   TimeLeftAsc = {
-    Description = "Ascending on time left",
-    Order = 6,
     Rules = {
+      {Subject = "ExpirationTime", Operator = "NumberAsc", Args = {}},
+    },
+  },
+  TypeTimeAsc = {
+    Rules = {
+      {Subject = "Type", Operator = "ListAsc", Args = {List = {"HELPFUL", "WEAPON", "HARMFUL"}}},
       {Subject = "ExpirationTime", Operator = "NumberAsc", Args = {}},
     },
   },
