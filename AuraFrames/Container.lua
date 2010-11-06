@@ -4,6 +4,8 @@ local LibAura = LibStub("LibAura-1.0");
 
 AuraFrames.Containers = {};
 
+AuraFrames.ContainersUnlocked = false;
+
 
 -----------------------------------------------------------------
 -- Function GenerateContainerId
@@ -96,9 +98,9 @@ function AuraFrames:CreateContainer(Id)
 
   end
   
-  -- If we are in ConfigMode, then directly set the correct mode for the container.
-  if self.ConfigMode then
-    self.Containers[Id]:SetConfigMode(true);
+  -- If ContainersUnlocked then unlock the new container also.
+  if self.ContainersUnlocked then
+    self.Containers[Id]:UnlockContainer(true);
   end
   
   return true;

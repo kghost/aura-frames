@@ -160,8 +160,6 @@ function Module:New(Config)
   Container.Frame:RegisterEvent("PLAYER_ENTERING_WORLD");
   Container.Frame:RegisterEvent("ZONE_CHANGED");
 
-  Container:SetConfigMode(AuraFrames.ConfigMode);
-
   return Container;
 
 end

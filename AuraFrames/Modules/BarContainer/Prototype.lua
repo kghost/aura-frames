@@ -265,7 +265,7 @@ function Prototype:Update(...)
     
     self.Frame:SetScale(self.Config.Layout.Scale);
     
-    if self.ConfigMode then
+    if self.Unlocked then
     
       if self.ConfigFrame then
         self.ConfigFrame.Text:SetText("Container "..self.Name.."\n"..self.Config.Layout.NumberOfBars);
@@ -336,13 +336,13 @@ end
 
 
 -----------------------------------------------------------------
--- Function ConfigMode
+-- Function UnlockContainer
 -----------------------------------------------------------------
-function Prototype:SetConfigMode(Mode)
+function Prototype:UnlockContainer(Unlock)
 
-  self.ConfigMode = Mode;
+  self.Unlocked = Unlock;
   
-  if Mode == true then
+  if Unlock == true then
     
     if not self.ConfigFrame then
     
