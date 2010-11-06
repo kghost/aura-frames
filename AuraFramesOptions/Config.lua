@@ -697,7 +697,7 @@ function AuraFrames:GetConfigOptions()
   
 --[[
   
-  for ModuleId, Module in pairs(AuraFrames.ContainerHandlers) do
+  for ModuleId, Module in pairs(AuraFrames.ContainerModules) do
   
     Options.args.ContainerDefaults.args["Module_"..ModuleId] = {
       type = "group",

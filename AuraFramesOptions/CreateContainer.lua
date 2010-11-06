@@ -153,7 +153,7 @@ function AuraFrames:RefreshCreateContainerWizard()
   LabelTypeInfo:SetText("There are different types of containers. Every type have his own way of displaying aura's. You must select an type for this container, this can not be changed after the container is created. Select a container type:\n");
   WizardContainer:AddChild(LabelTypeInfo);
   
-  for Type, Handler in pairs(AuraFrames.ContainerHandlers) do
+  for Type, Handler in pairs(AuraFrames.ContainerModules) do
   
     local TypeControl = AceGUI:Create("CheckBox");
     TypeControl.ContainerType = Type;
