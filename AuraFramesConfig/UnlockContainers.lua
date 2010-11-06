@@ -2,8 +2,6 @@ local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AceGUI = LibStub("AceGUI-3.0");
 
-AuraFramesConfig.ContainersUnlocked = false;
-
 local UnlockDialog;
 
 -----------------------------------------------------------------
@@ -12,7 +10,7 @@ local UnlockDialog;
 local function ShowUnlockDialog()
 
   if not UnlockDialog then
-    local f = CreateFrame("Frame", "AuraFramesUnlockDialog", UIParent)
+    local f = CreateFrame("Frame", nil, UIParent)
     f:SetFrameStrata("DIALOG")
     f:SetToplevel(true)
     f:EnableMouse(true)
@@ -53,8 +51,8 @@ local function ShowUnlockDialog()
     desc:SetPoint("BOTTOMRIGHT", -18, 48)
     desc:SetText("Containers unlocked. Move them now and click Lock when you are done.")
 
-    local lockBars = CreateFrame("CheckButton", "AuraFramesUnlockDialogLock", f, "OptionsButtonTemplate")
-    getglobal(lockBars:GetName() .. "Text"):SetText("Lock")
+    local lockBars = CreateFrame("CheckButton", nil, f, "OptionsButtonTemplate")
+    lockBars:SetText("Lock");
 
     lockBars:SetScript("OnClick", function(self)
       AuraFramesConfig:UnlockContainers(false);
@@ -76,7 +74,7 @@ end
 -----------------------------------------------------------------
 function AuraFramesConfig:UnlockContainers(Unlock)
   
-  self.ContainersUnlocked = Unlock;
+  AuraFrames.ContainersUnlocked = Unlock;
   
   for _, Container in pairs(AuraFrames.Containers) do
   
