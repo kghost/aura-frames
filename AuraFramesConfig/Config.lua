@@ -201,6 +201,7 @@ function AuraFramesConfig:RefreshTree()
   AuraFramesConfig.Tree = Tree;
 
   self.Content:SetTree(Tree);
+  self.Content:SetTreeWidth(170, false);
 
 end
 
@@ -233,6 +234,7 @@ function AuraFramesConfig:SelectByPath(...)
   end
   
   self.Content:RefreshTree();
+  self.Content:SetTreeWidth(170, false);
   
 end
 
@@ -279,7 +281,6 @@ function AuraFramesConfig:Show()
 
     self:CreateWindow();
     self:RefreshTree();
-    --self:SelectByPath("Containers", "Test", "Filter");
     self:SelectByPath("General");
     
   else

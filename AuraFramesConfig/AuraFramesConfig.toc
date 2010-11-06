@@ -20,5 +20,6 @@ ContentSources.lua
 ContentOrder.lua
 ContentFilter.lua
 ContentProfiles.lua
+ContentButtonFacade.lua
 
 Modules.xml
