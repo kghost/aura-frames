@@ -137,8 +137,9 @@ function AuraFramesConfig:ContentContainersRefresh(Content)
   Content:AddText("Containers can only be moved when they are unlocked. Unlock/lock the containers by using the button below:\n\n");
   
   local ButtonMove = AceGUI:Create("Button");
-  ButtonMove:SetText(AuraFrames.ConfigMode and "Lock containers" or "Unlock containers");
+  ButtonMove:SetText(AuraFramesConfig.ContainersUnlocked and "Lock containers" or "Unlock containers");
   ButtonMove:SetCallback("OnClick", function()
+    AuraFramesConfig:UnlockContainers(not AuraFramesConfig.ContainersUnlocked);
   end);
   Content:AddChild(ButtonMove);
 

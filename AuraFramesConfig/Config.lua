@@ -36,10 +36,10 @@ function AuraFramesConfig:EnhanceContainer(Container)
   Container.AddSpace = function(Container, Rows)
   
     if not Rows then
-      Rows = 0;
+      Rows = 1;
     end
   
-    return Container:AddText(" "..string.rep("\n", Rows));
+    return Container:AddText(" "..string.rep("\n", Rows - 1));
     
   end
 

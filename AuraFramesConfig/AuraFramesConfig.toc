@@ -10,6 +10,7 @@ Embeds.xml
 
 AuraFramesConfig.lua
 Config.lua
+UnlockContainers.lua
 
 ContentGeneral.lua
 ContentContainers.lua

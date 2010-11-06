@@ -2,6 +2,36 @@ local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AceGUI = LibStub("AceGUI-3.0");
 
+local CopySettingsSelection = {};
+local CopySettingsFrom = "";
+
+
+-----------------------------------------------------------------
+-- Function DeepCopy
+-----------------------------------------------------------------
+function DeepCopy(object)
+
+  local lookup_table = {}
+
+  local function _copy(object)
+    if type(object) ~= "table" then
+      return object
+    elseif lookup_table[object] then
+      return lookup_table[object]
+    end
+    local new_table = {}
+    lookup_table[object] = new_table
+    for index, value in pairs(object) do
+      new_table[_copy(index)] = _copy(value)
+    end
+    return setmetatable(new_table, getmetatable(object))
+  end
+
+  return _copy(object)
+
+end
+
+
 -----------------------------------------------------------------
 -- Local Function SetContainerEnabled
 -----------------------------------------------------------------
@@ -24,6 +54,31 @@ function SetContainerEnabled(Id, Enabled)
   end
   
 end
+
+
+-----------------------------------------------------------------
+-- Function CopyContainerConfig
+-----------------------------------------------------------------
+function CopyContainerConfig(Id)
+
+  if not AuraFrames.db.profile.Containers[Id] or not AuraFrames.db.profile.Containers[CopySettingsFrom] then
+    AuraFrames:Message("Not a valid destination or source container");
+    return false;
+  end
+
+  for Key, Value in pairs(AuraFrames.db.profile.Containers[CopySettingsFrom]) do
+    if type(Value) == "table" and CopySettingsSelection[Key] and CopySettingsSelection[Key] == true then
+      AuraFrames.db.profile.Containers[Id][Key] = DeepCopy(Value);
+    end
+  end
+  
+  AuraFrames:DeleteContainer(Id);
+  AuraFrames:CreateContainer(Id);
+  
+  return true;
+
+end
+
 
 -----------------------------------------------------------------
 -- Function ContentContainerNoModule
@@ -76,6 +131,9 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
   Content:ReleaseChildren();
 
   Content:SetLayout("List");
+  
+  wipe(CopySettingsSelection);
+  CopySettingsFrom = "";
 
   local ContainerConfig = AuraFrames.db.profile.Containers[ContainerId];
 
@@ -134,6 +192,7 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
         CheckBoxWhat:SetValue(false);
         CheckBoxWhat:SetWidth(175);
         CheckBoxWhat:SetCallback("OnValueChanged", function(_, _, Value)
+          CopySettingsSelection[Key] = Value
         end);
         GroupCopyWhat:AddChild(CheckBoxWhat);
       
@@ -149,12 +208,18 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
       SelectCopyFrom:SetLabel("Copy from container");
       SelectCopyFrom:SetValue("");
       SelectCopyFrom:SetCallback("OnValueChanged", function(_, _, Value)
+        CopySettingsFrom = Value;
       end);
       GroupCopyOptions:AddChild(SelectCopyFrom);
       
       local ButtonCopy = AceGUI:Create("Button");
       ButtonCopy:SetText("Copy settings");
       ButtonCopy:SetCallback("OnClick", function()
+      
+        if CopyContainerConfig(ContainerId) == true then
+          AuraFramesConfig:ContentContainerRefresh(Content, ContainerId);
+        end
+      
       end);
       GroupCopyOptions:AddChild(ButtonCopy);
       
@@ -164,8 +229,9 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
       Content:AddText("Containers can only be moved when they are unlocked. Unlock/lock the containers by using the button below:\n\n");
       
       local ButtonMove = AceGUI:Create("Button");
-      ButtonMove:SetText(AuraFrames.ConfigMode and "Lock containers" or "Unlock containers");
+      ButtonMove:SetText(AuraFramesConfig.ContainersUnlocked and "Lock containers" or "Unlock containers");
       ButtonMove:SetCallback("OnClick", function()
+        AuraFramesConfig:UnlockContainers(not AuraFramesConfig.ContainersUnlocked);
       end);
       Content:AddChild(ButtonMove);
       
