@@ -1,0 +1,165 @@
+local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
+local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
+local AceGUI = LibStub("AceGUI-3.0");
+
+local ContainerName = "";
+local ContainerTypeControls = {};
+local ContainerType = "";
+
+-----------------------------------------------------------------
+-- Local Function CreateContainerConfig
+-----------------------------------------------------------------
+local function CreateContainerConfig()
+
+  if strlen(ContainerName) == 0 then
+    AuraFramesConfig:Close();
+    AuraFrames:Message("Please provide a container name, this is required!", function() AuraFramesConfig:Show(); end);
+    return
+  end
+  
+  local Found = false;
+  
+  for _, Container in pairs(AuraFrames.db.profile.Containers) do
+  
+    if ContainerName == Container.Name then
+      Found = true;
+      break;
+    end
+  
+  end
+  
+  if Found == true then
+    AuraFramesConfig:Close();
+    AuraFrames:Message("The container name you provided is already used. Please provide an unique name!", function() AuraFramesConfig:Show(); end);
+    return
+  end
+
+  if strlen(ContainerType) == 0 then
+    AuraFramesConfig:Close();
+    AuraFrames:Message("Please select a container type, this is required!", function() AuraFramesConfig:Show(); end);
+    return
+  end
+  
+  ContainerId = AuraFrames:CreateNewContainer(ContainerName, ContainerType);
+
+  if not ContainerId then
+    AuraFramesConfig:Close();
+    AuraFrames:Message("Failed to create the container! Please contact the addon author!", function() AuraFramesConfig:Show(); end);
+    return;
+  end
+  
+  wipe(ContainerTypeControls);
+  
+  AuraFramesConfig:RefreshTree();
+  AuraFramesConfig:SelectByPath("Containers", ContainerId);
+
+end
+
+
+-----------------------------------------------------------------
+-- Function ContentContainersRefresh
+-----------------------------------------------------------------
+function AuraFramesConfig:ContentContainersRefresh(Content)
+
+  ContainerName = "";
+  ContainerTypeControls = {};
+  ContainerType = "";
+
+  Content:PauseLayout();
+  Content:ReleaseChildren();
+
+  Content:SetLayout("List");
+  
+  Content:AddText("Containers\n", GameFontNormalLarge);
+  Content:AddText("Containers are used for grouping aura's together. There are different kind of containers, every type with there own ways of displaying aura's.\n\n");
+  
+  Content:AddText("Every container must have is own unique name. This name is used to identity the container.\n");
+
+  local LabelIdInfo;
+  
+  local NameValue = AceGUI:Create("EditBox");
+  NameValue:DisableButton(true);
+  NameValue:SetText("");
+  NameValue:SetLabel("Name");
+  NameValue:SetWidth(150);
+  NameValue:SetCallback("OnTextChanged", function(_, _, Text)
+    ContainerName = Text;
+    LabelIdInfo:SetText("Container id: "..AuraFrames:GenerateContainerId(Text));
+  end);
+  Content:AddChild(NameValue);
+
+  LabelIdInfo = Content:AddText("Container id: ", GameFontNormalSmall);
+  
+  Content:AddSpace();
+
+  Content:AddText("There are different types of containers. Every type have his own way of displaying aura's. You must select an type for this container, this can not be changed after the container is created. Select a container type:\n");
+
+  for Type, Module in pairs(AuraFrames.ContainerModules) do
+  
+    if not Module:IsEnabled() then
+      Module:Enable();
+    end
+  
+    local TypeControl = AceGUI:Create("CheckBox");
+    TypeControl.ContainerType = Type;
+    TypeControl:SetType("radio");
+    TypeControl:SetValue(false);
+    TypeControl:SetRelativeWidth(1);
+    TypeControl:SetLabel(Module:GetName());
+    TypeControl:SetDescription(Module:GetDescription() .. "\n");
+    TypeControl:SetCallback("OnValueChanged", function(_, _, Value)
+      if Value == false then
+        TypeControl:SetValue(true);
+        return;
+      end
+      ContainerType = Type;
+      for _, Control in ipairs(ContainerTypeControls) do
+        if Type ~= Control.ContainerType then
+          Control:SetValue(false);
+        end
+      end
+    end);
+    Content:AddChild(TypeControl);
+    
+    table.insert(ContainerTypeControls, TypeControl);
+
+  end
+
+  local ButtonCreate = AceGUI:Create("Button");
+  ButtonCreate:SetText("Create");
+  ButtonCreate:SetCallback("OnClick", function()
+    CreateContainerConfig();
+  end);
+  Content:AddChild(ButtonCreate);
+  
+  Content:AddSpace();
+  Content:AddHeader("Move containers");
+  Content:AddText("Containers can only be moved when they are unlocked. Unlock/lock the containers by using the button below:\n\n");
+  
+  local ButtonMove = AceGUI:Create("Button");
+  ButtonMove:SetText(AuraFrames.ConfigMode and "Lock containers" or "Unlock containers");
+  ButtonMove:SetCallback("OnClick", function()
+  end);
+  Content:AddChild(ButtonMove);
+
+  Content:ResumeLayout();
+  Content:DoLayout();
+
+end
+
+-----------------------------------------------------------------
+-- Function ContentContainers
+-----------------------------------------------------------------
+function AuraFramesConfig:ContentContainers()
+
+  self.Content:SetLayout("Fill");
+  
+  local Content = AceGUI:Create("ScrollFrame");
+  Content:SetLayout("List");
+  self:EnhanceContainer(Content);
+  self.Content:AddChild(Content);
+  
+  self:ContentContainersRefresh(Content);
+  
+end
+

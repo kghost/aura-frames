@@ -1,0 +1,22 @@
+## Interface: 40000
+## Title: Aura Frames Options (Load on Demand)
+## Notes: Options for AuraFrames
+## Author: Alex <Nexiuz> Elderson
+## Version: 1.0
+## Dependencies: AuraFrames
+## LoadOnDemand: 1
+
+Embeds.xml
+
+AuraFramesConfig.lua
+Config.lua
+
+ContentGeneral.lua
+ContentContainers.lua
+ContentContainer.lua
+ContentSources.lua
+ContentOrder.lua
+ContentFilter.lua
+ContentProfiles.lua
+
+Modules.xml
