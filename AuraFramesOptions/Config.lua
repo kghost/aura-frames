@@ -201,10 +201,11 @@ end
 function AuraFrames:SetConfigMode(Mode)
   
   self.ConfigMode = Mode;
+  self.ContainersUnlocked = Mode;
   
   for _, Container in pairs(self.Containers) do
   
-    Container:SetConfigMode(Mode);
+    Container:UnlockContainer(Mode);
   
   end
   
