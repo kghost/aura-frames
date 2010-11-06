@@ -1,5 +1,29 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
+
+local FilterPredefinedConfig = {
+  CastedByMe = {
+    Name = "Casted by me",
+    Description = "Aura's that you have casted by you.",
+    Order = 1,
+  },
+  NotCastedByMe = {
+    Name = "Not casted by me",
+    Description = "Aura's that you have been not casted by you.",
+    Order = 2,
+  },
+  CastedBySameClass = {
+    Name = "Casted by someone of the same class I am",
+    Description = "Aura's that are casted by the class "..format("|cff%02x%02x%02x%s|r", RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].r * 255, RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].g * 255, RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].b * 255, select(1, UnitClass("player"))),
+    Order = 3,
+  },
+  HarmfulOnFriendlyAndHelpfulOnHostile = {
+    Name = "Buffs on |cfff36a6ahostile|r and debuffs on |cff6af36afriendly|r targets",
+    Order = 4,
+  },
+};
+
+
 -----------------------------------------------------------------
 -- Function ApplyChange
 -----------------------------------------------------------------
@@ -94,7 +118,7 @@ function AuraFrames.FilterPrototype:BuildConfigOptions()
       Options["Predefined"..Key] = {
         type = "toggle",
         width = "full",
-        name = Definition.Description,
+        name = FilterPredefinedConfig[Key].Name,
         get = function(Info) return Config.Predefined and Config.Predefined[Key] or false; end,
         set = function(Info, Value)
           if Value == true then
@@ -109,7 +133,7 @@ function AuraFrames.FilterPrototype:BuildConfigOptions()
           end
           self:ApplyChange();
         end,
-        order = CurrentOrder + Definition.Order - 1,
+        order = CurrentOrder + FilterPredefinedConfig[Key].Order - 1,
       };
       Order = Order + 1;
       
