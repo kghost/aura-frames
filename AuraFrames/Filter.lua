@@ -14,59 +14,36 @@ AuraFrames.FilterPrototype = {};
 -- List of all the predefined filters. Used by the expresion builder and the configuration.
 AuraFrames.FilterPredefined = {
   CastedByMe = {
-    Description = "The aura is casted by me",
-    Order = 1,
     Groups = {
       {
         {Subject = "CastedByMe", Operator = "Equal", Args = {Boolean = "true"}},
-      }
+      },
     },
   },
   NotCastedByMe = {
-    Description = "The aura is not casted by me",
-    Order = 2,
     Groups = {
       {
         {Subject = "CastedByMe", Operator = "Equal", Args = {Boolean = "false"}},
-      }
-    },
-  },
-  CastedByFriendly = {
-    Description = "The aura is casted by a friendly player or ncp",
-    Order = 3,
-    Groups = {
-      {
-        {Subject = "CastedByFriendly", Operator = "Equal", Args = {Boolean = "true"}},
-      }
+      },
     },
   },
   CastedBySameClass = {
-    Description = "The aura is casted by someone of the same class I am",
-    Order = 4,
     Groups = {
       {
         {Subject = "CasterClass", Operator = "Equal", Args = {String = select(2, UnitClass("player"))}},
-      }
+      },
     },
   },
-  HarmfulOnFriendly = {
-    Description = "The aura is harmful while it is on a friendly player or ncp",
-    Order = 5,
+  HarmfulOnFriendlyAndHelpfulOnHostile = {
     Groups = {
       {
         {Subject = "TargetIsFriendly", Operator = "Equal", Args = {Boolean = "true"}},
         {Subject = "Type", Operator = "Equal", Args = {String = "HARMFUL"}},
-      }
-    },
-  },
-  HelpfulOnHostile = {
-    Description = "The aura is helpful while it is on a hostile player or ncp",
-    Order = 6,
-    Groups = {
+      },
       {
         {Subject = "TargetIsHostile", Operator = "Equal", Args = {Boolean = "true"}},
         {Subject = "Type", Operator = "Equal", Args = {String = "HELPFUL"}},
-      }
+      },
     },
   },
 };

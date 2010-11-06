@@ -98,8 +98,8 @@ function AuraFrames:Confirm(Message, Func, ButtonText1, ButtonText2)
   local Popup = StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"];
   Popup.text = Message;
 
-  button1 = ButtonText1 or "Yes";
-  button2 = ButtonText2 or "No";
+  Popup.button1 = ButtonText1 or "Yes";
+  Popup.button2 = ButtonText2 or "No";
 
   if Func then
     Popup.OnAccept = function()
