@@ -1,5 +1,35 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
+
+local OrderPredefinedConfig = {
+  TimeLeftDesc = {
+    Name = "|cff4cd8daDescending|r on time left",
+    Description = "|cff4cd8daDescending: Start with most time left and end with lowest time left|r",
+    Order = 1,
+  },
+  NoTimeTimeLeftDesc = {
+    Name = "No expiration time and then |cff4cd8dadescending|r on time left",
+    Description = "|cff4cd8daDescending: Start with most time left and end with lowest time left|r",
+    Order = 2,
+  },
+  TypeNoTimeTimeDesc = {
+    Name = "Sort on Type, no expiration time and then |cff4cd8dadescending|r on time left",
+    Description = "|cff4cd8daDescending: Start with most time left and end with lowest time left|r",
+    Order = 3,
+  },
+  TimeLeftAsc = {
+    Name = "|cfff1ec66Ascending|r on time left",
+    Description = "|cfff1ec66Ascending|r: Start with lowest time left and end with most time left|r",
+    Order = 4,
+  },
+  TypeTimeAsc = {
+    Name = "Sort on Type, |cfff1ec66ascending|r on time left",
+    Description = "|cfff1ec66Ascending|r: Start with lowest time left and end with most time left|r",
+    Order = 5,
+  },
+};
+
+
 -----------------------------------------------------------------
 -- Function ApplyChange
 -----------------------------------------------------------------
@@ -96,7 +126,7 @@ function AuraFrames.OrderPrototype:BuildConfigOptions()
       Options["Predefined"..Key] = {
         type = "toggle",
         width = "full",
-        name = Definition.Description,
+        name = OrderPredefinedConfig[Key].Name,
         get = function(Info) return Config.Predefined == Key; end,
         set = function(Info, Value)
           if Value == true then
@@ -105,7 +135,7 @@ function AuraFrames.OrderPrototype:BuildConfigOptions()
             self:ApplyChange();
           end
         end,
-        order = CurrentOrder + Definition.Order - 1,
+        order = CurrentOrder + OrderPredefinedConfig[Key].Order - 1,
       };
       Order = Order + 1;
       
