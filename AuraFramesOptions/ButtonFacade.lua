@@ -17,7 +17,7 @@ local function GetState(info)
 end
 
 -----------------------------------------------------------------
--- Function SkinCallback
+-- Function GetButtonFacadeContainerOptions
 -----------------------------------------------------------------
 function AuraFrames:GetButtonFacadeContainerOptions(Container)
 
