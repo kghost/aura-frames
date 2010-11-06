@@ -18,7 +18,7 @@ local FilterPredefinedConfig = {
     Order = 2,
   },
   CastedBySameClass = {
-    Name = "Casted by someone of the same class I am",
+    Name = "Casted by someone of the same class",
     Description = "Aura's that are casted by the class "..format("|cff%02x%02x%02x%s|r", RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].r * 255, RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].g * 255, RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].b * 255, select(1, UnitClass("player"))),
     Order = 3,
   },
@@ -309,11 +309,9 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
   
   Content:SetLayout("List");
   
-  Content:AddText("Filter\n", GameFontNormalLarge);
+  Content:AddText("Filter", GameFontNormalLarge);
   
   if FilterConfig.Expert == true then
-  
-    Content:AddHeader("Rules");
   
     for Index, Group in ipairs(FilterConfig.Groups or {}) do
 
@@ -384,16 +382,24 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
     CheckBoxExpert:SetRelativeWidth(1);
     CheckBoxExpert:SetLabel("Expert Mode");
     CheckBoxExpert:SetCallback("OnValueChanged", function(_, _, Value)
-      FilterConfig.Expert = false;
-      FilterConfig.Groups = {};
-      AuraFramesConfig:ContentFilterRefresh(Content, ContainerId);
-      ApplyChange(ContainerId);
+      AuraFramesConfig:Close();
+      AuraFrames:Confirm("Are you sure you want to turn of expert mode? You will lose your custom filters!", function(Result)
+        if Result == true then
+          FilterConfig.Expert = false;
+          FilterConfig.Groups = {};
+          ApplyChange(ContainerId);
+        else
+          CheckBoxExpert:SetValue(true);
+        end
+        AuraFramesConfig:ContentFilterRefresh(Content, ContainerId);
+        AuraFramesConfig:Show();
+      end);
     end);
     Content:AddChild(CheckBoxExpert);
   
   else
   
-    Content:AddText("Filters are used for fine tuning what kind of aura's are displayed inside a container.\n\nOnly show aura's that are matching at least one of the following selected criteria, if nothing is selected then there will be no filtering:\n\n");
+    Content:AddText("\nFilters are used for fine tuning what kind of aura's are displayed inside a container.\n\nOnly show aura's that are matching at least one of the following selected criteria, if nothing is selected then there will be no filtering:\n\n");
   
     local List = {};
   
