@@ -432,7 +432,8 @@ function Prototype:AuraNew(Aura)
   self.Order:Add(Button);
   
   if LBF then
-    self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border});
+    -- Don't skin the count text, we will take care of that.
+    self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false});
   end
   
   self:UpdateButton(Button);

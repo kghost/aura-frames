@@ -24,7 +24,7 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
     GameTooltip:AddLine(" ")
     GameTooltip:AddLine("|cffff0000Test Aura|r");
 
-  elseif Aura.Type == "WEAPON" or Aura.Type == "WEAPONOLD" then
+  elseif Aura.Type == "WEAPON" then
   
     GameTooltip:SetInventoryItem(Aura.Unit, Aura.Index);
   

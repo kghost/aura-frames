@@ -40,6 +40,7 @@ local CancelAuraFrameHandlers = {};
 -- If we are in combat or not.
 local InCombat = false;
 
+
 -- Frame to track for enter/leaving combat.
 local EventFrame = CreateFrame("Frame");
 EventFrame:RegisterEvent("PLAYER_REGEN_DISABLED");

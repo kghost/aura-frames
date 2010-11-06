@@ -8,32 +8,9 @@ local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
 local GetTime = GetTime;
 
--- This version will be used to trigger database upgrades
-AuraFrames.DbVersion = 160;
-
 -- Expose the addon to the global namespace for debugging.
 _G["AuraFrames"] = AuraFrames;
 _G["af"] = AuraFrames;
-
-AuraFrames.ContainerHandlers = {};
-AuraFrames.Containers = {};
-
-
-local ConfigDefaults = {
-  profile = {
-    DbVersion = 0,
-    Containers = {
-      ["*"] = {
-        Name = "",
-        Type = "",
-        Enabled = true,
-        Sources = {},
-      },
-    },
-    HideBlizzardAuraFrames = false,
-  },
-};
-
 
 
 -----------------------------------------------------------------
@@ -41,24 +18,11 @@ local ConfigDefaults = {
 -----------------------------------------------------------------
 function AuraFrames:OnInitialize()
 
-  self.db = LibStub("AceDB-3.0"):New("AuraFramesDB", ConfigDefaults);
-  
-  if self.db.profile.DbVersion == 0 then
-    self.db.profile.DbVersion = AuraFrames.DbVersion;
-  end
-  
-  if self.db.profile.DbVersion < AuraFrames.DbVersion then
-    self:Print("Old database version found, going to automatically trying to upgrade. Cross your fingers and hope for no errors :) Have fun with the new version!");
-    self:UpgradeDb();
-  end
-  
-  if self.db.profile.HideBlizzardAuraFrames then
-    self:DisableBlizzardAuraFrames();
-  end
+  self:DatabaseInitialize();
+
+  self:CheckBlizzardAuraFrames();
   
   self:RegisterChatCommand("af", "OpenConfigDialog");
-  self:RegisterChatCommand("afreset", "ResetConfig");
-  self:RegisterChatCommand("affixdb", "UpgradeDb");
   
   self:RegisterBlizzardOptions();
 
@@ -88,13 +52,19 @@ end
 -----------------------------------------------------------------
 -- Function HideBlizzardAuraFrames
 -----------------------------------------------------------------
-function AuraFrames:DisableBlizzardAuraFrames()
+function AuraFrames:CheckBlizzardAuraFrames()
+
+  if self.db.profile.HideBlizzardAuraFrames ~= true then
+    return;
+  end
 
   -- Hide the default Blizz buff frame
   BuffFrame:Hide();
   TemporaryEnchantFrame:Hide();
+  ConsolidatedBuffs:Hide();
 
-  -- The default buff frame is still working, lets destroy it so it doesnt eat any cpu cycles anymore
+  -- The default buff frame is still working,lets destroy
+  -- it so it doesnt eat any cpu cycles anymore
   
   -- Disable the events to the default buff frame
   BuffFrame:UnregisterAllEvents(); 
@@ -105,11 +75,6 @@ function AuraFrames:DisableBlizzardAuraFrames()
   BuffFrame:SetScript("OnUpdate", nil); 
   TemporaryEnchantFrame:SetScript("OnUpdate", nil);
   ConsolidatedBuffs:SetScript("OnUpdate", nil);
-  
-  -- Make sure the buff frames are not shown.
-  BuffFrame:Hide();
-  TemporaryEnchantFrame:Hide();
-  ConsolidatedBuffs:Hide();
   
 end
 
@@ -122,8 +87,8 @@ function AuraFrames:Confirm(Message, Func)
   if not StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] then
 
     StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] = {
-      button1 = "Accept",
-      button2 = "Cancel",
+      button1 = "Yes",
+      button2 = "No",
       timeout = 0,
       whileDead = 1,
       hideOnEscape = 1,

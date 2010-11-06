@@ -1,5 +1,5 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
-local Module = AuraFrames:NewContainerModule("ButtonContainer", AuraFrames.ContainerPrototype);
+local Module = AuraFrames:NewContainerModule("ButtonContainer");
 
 -- Import most used functions into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
@@ -14,9 +14,6 @@ Module.MaxButtons = 120;
 Module.ButtonSizeX = 36;
 Module.ButtonSizeY = 36;
 
--- Register this module as a container handler.
-AuraFrames.ContainerHandlers["Buttons"] = Module;
-
 -- List that contains the function prototypes for container objects.
 Module.Prototype = {};
 
@@ -26,6 +23,22 @@ Module.Prototype = {};
 -----------------------------------------------------------------
 function Module:OnInitialize()
 
+
+end
+
+
+-----------------------------------------------------------------
+-- Function OnEnable
+-----------------------------------------------------------------
+function Module:OnEnable()
+
+end
+
+
+-----------------------------------------------------------------
+-- Function OnDisable
+-----------------------------------------------------------------
+function Module:OnDisable()
 
 end
 

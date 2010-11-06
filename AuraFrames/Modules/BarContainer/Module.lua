@@ -1,5 +1,5 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
-local Module = AuraFrames:NewModule("BarContainer", AuraFrames.ContainerPrototype);
+local Module = AuraFrames:NewContainerModule("BarContainer");
 local LSM = LibStub("LibSharedMedia-3.0");
 
 -- Import most used functions into the local namespace.
@@ -14,8 +14,6 @@ local GetTime = GetTime;
 Module.MaxBars = 40;
 Module.BarHeight = 24;
 
--- Register this module as a container handler.
-AuraFrames.ContainerHandlers["Bars"] = Module;
 
 -- List that contains the function prototypes for container objects.
 Module.Prototype = {};
