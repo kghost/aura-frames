@@ -12,6 +12,8 @@ function Module:ContentTabButtonFacade()
 
   self.Tab:SetLayout("List");
   
+  self.Tab:AddText("ButtonFacade\n", GameFontNormalLarge);
+  
   if not LBF then
   
     self.Tab:AddText("\nButtonFacade is used for skinning the buttons.\n\nThe ButtonFacade addon is not found, please install or enable ButtonFacade addon if you want to use custom button skinning.");
