@@ -79,7 +79,7 @@ local function ColorContent(Content, ContainerId)
   ColorBuff:SetLabel("Buff");
   ColorBuff:SetCallback("OnValueChanged", function(_, _, ...)
     ColorConfig.Buff = {...};
-    Container:Update("LAYOUT");
+    ContainerInstance:Update("LAYOUT");
   end);
   BorderGroup:AddChild(ColorBuff);
 
