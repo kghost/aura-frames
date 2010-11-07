@@ -1,5 +1,5 @@
 local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
-local Module = AuraFramesConfig:GetModule("ButtonContainer");
+local Module = AuraFramesConfig:GetModule("BarContainer");
 local AceGUI = LibStub("AceGUI-3.0");
 
 
@@ -109,5 +109,26 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
     ContentTooltip:AddChild(TooltipShowClassification);
   
   end
+  
+  Content:AddSpace();
+
+  Content:AddHeader("Aura Icon");
+  
+  Content:AddText("The aura icon can be displayed at any side or not at all.");
+  
+  local Icon = AceGUI:Create("Dropdown");
+  Icon:SetList({
+    NONE = "None",
+    LEFT = "Left",
+    RIGHT = "Right",
+  });
+  Icon:SetLabel("Icon");
+  Icon:SetValue(LayoutConfig.Icon);
+  Icon:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.Icon = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  Content:AddChild(Icon);
+  
   
 end

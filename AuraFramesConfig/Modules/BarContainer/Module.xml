@@ -8,7 +8,7 @@
   
   <Script file="ContentLayoutGeneral.lua" />
   <Script file="ContentLayoutSizeAndScale.lua" />
-  <Script file="ContentLayoutDurationAndCount.lua" />
+  <Script file="ContentLayoutText.lua" />
   <Script file="ContentLayoutSkinAndColors.lua" />
   
 </Ui>

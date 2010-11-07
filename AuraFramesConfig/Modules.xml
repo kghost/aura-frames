@@ -2,5 +2,6 @@
 ..\FrameXML\UI.xsd">
 
   <Include file="Modules\ButtonContainer\Module.xml" />
+  <Include file="Modules\BarContainer\Module.xml" />
 
 </Ui>

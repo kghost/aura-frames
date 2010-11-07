@@ -1,5 +1,5 @@
 local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
-local Module = AuraFramesConfig:GetModule("ButtonContainer");
+local Module = AuraFramesConfig:GetModule("BarContainer");
 local AceGUI = LibStub("AceGUI-3.0");
 
 local SelectedTabs = {};
@@ -23,7 +23,7 @@ function Module:ContentLayout(ContainerId)
       text = "Size and Scale",
     },
     {
-      value = "ContentLayoutText",
+      value = "Text",
       text = "Text",
     },
 --[[

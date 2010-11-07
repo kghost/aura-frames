@@ -1,6 +1,7 @@
 local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
-local Module = AuraFramesConfig:GetModule("ButtonContainer");
+local Module = AuraFramesConfig:GetModule("BarContainer");
 local AceGUI = LibStub("AceGUI-3.0");
+local LSM = LibStub("LibSharedMedia-3.0");
 
 
 -----------------------------------------------------------------
@@ -35,7 +36,6 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   Content:AddText("The number of bars the container will display.");
   
   local NumberOfBars = AceGUI:Create("Slider");
-  NumberOfBars:SetWidth(250);
   NumberOfBars:SetValue(LayoutConfig.NumberOfBars);
   NumberOfBars:SetLabel("Horizontal Size");
   NumberOfBars:SetSliderValues(1, 20, 1);
@@ -48,6 +48,11 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   
   Content:AddSpace(2);
   
+  local SizeGroup = AceGUI:Create("SimpleGroup");
+  SizeGroup:SetLayout("Flow");
+  SizeGroup:SetRelativeWidth(1);
+  Content:AddChild(SizeGroup);
+  
   local DropdownDirection = AceGUI:Create("Dropdown");
   DropdownDirection:SetList({
     DOWN = "Down",
@@ -59,8 +64,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
     LayoutConfig.Direction = Value;
     ContainerInstance:Update("LAYOUT");
   end);
-  Content:AddChild(DropdownDirection);
-  
+  SizeGroup:AddChild(DropdownDirection);
 
   local DropdownBarDirection = AceGUI:Create("Dropdown");
   DropdownBarDirection:SetList({
@@ -75,16 +79,16 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
     LayoutConfig.BarDirection = Value;
     ContainerInstance:Update("LAYOUT");
   end);
-  Content:AddChild(DropdownBarDirection);
+  SizeGroup:AddChild(DropdownBarDirection);
   
   local BarWidth = AceGUI:Create("EditBox");
-  BarWidth:SetValue(tostring(LayoutConfig.BarWidth));
+  BarWidth:SetText(tostring(LayoutConfig.BarWidth));
   BarWidth:SetLabel("Width of the bars");
-  BarWidth:SetCallback("OnValueChanged", function(_, _, Value)
-    LayoutConfig.BarMaxTime = tonumber(Value);
+  BarWidth:SetCallback("OnEnterPressed", function(_, _, Value)
+    LayoutConfig.BarWidth = tonumber(Value);
     ContainerInstance:Update("LAYOUT");
   end);
-  Content:AddChild(BarWidth);
+  SizeGroup:AddChild(BarWidth);
   
   local BarTexture = AceGUI:Create("LSM30_Font");
   BarTexture:SetList(LSM:HashTable("statusbar"));
@@ -95,8 +99,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
     ContainerInstance:Update("LAYOUT");
     BarTexture:SetValue(Value);
   end);
-  DurationGroup:AddChild(BarTexture);
-  
+  SizeGroup:AddChild(BarTexture);
 
   Content:AddSpace();
   Content:AddHeader("Spacing");
@@ -105,25 +108,30 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   
   Content:AddSpace();
   
+  local SpacingGroup = AceGUI:Create("SimpleGroup");
+  SpacingGroup:SetLayout("Flow");
+  SpacingGroup:SetRelativeWidth(1);
+  Content:AddChild(SpacingGroup);
+  
   local Space = AceGUI:Create("Slider");
   Space:SetValue(LayoutConfig.Space);
-  Space:SetLabel("Horizontal Space");
+  Space:SetLabel("Space between bar");
   Space:SetSliderValues(0, 50, 0.1);
   Space:SetIsPercent(false);
   Space:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.Space = Value;
     ContainerInstance:Update("LAYOUT");
   end);
-  Content:AddChild(Space);
+  SpacingGroup:AddChild(Space);
   
   local BarMaxTime = AceGUI:Create("EditBox");
-  BarMaxTime:SetValue(tostring(LayoutConfig.BarMaxTime));
+  BarMaxTime:SetText(tostring(LayoutConfig.BarMaxTime));
   BarMaxTime:SetLabel("Max Time");
-  BarMaxTime:SetCallback("OnValueChanged", function(_, _, Value)
+  BarMaxTime:SetCallback("OnEnterPressed", function(_, _, Value)
     LayoutConfig.BarMaxTime = tonumber(Value);
     ContainerInstance:Update("LAYOUT");
   end);
-  Content:AddChild(BarMaxTime);
+  SpacingGroup:AddChild(BarMaxTime);
 
 
 end

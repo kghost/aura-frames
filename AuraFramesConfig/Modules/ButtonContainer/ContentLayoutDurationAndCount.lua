@@ -110,7 +110,7 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
     OUTLINE = "Outline",
     THICKOUTLINE = "Thick Outline",
   });
-  DurationOutline:SetValue(LayoutConfig.DurationOutline or "NONE");
+  DurationOutline:SetValue(LayoutConfig.DurationOutline);
   DurationOutline:SetDisabled(not LayoutConfig.ShowDuration);
   DurationOutline:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.DurationOutline = Value;
@@ -217,7 +217,7 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
     OUTLINE = "Outline",
     THICKOUTLINE = "Thick Outline",
   });
-  CountOutline:SetValue(LayoutConfig.CountOutline or "NONE");
+  CountOutline:SetValue(LayoutConfig.CountOutline);
   CountOutline:SetDisabled(not LayoutConfig.ShowCount);
   CountOutline:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.CountOutline = Value;
