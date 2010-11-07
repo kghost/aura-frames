@@ -9,7 +9,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 162;
+AuraFrames.DatabaseVersion = 163;
 
 
 --[[
@@ -56,6 +56,9 @@ AuraFrames.DatabaseVersion = 162;
   
   Version 162:
     DurationFormat: Different keys changed.
+    
+  Version 163:
+    Fixing version 160 (colors is not located in layout).
 
 ]]--
 
@@ -308,6 +311,26 @@ function AuraFrames:DatabaseUpgrade()
         Container.Layout.CountPosY = -6;
         Container.Layout.CountColor = {1, 1, 1, 1};
         
+      end
+    
+    end
+    
+    if self.db.profile.DbVersion < 163 then
+    
+      if Container.Layout and Container.Colors then
+        
+        local Colors = Container.Colors;
+        
+        Colors.Debuff.None[4] = 1.0;
+        Colors.Debuff.Magic[4] = 1.0;
+        Colors.Debuff.Curse[4] = 1.0;
+        Colors.Debuff.Disease[4] = 1.0;
+        Colors.Debuff.Poison[4] = 1.0;
+        
+        Colors.Buff[4] = 1.0;
+        Colors.Weapon[4] = 1.0;
+        Colors.Other[4] = 1.0;
+      
       end
     
     end

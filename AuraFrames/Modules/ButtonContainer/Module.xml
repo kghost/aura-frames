@@ -33,27 +33,14 @@
     </Size>
     <Layers>
       <Layer level="BACKGROUND">
-        <Texture name="$parentIcon">
-        </Texture>
+        <Texture name="$parentIcon" />
       </Layer>
       <Layer level="ARTWORK">
         <FontString name="$parentCount" hidden="true" justifyH="RIGHT" />
         <FontString name="$parentDuration" hidden="true" />
       </Layer>
       <Layer level="OVERLAY">
-        <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">
-          <Size>
-            <AbsDimension x="38" y="38"/>
-          </Size>
-          <Anchors>
-            <Anchor point="CENTER">
-              <Offset>
-                <AbsDimension x="0" y="0"/>
-              </Offset>
-            </Anchor>
-          </Anchors>
-          <TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>
-        </Texture>
+        <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD" />
       </Layer>
     </Layers>
   </Button>
