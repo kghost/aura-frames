@@ -1,8 +1,8 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:GetModule("ButtonContainer");
+local LibAura = LibStub("LibAura-1.0");
 local LBF = LibStub("LibButtonFacade", true);
 local LSM = LibStub("LibSharedMedia-3.0");
-local LibAura = LibStub("LibAura-1.0");
 
 -- Import most used functions into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
@@ -261,8 +261,8 @@ function Prototype:Update(...)
       tinsert(Flags, "MONOCHROME");
     end
 
-    self.DurationFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.DurationFont, true) or "Fonts\\FRIZQT__.TTF", self.Config.Layout.DurationSize or 12, tconcat(Flags, ","));
-    self.DurationFontObject:SetTextColor(unpack(self.Config.Layout.DurationColor or {1, 1, 1, 1}));
+    self.DurationFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.DurationFont, true) or "Fonts\\FRIZQT__.TTF", self.Config.Layout.DurationSize, tconcat(Flags, ","));
+    self.DurationFontObject:SetTextColor(unpack(self.Config.Layout.DurationColor));
     
     Flags = {};
 
@@ -274,8 +274,8 @@ function Prototype:Update(...)
       tinsert(Flags, "MONOCHROME");
     end
     
-    self.CountFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.CountFont, true) or "Fonts\\FRIZQT__.TTF", self.Config.Layout.CountSize or 12, tconcat(Flags, ","));
-    self.CountFontObject:SetTextColor(unpack(self.Config.Layout.CountColor or {1, 1, 1, 1}));
+    self.CountFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.CountFont, true) or "Fonts\\FRIZQT__.TTF", self.Config.Layout.CountSize, tconcat(Flags, ","));
+    self.CountFontObject:SetTextColor(unpack(self.Config.Layout.CountColor));
     
     for _, Button in pairs(self.Buttons) do
       self:UpdateButton(Button);

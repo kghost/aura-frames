@@ -22,8 +22,7 @@ function AuraFrames:OnInitialize()
 
   self:CheckBlizzardAuraFrames();
   
-  self:RegisterChatCommand("afnew", "OpenConfigDialog");
-  self:RegisterChatCommand("af", "OpenConfigDialogOld");
+  self:RegisterChatCommand("af", "OpenConfigDialog");
   
   self:RegisterBlizzardOptions();
 

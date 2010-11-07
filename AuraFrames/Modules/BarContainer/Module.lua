@@ -83,7 +83,7 @@ function Module:GetConfigDefaults()
     Layout = {
       Scale = 1.0,
       NumberOfBars = 10,
-      Space = 5,
+      Space = 0,
       BarWidth = 250,
       BarMaxTime = 30,
       Direction = "DOWN",
@@ -91,6 +91,10 @@ function Module:GetConfigDefaults()
       ShowDuration = true,
       DurationLayout = "ABBREVSPACE",
       ShowCount = true,
+      TextOutline = "OUTLINE",
+      TextMonochrome = false,
+      TextSize = 11,
+      TextColor = {1, 1, 1, 1},
       SortOrder = "Duration",
       ShowTooltip = true,
       Clickable = true,
@@ -98,7 +102,7 @@ function Module:GetConfigDefaults()
       TooltipShowCaster = true,
       TooltipShowSpellId = false,
       TooltipShowClassification = false,
-      BarTexture = "Aluminum",
+      BarTexture = "BantoBar",
       BarDirection = "LEFTSHRINK",
       Icon = "LEFT",
     },
@@ -153,6 +157,8 @@ function Module:New(Config)
   Container.Bars = {};
   
   Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
+  
+  Container.FontObject = _G["AuraFramesContainer_"..Config.Id.."_Font"] or CreateFont("AuraFramesContainer_"..Config.Id.."_Font");
   
   Container:Update();
   

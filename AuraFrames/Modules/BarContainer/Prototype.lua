@@ -272,6 +272,19 @@ function Prototype:Update(...)
     -- 1.0 is the min.
     self.WidthPerSecond = (self.BarWidth - 1) / self.Config.Layout.BarMaxTime;
     
+    local Flags = {};
+
+    if self.Config.Layout.TextOutline and self.Config.Layout.TextOutline ~= "NONE" then
+      tinsert(Flags, self.Config.Layout.TextOutline);
+    end
+
+    if self.Config.Layout.TextMonochrome == true then
+      tinsert(Flags, "MONOCHROME");
+    end
+
+    self.FontObject:SetFont(LSM:Fetch("font", self.Config.Layout.TextFont, true) or "Fonts\\FRIZQT__.TTF", self.Config.Layout.TextSize, tconcat(Flags, ","));
+    self.FontObject:SetTextColor(unpack(self.Config.Layout.TextColor));
+    
     for _, Bar in pairs(self.Bars) do
       self:UpdateBar(Bar);
     end
@@ -381,17 +394,6 @@ function Prototype:AuraNew(Aura)
     Bar.Button.Icon = _G[BarId.."ButtonIcon"];
     Bar.Button.Border = _G[BarId.."ButtonBorder"];
     
-    local Container = self;  
-    Bar:SetScript("OnUpdate", function(_, Elapsed)
-      
-       Bar.TimeSinceLastUpdate = Bar.TimeSinceLastUpdate + Elapsed;
-       if Bar.TimeSinceLastUpdate > BarUpdatePeriod then
-          BarOnUpdate(Container, Bar, Bar.TimeSinceLastUpdate);
-          Bar.TimeSinceLastUpdate = 0.0;
-       end
-      
-    end);
-    
     --Module.LBFGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border});
     
   else
@@ -400,6 +402,21 @@ function Prototype:AuraNew(Aura)
   
   end
   
+  local Container = self;  
+  Bar:SetScript("OnUpdate", function(_, Elapsed)
+    
+     Bar.TimeSinceLastUpdate = Bar.TimeSinceLastUpdate + Elapsed;
+     if Bar.TimeSinceLastUpdate > BarUpdatePeriod then
+        BarOnUpdate(Container, Bar, Bar.TimeSinceLastUpdate);
+        Bar.TimeSinceLastUpdate = 0.0;
+     end
+    
+  end);
+  
+  -- Set the font from this container.
+  Bar.Text:SetFontObject(self.FontObject);
+  Bar.Duration:SetFontObject(self.FontObject);
+
   Bar.TimeSinceLastUpdate = 0.0;
   
   Bar:SetParent(self.Frame);
