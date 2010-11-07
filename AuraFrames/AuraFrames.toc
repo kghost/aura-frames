@@ -20,5 +20,6 @@ Code.lua
 Filter.lua
 Order.lua
 ButtonFacade.lua
+FormatTime.lua
 
 Modules.xml

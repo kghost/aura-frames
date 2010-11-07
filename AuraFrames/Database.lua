@@ -9,13 +9,12 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 161;
+AuraFrames.DatabaseVersion = 162;
 
 
 --[[
 
   Database version history list:
-
 
   Version 153:
     db.profile.Containers[*].Filters renamed to db.profile.Containers[*].Filter
@@ -54,6 +53,9 @@ AuraFrames.DatabaseVersion = 161;
     from the container name to the module name.
     
     db.profile.Containers[*].Type changed to module name.
+  
+  Version 162:
+    DurationFormat: Different keys changed.
 
 ]]--
 
@@ -270,6 +272,46 @@ function AuraFrames:DatabaseUpgrade()
     
     end
     
+    if self.db.profile.DbVersion < 162 then
+    
+      if Container.Layout.DurationLayout == "FORMAT" then
+        
+        Container.Layout.DurationLayout = "ABBREVSPACE";
+        
+      elseif Container.Layout.DurationLayout == "SEPCOLON" then
+        
+        Container.Layout.DurationLayout = "SEPCOL";
+      
+      elseif Container.Layout.DurationLayout == "SECONDS" then
+        
+        Container.Layout.DurationLayout = "NONE";
+        
+      else -- Default
+        
+        Container.Layout.DurationLayout = "ABBREVSPACE"; 
+        
+      end
+    
+      if Container.Type == "ButtonContainer" then
+      
+        Container.Layout.DurationOutline = "OUTLINE";
+        Container.Layout.DurationMonochrome = false;
+        Container.Layout.DurationSize = 11;
+        Container.Layout.DurationPosX = 0;
+        Container.Layout.DurationPosY = -25;
+        Container.Layout.DurationColor = {1, 1, 1, 1};
+        
+        Container.Layout.CountOutline = "OUTLINE";
+        Container.Layout.CountMonochrome = false;
+        Container.Layout.CountSize = 12;
+        Container.Layout.CountPosX = 10;
+        Container.Layout.CountPosY = -6;
+        Container.Layout.CountColor = {1, 1, 1, 1};
+        
+      end
+    
+    end
+    
   end
   
   if self.db.profile.DbVersion < 159 then
@@ -279,7 +321,6 @@ function AuraFrames:DatabaseUpgrade()
   end
 
   self.db.profile.DbVersion = AuraFrames.DbVersion;
-
 
 end
 

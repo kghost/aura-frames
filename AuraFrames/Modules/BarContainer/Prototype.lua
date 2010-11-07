@@ -44,39 +44,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
     
     local TimeLeft = max(Bar.Aura.ExpirationTime - GetTime(), 0);
     
-    if Config.Layout.DurationLayout == "FORMAT" then
-    
-      Bar.Duration:SetFormattedText(SecondsToTimeAbbrev(TimeLeft));
-
-    elseif Config.Layout.DurationLayout == "SEPCOLON" then
-    
-      local Days, Hours, Minutes, Seconds = math_floor(TimeLeft / 86400), math_floor((TimeLeft % 86400) / 3600), math_floor((TimeLeft % 3600) / 60), TimeLeft % 60;
-      
-      if Days ~= 0 then
-        Bar.Duration:SetFormattedText("%d:%.2d:%.2d:%.2d", Days, Hours, Minutes, Seconds);
-      elseif Hours ~= 0 then
-        Bar.Duration:SetFormattedText("%d:%.2d:%.2d", Hours, Minutes, Seconds);
-      else
-        Bar.Duration:SetFormattedText("%d:%.2d", Minutes, Seconds);
-      end
-
-    elseif Config.Layout.DurationLayout == "SEPDOT" then
-
-      local Days, Hours, Minutes, Seconds = math_floor(TimeLeft / 86400), math_floor((TimeLeft % 86400) / 3600), math_floor((TimeLeft % 3600) / 60), TimeLeft % 60;
-      
-      if Days ~= 0 then
-        Bar.Duration:SetFormattedText("%d.%.2d.%.2d.%.2d", Days, Hours, Minutes, Seconds);
-      elseif Hours ~= 0 then
-        Bar.Duration:SetFormattedText("%d.%.2d.%.2d", Hours, Minutes, Seconds);
-      else
-        Bar.Duration:SetFormattedText("%d.%.2d", Minutes, Seconds);
-      end
-
-    elseif Config.Layout.DurationLayout == "SECONDS" then
-    
-      Bar.Duration:SetText(math_floor(TimeLeft));
-
-    end
+    Bar.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft));
     
     if TimeLeft < Container.Config.Layout.BarMaxTime then
     

@@ -89,7 +89,7 @@ function Module:GetConfigDefaults()
       Direction = "DOWN",
       DynamicSize = false,
       ShowDuration = true,
-      DurationLayout = "FORMAT",
+      DurationLayout = "ABBREVSPACE",
       ShowCount = true,
       SortOrder = "Duration",
       ShowTooltip = true,

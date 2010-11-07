@@ -33,7 +33,6 @@ local DirectionMapping = {
   UPRIGHT   = {"BOTTOMLEFT",  "x",  1,  1},
 };
 
-
 local ButtonUpdatePeriod = 0.05;
 
 local PI2 = PI + PI;
@@ -50,39 +49,7 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
     
     local TimeLeft = max(Button.Aura.ExpirationTime - GetTime(), 0);
     
-    if Config.Layout.DurationLayout == "FORMAT" then
-    
-      Button.Duration:SetFormattedText(SecondsToTimeAbbrev(TimeLeft));
-    
-    elseif Config.Layout.DurationLayout == "SEPCOLON" then
-    
-      local Days, Hours, Minutes, Seconds = math_floor(TimeLeft / 86400), math_floor((TimeLeft % 86400) / 3600), math_floor((TimeLeft % 3600) / 60), TimeLeft % 60;
-      
-      if Days ~= 0 then
-        Button.Duration:SetFormattedText("%d:%.2d:%.2d:%.2d", Days, Hours, Minutes, Seconds);
-      elseif Hours ~= 0 then
-        Button.Duration:SetFormattedText("%d:%.2d:%.2d", Hours, Minutes, Seconds);
-      else
-        Button.Duration:SetFormattedText("%d:%.2d", Minutes, Seconds);
-      end
-
-    elseif Config.Layout.DurationLayout == "SEPDOT" then
-
-      local Days, Hours, Minutes, Seconds = math_floor(TimeLeft / 86400), math_floor((TimeLeft % 86400) / 3600), math_floor((TimeLeft % 3600) / 60), TimeLeft % 60;
-      
-      if Days ~= 0 then
-        Button.Duration:SetFormattedText("%d.%.2d.%.2d.%.2d", Days, Hours, Minutes, Seconds);
-      elseif Hours ~= 0 then
-        Button.Duration:SetFormattedText("%d.%.2d.%.2d", Hours, Minutes, Seconds);
-      else
-        Button.Duration:SetFormattedText("%d.%.2d", Minutes, Seconds);
-      end
-
-    elseif Config.Layout.DurationLayout == "SECONDS" then
-    
-      Button.Duration:SetText(math_floor(TimeLeft));
-
-    end
+    Button.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft));
     
     if Button.ExpireFlashTime and TimeLeft < Button.ExpireFlashTime then
     
@@ -165,7 +132,7 @@ function Prototype:UpdateButton(Button)
   if Button.Duration ~= nil and self.Config.Layout.ShowDuration and Aura.ExpirationTime > 0 then
     
     Button.Duration:ClearAllPoints();
-    Button.Duration:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.DurationPosX or 0, self.Config.Layout.DurationPosY or -25);
+    Button.Duration:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.DurationPosX, self.Config.Layout.DurationPosY);
     
     Button.Duration:Show();
   
@@ -178,7 +145,7 @@ function Prototype:UpdateButton(Button)
   if Button.Count ~= nil and self.Config.Layout.ShowCount and Aura.Count > 0 then
   
     Button.Count:ClearAllPoints();
-    Button.Count:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.CountPosX or 10, self.Config.Layout.CountPosY or -6);
+    Button.Count:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.CountPosX, self.Config.Layout.CountPosY);
     Button.Count:SetText(Aura.Count);
     Button.Count:Show();
     
@@ -308,7 +275,7 @@ function Prototype:Update(...)
     end
     
     self.CountFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.CountFont, true) or "Fonts\\FRIZQT__.TTF", self.Config.Layout.CountSize or 12, tconcat(Flags, ","));
-    self.CountFontObject:SetTextColor(unpack(self.Config.Layout.DurationColor or {1, 1, 1, 1}));
+    self.CountFontObject:SetTextColor(unpack(self.Config.Layout.CountColor or {1, 1, 1, 1}));
     
     for _, Button in pairs(self.Buttons) do
       self:UpdateButton(Button);
@@ -431,17 +398,6 @@ function Prototype:AuraNew(Aura)
     Button.Count = _G[ButtonId.."Count"];
     Button.Border = _G[ButtonId.."Border"];
     
-    local Container = self;  
-    Button:SetScript("OnUpdate", function(_, Elapsed)
-      
-       Button.TimeSinceLastUpdate = Button.TimeSinceLastUpdate + Elapsed;
-       if Button.TimeSinceLastUpdate > ButtonUpdatePeriod then
-          ButtonOnUpdate(Container, Button, Button.TimeSinceLastUpdate);
-          Button.TimeSinceLastUpdate = 0.0;
-       end
-      
-    end);
-    
   else
   
     ButtonId = Button:GetName();
@@ -450,6 +406,17 @@ function Prototype:AuraNew(Aura)
   
   end
   
+  local Container = self;  
+  Button:SetScript("OnUpdate", function(_, Elapsed)
+    
+     Button.TimeSinceLastUpdate = Button.TimeSinceLastUpdate + Elapsed;
+     if Button.TimeSinceLastUpdate > ButtonUpdatePeriod then
+        ButtonOnUpdate(Container, Button, Button.TimeSinceLastUpdate);
+        Button.TimeSinceLastUpdate = 0.0;
+     end
+    
+  end);
+
   -- Set the font from this container.
   Button.Duration:SetFontObject(self.DurationFontObject);
   Button.Count:SetFontObject(self.CountFontObject);
@@ -507,6 +474,8 @@ function Prototype:AuraOld(Aura)
   Button:Hide();
   Button:ClearAllPoints();
   Button:SetParent(UIParent);
+  
+  Button:SetScript("OnUpdate", nil);
   
   -- Release the button back in the pool for later use.
   table.insert(ButtonPool, Button);
