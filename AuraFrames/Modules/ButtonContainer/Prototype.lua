@@ -1,6 +1,7 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:GetModule("ButtonContainer");
 local LBF = LibStub("LibButtonFacade", true);
+local LSM = LibStub("LibSharedMedia-3.0");
 local LibAura = LibStub("LibAura-1.0");
 
 -- Import most used functions into the local namespace.
@@ -52,7 +53,7 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
     if Config.Layout.DurationLayout == "FORMAT" then
     
       Button.Duration:SetFormattedText(SecondsToTimeAbbrev(TimeLeft));
-
+    
     elseif Config.Layout.DurationLayout == "SEPCOLON" then
     
       local Days, Hours, Minutes, Seconds = math_floor(TimeLeft / 86400), math_floor((TimeLeft % 86400) / 3600), math_floor((TimeLeft % 3600) / 60), TimeLeft % 60;
@@ -163,6 +164,9 @@ function Prototype:UpdateButton(Button)
 
   if Button.Duration ~= nil and self.Config.Layout.ShowDuration and Aura.ExpirationTime > 0 then
     
+    Button.Duration:ClearAllPoints();
+    Button.Duration:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.DurationPosX or 0, self.Config.Layout.DurationPosY or -25);
+    
     Button.Duration:Show();
   
   elseif Button.Duration then
@@ -173,6 +177,8 @@ function Prototype:UpdateButton(Button)
 
   if Button.Count ~= nil and self.Config.Layout.ShowCount and Aura.Count > 0 then
   
+    Button.Count:ClearAllPoints();
+    Button.Count:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.CountPosX or 10, self.Config.Layout.CountPosY or -6);
     Button.Count:SetText(Aura.Count);
     Button.Count:Show();
     
@@ -277,6 +283,32 @@ function Prototype:Update(...)
       ShowSpellId = self.Config.Layout.TooltipShowSpellId,
       ShowClassification = self.Config.Layout.TooltipShowClassification,
     };
+    
+    local Flags = {};
+
+    if self.Config.Layout.DurationOutline and self.Config.Layout.DurationOutline ~= "NONE" then
+      tinsert(Flags, self.Config.Layout.DurationOutline);
+    end
+
+    if self.Config.Layout.DurationMonochrome == true then
+      tinsert(Flags, "MONOCHROME");
+    end
+
+    self.DurationFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.DurationFont, true) or "Fonts\\FRIZQT__.TTF", self.Config.Layout.DurationSize or 12, tconcat(Flags, ","));
+    self.DurationFontObject:SetTextColor(unpack(self.Config.Layout.DurationColor or {1, 1, 1, 1}));
+    
+    Flags = {};
+
+    if self.Config.Layout.CountOutline and self.Config.Layout.CountOutline ~= "NONE" then
+      tinsert(Flags, self.Config.Layout.CountOutline);
+    end
+
+    if self.Config.Layout.CountMonochrome == true then
+      tinsert(Flags, "MONOCHROME");
+    end
+    
+    self.CountFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.CountFont, true) or "Fonts\\FRIZQT__.TTF", self.Config.Layout.CountSize or 12, tconcat(Flags, ","));
+    self.CountFontObject:SetTextColor(unpack(self.Config.Layout.DurationColor or {1, 1, 1, 1}));
     
     for _, Button in pairs(self.Buttons) do
       self:UpdateButton(Button);
@@ -398,7 +430,7 @@ function Prototype:AuraNew(Aura)
     Button.Icon = _G[ButtonId.."Icon"];
     Button.Count = _G[ButtonId.."Count"];
     Button.Border = _G[ButtonId.."Border"];
-
+    
     local Container = self;  
     Button:SetScript("OnUpdate", function(_, Elapsed)
       
@@ -417,6 +449,10 @@ function Prototype:AuraNew(Aura)
     Button.Icon:SetAlpha(1.0);
   
   end
+  
+  -- Set the font from this container.
+  Button.Duration:SetFontObject(self.DurationFontObject);
+  Button.Count:SetFontObject(self.CountFontObject);
   
   Button.NewFlashTime = self.NewFlashTime;
   Button.ExpireFlashTime = self.ExpireFlashTime;

@@ -37,12 +37,8 @@
         </Texture>
       </Layer>
       <Layer level="ARTWORK">
-        <FontString name="$parentCount" inherits="NumberFontNormal" hidden="true" justifyH="RIGHT" />
-        <FontString name="$parentDuration" inherits="GameFontNormalSmall" hidden="true">
-          <Anchors>
-            <Anchor point="TOP" relativePoint="BOTTOM" />
-          </Anchors>
-        </FontString>
+        <FontString name="$parentCount" hidden="true" justifyH="RIGHT" />
+        <FontString name="$parentDuration" hidden="true" />
       </Layer>
       <Layer level="OVERLAY">
         <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">

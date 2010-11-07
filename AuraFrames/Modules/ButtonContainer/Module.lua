@@ -84,8 +84,10 @@ function Module:GetConfigDefaults()
       Direction = "LEFTDOWN",
       DynamicSize = false,
       ShowDuration = true,
+      DurationMonochrome = true,
       DurationLayout = "FORMAT",
       ShowCount = true,
+      CountMonochrome = true,
       SortOrder = "Duration",
       ShowTooltip = true,
       Clickable = true,
@@ -136,10 +138,10 @@ function Module:New(Config)
   setmetatable(Container, { __index = self.Prototype});
   
   -- Reuse old containers if we can.
-  if _G["AuraFramesContainer_"..Config.Name] then
-    Container.Frame = _G["AuraFramesContainer_"..Config.Name];
+  if _G["AuraFramesContainer_"..Config.Id] then
+    Container.Frame = _G["AuraFramesContainer_"..Config.Id];
   else
-    Container.Frame = CreateFrame("Frame", "AuraFramesContainer_"..Config.Name, UIParent, "AuraFramesButtonContainerTemplate");
+    Container.Frame = CreateFrame("Frame", "AuraFramesContainer_"..Config.Id, UIParent, "AuraFramesButtonContainerTemplate");
   end
   
   Container.Frame:Show();
@@ -158,7 +160,10 @@ function Module:New(Config)
   
   Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
   
-  Container:Update();
+  Container.DurationFontObject = _G["AuraFramesContainer_"..Config.Id.."_DurationFont"] or CreateFont("AuraFramesContainer_"..Config.Id.."_DurationFont");
+  Container.CountFontObject = _G["AuraFramesContainer_"..Config.Id.."_CountFont"] or CreateFont("AuraFramesContainer_"..Config.Id.."_CountFont");
+  
+  Container:Update("ALL");
   
   Container.Frame:SetScript("OnEvent", function() Container:Update(); end);
   Container.Frame:RegisterEvent("PLAYER_ENTERING_WORLD");
