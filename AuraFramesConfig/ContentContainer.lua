@@ -96,6 +96,8 @@ function AuraFramesConfig:ContentContainerNoModule(ContainerId)
   local ButtonDelete = AceGUI:Create("Button");
   ButtonDelete:SetText("Delete container");
   ButtonDelete:SetCallback("OnClick", function()
+  
+    AuraFramesConfig:Hide();
     
     AuraFrames:Confirm("Are you sure you want to delete the container?", function(Result)
       if Result == true then
@@ -113,6 +115,8 @@ function AuraFramesConfig:ContentContainerNoModule(ContainerId)
         AuraFramesConfig:SelectByPath("Containers");
       
       end
+      
+      AuraFramesConfig:Show();
       
     end);
     
@@ -246,6 +250,8 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
   local ButtonDelete = AceGUI:Create("Button");
   ButtonDelete:SetText("Delete container");
   ButtonDelete:SetCallback("OnClick", function()
+  
+    AuraFramesConfig:Close();
     
     AuraFrames:Confirm("Are you sure you want to delete the container?", function(Result)
       if Result == true then
@@ -261,8 +267,10 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
         
         -- Select "Containers" page.
         AuraFramesConfig:SelectByPath("Containers");
-      
+        
       end
+      
+      AuraFramesConfig:Show();
       
     end);
     
