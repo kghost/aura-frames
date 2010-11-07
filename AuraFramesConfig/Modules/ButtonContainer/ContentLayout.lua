@@ -15,24 +15,20 @@ function Module:ContentLayout(ContainerId)
   Tab:SetRelativeWidth(1);
   Tab:SetTabs({
     {
-      value = "SizeScale",
+      value = "General",
+      text = "General",
+    },
+    {
+      value = "SizeAndScale",
       text = "Size and Scale",
     },
     {
-      value = "Display",
-      text = "Display",
+      value = "DurationAndCount",
+      text = "Duration and Count",
     },
     {
-      value = "Colors",
-      text = "Colors",
-    },
-    {
-      value = "Tooltip",
-      text = "Tooltip",
-    },
-    {
-      value = "ButtonFacade",
-      text = "ButtonFacade",
+      value = "SkinAndColors",
+      text = "Skin and Colors",
     },
   });
   Tab:SetCallback("OnGroupSelected", function(_, _, Value)
@@ -41,26 +37,10 @@ function Module:ContentLayout(ContainerId)
     Module.Layout:ReleaseChildren();
     
     SelectedTabs[ContainerId] = Value;
-
-    if Value == "SizeScale" then
     
-      self:ContentTabSizeScale(self.Layout, ContainerId);
+    if self["ContentLayout"..Value] then
     
-    elseif Value == "Display" then
-    
-      self:ContentTabDisplay(self.Layout, ContainerId);
-
-    elseif Value == "Colors" then
-    
-      self:ContentTabColors(self.Layout, ContainerId);
-
-    elseif Value == "Tooltip" then
-    
-      self:ContentTabTooltip(self.Layout, ContainerId);
-
-    elseif Value == "ButtonFacade" then
-    
-      self:ContentTabButtonFacade(self.Layout, ContainerId);
+      self["ContentLayout"..Value](self, self.Layout, ContainerId);
     
     end
 
@@ -78,7 +58,7 @@ function Module:ContentLayout(ContainerId)
   Tab:AddChild(self.Layout);
   
   -- Select last tab otherwise if first tab.
-  Tab:SelectTab(SelectedTabs[ContainerId] or "SizeScale");
+  Tab:SelectTab(SelectedTabs[ContainerId] or "General");
 
 end
 

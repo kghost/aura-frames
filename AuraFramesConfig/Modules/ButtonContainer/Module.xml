@@ -6,10 +6,9 @@
   <Script file="ContentLayout.lua" />
   <Script file="ContentWarnings.lua" />
   
-  <Script file="ContentTabSizeScale.lua" />
-  <Script file="ContentTabDisplay.lua" />
-  <Script file="ContentTabColors.lua" />
-  <Script file="ContentTabTooltip.lua" />
-  <Script file="ContentTabButtonFacade.lua" />
+  <Script file="ContentLayoutGeneral.lua" />
+  <Script file="ContentLayoutSizeAndScale.lua" />
+  <Script file="ContentLayoutDurationAndCount.lua" />
+  <Script file="ContentLayoutSkinAndColors.lua" />
   
 </Ui>

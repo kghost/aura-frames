@@ -1,27 +1,23 @@
 local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
-local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFramesConfig:GetModule("ButtonContainer");
+local LBF = LibStub("LibButtonFacade", true);
 local AceGUI = LibStub("AceGUI-3.0");
 
 
 -----------------------------------------------------------------
--- Function ContentTabColors
+-- Local Function ColorContent
 -----------------------------------------------------------------
-function Module:ContentTabColors(Content, ContainerId)
-
-  -- We are calling our self for a refresh.
-  Content:ReleaseChildren();
+local function ColorContent(Content, ContainerId)
 
   local ColorConfig = AuraFrames.db.profile.Containers[ContainerId].Colors;
   local ContainerInstance = AuraFrames.Containers[ContainerId];
   local ContainerType = AuraFrames.db.profile.Containers[ContainerId].Type;
 
+  Content:PauseLayout();
+  Content:ReleaseChildren();
+  
   Content:SetLayout("List");
 
-  Content:AddText("Colors\n", GameFontNormalLarge);
-  
-  Content:AddHeader("Border");
-  
   local BorderGroup = AceGUI:Create("SimpleGroup");
   BorderGroup:SetLayout("Flow");
   BorderGroup:SetRelativeWidth(1);
@@ -110,12 +106,58 @@ function Module:ContentTabColors(Content, ContainerId)
   Content:AddSpace();
   
   local ColorReset = AceGUI:Create("Button");
-  ColorReset:SetText("Reset Colors");
+  ColorReset:SetText("Reset Border Colors");
   ColorReset:SetCallback("OnClick", function()
     AuraFrames.db.profile.Containers[ContainerId].Colors = AuraFrames:GetModule(ContainerType):GetConfigDefaults().Colors;
     ContainerInstance:Update("LAYOUT");
-    Module:ContentTabColors(Content, ContainerId);
+    ColorContent(Content, ContainerId);
   end);
   Content:AddChild(ColorReset);
+  
+  Content:ResumeLayout();
+  Content:DoLayout();
+
+end
+
+-----------------------------------------------------------------
+-- Function ContentLayoutSkinAndColors
+-----------------------------------------------------------------
+function Module:ContentLayoutSkinAndColors(Content, ContainerId)
+
+  local ContainerInstance = AuraFrames.Containers[ContainerId];
+
+  Content:SetLayout("List");
+
+  Content:AddText("Skin and Colors\n", GameFontNormalLarge);
+
+  Content:AddHeader("ButtonFacade");
+  
+  if not LBF then
+  
+    Content:AddText("ButtonFacade is used for skinning the buttons.\n\nThe ButtonFacade addon is not found, please install or enable ButtonFacade addon if you want to use custom button skinning.");
+  
+  else
+
+    Content:AddText("ButtonFacade is used for skinning the buttons.\n");
+    
+    local ContentButtonFacade = AceGUI:Create("SimpleGroup");
+    ContentButtonFacade:SetRelativeWidth(1);
+    Content:AddChild(ContentButtonFacade);
+    AuraFramesConfig:EnhanceContainer(ContentButtonFacade);
+
+    AuraFramesConfig:ContentButtonFacade(ContentButtonFacade, ContainerInstance.LBFGroup);
+  
+  end
+  
+  Content:AddSpace();
+  
+  Content:AddHeader("Border colors");
+
+  local ContentColors = AceGUI:Create("SimpleGroup");
+  ContentColors:SetRelativeWidth(1);
+  Content:AddChild(ContentColors);
+  AuraFramesConfig:EnhanceContainer(ContentColors);
+  
+  ColorContent(ContentColors, ContainerId);
 
 end
