@@ -223,22 +223,19 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
       end);
       GroupCopyOptions:AddChild(ButtonCopy);
       
-      Content:AddSpace();
-      
-      Content:AddHeader("Move containers");
-      Content:AddText("Containers can only be moved when they are unlocked. Unlock/lock the containers by using the button below:\n\n");
-      
-      local ButtonMove = AceGUI:Create("Button");
-      ButtonMove:SetText(AuraFramesConfig.ContainersUnlocked and "Lock containers" or "Unlock containers");
-      ButtonMove:SetCallback("OnClick", function()
-        AuraFramesConfig:UnlockContainers(not AuraFramesConfig.ContainersUnlocked);
-      end);
-      Content:AddChild(ButtonMove);
-      
     end
-  
-  else
-  
+    
+    Content:AddSpace();
+    
+    Content:AddHeader("Move containers");
+    Content:AddText("Containers can only be moved when they are unlocked. Unlock/lock the containers by using the button below:\n\n");
+    
+    local ButtonMove = AceGUI:Create("Button");
+    ButtonMove:SetText(AuraFramesConfig.ContainersUnlocked and "Lock containers" or "Unlock containers");
+    ButtonMove:SetCallback("OnClick", function()
+      AuraFramesConfig:UnlockContainers(not AuraFramesConfig.ContainersUnlocked);
+    end);
+    Content:AddChild(ButtonMove);
   
   end
   

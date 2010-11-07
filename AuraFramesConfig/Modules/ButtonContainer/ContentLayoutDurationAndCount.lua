@@ -37,10 +37,11 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   local DurationLayout = AceGUI:Create("Dropdown");
   DurationLayout:SetWidth(150);
   DurationLayout:SetList({
-    FORMAT        = "10 m",
-    SEPCOLON      = "10:15",
+    ABBREVSPACE   = "10 m",
+    ABBREV        = "10m",
+    SEPCOL        = "10:15",
     SEPDOT        = "10.15",
-    SECONDS       = "615",
+    NONE          = "615",
   });
   DurationLayout:SetLabel("Time layout");
   DurationLayout:SetDisabled(not LayoutConfig.ShowDuration);
@@ -69,7 +70,7 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   DurationGroup:AddChild(DurationFont);
   
   local DurationSize = AceGUI:Create("Slider");
-  DurationSize:SetValue(LayoutConfig.DurationSize or 10);
+  DurationSize:SetValue(LayoutConfig.DurationSize);
   DurationSize:SetLabel("Font Size");
   DurationSize:SetDisabled(not LayoutConfig.ShowDuration);
   DurationSize:SetSliderValues(6, 30, 0.1);
@@ -80,7 +81,7 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   DurationGroup:AddChild(DurationSize);
   
   local DurationPosX = AceGUI:Create("Slider");
-  DurationPosX:SetValue(LayoutConfig.DurationPosX or 0);
+  DurationPosX:SetValue(LayoutConfig.DurationPosX);
   DurationPosX:SetLabel("Position X");
   DurationPosX:SetDisabled(not LayoutConfig.ShowDuration);
   DurationPosX:SetSliderValues(-50, 50, 0.1);
@@ -91,7 +92,7 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   DurationGroup:AddChild(DurationPosX);
   
   local DurationPosY = AceGUI:Create("Slider");
-  DurationPosY:SetValue(LayoutConfig.DurationPosY or -25);
+  DurationPosY:SetValue(LayoutConfig.DurationPosY);
   DurationPosY:SetLabel("Position Y");
   DurationPosY:SetDisabled(not LayoutConfig.ShowDuration);
   DurationPosY:SetSliderValues(-50, 50, 0.1);
@@ -133,7 +134,7 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   DurationColor:SetLabel("Color");
   DurationColor:SetDisabled(not LayoutConfig.ShowDuration);
   DurationColor:SetHasAlpha(true);
-  DurationColor:SetColor(unpack(LayoutConfig.DurationColor or {1, 1, 1, 1}));
+  DurationColor:SetColor(unpack(LayoutConfig.DurationColor));
   DurationColor:SetCallback("OnValueChanged", function(_, _, ...)
     LayoutConfig.DurationColor = {...};
     ContainerInstance:Update("LAYOUT");
@@ -146,7 +147,7 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   
   local ShowCount = AceGUI:Create("CheckBox");
   ShowCount:SetLabel("Show count");
-  ShowCount:SetDescription("Show the number of applications of an aura.");
+  ShowCount:SetDescription("Show the number of stacks of an aura.");
   ShowCount:SetRelativeWidth(1);
   ShowCount:SetValue(LayoutConfig.ShowCount);
   ShowCount:SetCallback("OnValueChanged", function(_, _, Value)
@@ -176,7 +177,7 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   CountGroup:AddChild(CountFont);
   
   local CountSize = AceGUI:Create("Slider");
-  CountSize:SetValue(LayoutConfig.CountSize or 10);
+  CountSize:SetValue(LayoutConfig.CountSize);
   CountSize:SetLabel("Font Size");
   CountSize:SetDisabled(not LayoutConfig.ShowCount);
   CountSize:SetSliderValues(6, 30, 0.1);
@@ -187,7 +188,7 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   CountGroup:AddChild(CountSize);
   
   local CountPosX = AceGUI:Create("Slider");
-  CountPosX:SetValue(LayoutConfig.CountPosX or 0);
+  CountPosX:SetValue(LayoutConfig.CountPosX);
   CountPosX:SetLabel("Position X");
   CountPosX:SetDisabled(not LayoutConfig.ShowCount);
   CountPosX:SetSliderValues(-50, 50, 0.1);
@@ -198,7 +199,7 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   CountGroup:AddChild(CountPosX);
   
   local CountPosY = AceGUI:Create("Slider");
-  CountPosY:SetValue(LayoutConfig.CountPosY or -25);
+  CountPosY:SetValue(LayoutConfig.CountPosY);
   CountPosY:SetLabel("Position Y");
   CountPosY:SetDisabled(not LayoutConfig.ShowCount);
   CountPosY:SetSliderValues(-50, 50, 0.1);
@@ -240,7 +241,7 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   CountColor:SetLabel("Color");
   CountColor:SetDisabled(not LayoutConfig.ShowCount);
   CountColor:SetHasAlpha(true);
-  CountColor:SetColor(unpack(LayoutConfig.CountColor or {1, 1, 1, 1}));
+  CountColor:SetColor(unpack(LayoutConfig.CountColor));
   CountColor:SetCallback("OnValueChanged", function(_, _, ...)
     LayoutConfig.CountColor = {...};
     ContainerInstance:Update("LAYOUT");
