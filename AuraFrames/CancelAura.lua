@@ -12,7 +12,12 @@ working like totem auras.
 
 ]]--
 
-local RestoreHandlers, FireHandler;
+-- Import used global references into the local namespace.
+local pairs, ipairs = pairs, ipairs;
+local DestroyTotem = DestroyTotem;
+
+
+local RestoreHandlers, BackupHandlers, FireHandler;
 
 -- Create the secure button we use for canceling auras.
 local CancelAuraButton = CreateFrame("Button", "AuraFramesButtonContainerActionButton", UIParent, "SecureActionButtonTemplate");

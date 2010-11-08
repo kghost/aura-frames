@@ -15,13 +15,13 @@ local LibAura, OldMinor = LibStub:NewLibrary(Major, Minor);
 
 if not LibAura then return; end -- No upgrade needed.
 
--- Import most used functions into the local namespace.
-local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
+-- Import used global references into the local namespace.
+local tinsert, tremove, tconcat, sort, tContains = tinsert, tremove, table.concat, sort, tContains;
 local fmt, tostring = string.format, tostring;
 local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetTime = GetTime;
+local GetTime, sub = GetTime, string.sub;
 
 -- Expose the library to the global namespace for debugging.
 _G["LibAura"] = LibAura;
@@ -462,7 +462,7 @@ function LibAura:RegisterEvent(Event, Object, Function)
   
     self.EventFrame.Events[Event] = {};
     
-    if string.sub(Event, 1, 8) ~= "LIBAURA_" then
+    if sub(Event, 1, 8) ~= "LIBAURA_" then
       self.EventFrame:RegisterEvent(Event);
     end
   
@@ -509,7 +509,7 @@ function LibAura:UnregisterEvent(Event, Object, Function)
       
         self.EventFrame.Events[Event] = nil;
         
-        if string.sub(Event, 1, 8) ~= "LIBAURA_" then
+        if sub(Event, 1, 8) ~= "LIBAURA_" then
           self.EventFrame:UnregisterEvent(Event);
         end
       

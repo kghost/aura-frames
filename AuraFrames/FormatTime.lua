@@ -1,5 +1,6 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
+-- Import used global references into the local namespace.
 local math_sin, math_cos, math_floor, math_ceil = math.sin, math.cos, math.floor, math.ceil;
 
 --[[
@@ -53,15 +54,15 @@ function AuraFrames:FormatTimeLeft(Format, TimeLeft)
   if Format == "ABBREV" or Format == "ABBREVSPACE" then
 
     if (TimeLeft >= 86400) then
-      return Lookup[Format].Day, ceil(TimeLeft / 86400);
+      return Lookup[Format].Day, math_ceil(TimeLeft / 86400);
     end
 
     if (TimeLeft >= 3600) then
-      return Lookup[Format].Hour, ceil(TimeLeft / 3600);
+      return Lookup[Format].Hour, math_ceil(TimeLeft / 3600);
     end
 
     if (TimeLeft >= 60) then
-      return Lookup[Format].Minute, ceil(TimeLeft / 60);
+      return Lookup[Format].Minute, math_ceil(TimeLeft / 60);
     end
 
     return Lookup[Format].Second, TimeLeft;

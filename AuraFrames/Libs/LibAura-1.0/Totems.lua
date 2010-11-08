@@ -21,6 +21,11 @@ local Module = LibAura:NewModule(Major, Minor);
 
 if not Module then return; end -- No upgrade needed.
 
+-- Import used global references into the local namespace.
+local pairs, ipairs, tinsert = pairs, ipairs, tinsert;
+local UnitName, GetMultiCastTotemSpells, GetSpellInfo, GetTotemInfo = UnitName, GetMultiCastTotemSpells, GetSpellInfo, GetTotemInfo;
+
+
 -- Make sure that we dont have old unit/types if we upgrade.
 LibAura:UnregisterModuleSource(Module, nil, nil);
 
@@ -207,7 +212,7 @@ function Module:UpdateTotemSpells()
     
     for _, SpellId in ipairs(Spells) do
       
-      Name, _, Icon = GetSpellInfo(SpellId);
+      local Name, _, Icon = GetSpellInfo(SpellId);
       
       self.TotemSpells[i][SpellId] = {Name = Name, Match = "^" .. Name, Icon = Icon};
       
@@ -245,7 +250,7 @@ function Module:Update()
   
     local Aura = self.db[i];
   
-    _, TotemName, StartTime, Duration = GetTotemInfo(i);
+    local _, TotemName, StartTime, Duration = GetTotemInfo(i);
     
     if TotemName and TotemName ~= "" then
     

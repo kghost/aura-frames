@@ -27,14 +27,17 @@ LibAura:UnregisterModuleSource(Module, nil, nil);
 LibAura:RegisterModuleSource(Module, "player", "INTERNALCOOLDOWNITEM");
 LibAura:RegisterModuleSource(Module, "player", "INTERNALCOOLDOWNTALENT");
 
--- Import most used functions into the local namespace.
+-- Import used global references into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
 local fmt, tostring = string.format, tostring;
-local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
+local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetTime = GetTime;
+local GetTime, UnitName, GetItemInfo, GetSpellInfo = GetTime, UnitName, GetItemInfo, GetSpellInfo;
 
+-- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
+-- List them here for Mikk's FindGlobals script
+-- GLOBALS: LibStub
 
 -- Internal db used for storing auras, spellbooks and spell history.
 Module.db = Module.db or {};

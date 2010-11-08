@@ -20,6 +20,10 @@ local Module = LibAura:NewModule(Major, Minor);
 
 if not Module then return; end -- No upgrade needed.
 
+-- Import used global references into the local namespace.
+local pairs, ipairs, next, tinsert, tremove, GetTime = pairs, ipairs, next, tinsert, tremove, GetTime;
+local sub = string.sub;
+
 local AuraPool =  {};
 
 -- The time an old aura is availible.
@@ -50,7 +54,7 @@ end
 -----------------------------------------------------------------
 function Module:ModuleSourceCreated(Unit, Type, Requester)
 
-  if Requestor == Module then
+  if Requester == Module then
     return;
   end
   
@@ -64,7 +68,7 @@ end
 -----------------------------------------------------------------
 function Module:ModuleSourceDestroyed(Unit, Type, Requester)
   
-  if Requestor == Module then
+  if Requester == Module then
     return;
   end
   
@@ -123,7 +127,7 @@ function Module:ActivateSource(Unit, Type)
 
   self.db[Unit][Type] = {};
   
-  LibAura:RegisterObjectSource(self, Unit, string.sub(Type, 1, -4));
+  LibAura:RegisterObjectSource(self, Unit, sub(Type, 1, -4));
   
 end
 
@@ -132,7 +136,7 @@ end
 -----------------------------------------------------------------
 function Module:DeactivateSource(Unit, Type)
 
-  LibAura:UnregisterObjectSource(self, Unit, string.sub(Type, 1, -3));
+  LibAura:UnregisterObjectSource(self, Unit, sub(Type, 1, -3));
   
   if not self.db[Unit] then
     return;
@@ -187,7 +191,7 @@ end
 -----------------------------------------------------------------
 function Module:AuraOld(Aura)
 
-  if not self.db[NewAura.Unit] or not self.db[NewAura.Unit][NewAura.Type] then
+  if not self.db[Aura.Unit] or not self.db[Aura.Unit][Aura.Type] then
     return;
   end
 

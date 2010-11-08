@@ -1,13 +1,16 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
--- Import most used functions into the local namespace.
+-- Import used global references into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
 local fmt, tostring = string.format, tostring;
 local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetTime = GetTime;
+local GetTime, CreateFrame, LoadAddOn, _G, LibStub = GetTime, CreateFrame, LoadAddOn, _G, LibStub;
 
+-- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
+-- List them here for Mikk's FindGlobals script
+-- GLOBALS: InterfaceOptions_AddCategory, InterfaceOptionsFrame, HideUIPanel, GameMenuFrame
 
 -- By default we are not in config mode.
 AuraFrames.ConfigMode = false;

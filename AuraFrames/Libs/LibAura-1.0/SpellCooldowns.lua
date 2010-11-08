@@ -25,14 +25,13 @@ LibAura:RegisterModuleSource(Module, "player", "SPELLCOOLDOWN");
 LibAura:RegisterModuleSource(Module, "pet", "SPELLCOOLDOWN");
 
 
--- Import most used functions into the local namespace.
+-- Import used global references into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
 local fmt, tostring = string.format, tostring;
-local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
+local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetTime = GetTime;
-
+local GetTime, GetSpellBookItemInfo, UnitName, GetSpellInfo, GetSpellCooldown = GetTime, GetSpellBookItemInfo, UnitName, GetSpellInfo, GetSpellCooldown;
 
 -- Internal db used for storing auras, spellbooks and spell history.
 Module.db = Module.db or {};
@@ -194,11 +193,9 @@ function Module:UpdateSpellBook(Unit)
     Aura.Id = Unit.."SPELLCOOLDOWN"..Unit..SpellId;
     Aura.Old = nil;
     
-    if not Aura.Name then
-    
-      af:Print("ERROR: The spell id "..SpellId.." doesn't seem to have a spell name! Please report this to the addon author.");
-    
-    end
+    --if not Aura.Name then
+    --  af:Print("ERROR: The spell id "..SpellId.." doesn't seem to have a spell name! Please report this to the addon author.");
+    --end
     
     i = i + 1
   end
@@ -252,7 +249,7 @@ end
 -----------------------------------------------------------------
 function Module:ScanSpellCooldowns(Unit)
 
-  i = 1;
+  local i = 1;
 
   while true do
   

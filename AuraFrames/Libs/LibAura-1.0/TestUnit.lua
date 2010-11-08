@@ -26,13 +26,14 @@ LibAura:UnregisterModuleSource(Module, nil, nil);
 LibAura:RegisterModuleSource(Module, "test", "HELPFUL");
 LibAura:RegisterModuleSource(Module, "test", "HARMFUL");
 
--- Import most used functions into the local namespace.
+-- Import used global references into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
 local fmt, tostring = string.format, tostring;
-local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
+local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetTime = GetTime;
+local GetTime, UnitName, GetSpellInfo = GetTime, UnitName, GetSpellInfo;
+
 
 -- Internal db used for storing auras.
 Module.db = Module.db or {};
@@ -87,7 +88,7 @@ function Module:ActivateSource(Unit, Type)
   
   self.db[Type] = {};
   
-  local CurrentTime = GetTime();
+  local CurrentTime, _ = GetTime();
   
   for SpellId, Options in pairs(Module.TestData[Type]) do
   
@@ -110,7 +111,7 @@ function Module:ActivateSource(Unit, Type)
     Aura.Name, _, Aura.Icon = GetSpellInfo(SpellId);
     Aura.Id = Aura.Unit..Aura.Name..Aura.ExpirationTime;
     
-    table.insert(self.db[Type], Aura);
+    tinsert(self.db[Type], Aura);
     
     LibAura:FireAuraNew(Aura);
   

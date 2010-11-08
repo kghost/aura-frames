@@ -1,6 +1,9 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local LBF = LibStub("LibButtonFacade", true);
 
+-- Import used global references into the local namespace.
+local rawset = rawset;
+
 
 -----------------------------------------------------------------
 -- Function CreateButtonFacadeGroup

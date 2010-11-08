@@ -1,12 +1,18 @@
 local AuraFrames = LibStub("AceAddon-3.0"):NewAddon("AuraFrames", "AceConsole-3.0");
 
--- Import most used functions into the local namespace.
+-- Import used global references into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
 local fmt, tostring = string.format, tostring;
 local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetTime = GetTime;
+local GetTime, StaticPopupDialogs, StaticPopup_Show = GetTime, StaticPopupDialogs, StaticPopup_Show;
+
+-- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
+-- List them here for Mikk's FindGlobals script
+-- GLOBALS: BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs
+
+BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs
 
 -- Expose the addon to the global namespace for debugging.
 _G["AuraFrames"] = AuraFrames;

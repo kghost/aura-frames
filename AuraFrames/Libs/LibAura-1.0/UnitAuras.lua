@@ -64,13 +64,14 @@ local Module = LibAura:NewModule(Major, Minor);
 if not Module then return; end -- No upgrade needed.
 
 
--- Import most used functions into the local namespace.
+-- Import used global references into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
 local fmt, tostring = string.format, tostring;
 local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
 local GetTime = GetTime;
+local UnitAura, UnitName = UnitAura, UnitName;
 
 
 -----------------------------------------------------------------
@@ -403,7 +404,7 @@ function Module:ScanUnitAurasChanges(Unit, Type)
       
       i = i + 1;
     
-    elseif Auras[j].Name ~= Name or Auras[j].Caster ~= Caster or Auras[j].ExpirationTime ~= ExpirationTime then -- removed aura
+    elseif Auras[j].Name ~= Name or Auras[j].CasterUnit ~= CasterUnit or Auras[j].ExpirationTime ~= ExpirationTime then -- removed aura
     
       Auras[j].Index = 0;
       
@@ -480,7 +481,7 @@ function Module:ScanUnitAuras(Unit, Type)
 
   while true do
 
-    local Name, _, Icon, Count, Classification, Duration, ExpirationTime, CasterUnit, _, _, SpellId = UnitAura(Unit, i, Type);
+    local Name, _, Icon, Count, Classification, Duration, ExpirationTime, CasterUnit, IsStealable, _, SpellId = UnitAura(Unit, i, Type);
     
     if not Name then break end;
     
@@ -488,7 +489,7 @@ function Module:ScanUnitAuras(Unit, Type)
     
     for j = 1, #Auras do
     
-      if Auras[j].Name == Name and Auras[j].Caster == Caster and Auras[j].ExpirationTime == ExpirationTime then
+      if Auras[j].Name == Name and Auras[j].CasterUnit == CasterUnit and Auras[j].ExpirationTime == ExpirationTime then
         
         Found = true;
         Auras[j].Scanned = true;

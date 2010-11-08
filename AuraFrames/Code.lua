@@ -1,5 +1,14 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
+-- Import used global references into the local namespace.
+local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
+local fmt, tostring = string.format, tostring;
+local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
+local loadstring, assert, error = loadstring, assert, error;
+local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
+local GetTime = GetTime;
+local tolower, toupper, tonumber, gsub = string.lower, string.upper, tonumber, string.gsub;
+
 
 -----------------------------------------------------------------
 -- Function BuildValue
@@ -10,7 +19,7 @@ function AuraFrames:BuildValue(RequestedType, Value)
   
     if RequestedType == "String" then
     
-      local ValueText = string.gsub(Value, "\"", "\\\"");
+      local ValueText = gsub(Value, "\"", "\\\"");
     
       return "\""..ValueText.."\"";
     
@@ -20,7 +29,7 @@ function AuraFrames:BuildValue(RequestedType, Value)
     
     elseif RequestedType == "Boolean" then
     
-      if string.lower(Value) == "true" or string.lower(Value) == "on" or string.lower(Value) == "yes" or tonumber(Value) == 1 then
+      if tolower(Value) == "true" or tolower(Value) == "on" or tolower(Value) == "yes" or tonumber(Value) == 1 then
         return "true";
       else
         return "false";

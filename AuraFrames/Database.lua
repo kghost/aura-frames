@@ -1,6 +1,6 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
--- Import most used functions into the local namespace.
+-- Import used global references into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
 local fmt, tostring = string.format, tostring;
 local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
@@ -171,7 +171,7 @@ function AuraFrames:CopyDatabaseDefaults(Source, Destination)
       
         Destination[Key] = Value;
       
-      elseif type(Destination[k]) == "table" then
+      elseif type(Destination[Key]) == "table" then
       
         self:CopyDatabaseDefaults(Value, Destination[Key]);
       

@@ -23,14 +23,18 @@ LibAura:UnregisterModuleSource(Module, nil, nil);
 -- Register the the provided sources.
 LibAura:RegisterModuleSource(Module, "player", "WEAPON");
 
-
--- Import most used functions into the local namespace.
+-- Import used global references into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
 local fmt, tostring = string.format, tostring;
 local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetTime = GetTime;
+local GetTime, UnitName, CreateFrame, GetInventoryItemTexture, GetWeaponEnchantInfo = GetTime, UnitName, CreateFrame, GetInventoryItemTexture, GetWeaponEnchantInfo;
+local ceil, abs = ceil, abs;
+
+-- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
+-- List them here for Mikk's FindGlobals script
+-- GLOBALS: UIParent
 
 
 -----------------------------------------------------------------
@@ -202,14 +206,14 @@ end
 -----------------------------------------------------------------
 -- Function GetWeaponEnchantName
 -----------------------------------------------------------------
-function Module:GetWeaponEnchantName(SlotId)
+function Module:GetWeaponEnchantName(SlotId)s
 
-   self.ScanTooltip:SetOwner(UIParent, "ANCHOR_NONE")
-   self.ScanTooltip:SetInventoryItem("player", SlotId)
+   self.ScanTooltip:SetOwner(UIParent, "ANCHOR_NONE");
+   self.ScanTooltip:SetInventoryItem("player", SlotId);
 
    for i = 1, self.ScanTooltip:NumLines() do
 
-      local TextObject = getglobal("LibAura-1.0_ScanTooltipTextLeft"..i);
+      local TextObject = _G["LibAura-1.0_ScanTooltipTextLeft"..i];
       if TextObject then
         
         local Text = TextObject:GetText();
@@ -217,15 +221,15 @@ function Module:GetWeaponEnchantName(SlotId)
         local EnchantText = Text:match("^(.+) %(%d+ min%)$") or Text:match("^(.+) %(%d+ sec%)$") or Text:match("^(.+) %(%d+ hour%)$");
 
         if EnchantText then
-           self.ScanTooltip:Hide()
-           return EnchantText
+           self.ScanTooltip:Hide();
+           return EnchantText;
         end
         
       end
 
    end
 
-   self.ScanTooltip:Hide()
+   self.ScanTooltip:Hide();
    
    return "";
 

@@ -19,6 +19,9 @@ local LibAura, OldMinor = LibStub(MAJOR);
 -- We  bail out if the libary is having a higher minor then we are.
 if OldMinor > MINOR then return; end
 
+-- Import used global references into the local namespace.
+local type = type;
+
 LibAura.Prototype = LibAura.Prototype or {};
 
 
