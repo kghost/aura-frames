@@ -9,7 +9,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 165;
+AuraFrames.DatabaseVersion = 167;
 
 
 --[[
@@ -65,6 +65,14 @@ AuraFrames.DatabaseVersion = 165;
   
   Version 165:
     Added support for coloring the background of the texture and button in the bar container. Settings defaults.
+  
+  Version 166:
+    Bar container can now hide the aura name, set default to show when upgrading.
+    Bar texture can now stand still or move.
+  
+  Version 167:
+    Bar container new: TextureBackgroundUseTexture, TextureBackgroundUseBarColor,
+    TextureBackgroundOpacity and ButtonBackgroundOpacity.
   
 ]]--
 
@@ -361,6 +369,30 @@ function AuraFrames:DatabaseUpgrade()
         Container.Layout.TextureBackgroundColor = {0, 0, 0, 0.8};
         Container.Layout.ButtonBackgroundColor = {0, 0, 0, 0.8};
         Container.Layout.ButtonBackgroundUseBar = true;
+        
+      end
+    
+    end
+    
+    if self.db.profile.DbVersion < 166 then
+    
+      if Container.Type == "BarContainer" then
+      
+        Container.Layout.ShowAuraName = true;
+        Container.Layout.BarTextureMove = false;
+        
+      end
+    
+    end
+    
+    if self.db.profile.DbVersion < 167 then
+    
+      if Container.Type == "BarContainer" then
+      
+        Container.Layout.TextureBackgroundUseTexture = false;
+        Container.Layout.TextureBackgroundUseBarColor = false;
+        Container.Layout.TextureBackgroundOpacity = 1;
+        Container.Layout.ButtonBackgroundOpacity = 1;
         
       end
     

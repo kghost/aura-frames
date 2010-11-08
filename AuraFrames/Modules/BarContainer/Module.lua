@@ -12,7 +12,7 @@ local GetTime = GetTime;
 
 -- Module settings
 Module.MaxBars = 40;
-Module.BarHeight = 24;
+Module.BarHeight = 36;
 
 
 -- List that contains the function prototypes for container objects.
@@ -96,8 +96,12 @@ function Module:GetConfigDefaults()
       TextSize = 11,
       TextColor = {1, 1, 1, 1},
       TextureBackgroundColor = {0, 0, 0, 0.8},
+      TextureBackgroundUseTexture = false,
+      TextureBackgroundUseBarColor = false,
+      TextureBackgroundOpacity = 1,
       ButtonBackgroundColor = {0, 0, 0, 0.8},
       ButtonBackgroundUseBar = true,
+      ButtonBackgroundOpacity = 1,
       SortOrder = "Duration",
       ShowTooltip = true,
       Clickable = true,
@@ -106,6 +110,7 @@ function Module:GetConfigDefaults()
       TooltipShowSpellId = false,
       TooltipShowClassification = false,
       BarTexture = "BantoBar",
+      BarTextureMove = true;
       BarDirection = "LEFTSHRINK",
       Icon = "LEFT",
     },

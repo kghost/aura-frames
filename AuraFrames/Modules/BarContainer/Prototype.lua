@@ -48,12 +48,41 @@ local function BarOnUpdate(Container, Bar, Elapsed)
     
     if TimeLeft < Container.Config.Layout.BarMaxTime then
     
+      local Part = TimeLeft / Container.Config.Layout.BarMaxTime;
+    
       if Container.Shrink then
         Bar.Texture:SetWidth((Container.WidthPerSecond * TimeLeft) + 1.0);
       else
         Bar.Texture:SetWidth(Container.BarWidth - (Container.WidthPerSecond * TimeLeft));
       end
-    
+      
+      local Part = TimeLeft / Container.Config.Layout.BarMaxTime;
+      local Left, Right;
+      
+      if Container.Config.Layout.BarDirection == "LEFTGROW" then
+
+        Left, Right = 0, 1 - Part; -- k
+
+      elseif Container.Config.Layout.BarDirection == "RIGHTGROW" then
+
+        Left, Right = 1 - Part, 0;
+
+      elseif Container.Config.Layout.BarDirection == "LEFTSHRINK" then
+
+        Left, Right = 0, Part; -- k
+
+      else -- RIGHTSHRINK
+
+        Left, Right = Part, 0;
+
+      end
+      
+      if Container.Config.Layout.BarTextureMove then
+        Left, Right = Right, Left;
+      end
+      
+      Bar.Texture:SetTexCoord(Left, Right, 0, 1);
+      
     end
   
   end
@@ -169,6 +198,12 @@ function Prototype:UpdateBar(Bar)
   
   Bar.Texture:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
   
+  if self.Config.Layout.TextureBackgroundUseTexture == true then
+    Bar.Texture.Background:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
+  else
+    Bar.Texture.Background:SetTexture(1, 1, 1, 1);
+  end
+  
   if self.Config.Layout.ShowDuration and Aura.ExpirationTime > 0 then
     
     Bar.Duration:Show();
@@ -178,16 +213,20 @@ function Prototype:UpdateBar(Bar)
     Bar.Duration:Hide();
   
   end
+  
+  local Text = {};
+  
+  if self.Config.Layout.ShowAuraName then
+    tinsert(Text, Aura.Name);
+  end
 
   if self.Config.Layout.ShowCount and Aura.Count > 0 then
   
-    Bar.Text:SetText(Aura.Name.." ["..Aura.Count.."]");
+    tinsert(Text, "["..Aura.Count.."]");
   
-  else
-  
-    Bar.Text:SetText(Aura.Name);
-    
   end
+  
+  Bar.Text:SetText(tconcat(Text, " "));
   
   local Color;
   
@@ -216,10 +255,36 @@ function Prototype:UpdateBar(Bar)
   Bar.Button.Border:SetVertexColor(unpack(Color));
   Bar.Texture:SetVertexColor(unpack(Color));
   
-  Bar.Texture.Background:SetVertexColor(unpack(self.Config.Layout.TextureBackgroundColor));
+  if self.Config.Layout.TextureBackgroundUseBarColor then
+  
+    Bar.Texture.Background:SetVertexColor(Color[1], Color[2], Color[3], self.Config.Layout.TextureBackgroundOpacity);
+  
+  else
+  
+    Bar.Texture.Background:SetVertexColor(unpack(self.Config.Layout.TextureBackgroundColor));
+  
+  end
   
   if self.Config.Layout.Icon ~= "NONE" then
-    Bar.Button.Background:SetVertexColor(unpack(self.Config.Layout.ButtonBackgroundUseBar and self.Config.Layout.TextureBackgroundColor or self.Config.Layout.ButtonBackgroundColor));
+  
+    if self.Config.Layout.ButtonBackgroundUseBar == true then
+    
+      if self.Config.Layout.TextureBackgroundUseBarColor then
+      
+        Bar.Button.Background:SetVertexColor(Color[1], Color[2], Color[3], self.Config.Layout.ButtonBackgroundOpacity);
+      
+      else
+      
+        Bar.Button.Background:SetVertexColor(unpack(self.Config.Layout.TextureBackgroundColor));
+      
+      end
+    
+    else
+    
+      Bar.Button.Background:SetVertexColor(unpack(self.Config.Layout.ButtonBackgroundColor));
+    
+    end
+    
   end
   
   if self.Config.Layout.ShowTooltip then
@@ -253,6 +318,7 @@ function Prototype:UpdateBar(Bar)
   if Aura.ExpirationTime == 0 or (Aura.ExpirationTime ~= 0 and max(Aura.ExpirationTime - GetTime(), 0) > self.Config.Layout.BarMaxTime) then
     
     Bar.Texture:SetWidth(self.BarWidth);
+    Bar.Texture:SetTexCoord(0, 1, 0, 1);
     
   end
   
@@ -530,11 +596,19 @@ function Prototype:AuraChanged(Aura)
   
   local Bar = self.Bars[Aura.Id];
   
-  if Bar.Count and self.Config.Layout.ShowCount and Aura.Count > 0 then
+  local Text = {};
   
-    Bar.Text:SetText(Aura.Name.." ["..Aura.Count.."]");
-    
+  if self.Config.Layout.ShowAuraName then
+    tinsert(Text, Aura.Name);
   end
+
+  if self.Config.Layout.ShowCount and Aura.Count > 0 then
+  
+    tinsert(Text, "["..Aura.Count.."]");
+  
+  end
+  
+  Bar.Text:SetText(tconcat(Text, " "));
   
   self.Order:Update(Bar);
 

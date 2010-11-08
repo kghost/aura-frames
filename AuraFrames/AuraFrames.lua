@@ -24,14 +24,6 @@ _G["af"] = AuraFrames;
 -----------------------------------------------------------------
 function AuraFrames:OnInitialize()
 
-  self:DatabaseInitialize();
-
-  self:CheckBlizzardAuraFrames();
-  
-  self:RegisterChatCommand("af", "OpenConfigDialog");
-  
-  self:RegisterBlizzardOptions();
-
 end
 
 
@@ -39,6 +31,14 @@ end
 -- Function OnEnable
 -----------------------------------------------------------------
 function AuraFrames:OnEnable()
+
+  self:DatabaseInitialize();
+
+  self:CheckBlizzardAuraFrames();
+  
+  self:RegisterChatCommand("af", "OpenConfigDialog");
+  
+  self:RegisterBlizzardOptions();
 
   self:CreateAllContainers();
 
