@@ -152,7 +152,7 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
   
   Content:AddSpace();
   
-  Content:AddHeader("Border colors");
+  Content:AddHeader("Border Colors");
 
   local ContentColors = AceGUI:Create("SimpleGroup");
   ContentColors:SetRelativeWidth(1);

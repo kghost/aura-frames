@@ -26,12 +26,10 @@ function Module:ContentLayout(ContainerId)
       value = "Text",
       text = "Text",
     },
---[[
     {
       value = "SkinAndColors",
       text = "Skin and Colors",
     },
-]]--
   });
   Tab:SetCallback("OnGroupSelected", function(_, _, Value)
 

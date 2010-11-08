@@ -100,7 +100,7 @@ function AuraFramesConfig:CreateWindow()
 
   self.Content = AceGUI:Create("TreeGroup");
   self.Content:SetRelativeWidth(1);
-  self.Content:SetTreeWidth(170, false);
+  self.Content:SetTreeWidth(180, false);
   self.Content:SetCallback("OnGroupSelected", function(TreeControl, Event, Group)
     
     AuraFramesConfig.Content:PauseLayout();
@@ -179,7 +179,7 @@ function AuraFramesConfig:RefreshTree()
     Containers = nil;
   end
 
-  local Tree = {
+  self.Tree = {
     { 
       value = "General",
       text = "General",
@@ -198,10 +198,8 @@ function AuraFramesConfig:RefreshTree()
     },
   };
 
-  AuraFramesConfig.Tree = Tree;
-
-  self.Content:SetTree(Tree);
-  self.Content:SetTreeWidth(170, false);
+  self.Content:SetTree(self.Tree);
+  self.Content:SetTreeWidth(180, false);
 
 end
 
@@ -234,7 +232,7 @@ function AuraFramesConfig:SelectByPath(...)
   end
   
   self.Content:RefreshTree();
-  self.Content:SetTreeWidth(170, false);
+  self.Content:SetTreeWidth(180, false);
   
 end
 
@@ -281,6 +279,10 @@ function AuraFramesConfig:Show()
 
     self:CreateWindow();
     self:RefreshTree();
+    
+    -- Expand by default the containers level.
+    self.TreeStatus.groups["Containers"] = true;
+    
     self:SelectByPath("General");
     
   else

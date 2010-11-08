@@ -2,7 +2,6 @@ local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
 local Module = AuraFramesConfig:GetModule("BarContainer");
 local AceGUI = LibStub("AceGUI-3.0");
-local LSM = LibStub("LibSharedMedia-3.0");
 
 
 -----------------------------------------------------------------
@@ -91,17 +90,6 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   end);
   SizeGroup:AddChild(BarWidth);
   
-  local BarTexture = AceGUI:Create("LSM30_Font");
-  BarTexture:SetList(LSM:HashTable("statusbar"));
-  BarTexture:SetLabel("Bar Texture");
-  BarTexture:SetValue(LayoutConfig.BarTexture);
-  BarTexture:SetCallback("OnValueChanged", function(_, _, Value)
-    LayoutConfig.BarTexture = Value;
-    ContainerInstance:Update("LAYOUT");
-    BarTexture:SetValue(Value);
-  end);
-  SizeGroup:AddChild(BarTexture);
-
   Content:AddSpace();
   Content:AddHeader("Spacing");
   

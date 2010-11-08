@@ -1,8 +1,9 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
 local Module = AuraFramesConfig:GetModule("BarContainer");
-local LBF = LibStub("LibButtonFacade", true);
 local AceGUI = LibStub("AceGUI-3.0");
+local LBF = LibStub("LibButtonFacade", true);
+local LSM = LibStub("LibSharedMedia-3.0");
 
 
 -----------------------------------------------------------------
@@ -125,11 +126,27 @@ end
 -----------------------------------------------------------------
 function Module:ContentLayoutSkinAndColors(Content, ContainerId)
 
+  local LayoutConfig = AuraFrames.db.profile.Containers[ContainerId].Layout;
   local ContainerInstance = AuraFrames.Containers[ContainerId];
 
   Content:SetLayout("List");
 
   Content:AddText("Skin and Colors\n", GameFontNormalLarge);
+  
+  Content:AddHeader("Bar texture");
+  
+  local BarTexture = AceGUI:Create("LSM30_Statusbar");
+  BarTexture:SetList(LSM:HashTable("statusbar"));
+  BarTexture:SetLabel("Bar Texture");
+  BarTexture:SetValue(LayoutConfig.BarTexture);
+  BarTexture:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarTexture = Value;
+    ContainerInstance:Update("LAYOUT");
+    BarTexture:SetValue(Value);
+  end);
+  Content:AddChild(BarTexture);
+  
+  Content:AddSpace();
 
   Content:AddHeader("ButtonFacade");
   
@@ -152,7 +169,7 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
   
   Content:AddSpace();
   
-  Content:AddHeader("Border colors");
+  Content:AddHeader("Border and Bar Colors");
 
   local ContentColors = AceGUI:Create("SimpleGroup");
   ContentColors:SetRelativeWidth(1);
@@ -160,5 +177,46 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
   AuraFramesConfig:EnhanceContainer(ContentColors);
   
   ColorContent(ContentColors, ContainerId);
+  
+  Content:AddSpace();
+  
+  Content:AddHeader("Background Colors");
+  
+  local BackgroundGroup = AceGUI:Create("SimpleGroup");
+  BackgroundGroup:SetLayout("Flow");
+  BackgroundGroup:SetRelativeWidth(1);
+  Content:AddChild(BackgroundGroup);
+  
+  local ColorBarBackground = AceGUI:Create("ColorPicker");
+  ColorBarBackground:SetRelativeWidth(1);
+  ColorBarBackground:SetHasAlpha(true);
+  ColorBarBackground:SetColor(unpack(LayoutConfig.TextureBackgroundColor));
+  ColorBarBackground:SetLabel("Bar Background");
+  ColorBarBackground:SetCallback("OnValueChanged", function(_, _, ...)
+    LayoutConfig.TextureBackgroundColor = {...};
+    ContainerInstance:Update("LAYOUT");
+  end);
+  BackgroundGroup:AddChild(ColorBarBackground);
+
+  local ColorButtonBackground = AceGUI:Create("ColorPicker");
+  ColorButtonBackground:SetHasAlpha(true);
+  ColorButtonBackground:SetDisabled(LayoutConfig.ButtonBackgroundUseBar);
+  ColorButtonBackground:SetColor(unpack(LayoutConfig.ButtonBackgroundColor));
+  ColorButtonBackground:SetLabel("Button Background");
+  ColorButtonBackground:SetCallback("OnValueChanged", function(_, _, ...)
+    LayoutConfig.ButtonBackgroundColor = {...};
+    ContainerInstance:Update("LAYOUT");
+  end);
+  BackgroundGroup:AddChild(ColorButtonBackground);
+  
+  local ColorUseSame = AceGUI:Create("CheckBox");
+  ColorUseSame:SetLabel("Use the same color for button as bar");
+  ColorUseSame:SetValue(LayoutConfig.ButtonBackgroundUseBar);
+  ColorUseSame:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.ButtonBackgroundUseBar = Value;
+    ColorButtonBackground:SetDisabled(Value);
+    ContainerInstance:Update("LAYOUT");
+  end);
+  BackgroundGroup:AddChild(ColorUseSame);
 
 end
