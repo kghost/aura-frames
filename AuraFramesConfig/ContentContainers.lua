@@ -40,7 +40,7 @@ local function CreateContainerConfig()
     return
   end
   
-  ContainerId = AuraFrames:CreateNewContainer(ContainerName, ContainerType);
+  local ContainerId = AuraFrames:CreateNewContainer(ContainerName, ContainerType);
 
   if not ContainerId then
     AuraFramesConfig:Close();

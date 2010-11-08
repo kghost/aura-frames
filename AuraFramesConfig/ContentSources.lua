@@ -1,6 +1,7 @@
 local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AceGUI = LibStub("AceGUI-3.0");
+local LibAura = LibStub("LibAura-1.0");
 
 local ExpertMode = false;
 

@@ -1,3 +1,4 @@
+local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
 local Module = AuraFramesConfig:GetModule("BarContainer");
 local LBF = LibStub("LibButtonFacade", true);
@@ -79,7 +80,7 @@ local function ColorContent(Content, ContainerId)
   ColorBuff:SetLabel("Buff");
   ColorBuff:SetCallback("OnValueChanged", function(_, _, ...)
     ColorConfig.Buff = {...};
-    Container:Update("LAYOUT");
+    ContainerInstance:Update("LAYOUT");
   end);
   BorderGroup:AddChild(ColorBuff);
 

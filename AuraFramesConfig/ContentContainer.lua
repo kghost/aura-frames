@@ -9,7 +9,7 @@ local CopySettingsFrom = "";
 -----------------------------------------------------------------
 -- Function DeepCopy
 -----------------------------------------------------------------
-function DeepCopy(object)
+local function DeepCopy(object)
 
   local lookup_table = {}
 
@@ -35,7 +35,7 @@ end
 -----------------------------------------------------------------
 -- Local Function SetContainerEnabled
 -----------------------------------------------------------------
-function SetContainerEnabled(Id, Enabled)
+local function SetContainerEnabled(Id, Enabled)
   
   if not AuraFrames.db.profile.Containers[Id] or AuraFrames.db.profile.Containers[Id].Enabled == Enabled then
     return;
@@ -59,7 +59,7 @@ end
 -----------------------------------------------------------------
 -- Function CopyContainerConfig
 -----------------------------------------------------------------
-function CopyContainerConfig(Id)
+local function CopyContainerConfig(Id)
 
   if not AuraFrames.db.profile.Containers[Id] or not AuraFrames.db.profile.Containers[CopySettingsFrom] then
     AuraFrames:Message("Not a valid destination or source container");

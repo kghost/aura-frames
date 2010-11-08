@@ -203,7 +203,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
             Value:SetWidth(150);
             Value:SetCallback("OnTextChanged", function(_, _, Text)
               Rule.Args[ValueType] = Text;
-              Filter:ApplyChange();
+              ApplyChange(ContainerId);
             end);
             Container:AddChild(Value);
           
