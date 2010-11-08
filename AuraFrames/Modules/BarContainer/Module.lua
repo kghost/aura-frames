@@ -91,6 +91,7 @@ function Module:GetConfigDefaults()
       ShowDuration = true,
       DurationLayout = "ABBREVSPACE",
       ShowCount = true,
+      ShowAuraName = true,
       TextOutline = "OUTLINE",
       TextMonochrome = false,
       TextSize = 11,
