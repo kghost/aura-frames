@@ -361,7 +361,7 @@ function AuraFramesConfig:ContentOrderRefresh(Content, ContainerId)
     CheckBoxExpert:SetCallback("OnValueChanged", function(_, _, Value)
 
       AuraFramesConfig:Close();
-      AuraFrames:Confirm("Are you sure you want to turn of expert mode? You will lose your custom rules!", function(Result)
+      AuraFrames:Confirm("Are you sure you want to turn off expert mode? You will lose your custom rules!", function(Result)
         if Result == true then
           OrderConfig.Expert = false;
           OrderConfig.Rules = {};
@@ -386,6 +386,7 @@ function AuraFramesConfig:ContentOrderRefresh(Content, ContainerId)
     for Key, Definition in pairs(AuraFrames.OrderPredefined) do
 
       local CheckBoxPredefined = AceGUI:Create("CheckBox");
+      CheckBoxPredefined:SetType("radio");
       CheckBoxPredefined.Order = OrderPredefinedConfig[Key].Order
       CheckBoxPredefined:SetValue(OrderConfig.Predefined == Key);
       CheckBoxPredefined:SetRelativeWidth(1);
@@ -395,6 +396,7 @@ function AuraFramesConfig:ContentOrderRefresh(Content, ContainerId)
       
         OrderConfig.Predefined = Key;
         ApplyChange(ContainerId);
+        AuraFramesConfig:ContentOrderRefresh(Content, ContainerId);
 
       end);
       

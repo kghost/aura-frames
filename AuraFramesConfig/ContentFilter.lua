@@ -383,7 +383,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
     CheckBoxExpert:SetLabel("Expert Mode");
     CheckBoxExpert:SetCallback("OnValueChanged", function(_, _, Value)
       AuraFramesConfig:Close();
-      AuraFrames:Confirm("Are you sure you want to turn of expert mode? You will lose your custom filters!", function(Result)
+      AuraFrames:Confirm("Are you sure you want to turn off expert mode? You will lose your custom filters!", function(Result)
         if Result == true then
           FilterConfig.Expert = false;
           FilterConfig.Groups = {};
