@@ -216,7 +216,7 @@ local function BackgroundContent(Content, ContainerId)
     end);
     BackgroundGroup:AddChild(ButtonBackgroundOpacity);
   
-  elseif LayoutConfig.TextureBackgroundUseBarColor == false and LayoutConfig.ButtonBackgroundUseBar == false then
+  elseif LayoutConfig.ButtonBackgroundUseBar == false then
 
     local ColorButtonBackground = AceGUI:Create("ColorPicker");
     ColorButtonBackground:SetHasAlpha(true);
