@@ -37,3 +37,7 @@ externals:
     AuraFramesConfig/Libs/AceGUI-3.0-Spell-EditBox:
         url: git://git.wowace.com/wow/ace-gui-3-0-spell-editbox/mainline.git
         tag: latest
+
+tools-used:
+    - findglobals
+
