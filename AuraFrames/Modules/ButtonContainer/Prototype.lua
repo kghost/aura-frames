@@ -177,7 +177,6 @@ function Prototype:UpdateButton(Button)
 
     end
     
-    
     if LBF then
       LBF:SetNormalVertexColor(Button, unpack(Color));
     end

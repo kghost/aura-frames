@@ -59,6 +59,10 @@ local function SkinCallback(_, SkinId, Gloss, Backdrop, ContainerId, Button, Col
     end
     
     db = AuraFrames.db.profile.Containers[ContainerId].Layout.ButtonFacade;
+    
+    if AuraFrames.Containers[ContainerId] then
+      AuraFrames.Containers[ContainerId]:Update("LAYOUT");
+    end
 
   end
   

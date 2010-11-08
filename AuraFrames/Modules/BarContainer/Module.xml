@@ -27,30 +27,25 @@
     </Layers>
   </Frame>
 
-  <Frame name="AuraFramesBarTemplate" drawLayer="BORDER" virtual="true" hidden="true">
+  <Frame name="AuraFramesBarTemplate" virtual="true">
     <Frames>
       <Button name="$parentButton">
         <Size x="24" y="24"/>
         <Layers>
           <Layer level="BACKGROUND">
             <Texture name="$parentIcon">
-              <TexCoords left="0.07" right="0.93" top="0.07" bottom="0.93"/>
               <Size>
                 <AbsDimension x="24" y="24"/>
               </Size>
             </Texture>
           </Layer>
           <Layer level="OVERLAY">
-            <Texture name="$parentBorder" file="Interface\Buttons\UI-ActionButton-Border" alphaMode="ADD">
+            <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">
               <Size>
                 <AbsDimension x="24" y="24"/>
               </Size>
               <Anchors>
-                <Anchor point="CENTER">
-                  <Offset>
-                    <AbsDimension x="0" y="0"/>
-                  </Offset>
-                </Anchor>
+                <Anchor point="CENTER"/>
               </Anchors>
               <TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>
             </Texture>
@@ -60,15 +55,16 @@
     </Frames>
     <Layers>
       <Layer level="BACKGROUND">
-        <Texture name="$parentBackground" setAllPoints="true">
-          <Color r="0.0" g="0.0" b="0.0" a="0.8"/>
+        <Texture name="$parentTextureBackground">
+          <Color r="1.0" g="1.0" b="1.0" a="1.0"/>
+        </Texture>
+        <Texture name="$parentButtonBackground">
+          <Color r="1.0" g="1.0" b="1.0" a="1.0"/>
+          <Size>
+            <AbsDimension x="24" y="24"/>
+          </Size>
           <Anchors>
-            <Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT">
-              <AbsDimension x="0" y="0"/>
-            </Anchor>
-            <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT">
-              <AbsDimension x="0" y="0"/>
-            </Anchor>
+            <Anchor point="CENTER" relativeTo="$parentButton" />
           </Anchors>
         </Texture>
       </Layer>
@@ -81,8 +77,8 @@
         </Texture>
       </Layer>
       <Layer level="OVERLAY">
-        <FontString name="$parentText" inherits="NumberFontNormal" justifyH="RIGHT" />
-        <FontString name="$parentDuration" inherits="NumberFontNormal" hidden="true" />
+        <FontString name="$parentText" justifyH="RIGHT" />
+        <FontString name="$parentDuration" hidden="true" />
       </Layer>
     </Layers>
   </Frame>

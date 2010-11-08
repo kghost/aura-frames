@@ -9,7 +9,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 164;
+AuraFrames.DatabaseVersion = 165;
 
 
 --[[
@@ -62,6 +62,9 @@ AuraFrames.DatabaseVersion = 164;
   
   Version 164:
     Added text font settings for bar containers.
+  
+  Version 165:
+    Added support for coloring the background of the texture and button in the bar container. Settings defaults.
   
 ]]--
 
@@ -346,6 +349,18 @@ function AuraFrames:DatabaseUpgrade()
         Container.Layout.TextMonochrome = false;
         Container.Layout.TextSize = 11;
         Container.Layout.TextColor = {1, 1, 1, 1};
+        
+      end
+    
+    end
+    
+    if self.db.profile.DbVersion < 165 then
+    
+      if Container.Type == "BarContainer" then
+      
+        Container.Layout.TextureBackgroundColor = {0, 0, 0, 0.8};
+        Container.Layout.ButtonBackgroundColor = {0, 0, 0, 0.8};
+        Container.Layout.ButtonBackgroundUseBar = true;
         
       end
     

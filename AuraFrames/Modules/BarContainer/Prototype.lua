@@ -1,8 +1,8 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:GetModule("BarContainer");
 local LibAura = LibStub("LibAura-1.0");
-local LSM = LibStub("LibSharedMedia-3.0");
 local LBF = LibStub("LibButtonFacade", true);
+local LSM = LibStub("LibSharedMedia-3.0");
 
 -- Import most used functions into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
@@ -95,6 +95,10 @@ function Prototype:Delete()
   self.Frame:UnregisterAllEvents();
   self.Frame = nil;
 
+  if self.LBFGroup then
+    self.LBFGroup:Delete(true);
+  end
+
   if self.ConfigFrame then
     self.ConfigFrame:Hide();
   end
@@ -117,25 +121,28 @@ function Prototype:UpdateBar(Bar)
   
   if self.Config.Layout.Icon == "NONE" then
     
-    Bar.Button.Icon:Hide();
+    Bar.Button:Hide();
+    Bar.Button.Background:Hide();
     
     Bar.Text:SetPoint("LEFT", Bar, "LEFT", 5, 0);
     Bar.Duration:SetPoint("RIGHT", Bar, "RIGHT", -5, 0);
     
   elseif self.Config.Layout.Icon == "LEFT" then
   
-    Bar.Button.Icon:ClearAllPoints();
-    Bar.Button.Icon:SetPoint("TOPLEFT", Bar, "TOPLEFT", 0, 0);
-    Bar.Button.Icon:Show();
+    Bar.Button:ClearAllPoints();
+    Bar.Button:SetPoint("TOPLEFT", Bar, "TOPLEFT", 0, 0);
+    Bar.Button:Show();
+    Bar.Button.Background:Show();
   
     Bar.Text:SetPoint("LEFT", Bar, "LEFT", 5 + Module.BarHeight , 0);
     Bar.Duration:SetPoint("RIGHT", Bar, "RIGHT", -5, 0);
   
   elseif self.Config.Layout.Icon == "RIGHT" then
   
-    Bar.Button.Icon:ClearAllPoints();
-    Bar.Button.Icon:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", 0, 0);
-    Bar.Button.Icon:Show();
+    Bar.Button:ClearAllPoints();
+    Bar.Button:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", 0, 0);
+    Bar.Button:Show();
+    Bar.Button.Background:Show();
   
     Bar.Text:SetPoint("LEFT", Bar, "LEFT", 5, 0);
     Bar.Duration:SetPoint("RIGHT", Bar, "RIGHT", -5 - Module.BarHeight, 0);
@@ -149,11 +156,13 @@ function Prototype:UpdateBar(Bar)
   if self.Config.Layout.BarDirection == "LEFTGROW" or self.Config.Layout.BarDirection == "LEFTSHRINK" then
   
     Bar.Texture:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
+    Bar.Texture.Background:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
     Bar.Spark:SetPoint("CENTER", Bar.Texture, "RIGHT", 0, 0);
     
   else
 
     Bar.Texture:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
+    Bar.Texture.Background:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
     Bar.Spark:SetPoint("CENTER", Bar.Texture, "LEFT", 0, 0);
   
   end
@@ -179,7 +188,40 @@ function Prototype:UpdateBar(Bar)
     Bar.Text:SetText(Aura.Name);
     
   end
+  
+  local Color;
+  
+  if Aura.Type == "HARMFUL" then
+  
+    Color = self.Config.Colors.Debuff[Aura.Classification];
 
+  elseif Aura.Type == "HELPFUL" then
+
+    Color = self.Config.Colors["Buff"];
+
+  elseif Aura.Type == "WEAPON" then
+
+    Color = self.Config.Colors["Weapon"];
+
+  else
+
+    Color = self.Config.Colors["Other"];
+
+  end
+  
+  if LBF then
+    LBF:SetNormalVertexColor(Bar.Button, unpack(Color));
+  end
+  
+  Bar.Button.Border:SetVertexColor(unpack(Color));
+  Bar.Texture:SetVertexColor(unpack(Color));
+  
+  Bar.Texture.Background:SetVertexColor(unpack(self.Config.Layout.TextureBackgroundColor));
+  
+  if self.Config.Layout.Icon ~= "NONE" then
+    Bar.Button.Background:SetVertexColor(unpack(self.Config.Layout.ButtonBackgroundUseBar and self.Config.Layout.TextureBackgroundColor or self.Config.Layout.ButtonBackgroundColor));
+  end
+  
   if self.Config.Layout.ShowTooltip then
   
     Bar:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Aura, Bar, self.TooltipOptions); end);
@@ -192,7 +234,7 @@ function Prototype:UpdateBar(Bar)
   
   end
   
-  Bar.Background:SetWidth(self.Config.Layout.BarWidth);
+  Bar.Texture.Background:SetWidth(self.Config.Layout.BarWidth);
   
   if self.Config.Layout.Clickable then
     
@@ -386,15 +428,14 @@ function Prototype:AuraNew(Aura)
     
     Bar.Text = _G[BarId.."Text"];
     Bar.Duration = _G[BarId.."Duration"];
-    Bar.Background = _G[BarId.."Background"];
     Bar.Texture = _G[BarId.."Texture"];
+    Bar.Texture.Background = _G[BarId.."TextureBackground"];
     Bar.Spark = _G[BarId.."Spark"];
     
     Bar.Button = _G[BarId.."Button"];
     Bar.Button.Icon = _G[BarId.."ButtonIcon"];
     Bar.Button.Border = _G[BarId.."ButtonBorder"];
-    
-    --Module.LBFGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border});
+    Bar.Button.Background = _G[BarId.."ButtonBackground"];
     
   else
   
@@ -427,6 +468,11 @@ function Prototype:AuraNew(Aura)
   self.Bars[Aura.Id] = Bar;
   self.Order:Add(Bar);
   
+  if LBF then
+    -- We Don't have count text.
+    self.LBFGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border, Count = false});
+  end
+  
   self:UpdateBar(Bar);
   
   self:UpdateAnchors();
@@ -453,7 +499,11 @@ function Prototype:AuraOld(Aura)
   -- Remove the bar from the container order list.
   self.Order:Remove(Bar);
   
-  if AuraFrames:IsTooltipOwner(Bar) then
+  if LBF then
+    self.LBFGroup:RemoveButton(Bar.Button, true);
+  end
+  
+  if AuraFrames:IsTooltipOwner(Button) then
     AuraFrames:HideTooltip();
   end
   
