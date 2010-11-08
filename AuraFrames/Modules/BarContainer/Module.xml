@@ -5,6 +5,15 @@
   <Script file="Prototype.lua" />
 
   <Frame name="AuraFramesBarContainerTemplate" parent="UIParent" frameStrata="LOW" toplevel="true" virtual="true" movable="true">
+<!--
+    <Layers>
+      <Layer level="BACKGROUND">
+        <Texture name="$parentTextureBackground">
+          <Color r="0" g="0" b="0" a="0.4"/>
+        </Texture>
+      </Layer>
+    </Layers>
+-->
   </Frame>
   
   <Frame name="AuraFramesBarContainerConfigTemplate" frameStrata="MEDIUM" toplevel="true" virtual="true" enableMouse="true">
