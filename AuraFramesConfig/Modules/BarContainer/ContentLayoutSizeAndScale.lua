@@ -24,7 +24,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   Scale:SetWidth(500);
   Scale:SetValue(LayoutConfig.Scale);
   Scale:SetLabel("The scale of the container");
-  Scale:SetSliderValues(0.5, 2, 0.01);
+  Scale:SetSliderValues(0.5, 3, 0.01);
   Scale:SetIsPercent(true);
   Scale:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.Scale = Value;
@@ -73,7 +73,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
     LEFTSHRINK = "Left, shrink",
     RIGHTSHRINK = "Right, shrink",
   });
-  DropdownBarDirection:SetLabel("Grow direction of aura's");
+  DropdownBarDirection:SetLabel("Grow direction of bars");
   DropdownBarDirection:SetValue(LayoutConfig.BarDirection);
   DropdownBarDirection:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.BarDirection = Value;
@@ -81,14 +81,25 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   end);
   SizeGroup:AddChild(DropdownBarDirection);
   
-  local BarWidth = AceGUI:Create("EditBox");
-  BarWidth:SetText(tostring(LayoutConfig.BarWidth));
+  local BarWidth = AceGUI:Create("Slider");
+  BarWidth:SetValue(LayoutConfig.BarWidth);
   BarWidth:SetLabel("Width of the bars");
-  BarWidth:SetCallback("OnEnterPressed", function(_, _, Value)
-    LayoutConfig.BarWidth = tonumber(Value);
+  BarWidth:SetSliderValues(50, 1000, 10);
+  BarWidth:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarWidth = Value;
     ContainerInstance:Update("LAYOUT");
   end);
   SizeGroup:AddChild(BarWidth);
+  
+  local TextureMove = AceGUI:Create("CheckBox");
+  TextureMove:SetLabel("Bar texture moving");
+  TextureMove:SetDescription("Is the bar texture moving or standing still.");
+  TextureMove:SetValue(LayoutConfig.BarTextureMove);
+  TextureMove:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarTextureMove = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  SizeGroup:AddChild(TextureMove);
   
   Content:AddSpace();
   Content:AddHeader("Spacing");
@@ -113,14 +124,16 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   end);
   SpacingGroup:AddChild(Space);
   
-  local BarMaxTime = AceGUI:Create("EditBox");
-  BarMaxTime:SetText(tostring(LayoutConfig.BarMaxTime));
+  local BarMaxTime = AceGUI:Create("Slider");
+  BarMaxTime:SetValue(LayoutConfig.BarMaxTime);
   BarMaxTime:SetLabel("Max Time");
-  BarMaxTime:SetCallback("OnEnterPressed", function(_, _, Value)
-    LayoutConfig.BarMaxTime = tonumber(Value);
+  BarMaxTime:SetSliderValues(1, 300, 1);
+  BarMaxTime:SetIsPercent(false);
+  BarMaxTime:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarMaxTime = Value;
     ContainerInstance:Update("LAYOUT");
   end);
   SpacingGroup:AddChild(BarMaxTime);
-
+  
 
 end

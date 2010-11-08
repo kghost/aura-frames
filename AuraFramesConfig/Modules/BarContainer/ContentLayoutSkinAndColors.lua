@@ -121,6 +121,124 @@ local function ColorContent(Content, ContainerId)
 
 end
 
+
+-----------------------------------------------------------------
+-- Local Function BackgroundContent
+-----------------------------------------------------------------
+local function BackgroundContent(Content, ContainerId)
+
+  local LayoutConfig = AuraFrames.db.profile.Containers[ContainerId].Layout;
+  local ContainerInstance = AuraFrames.Containers[ContainerId];
+
+  Content:PauseLayout();
+  Content:ReleaseChildren();
+  
+  Content:SetLayout("List");
+  
+  local BackgroundGroup = AceGUI:Create("SimpleGroup");
+  BackgroundGroup:SetLayout("Flow");
+  BackgroundGroup:SetRelativeWidth(1);
+  Content:AddChild(BackgroundGroup);
+  
+  local UseTexture = AceGUI:Create("CheckBox");
+  UseTexture:SetRelativeWidth(1);
+  UseTexture:SetLabel("Use as background the bar texture");
+  UseTexture:SetDescription("You can change the color and opacity of an texture when using this.");
+  UseTexture:SetValue(LayoutConfig.TextureBackgroundUseTexture);
+  UseTexture:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.TextureBackgroundUseTexture = Value;
+    ContainerInstance:Update("LAYOUT");
+    BackgroundContent(Content, ContainerId);
+  end);
+  BackgroundGroup:AddChild(UseTexture);
+  
+  local UseBarColor = AceGUI:Create("CheckBox");
+  UseBarColor:SetWidth(300);
+  UseBarColor:SetLabel("Use the color from the bar");
+  UseBarColor:SetDescription("The color of the main bar will also be used as background, you can still change the opacity of the background.");
+  UseBarColor:SetValue(LayoutConfig.TextureBackgroundUseBarColor);
+  UseBarColor:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.TextureBackgroundUseBarColor = Value;
+    BackgroundContent(Content, ContainerId);
+    ContainerInstance:Update("LAYOUT");
+  end);
+  BackgroundGroup:AddChild(UseBarColor);
+  
+  if LayoutConfig.TextureBackgroundUseBarColor == true then
+  
+    local TextureBackgroundOpacity = AceGUI:Create("Slider");
+    TextureBackgroundOpacity:SetValue(LayoutConfig.TextureBackgroundOpacity);
+    TextureBackgroundOpacity:SetLabel("The opacity of the texture");
+    TextureBackgroundOpacity:SetSliderValues(0, 1, 0.01);
+    TextureBackgroundOpacity:SetIsPercent(true);
+    TextureBackgroundOpacity:SetCallback("OnValueChanged", function(_, _, Value)
+      LayoutConfig.TextureBackgroundOpacity = Value;
+      ContainerInstance:Update("LAYOUT");
+    end);
+    BackgroundGroup:AddChild(TextureBackgroundOpacity);
+    
+  else
+    
+    local ColorBarBackground = AceGUI:Create("ColorPicker");
+    ColorBarBackground:SetHasAlpha(true);
+    ColorBarBackground:SetColor(unpack(LayoutConfig.TextureBackgroundColor));
+    ColorBarBackground:SetLabel("Bar Background");
+    ColorBarBackground:SetCallback("OnValueChanged", function(_, _, ...)
+      LayoutConfig.TextureBackgroundColor = {...};
+      ContainerInstance:Update("LAYOUT");
+    end);
+    BackgroundGroup:AddChild(ColorBarBackground);
+  
+  end
+  
+  local ColorUseSame = AceGUI:Create("CheckBox");
+  ColorUseSame:SetWidth(300);
+  ColorUseSame:SetLabel("Use the same color for button as bar");
+  ColorUseSame:SetDescription("This will use the background color from the normal background.");
+  ColorUseSame:SetValue(LayoutConfig.ButtonBackgroundUseBar);
+  ColorUseSame:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.ButtonBackgroundUseBar = Value;
+    ContainerInstance:Update("LAYOUT");
+    BackgroundContent(Content, ContainerId)
+  end);
+  BackgroundGroup:AddChild(ColorUseSame);
+
+  if LayoutConfig.TextureBackgroundUseBarColor == true and LayoutConfig.ButtonBackgroundUseBar == true then
+  
+    local ButtonBackgroundOpacity = AceGUI:Create("Slider");
+    ButtonBackgroundOpacity:SetValue(LayoutConfig.ButtonBackgroundOpacity);
+    ButtonBackgroundOpacity:SetLabel("The opacity of the texture");
+    ButtonBackgroundOpacity:SetSliderValues(0, 1, 0.01);
+    ButtonBackgroundOpacity:SetIsPercent(true);
+    ButtonBackgroundOpacity:SetCallback("OnValueChanged", function(_, _, Value)
+      LayoutConfig.ButtonBackgroundOpacity = Value;
+      ContainerInstance:Update("LAYOUT");
+    end);
+    BackgroundGroup:AddChild(ButtonBackgroundOpacity);
+  
+  elseif LayoutConfig.TextureBackgroundUseBarColor == false and LayoutConfig.ButtonBackgroundUseBar == false then
+
+    local ColorButtonBackground = AceGUI:Create("ColorPicker");
+    ColorButtonBackground:SetHasAlpha(true);
+    ColorButtonBackground:SetDisabled(LayoutConfig.ButtonBackgroundUseBar);
+    ColorButtonBackground:SetColor(unpack(LayoutConfig.ButtonBackgroundColor));
+    ColorButtonBackground:SetLabel("Button Background");
+    ColorButtonBackground:SetCallback("OnValueChanged", function(_, _, ...)
+      LayoutConfig.ButtonBackgroundColor = {...};
+      ContainerInstance:Update("LAYOUT");
+    end);
+    BackgroundGroup:AddChild(ColorButtonBackground);
+    
+  end
+  
+  Content:AddSpace();
+  
+  Content:ResumeLayout();
+  Content:DoLayout();
+
+end
+
+
 -----------------------------------------------------------------
 -- Function ContentLayoutSkinAndColors
 -----------------------------------------------------------------
@@ -180,43 +298,13 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
   
   Content:AddSpace();
   
-  Content:AddHeader("Background Colors");
+  Content:AddHeader("Background Texture and Colors");
   
-  local BackgroundGroup = AceGUI:Create("SimpleGroup");
-  BackgroundGroup:SetLayout("Flow");
-  BackgroundGroup:SetRelativeWidth(1);
-  Content:AddChild(BackgroundGroup);
+  local ContentBackground = AceGUI:Create("SimpleGroup");
+  ContentBackground:SetRelativeWidth(1);
+  Content:AddChild(ContentBackground);
+  AuraFramesConfig:EnhanceContainer(ContentBackground);
   
-  local ColorBarBackground = AceGUI:Create("ColorPicker");
-  ColorBarBackground:SetRelativeWidth(1);
-  ColorBarBackground:SetHasAlpha(true);
-  ColorBarBackground:SetColor(unpack(LayoutConfig.TextureBackgroundColor));
-  ColorBarBackground:SetLabel("Bar Background");
-  ColorBarBackground:SetCallback("OnValueChanged", function(_, _, ...)
-    LayoutConfig.TextureBackgroundColor = {...};
-    ContainerInstance:Update("LAYOUT");
-  end);
-  BackgroundGroup:AddChild(ColorBarBackground);
-
-  local ColorButtonBackground = AceGUI:Create("ColorPicker");
-  ColorButtonBackground:SetHasAlpha(true);
-  ColorButtonBackground:SetDisabled(LayoutConfig.ButtonBackgroundUseBar);
-  ColorButtonBackground:SetColor(unpack(LayoutConfig.ButtonBackgroundColor));
-  ColorButtonBackground:SetLabel("Button Background");
-  ColorButtonBackground:SetCallback("OnValueChanged", function(_, _, ...)
-    LayoutConfig.ButtonBackgroundColor = {...};
-    ContainerInstance:Update("LAYOUT");
-  end);
-  BackgroundGroup:AddChild(ColorButtonBackground);
-  
-  local ColorUseSame = AceGUI:Create("CheckBox");
-  ColorUseSame:SetLabel("Use the same color for button as bar");
-  ColorUseSame:SetValue(LayoutConfig.ButtonBackgroundUseBar);
-  ColorUseSame:SetCallback("OnValueChanged", function(_, _, Value)
-    LayoutConfig.ButtonBackgroundUseBar = Value;
-    ColorButtonBackground:SetDisabled(Value);
-    ContainerInstance:Update("LAYOUT");
-  end);
-  BackgroundGroup:AddChild(ColorUseSame);
+  BackgroundContent(ContentBackground, ContainerId);
 
 end

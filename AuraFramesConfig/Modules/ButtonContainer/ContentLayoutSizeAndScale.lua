@@ -24,7 +24,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   Scale:SetWidth(500);
   Scale:SetValue(LayoutConfig.Scale);
   Scale:SetLabel("The scale of the container");
-  Scale:SetSliderValues(0.5, 2, 0.01);
+  Scale:SetSliderValues(0.5, 3, 0.01);
   Scale:SetIsPercent(true);
   Scale:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.Scale = Value;

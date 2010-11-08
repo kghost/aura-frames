@@ -21,10 +21,10 @@ function Module:ContentLayoutText(Content, ContainerId)
 
   Content:AddHeader("Options");
   
-  local DurationGroup = AceGUI:Create("SimpleGroup");
-  DurationGroup:SetLayout("Flow");
-  DurationGroup:SetRelativeWidth(1);
-  Content:AddChild(DurationGroup);
+  local OptionGroup = AceGUI:Create("SimpleGroup");
+  OptionGroup:SetLayout("Flow");
+  OptionGroup:SetRelativeWidth(1);
+  Content:AddChild(OptionGroup);
   
   local ShowDuration = AceGUI:Create("CheckBox");
   ShowDuration:SetWidth(250);
@@ -36,7 +36,7 @@ function Module:ContentLayoutText(Content, ContainerId)
     ContainerInstance:Update("LAYOUT");
     Module:ContentLayoutText(Content, ContainerId)
   end);
-  DurationGroup:AddChild(ShowDuration);
+  OptionGroup:AddChild(ShowDuration);
   
   local DurationLayout = AceGUI:Create("Dropdown");
   DurationLayout:SetWidth(150);
@@ -54,87 +54,110 @@ function Module:ContentLayoutText(Content, ContainerId)
     LayoutConfig.DurationLayout = Value;
     ContainerInstance:Update("LAYOUT");
   end);
-  DurationGroup:AddChild(DurationLayout);
+  OptionGroup:AddChild(DurationLayout);
+  
+  local ShowAuraName = AceGUI:Create("CheckBox");
+  ShowAuraName:SetWidth(250);
+  ShowAuraName:SetLabel("Show aura name");
+  ShowAuraName:SetDescription("Show the spell or item name.");
+  ShowAuraName:SetValue(LayoutConfig.ShowAuraName);
+  ShowAuraName:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.ShowAuraName = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  OptionGroup:AddChild(ShowAuraName);
   
   local ShowCount = AceGUI:Create("CheckBox");
+  ShowCount:SetWidth(250);
+  ShowCount:SetDisabled(not LayoutConfig.ShowAuraName);
   ShowCount:SetLabel("Show count");
   ShowCount:SetDescription("Show the number of stacks of an aura.");
-  ShowCount:SetRelativeWidth(1);
   ShowCount:SetValue(LayoutConfig.ShowCount);
   ShowCount:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.ShowCount = Value;
     ContainerInstance:Update("LAYOUT");
   end);
-  Content:AddChild(ShowCount);
+  OptionGroup:AddChild(ShowCount);
+  
+  Content:AddSpace();
   
   Content:AddHeader("Font");
+  
+  Content:AddText("Change the font and size settings that are used for the aura name, stacks and duration.\n");
   
   local TextGroup = AceGUI:Create("SimpleGroup");
   TextGroup:SetLayout("Flow");
   TextGroup:SetRelativeWidth(1);
   Content:AddChild(TextGroup);
   
-  local DurationFont = AceGUI:Create("LSM30_Font");
-  DurationFont:SetList(LSM:HashTable("font"));
-  DurationFont:SetLabel("Font");
-  DurationFont:SetValue(LayoutConfig.TextFont);
-  DurationFont:SetCallback("OnValueChanged", function(_, _, Value)
+  local TextFont = AceGUI:Create("LSM30_Font");
+  TextFont:SetWidth(200);
+  TextFont:SetList(LSM:HashTable("font"));
+  TextFont:SetLabel("Font");
+  TextFont:SetValue(LayoutConfig.TextFont);
+  TextFont:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.TextFont = Value;
     ContainerInstance:Update("LAYOUT");
-    DurationFont:SetValue(Value);
+    TextFont:SetValue(Value);
   end);
-  TextGroup:AddChild(DurationFont);
+  TextGroup:AddChild(TextFont);
   
-  local DurationSize = AceGUI:Create("Slider");
-  DurationSize:SetValue(LayoutConfig.TextSize);
-  DurationSize:SetLabel("Font Size");
-  DurationSize:SetSliderValues(6, 30, 0.1);
-  DurationSize:SetCallback("OnValueChanged", function(_, _, Value)
+  local Space1 = AceGUI:Create("Label");
+  Space1:SetWidth(50);
+  Space1:SetText(" ");
+  TextGroup:AddChild(Space1);
+  
+  local TextSize = AceGUI:Create("Slider");
+  TextSize:SetWidth(200);
+  TextSize:SetValue(LayoutConfig.TextSize);
+  TextSize:SetLabel("Font Size");
+  TextSize:SetSliderValues(6, 30, 0.1);
+  TextSize:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.TextSize = Value;
     ContainerInstance:Update("LAYOUT");
   end);
-  TextGroup:AddChild(DurationSize);
+  TextGroup:AddChild(TextSize);
   
-  local TextOptionsGroup = AceGUI:Create("SimpleGroup");
-  TextOptionsGroup:SetLayout("Flow");
-  TextOptionsGroup:SetRelativeWidth(1);
-  Content:AddChild(TextOptionsGroup);
-  
-  local DurationOutline = AceGUI:Create("Dropdown");
-  DurationOutline:SetWidth(150);
-  DurationOutline:SetLabel("Outline");
-  DurationOutline:SetList({
+  local TextOutline = AceGUI:Create("Dropdown");
+  TextOutline:SetWidth(200);
+  TextOutline:SetLabel("Outline");
+  TextOutline:SetList({
     NONE = "None",
     OUTLINE = "Outline",
     THICKOUTLINE = "Thick Outline",
   });
-  DurationOutline:SetValue(LayoutConfig.TextOutline);
-  DurationOutline:SetCallback("OnValueChanged", function(_, _, Value)
+  TextOutline:SetValue(LayoutConfig.TextOutline);
+  TextOutline:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.TextOutline = Value;
     ContainerInstance:Update("LAYOUT");
   end);
-  TextOptionsGroup:AddChild(DurationOutline);
+  TextGroup:AddChild(TextOutline);
   
-  local DurationMonochrome = AceGUI:Create("CheckBox");
-  DurationMonochrome:SetWidth(150);
-  DurationMonochrome:SetLabel("Monochrome");
-  DurationMonochrome:SetValue(LayoutConfig.TextMonochrome);
-  DurationMonochrome:SetCallback("OnValueChanged", function(_, _, Value)
+  local Space1 = AceGUI:Create("Label");
+  Space1:SetWidth(50);
+  Space1:SetText(" ");
+  TextGroup:AddChild(Space1);
+  
+  local TextMonochrome = AceGUI:Create("CheckBox");
+  TextMonochrome:SetWidth(150);
+  TextMonochrome:SetLabel("Monochrome");
+  TextMonochrome:SetValue(LayoutConfig.TextMonochrome);
+  TextMonochrome:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.TextMonochrome = Value;
     ContainerInstance:Update("LAYOUT");
   end);
-  TextOptionsGroup:AddChild(DurationMonochrome);
+  TextGroup:AddChild(TextMonochrome);
   
-  local DurationColor = AceGUI:Create("ColorPicker");
-  DurationColor:SetWidth(150);
-  DurationColor:SetLabel("Color");
-  DurationColor:SetHasAlpha(true);
-  DurationColor:SetColor(unpack(LayoutConfig.TextColor));
-  DurationColor:SetCallback("OnValueChanged", function(_, _, ...)
+  local TextColor = AceGUI:Create("ColorPicker");
+  TextColor:SetWidth(150);
+  TextColor:SetLabel("Color");
+  TextColor:SetHasAlpha(true);
+  TextColor:SetColor(unpack(LayoutConfig.TextColor));
+  TextColor:SetCallback("OnValueChanged", function(_, _, ...)
     LayoutConfig.TextColor = {...};
     ContainerInstance:Update("LAYOUT");
   end);
-  TextOptionsGroup:AddChild(DurationColor);
+  TextGroup:AddChild(TextColor);
   
   Content:AddSpace(2);
   

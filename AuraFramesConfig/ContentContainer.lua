@@ -151,6 +151,7 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
   CheckBoxEnabled:SetCallback("OnValueChanged", function(_, _, Value)
     SetContainerEnabled(ContainerId, Value);
     AuraFramesConfig:ContentContainerRefresh(Content, ContainerId);
+    AuraFramesConfig:RefreshTree();
   end);
   Content:AddChild(CheckBoxEnabled);
   

@@ -31,6 +31,10 @@ end
 -----------------------------------------------------------------
 function Module:GetTree(ContainerId)
 
+  if AuraFrames.db.profile.Containers[ContainerId].Enabled ~= true then
+    return nil;
+  end
+
   local Tree = {
     {
       value = "Sources",
