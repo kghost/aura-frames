@@ -12,7 +12,7 @@ local GetTime, StaticPopupDialogs, StaticPopup_Show = GetTime, StaticPopupDialog
 -- List them here for Mikk's FindGlobals script
 -- GLOBALS: BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs
 
-BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs
+local BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs = BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs;
 
 -- Expose the addon to the global namespace for debugging.
 _G["AuraFrames"] = AuraFrames;

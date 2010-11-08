@@ -31,6 +31,7 @@ local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
 local GetTime, UnitName, CreateFrame, GetInventoryItemTexture, GetWeaponEnchantInfo = GetTime, UnitName, CreateFrame, GetInventoryItemTexture, GetWeaponEnchantInfo;
 local ceil, abs = ceil, abs;
+local _G, WorldFrame = _G, WorldFrame;
 
 -- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
 -- List them here for Mikk's FindGlobals script
@@ -206,7 +207,7 @@ end
 -----------------------------------------------------------------
 -- Function GetWeaponEnchantName
 -----------------------------------------------------------------
-function Module:GetWeaponEnchantName(SlotId)s
+function Module:GetWeaponEnchantName(SlotId)
 
    self.ScanTooltip:SetOwner(UIParent, "ANCHOR_NONE");
    self.ScanTooltip:SetInventoryItem("player", SlotId);
