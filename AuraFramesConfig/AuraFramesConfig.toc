@@ -22,4 +22,6 @@ ContentFilter.lua
 ContentProfiles.lua
 ContentButtonFacade.lua
 
+AceGUIContainer-AuraFramesWindow.lua
+
 Modules.xml

@@ -90,13 +90,16 @@ function AuraFramesConfig:CreateWindow()
     return;
   end
 
-  self.Window = AceGUI:Create("Window");
+  self.Window = AceGUI:Create("AuraFramesWindow");
   self.Window:Hide();
   self.Window:SetTitle("Aura Frames - Configuration");
   self.Window:SetWidth(800);
   self.Window:SetHeight(500);
   self.Window:EnableResize(false);
   self.Window:SetLayout("Fill");
+  self.Window:SetCallback("OnCollapse", function()
+    AuraFramesConfig:UnlockContainers(true);
+  end);
 
   self.Content = AceGUI:Create("TreeGroup");
   self.Content:SetRelativeWidth(1);
