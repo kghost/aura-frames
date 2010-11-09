@@ -37,7 +37,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   
   local NumberOfBars = AceGUI:Create("Slider");
   NumberOfBars:SetValue(LayoutConfig.NumberOfBars);
-  NumberOfBars:SetLabel("Horizontal Size");
+  NumberOfBars:SetLabel("Number of bars");
   NumberOfBars:SetSliderValues(1, 20, 1);
   NumberOfBars:SetIsPercent(false);
   NumberOfBars:SetCallback("OnValueChanged", function(_, _, Value)
