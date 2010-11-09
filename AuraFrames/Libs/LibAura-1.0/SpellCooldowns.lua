@@ -39,6 +39,9 @@ Module.db = Module.db or {};
 -- Number of spells to keep in the history list.
 local SpellMaxHistory = 3;
 
+-- The minimum duration of a spell cooldown
+local SpellMinimumCooldown = 2;
+
 -- Mapping type for booktypes.
 local BookType = {
   player  = BOOKTYPE_SPELL,
@@ -193,9 +196,23 @@ function Module:UpdateSpellBook(Unit)
     Aura.Id = Unit.."SPELLCOOLDOWN"..Unit..SpellId;
     Aura.Old = nil;
     
-    --if not Aura.Name then
-    --  af:Print("ERROR: The spell id "..SpellId.." doesn't seem to have a spell name! Please report this to the addon author.");
-    --end
+    if Aura.Active == false then
+    
+      local Start, Duration, Active = GetSpellCooldown(Aura.SpellId);
+      
+      if Active == 1 and Start > 0 and Duration > SpellMinimumCooldown then
+      
+        Aura.Duration = Duration;
+        Aura.ExpirationTime = Start + Duration;
+        Aura.Active = true;
+        
+        LibAura:FireAuraNew(Aura);
+        
+        tinsert(self.db[Unit].Auras, Aura);
+      
+      end
+    
+    end
     
     i = i + 1
   end
@@ -259,7 +276,7 @@ function Module:ScanSpellCooldowns(Unit)
     
     local Start, Duration, Active = GetSpellCooldown(self.db[Unit].History[i]);
     
-    if Active == 1 and Start > 0 and Duration > 2 then
+    if Active == 1 and Start > 0 and Duration > SpellMinimumCooldown then
     
       local Aura = self.db[Unit].Book[self.db[Unit].History[i]];
 
