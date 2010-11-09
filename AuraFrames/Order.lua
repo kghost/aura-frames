@@ -110,9 +110,9 @@ end
 
 
 -----------------------------------------------------------------
--- Function GetConfigDefaultsOrder
+-- Function GetDatabaseDefaultsOrder
 -----------------------------------------------------------------
-function AuraFrames:GetConfigDefaultsOrder()
+function AuraFrames:GetDatabaseDefaultsOrder()
 
   return {
     Expert = false,

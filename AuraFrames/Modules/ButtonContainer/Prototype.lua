@@ -10,13 +10,18 @@ local fmt, tostring = string.format, tostring;
 local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetTime = GetTime;
+local GetTime, CreateFrame, IsModifierKeyDown = GetTime, CreateFrame, IsModifierKeyDown;
 local math_sin, math_cos, math_floor, math_ceil = math.sin, math.cos, math.floor, math.ceil;
+local min, max = min, max;
+local _G, PI = _G, PI;
 
 local Prototype = Module.Prototype;
 
 -- Pool that contains all the current unused buttons sorted by type.
 local ButtonPool = {};
+
+-- All containers have also there own (smaller) pool.
+local ContainerButtonPoolSize = 5;
 
 -- Counters for each butten type.
 local ButtonCounter = 0;
@@ -49,7 +54,18 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
     
     local TimeLeft = max(Button.Aura.ExpirationTime - GetTime(), 0);
     
-    Button.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft));
+    if Container.Config.Layout.ShowDuration == true then
+    
+      local TimeLeftSeconds = math_ceil(TimeLeft);
+      
+      if Button.TimeLeftSeconds ~= TimeLeftSeconds then
+    
+        Button.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft));
+        Button.TimeLeftSeconds = TimeLeftSeconds;
+      
+      end
+    
+    end
     
     if Button.ExpireFlashTime and TimeLeft < Button.ExpireFlashTime then
     
@@ -111,6 +127,8 @@ function Prototype:Delete()
   self.Frame:UnregisterAllEvents();
   self.Frame = nil;
 
+  self:ReleasePool();
+
   if self.LBFGroup then
     self.LBFGroup:Delete(true);
   end
@@ -123,16 +141,37 @@ end
 
 
 -----------------------------------------------------------------
--- Function UpdateButton
+-- Function ReleasePool
 -----------------------------------------------------------------
-function Prototype:UpdateButton(Button)
+function Prototype:ReleasePool()
+
+  -- Cleanup container button pool
+  while #self.ButtonPool > 0 do
+  
+    local Button = tremove(self.ButtonPool);
+    
+    if LBF then
+      self.LBFGroup:RemoveButton(Button, true);
+    end
+  
+    Button:ClearAllPoints();
+    Button:SetParent(nil);
+    
+    -- Release the button in the general pool.
+    tinsert(ButtonPool, Button);
+  
+  end
+  
+end
+
+-----------------------------------------------------------------
+-- Function UpdateButtonDisplay
+-----------------------------------------------------------------
+function Prototype:UpdateButtonDisplay(Button)
 
   local Aura = Button.Aura;
 
-  if Button.Duration ~= nil and self.Config.Layout.ShowDuration and Aura.ExpirationTime > 0 then
-    
-    Button.Duration:ClearAllPoints();
-    Button.Duration:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.DurationPosX, self.Config.Layout.DurationPosY);
+  if Button.Duration ~= nil and self.Config.Layout.ShowDuration == true and Aura.ExpirationTime > 0 then
     
     Button.Duration:Show();
   
@@ -144,8 +183,6 @@ function Prototype:UpdateButton(Button)
 
   if Button.Count ~= nil and self.Config.Layout.ShowCount and Aura.Count > 0 then
   
-    Button.Count:ClearAllPoints();
-    Button.Count:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.CountPosX, self.Config.Layout.CountPosY);
     Button.Count:SetText(Aura.Count);
     Button.Count:Show();
     
@@ -185,9 +222,34 @@ function Prototype:UpdateButton(Button)
   
   end
   
+  ButtonOnUpdate(self, Button, 0.0);
+
+end
+
+-----------------------------------------------------------------
+-- Function UpdateButton
+-----------------------------------------------------------------
+function Prototype:UpdateButton(Button)
+
+  local Container, Aura = self, Button.Aura;
+
+  if Button.Duration ~= nil and self.Config.Layout.ShowDuration == true then
+    
+    Button.Duration:ClearAllPoints();
+    Button.Duration:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.DurationPosX, self.Config.Layout.DurationPosY);
+  
+  end
+
+  if self.Config.Layout.ShowCount then
+  
+    Button.Count:ClearAllPoints();
+    Button.Count:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.CountPosX, self.Config.Layout.CountPosY);
+    
+  end
+  
   if self.Config.Layout.ShowTooltip then
   
-    Button:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Aura, Button, self.TooltipOptions); end);
+    Button:SetScript("OnEnter", function(Button) AuraFrames:ShowTooltip(Button.Aura, Button, Container.TooltipOptions); end);
     Button:SetScript("OnLeave", function() AuraFrames:HideTooltip(); end);
   
   else
@@ -203,7 +265,7 @@ function Prototype:UpdateButton(Button)
     Button:RegisterForClicks("RightButtonUp");
     Button:SetScript("OnClick", ButtonOnClick);
     
-    Button:HookScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Button, Aura); end);
+    Button:HookScript("OnEnter", function(Button) AuraFrames:SetCancelAuraFrame(Button, Button.Aura); end);
     
   else
     
@@ -212,7 +274,7 @@ function Prototype:UpdateButton(Button)
     
   end
   
-  ButtonOnUpdate(self, Button, 0.0);
+  self:UpdateButtonDisplay(Button);
 
 end
 
@@ -279,6 +341,9 @@ function Prototype:Update(...)
     for _, Button in pairs(self.Buttons) do
       self:UpdateButton(Button);
     end
+    
+    -- We have buttons in the container pool that doesn't match the settings anymore. Release them into the general pool.
+    self:ReleasePool();
   
     if Changed ~= "ALL" then
       self:UpdateAnchors();
@@ -379,53 +444,65 @@ function Prototype:AuraNew(Aura)
   
   end
 
-  -- Pop the last button out the pool.
-  local Button = table.remove(ButtonPool);
+  -- Pop the last button out the container pool.
+  local Button = tremove(self.ButtonPool);
+  local FromContainerPool = Button and true or false;
+  
+  if not Button then
+  
+    -- Try the general pool.
+    Button = tremove(ButtonPool);
+    
+    if not Button then
+      -- No buttons in any pool. Let's make a new button.
+    
+      ButtonCounter = ButtonCounter + 1;
+    
+      local ButtonId = "AuraFramesButton"..ButtonCounter;
 
-  local ButtonId;
-  
-  if Button == nil then -- No buttons left in the pool
-  
-    ButtonCounter = ButtonCounter + 1;
-  
-    ButtonId = "AuraFramesButton"..ButtonCounter;
-
-    Button = CreateFrame("Button", ButtonId, self.Frame, "AuraFramesButtonTemplate");
+      Button = CreateFrame("Button", ButtonId, self.Frame, "AuraFramesButtonTemplate");
+      
+      Button.Duration = _G[ButtonId.."Duration"];
+      Button.Icon = _G[ButtonId.."Icon"];
+      Button.Count = _G[ButtonId.."Count"];
+      Button.Border = _G[ButtonId.."Border"];
     
-    Button.Duration = _G[ButtonId.."Duration"];
-    Button.Icon = _G[ButtonId.."Icon"];
-    Button.Count = _G[ButtonId.."Count"];
-    Button.Border = _G[ButtonId.."Border"];
+    else
     
-  else
-  
-    ButtonId = Button:GetName();
+      Button:SetParent(self.Frame);
     
-    Button.Icon:SetAlpha(1.0);
+    end
   
+    -- We got a general pool button or a new button.
+    -- Prepare it so it match a container pool button.
+    
+    local Container = self;  
+    Button:SetScript("OnUpdate", function(Button, Elapsed)
+      
+       Button.TimeSinceLastUpdate = Button.TimeSinceLastUpdate + Elapsed;
+       if Button.TimeSinceLastUpdate > ButtonUpdatePeriod then
+          ButtonOnUpdate(Container, Button, Button.TimeSinceLastUpdate);
+          Button.TimeSinceLastUpdate = 0.0;
+       end
+      
+    end);
+    
+    if LBF then
+      -- Don't skin the count text, we will take care of that.
+      self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false});
+    end
+    
+    -- Set the font from this container.
+    Button.Duration:SetFontObject(self.DurationFontObject);
+    Button.Count:SetFontObject(self.CountFontObject);
+    
   end
-  
-  local Container = self;  
-  Button:SetScript("OnUpdate", function(_, Elapsed)
-    
-     Button.TimeSinceLastUpdate = Button.TimeSinceLastUpdate + Elapsed;
-     if Button.TimeSinceLastUpdate > ButtonUpdatePeriod then
-        ButtonOnUpdate(Container, Button, Button.TimeSinceLastUpdate);
-        Button.TimeSinceLastUpdate = 0.0;
-     end
-    
-  end);
-
-  -- Set the font from this container.
-  Button.Duration:SetFontObject(self.DurationFontObject);
-  Button.Count:SetFontObject(self.CountFontObject);
   
   Button.NewFlashTime = self.NewFlashTime;
   Button.ExpireFlashTime = self.ExpireFlashTime;
   
   Button.TimeSinceLastUpdate = 0.0;
-  
-  Button:SetParent(self.Frame);
+  Button.TimeLeftSeconds = 0;
   
   Button.Aura = Aura;
   Button.Icon:SetTexture(Aura.Icon);
@@ -433,13 +510,19 @@ function Prototype:AuraNew(Aura)
   self.Buttons[Aura.Id] = Button;
   self.Order:Add(Button);
   
-  if LBF then
-    -- Don't skin the count text, we will take care of that.
-    self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false});
-  end
-  
-  self:UpdateButton(Button);
+  if FromContainerPool == true then
 
+    -- We need only a display update.
+    self:UpdateButtonDisplay(Button);
+
+  else
+
+    -- We need a full update.
+    self:UpdateButton(Button);
+
+  end
+
+  -- UpdateAnchors will also make sure the button is showned.
   self:UpdateAnchors();
 
 end
@@ -462,22 +545,34 @@ function Prototype:AuraOld(Aura)
   -- Remove the button from the container order list.
   self.Order:Remove(Button);
   
-  if LBF then
-    self.LBFGroup:RemoveButton(Button, true);
-  end
-  
-  if AuraFrames:IsTooltipOwner(Button) then
-    AuraFrames:HideTooltip();
-  end
-  
   Button:Hide();
-  Button:ClearAllPoints();
-  Button:SetParent(UIParent);
   
-  Button:SetScript("OnUpdate", nil);
+  -- The warning system can have changed the alpha. Set it back.
+  Button.Icon:SetAlpha(1.0);
   
-  -- Release the button back in the pool for later use.
-  table.insert(ButtonPool, Button);
+  -- See in what pool we need to drop.
+  if #self.ButtonPool >= ContainerButtonPoolSize then
+  
+    -- General pool.
+  
+    if LBF then
+      self.LBFGroup:RemoveButton(Button, true);
+    end
+
+    Button:ClearAllPoints();
+    Button:SetParent(nil);
+    
+    Button:SetScript("OnUpdate", nil);
+    
+    -- Release the button back in the general pool for later use.
+    tinsert(ButtonPool, Button);
+  
+  else
+  
+    -- Release the button back in the container pool for later use.
+    tinsert(self.ButtonPool, Button);
+  
+  end
   
   self:UpdateAnchors();
 
@@ -536,6 +631,10 @@ function Prototype:UpdateAnchors()
       end
     
     else
+    
+      if not self.Order[i]:IsShown() then
+        self.Order[i]:Show();
+      end
       
       if Direction[2] == "y" then
         x, y = ((i - 1) % self.Config.Layout.HorizontalSize), math_floor((i - 1) / self.Config.Layout.HorizontalSize);
@@ -550,10 +649,6 @@ function Prototype:UpdateAnchors()
         Direction[3] * (x * (Module.ButtonSizeX + (x and self.Config.Layout.SpaceX))),
         Direction[4] * (y * (Module.ButtonSizeY + (y and self.Config.Layout.SpaceY)))
       );
-
-      if not self.Order[i]:IsShown() then
-        self.Order[i]:Show();
-      end
     
     end
   

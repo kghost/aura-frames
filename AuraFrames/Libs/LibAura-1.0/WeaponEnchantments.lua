@@ -38,6 +38,8 @@ local _G, WorldFrame = _G, WorldFrame;
 -- GLOBALS: UIParent
 
 
+Module.TimeSinceLastUpdate = 0;
+
 -----------------------------------------------------------------
 -- Function Enable
 -----------------------------------------------------------------
@@ -196,7 +198,15 @@ end
 -----------------------------------------------------------------
 -- Function Update
 -----------------------------------------------------------------
-function Module:Update()
+function Module:Update(Elapsed)
+
+  self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + Elapsed;
+  
+  if self.TimeSinceLastUpdate > 0.5 then
+    self.TimeSinceLastUpdate = 0.0;
+  else
+    return;
+  end
 
   local HasMainHandEnchant, MainHandExpiration, MainHandCharges, HasOffHandEnchant, OffHandExpiration, OffHandCharges, HasThrownEnchant, ThrownExpiration, ThrownCharges = GetWeaponEnchantInfo();
 
@@ -266,13 +276,11 @@ function Module:ScanWeapon(Slot, HasEnchant, ExpirationTime, Charges)
   local Aura = self.db[Slot];
 
   if HasEnchant then
-  
-    local Name, Icon = self:GetWeaponEnchantName(Aura.Index), GetInventoryItemTexture("player", Aura.Index);
     
     -- We got some latency between querying the expire time and GetTime(). So we say if
-    -- the difference is more then 3 seconds that we got a new expiration time.
+    -- the difference is more then 2 seconds that we got a new expiration time.
     
-    if Aura.Active ~= true or Aura.Name ~= Name or Aura.Icon ~= Icon or abs(Aura.ExpirationTime - ExpirationTime) > 3 then -- New enchantment
+    if Aura.Active ~= true or abs(Aura.ExpirationTime - ExpirationTime) > 2 then -- New enchantment
     
       if Aura.Active == true then
         -- If we had an active enchantment, then fire aura old event before updating the aura.
@@ -281,8 +289,8 @@ function Module:ScanWeapon(Slot, HasEnchant, ExpirationTime, Charges)
         Aura.Active = true;
       end
       
-      Aura.Name = Name;
-      Aura.Icon = Icon;
+      Aura.Name = self:GetWeaponEnchantName(Aura.Index);
+      Aura.Icon = GetInventoryItemTexture("player", Aura.Index);
       Aura.ExpirationTime = ExpirationTime;
       Aura.Duration = ExpirationTime - GetTime();
       Aura.Count = Charges;

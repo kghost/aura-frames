@@ -10,25 +10,27 @@ local fmt, tostring = string.format, tostring;
 local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetTime = GetTime;
+local GetTime, CreateFrame, IsModifierKeyDown = GetTime, CreateFrame, IsModifierKeyDown;
 local math_sin, math_cos, math_floor, math_ceil = math.sin, math.cos, math.floor, math.ceil;
+local min, max = min, max;
+local _G = _G;
 
 local Prototype = Module.Prototype;
-
 
 -- Pool that contains all the current unused bars sorted by type.
 local BarPool = {};
 
+-- All containers have also there own (smaller) pool.
+local ContainerBarPoolSize = 5;
+
 -- Counters for each Bar type.
 local BarCounter = 0;
-
 
 -- Direction = {AnchorPoint, first X or Y, X Direction, Y Direction}
 local DirectionMapping = {
   DOWN  = {"TOPLEFT",    -1},
   UP    = {"BOTTOMLEFT",  1},
 };
-
 
 local BarUpdatePeriod = 0.05;
 
@@ -44,7 +46,19 @@ local function BarOnUpdate(Container, Bar, Elapsed)
     
     local TimeLeft = max(Bar.Aura.ExpirationTime - GetTime(), 0);
     
-    Bar.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft));
+    if Container.Config.Layout.ShowDuration == true then
+    
+      local TimeLeftSeconds = math_ceil(TimeLeft);
+      
+      if Bar.TimeLeftSeconds ~= TimeLeftSeconds then
+    
+        Bar.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft));
+      
+        Bar.TimeLeftSeconds = TimeLeftSeconds;
+      
+      end
+    
+    end
     
     if TimeLeft < Container.Config.Layout.BarMaxTime then
     
@@ -123,6 +137,8 @@ function Prototype:Delete()
   self.Frame:Hide();
   self.Frame:UnregisterAllEvents();
   self.Frame = nil;
+  
+  self:ReleasePool();
 
   if self.LBFGroup then
     self.LBFGroup:Delete(true);
@@ -134,76 +150,38 @@ function Prototype:Delete()
 
 end
 
+-----------------------------------------------------------------
+-- Function ReleasePool
+-----------------------------------------------------------------
+function Prototype:ReleasePool()
+
+  -- Cleanup container bar pool
+  while #self.BarPool > 0 do
+  
+    local Bar = tremove(self.BarPool);
+  
+    if LBF then
+      self.LBFGroup:RemoveButton(Bar.Button, true);
+    end
+    
+    Bar:ClearAllPoints();
+    Bar:SetParent(nil);
+    
+    -- Release the bar in the general pool.
+    tinsert(BarPool, Bar);
+  
+  end
+
+end
+
 
 -----------------------------------------------------------------
--- Function UpdateBar
+-- Function UpdateBarDisplay
 -----------------------------------------------------------------
-function Prototype:UpdateBar(Bar)
+function Prototype:UpdateBarDisplay(Bar)
 
   local Aura = Bar.Aura;
-  
-  Bar:SetWidth(self.Config.Layout.BarWidth);
-  Bar:SetHeight(Module.BarHeight);
-  
-  Bar.Text:ClearAllPoints();
-  Bar.Duration:ClearAllPoints();
-  
-  if self.Config.Layout.Icon == "NONE" then
-    
-    Bar.Button:Hide();
-    Bar.Button.Background:Hide();
-    
-    Bar.Text:SetPoint("LEFT", Bar, "LEFT", 5, 0);
-    Bar.Duration:SetPoint("RIGHT", Bar, "RIGHT", -5, 0);
-    
-  elseif self.Config.Layout.Icon == "LEFT" then
-  
-    Bar.Button:ClearAllPoints();
-    Bar.Button:SetPoint("TOPLEFT", Bar, "TOPLEFT", 0, 0);
-    Bar.Button:Show();
-    Bar.Button.Background:Show();
-  
-    Bar.Text:SetPoint("LEFT", Bar, "LEFT", 5 + Module.BarHeight , 0);
-    Bar.Duration:SetPoint("RIGHT", Bar, "RIGHT", -5, 0);
-  
-  elseif self.Config.Layout.Icon == "RIGHT" then
-  
-    Bar.Button:ClearAllPoints();
-    Bar.Button:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", 0, 0);
-    Bar.Button:Show();
-    Bar.Button.Background:Show();
-  
-    Bar.Text:SetPoint("LEFT", Bar, "LEFT", 5, 0);
-    Bar.Duration:SetPoint("RIGHT", Bar, "RIGHT", -5 - Module.BarHeight, 0);
 
-  end
-  
-  Bar.Texture:ClearAllPoints();
-  Bar.Texture:SetHeight(Module.BarHeight);
-  Bar.Spark:ClearAllPoints();
-  
-  if self.Config.Layout.BarDirection == "LEFTGROW" or self.Config.Layout.BarDirection == "LEFTSHRINK" then
-  
-    Bar.Texture:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
-    Bar.Texture.Background:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
-    Bar.Spark:SetPoint("CENTER", Bar.Texture, "RIGHT", 0, 0);
-    
-  else
-
-    Bar.Texture:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
-    Bar.Texture.Background:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
-    Bar.Spark:SetPoint("CENTER", Bar.Texture, "LEFT", 0, 0);
-  
-  end
-  
-  Bar.Texture:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
-  
-  if self.Config.Layout.TextureBackgroundUseTexture == true then
-    Bar.Texture.Background:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
-  else
-    Bar.Texture.Background:SetTexture(1, 1, 1, 1);
-  end
-  
   if self.Config.Layout.ShowDuration and Aura.ExpirationTime > 0 then
     
     Bar.Duration:Show();
@@ -287,9 +265,90 @@ function Prototype:UpdateBar(Bar)
     
   end
   
+  if Aura.ExpirationTime == 0 or (Aura.ExpirationTime ~= 0 and max(Aura.ExpirationTime - GetTime(), 0) > self.Config.Layout.BarMaxTime) then
+    
+    Bar.Texture:SetWidth(self.BarWidth);
+    Bar.Texture:SetTexCoord(0, 1, 0, 1);
+    
+  end
+
+  BarOnUpdate(self, Bar, 0.0);
+
+end
+
+
+-----------------------------------------------------------------
+-- Function UpdateBar
+-----------------------------------------------------------------
+function Prototype:UpdateBar(Bar)
+
+  local Container, Aura = self, Bar.Aura;
+  
+  Bar:SetWidth(self.Config.Layout.BarWidth);
+  Bar:SetHeight(Module.BarHeight);
+  
+  Bar.Text:ClearAllPoints();
+  Bar.Duration:ClearAllPoints();
+  
+  if self.Config.Layout.Icon == "NONE" then
+    
+    Bar.Button:Hide();
+    Bar.Button.Background:Hide();
+    
+    Bar.Text:SetPoint("LEFT", Bar, "LEFT", 5, 0);
+    Bar.Duration:SetPoint("RIGHT", Bar, "RIGHT", -5, 0);
+    
+  elseif self.Config.Layout.Icon == "LEFT" then
+  
+    Bar.Button:ClearAllPoints();
+    Bar.Button:SetPoint("TOPLEFT", Bar, "TOPLEFT", 0, 0);
+    Bar.Button:Show();
+    Bar.Button.Background:Show();
+  
+    Bar.Text:SetPoint("LEFT", Bar, "LEFT", 5 + Module.BarHeight , 0);
+    Bar.Duration:SetPoint("RIGHT", Bar, "RIGHT", -5, 0);
+  
+  elseif self.Config.Layout.Icon == "RIGHT" then
+  
+    Bar.Button:ClearAllPoints();
+    Bar.Button:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", 0, 0);
+    Bar.Button:Show();
+    Bar.Button.Background:Show();
+  
+    Bar.Text:SetPoint("LEFT", Bar, "LEFT", 5, 0);
+    Bar.Duration:SetPoint("RIGHT", Bar, "RIGHT", -5 - Module.BarHeight, 0);
+
+  end
+  
+  Bar.Texture:ClearAllPoints();
+  Bar.Texture:SetHeight(Module.BarHeight);
+  Bar.Spark:ClearAllPoints();
+  
+  if self.Config.Layout.BarDirection == "LEFTGROW" or self.Config.Layout.BarDirection == "LEFTSHRINK" then
+  
+    Bar.Texture:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
+    Bar.Texture.Background:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
+    Bar.Spark:SetPoint("CENTER", Bar.Texture, "RIGHT", 0, 0);
+    
+  else
+
+    Bar.Texture:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
+    Bar.Texture.Background:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
+    Bar.Spark:SetPoint("CENTER", Bar.Texture, "LEFT", 0, 0);
+  
+  end
+  
+  Bar.Texture:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
+  
+  if self.Config.Layout.TextureBackgroundUseTexture == true then
+    Bar.Texture.Background:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
+  else
+    Bar.Texture.Background:SetTexture(1, 1, 1, 1);
+  end
+  
   if self.Config.Layout.ShowTooltip then
   
-    Bar:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Aura, Bar, self.TooltipOptions); end);
+    Bar:SetScript("OnEnter", function(Bar) AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); end);
     Bar:SetScript("OnLeave", function() AuraFrames:HideTooltip(); end);
   
   else
@@ -306,7 +365,7 @@ function Prototype:UpdateBar(Bar)
     Bar:EnableMouse(true);
     Bar:SetScript("OnMouseUp", BarOnMouseUp);
     
-    Bar:HookScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Bar, Aura); end);
+    Bar:HookScript("OnEnter", function(Bar) AuraFrames:SetCancelAuraFrame(Bar, Bar.Aura); end);
     
   else
     
@@ -315,14 +374,7 @@ function Prototype:UpdateBar(Bar)
     
   end
   
-  if Aura.ExpirationTime == 0 or (Aura.ExpirationTime ~= 0 and max(Aura.ExpirationTime - GetTime(), 0) > self.Config.Layout.BarMaxTime) then
-    
-    Bar.Texture:SetWidth(self.BarWidth);
-    Bar.Texture:SetTexCoord(0, 1, 0, 1);
-    
-  end
-  
-  BarOnUpdate(self, Bar, 0.0);
+  self:UpdateBarDisplay(Bar);
 
 end
 
@@ -396,6 +448,9 @@ function Prototype:Update(...)
     for _, Bar in pairs(self.Bars) do
       self:UpdateBar(Bar);
     end
+    
+    -- We have bars in the container pool that doesn't match the settings anymore. Release them into the general pool.
+    self:ReleasePool();
     
     if Changed ~= "ALL" then
       self:UpdateAnchors();
@@ -480,53 +535,68 @@ function Prototype:AuraNew(Aura)
   
   end
   
-  -- Pop the last bar out the pool.
-  local Bar = table.remove(BarPool);
+  -- Pop the last button out the container pool.
+  local Bar = tremove(self.BarPool);
+  local FromContainerPool = Bar and true or false;
+  
+  if not Bar then
+  
+    -- Try the general pool.
+    Bar = tremove(BarPool);
+    
+    if not Bar then
+      -- No bars in any pool. Let's make a new bar.
+  
+      BarCounter = BarCounter + 1;
+    
+      local BarId = "AuraFramesBar"..BarCounter;
+      Bar = CreateFrame("Frame", BarId, self.Frame, "AuraFramesBarTemplate");
+      
+      Bar.Text = _G[BarId.."Text"];
+      Bar.Duration = _G[BarId.."Duration"];
+      Bar.Texture = _G[BarId.."Texture"];
+      Bar.Texture.Background = _G[BarId.."TextureBackground"];
+      Bar.Spark = _G[BarId.."Spark"];
+      
+      Bar.Button = _G[BarId.."Button"];
+      Bar.Button.Icon = _G[BarId.."ButtonIcon"];
+      Bar.Button.Border = _G[BarId.."ButtonBorder"];
+      Bar.Button.Background = _G[BarId.."ButtonBackground"];
+  
+    else
+    
+      Bar:SetParent(self.Frame);
+    
+    end
+  
+    -- We got a general pool bar or a new bar.
+    -- Prepare it so it match a container pool bar.
 
-  local BarId;
+    local Container = self;  
+    Bar:SetScript("OnUpdate", function(Bar, Elapsed)
+      
+       Bar.TimeSinceLastUpdate = Bar.TimeSinceLastUpdate + Elapsed;
+       if Bar.TimeSinceLastUpdate > BarUpdatePeriod then
+          BarOnUpdate(Container, Bar, Bar.TimeSinceLastUpdate);
+          Bar.TimeSinceLastUpdate = 0.0;
+       end
+      
+    end);
   
-  if Bar == nil then -- No bars left in the pool
+    if LBF then
+      -- We Don't have count text.
+      self.LBFGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border, Count = false});
+    end
   
-    BarCounter = BarCounter + 1;
-  
-    BarId = "AuraFramesBar"..BarCounter;
-    Bar = CreateFrame("Frame", BarId, self.Frame, "AuraFramesBarTemplate");
-    
-    Bar.Text = _G[BarId.."Text"];
-    Bar.Duration = _G[BarId.."Duration"];
-    Bar.Texture = _G[BarId.."Texture"];
-    Bar.Texture.Background = _G[BarId.."TextureBackground"];
-    Bar.Spark = _G[BarId.."Spark"];
-    
-    Bar.Button = _G[BarId.."Button"];
-    Bar.Button.Icon = _G[BarId.."ButtonIcon"];
-    Bar.Button.Border = _G[BarId.."ButtonBorder"];
-    Bar.Button.Background = _G[BarId.."ButtonBackground"];
-    
-  else
-  
-    BarId = Bar:GetName();
+    -- Set the font from this container.
+    Bar.Text:SetFontObject(self.FontObject);
+    Bar.Duration:SetFontObject(self.FontObject);
   
   end
   
-  local Container = self;  
-  Bar:SetScript("OnUpdate", function(_, Elapsed)
-    
-     Bar.TimeSinceLastUpdate = Bar.TimeSinceLastUpdate + Elapsed;
-     if Bar.TimeSinceLastUpdate > BarUpdatePeriod then
-        BarOnUpdate(Container, Bar, Bar.TimeSinceLastUpdate);
-        Bar.TimeSinceLastUpdate = 0.0;
-     end
-    
-  end);
-  
-  -- Set the font from this container.
-  Bar.Text:SetFontObject(self.FontObject);
-  Bar.Duration:SetFontObject(self.FontObject);
-
   Bar.TimeSinceLastUpdate = 0.0;
+  Bar.TimeLeftSeconds = 0;
   
-  Bar:SetParent(self.Frame);
   Bar.Button.Icon:SetTexture(Aura.Icon);
     
   Bar.Aura = Aura;
@@ -534,16 +604,19 @@ function Prototype:AuraNew(Aura)
   self.Bars[Aura.Id] = Bar;
   self.Order:Add(Bar);
   
-  if LBF then
-    -- We Don't have count text.
-    self.LBFGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border, Count = false});
+  if FromContainerPool == true then
+  
+    -- We need only a display update.
+    self:UpdateBarDisplay(Bar);
+  
+  else
+  
+    -- We need a full update.
+    self:UpdateBar(Bar);
+  
   end
   
-  self:UpdateBar(Bar);
-  
   self:UpdateAnchors();
-  
-  --Module.LBFGroup:ReSkin();
 
 end
 
@@ -565,20 +638,31 @@ function Prototype:AuraOld(Aura)
   -- Remove the bar from the container order list.
   self.Order:Remove(Bar);
   
-  if LBF then
-    self.LBFGroup:RemoveButton(Bar.Button, true);
-  end
-  
-  if AuraFrames:IsTooltipOwner(Button) then
-    AuraFrames:HideTooltip();
-  end
-  
   Bar:Hide();
-  Bar:ClearAllPoints();
-  Bar:SetParent(nil);
+  
+  -- See in what pool we need to drop.
+  if #self.BarPool >= ContainerBarPoolSize then
+  
+    -- General pool.
+  
+    if LBF then
+      self.LBFGroup:RemoveButton(Bar.Button, true);
+    end
+  
+    Bar:ClearAllPoints();
+    Bar:SetParent(nil);
+    
+    Bar:SetScript("OnUpdate", nil);
 
-  -- Release the bar back in the pool for later use.
-  table.insert(BarPool, Bar);
+    -- Release the bar back in the general pool for later use.
+    tinsert(BarPool, Bar);
+  
+  else
+  
+    -- Release the bar back in the container pool for later use.
+    tinsert(self.BarPool, Bar);
+    
+  end
   
   self:UpdateAnchors();
 

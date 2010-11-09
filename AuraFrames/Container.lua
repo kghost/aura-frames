@@ -139,7 +139,7 @@ function AuraFrames:CreateNewContainer(Name, Type)
   self.db.profile.Containers[Id].Type = Type;
 
   -- Copy the container defaults into the new config.
-  self:CopyDatabaseDefaults(ContainerModule:GetConfigDefaults(), self.db.profile.Containers[Id]);
+  self:CopyDatabaseDefaults(ContainerModule:GetDatabaseDefaults(), self.db.profile.Containers[Id]);
   
   self:CreateContainer(Id);
   

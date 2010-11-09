@@ -8,7 +8,12 @@ local fmt, tostring = string.format, tostring;
 local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetTime = GetTime;
+local GetTime, CreateFrame, CreateFont = GetTime, CreateFrame, CreateFont;
+local _G = _G;
+
+-- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
+-- List them here for Mikk's FindGlobals script
+-- GLOBALS: UIParent
 
 -- Module settings
 Module.MaxBars = 40;
@@ -69,11 +74,11 @@ function Module:GetDescription()
 end
 
 -----------------------------------------------------------------
--- Function GetConfigDefaults
+-- Function GetDatabaseDefaults
 -----------------------------------------------------------------
-function Module:GetConfigDefaults()
+function Module:GetDatabaseDefaults()
 
-  local ConfigDefaults = {
+  local DatabaseDefaults = {
     Location= {
       OffsetX = 0,
       OffsetY = 0,
@@ -127,11 +132,11 @@ function Module:GetConfigDefaults()
       Weapon        = {1.0, 1.0, 1.0, 1.0},
       Other         = {1.0, 1.0, 1.0, 1.0},
     },
-    Order = AuraFrames:GetConfigDefaultsOrder(),
-    Filter = AuraFrames:GetConfigDefaultsFilter(),
+    Order = AuraFrames:GetDatabaseDefaultsOrder(),
+    Filter = AuraFrames:GetDatabaseDefaultsFilter(),
   };
   
-  return ConfigDefaults;
+  return DatabaseDefaults;
 
 end
 
@@ -164,6 +169,8 @@ function Module:New(Config)
   Container.TooltipOptions = {};
   
   Container.Bars = {};
+  
+  Container.BarPool = {};
   
   Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
   

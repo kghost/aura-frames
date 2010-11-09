@@ -217,7 +217,7 @@ function AuraFrames:DatabaseUpgrade()
         self.ContainerModules[Container.Type]:Enable();
       end
       
-      self:CopyDatabaseDefaults(self.ContainerModules[Container.Type]:GetConfigDefaults(), Container);
+      self:CopyDatabaseDefaults(self.ContainerModules[Container.Type]:GetDatabaseDefaults(), Container);
     
     end
     
@@ -231,8 +231,8 @@ function AuraFrames:DatabaseUpgrade()
     
     if self.db.profile.DbVersion < 154 then
     
-      Container.Filter = AuraFrames:GetConfigDefaultsFilter();
-      Container.Order = AuraFrames:GetConfigDefaultsOrder();
+      Container.Filter = AuraFrames:GetDatabaseDefaultsFilter();
+      Container.Order = AuraFrames:GetDatabaseDefaultsOrder();
     
     end
     

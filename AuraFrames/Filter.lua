@@ -223,9 +223,9 @@ end
 
 
 -----------------------------------------------------------------
--- Function GetConfigDefaultsFilter
+-- Function GetDatabaseDefaultsFilter
 -----------------------------------------------------------------
-function AuraFrames:GetConfigDefaultsFilter()
+function AuraFrames:GetDatabaseDefaultsFilter()
 
   return {
     Expert = false,
