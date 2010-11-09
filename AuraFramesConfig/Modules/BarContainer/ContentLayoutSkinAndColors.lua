@@ -110,7 +110,7 @@ local function ColorContent(Content, ContainerId)
   local ColorReset = AceGUI:Create("Button");
   ColorReset:SetText("Reset Border Colors");
   ColorReset:SetCallback("OnClick", function()
-    AuraFrames.db.profile.Containers[ContainerId].Colors = AuraFrames:GetModule(ContainerType):GetConfigDefaults().Colors;
+    AuraFrames.db.profile.Containers[ContainerId].Colors = AuraFrames:GetModule(ContainerType):GetDatabaseDefaults().Colors;
     ContainerInstance:Update("LAYOUT");
     ColorContent(Content, ContainerId);
   end);
