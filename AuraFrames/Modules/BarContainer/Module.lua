@@ -22,6 +22,9 @@ Module.BarHeight = 36;
 -- List that contains the function prototypes for container objects.
 Module.Prototype = {};
 
+-- List of all active containers that are based on this module.
+Module.Containers = {};
+
 local StatusBarTextures = {
   ["Aluminum"]    = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Aluminum.tga]],
   ["Armory"]      = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Armory.tga]],

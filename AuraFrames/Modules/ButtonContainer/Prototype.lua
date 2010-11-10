@@ -63,6 +63,7 @@ CooldownFrame:SetScript("OnEvent", function(self, event)
       
         if Button.Cooldown:IsShown() == 1 then
         
+          -- Trigger animation code.
           Button.Cooldown:Hide();
           Button.Cooldown:Show();
         
