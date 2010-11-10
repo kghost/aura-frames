@@ -33,7 +33,7 @@ local function CreateListWindow()
   ListContainer:SetLayout("Flow");
   ListWindow:AddChild(ListContainer);
   
-  local ButtonDone = AceGUI:Create("Button");
+  local ButtonDone = AceGUI:Create("AuraFramesButton");
   ButtonDone:SetText("Close List Editor");
   ButtonDone:SetRelativeWidth(1);
   ButtonDone:SetCallback("OnClick", function()
@@ -96,7 +96,7 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
 
   elseif Input == "Number" then
   
-    Value = AceGUI:Create("EditBox");
+    Value = AceGUI:Create("AuraFramesEditBox");
     Value:DisableButton(true);
     Value:SetText("");
     Value:SetWidth(210);
@@ -106,13 +106,19 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
         Value:SetText(tostring(ListValue));
       else
         ListValue = Text;
+      end
+    end);
+    Value:SetCallback("OnEnterPressed", function(_, _, Text)
+      if ListValue ~= "" then
+        tinsert(List, ListValue);
+        ListEditorRefresh(List, Input, Add, Delete, Order);
       end
     end);
     ListContainer:AddChild(Value);
   
   elseif Input == "SpellId" then
   
-    Value = AceGUI:Create("EditBox");
+    Value = AceGUI:Create("AuraFramesEditBox");
     Value:DisableButton(true);
     Value:SetText("");
     Value:SetWidth(210);
@@ -124,17 +130,29 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
         ListValue = Text;
       end
     end);
+    Value:SetCallback("OnEnterPressed", function(_, _, Text)
+      if ListValue ~= "" then
+        tinsert(List, ListValue);
+        ListEditorRefresh(List, Input, Add, Delete, Order);
+      end
+    end);
     ListContainer:AddChild(Value);
   
   elseif Input == "String" then
   
-    Value = AceGUI:Create("EditBox");
+    Value = AceGUI:Create("AuraFramesEditBox");
     Value:DisableButton(true);
     Value:SetText("");
     Value:SetWidth(210);
     Value:SetLabel("Value");
     Value:SetCallback("OnTextChanged", function(_, _, Text)
       ListValue = Text;
+    end);
+    Value:SetCallback("OnEnterPressed", function(_, _, Text)
+      if ListValue ~= "" then
+        tinsert(List, ListValue);
+        ListEditorRefresh(List, Input, Add, Delete, Order);
+      end
     end);
     ListContainer:AddChild(Value);
     
@@ -176,7 +194,7 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
 
   if Value then
   
-    local ButtonAdd = AceGUI:Create("Button");
+    local ButtonAdd = AceGUI:Create("AuraFramesButton");
     ButtonAdd:SetText("Add");
     ButtonAdd:SetWidth(100);
     ButtonAdd:SetCallback("OnClick", function()
@@ -186,8 +204,12 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
       end
     end);
     ListContainer:AddChild(ButtonAdd);
+    
+    if Value.SetFocus then
+      Value:SetFocus();
+    end
   
-  end  
+  end
   
   local ItemContainer = AceGUI:Create("ScrollFrame");
   ItemContainer:SetRelativeWidth(1);
@@ -205,7 +227,20 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
     local Label = AceGUI:Create("Label");
     Label:SetFontObject(GameFontNormalSmall);
     Label:SetWidth(210);
-    Label:SetText((type(Input) == "table" and Input[Value]) or Value);
+    
+    if type(Input) == "table" and Input[Value] then
+      Label:SetText(Input[Value]);
+    elseif Input == "SpellId" then
+      local SpellName = GetSpellInfo(Value);
+      if SpellName then
+        Label:SetText(Value.." ("..SpellName..")");
+      else
+        Label:SetText(Value);
+      end
+    else
+      Label:SetText(Value);
+    end
+    
     Container:AddChild(Label);
     
     if Delete == true then
@@ -285,7 +320,11 @@ end
 -----------------------------------------------------------------
 function AuraFramesConfig:IsListEditorShown()
   
-  return ListWindow and ListWindow:IsShown() or 0;
+  if ListWindow then
+    return ListWindow:IsShown() and true or false;
+  else
+    return false;
+  end
   
 end
 
@@ -295,7 +334,6 @@ end
 function AuraFramesConfig:CloseListEditor()
   
   if ListWindow then
-    ListWindow:SetCallback("OnClose", nil);
     ListWindow:Hide();
   end
   

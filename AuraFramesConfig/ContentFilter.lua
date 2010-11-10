@@ -197,7 +197,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
 
           else
           
-            local Value = AceGUI:Create("EditBox");
+            local Value = AceGUI:Create("AuraFramesEditBox");
             Value:DisableButton(true);
             Value:SetText(Rule.Args[ValueType] or "");
             Value:SetLabel("Value");
@@ -214,7 +214,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
         
       elseif (ValueType == "Number" or ValueType == "SpellId") and (Operator == "Equal" or Operator == "NotEqual" or Operator == "Greater" or Operator == "GreaterOrEqual" or Operator == "Lesser" or Operator == "LesserOrEqual") then
       
-        local Value = AceGUI:Create("EditBox");
+        local Value = AceGUI:Create("AuraFramesEditBox");
         Value:DisableButton(true);
         if Rule.Args[ValueType] then
           Value:SetText(tostring(Rule.Args[ValueType]));
@@ -251,7 +251,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
         
       elseif (Operator == "InList" or Operator == "NotInList") then
       
-        local Value = AceGUI:Create("Button");
+        local Value = AceGUI:Create("AuraFramesButton");
         Value:SetText("Edit list");
         Value:SetWidth(150);
         Value:SetCallback("OnClick", function()
@@ -337,7 +337,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
       ContentButtons:SetLayout("Flow");
       ContentGroup:AddChild(ContentButtons);
       
-      local ButtonNewRule = AceGUI:Create("Button");
+      local ButtonNewRule = AceGUI:Create("AuraFramesButton");
       ButtonNewRule:SetText("New Rule");
       ButtonNewRule:SetWidth(150);
       ButtonNewRule:SetCallback("OnClick", function()
@@ -346,7 +346,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
       end);
       ContentButtons:AddChild(ButtonNewRule);
       
-      local ButtonDeleteGroup = AceGUI:Create("Button");
+      local ButtonDeleteGroup = AceGUI:Create("AuraFramesButton");
       ButtonDeleteGroup:SetText("Delete Group");
       ButtonDeleteGroup:SetWidth(150);
       ButtonDeleteGroup:SetCallback("OnClick", function()
@@ -360,7 +360,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
     
     Content:AddSpace();
     
-    local ButtonNewGroup = AceGUI:Create("Button");
+    local ButtonNewGroup = AceGUI:Create("AuraFramesButton");
     ButtonNewGroup:SetText("New Group");
     ButtonNewGroup:SetCallback("OnClick", function()
       if not FilterConfig.Groups then

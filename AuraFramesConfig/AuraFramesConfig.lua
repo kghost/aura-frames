@@ -10,6 +10,12 @@ function AuraFramesConfig:OnInitialize()
   
   CloseSpecialWindows = function()
     local Result = CloseSpecialWindowsOld();
+    
+    if self:IsListEditorShown() == true then
+      self:CloseListEditor()
+      return true;
+    end
+    
     return AuraFramesConfig:Close() or Result;
   end
 

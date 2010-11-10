@@ -44,27 +44,18 @@ local function AuraFramesWindow_OnAcquire(self)
     Button:SetHighlightTexture("Interface\\Buttons\\UI-Panel-MinimizeButton-Highlight");
     Button:SetPoint("CENTER", self._AuraFramesFrame, "CENTER", 1, -2);
     
-    self._AuraFramesFrameButton = Button;
+    Button:SetScript("OnClick", function() Window:Fire("OnCollapse"); end);
     
   end
   
-  self._AuraFramesFrameButton:SetScript("OnClick", function() Window:Fire("OnCollapse"); end);
   
 end
+
 
 -----------------------------------------------------------------
 -- Local Function AuraFramesWindow_OnRelease
 -----------------------------------------------------------------
 local function AuraFramesWindow_OnRelease(self)
-
-  -- Restore OnAcquire/OnRelease/Type.
-  self.OnAcquire = self.WindowOnAcquire;
-  self.OnRelease = self.WindowOnRelease;
-  self.type = self.WindowType;
-  
-  if self._AuraFramesFrame then
-    self._AuraFramesFrame:Hide();
-  end
 
   self:WindowOnRelease();
 
@@ -80,7 +71,6 @@ local function Constructor()
   
   Window.WindowOnAcquire = Window.OnAcquire;
   Window.WindowOnRelease = Window.OnRelease;
-  Window.WindowType = Window.type;
   
   Window.OnAcquire = AuraFramesWindow_OnAcquire;
   Window.OnRelease = AuraFramesWindow_OnRelease;

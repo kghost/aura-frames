@@ -90,7 +90,7 @@ function AuraFramesConfig:ContentContainersRefresh(Content)
 
   local LabelIdInfo;
   
-  local NameValue = AceGUI:Create("EditBox");
+  local NameValue = AceGUI:Create("AuraFramesEditBox");
   NameValue:DisableButton(true);
   NameValue:SetText("");
   NameValue:SetLabel("Name");
@@ -140,7 +140,7 @@ function AuraFramesConfig:ContentContainersRefresh(Content)
 
   Content:AddSpace();
 
-  local ButtonCreate = AceGUI:Create("Button");
+  local ButtonCreate = AceGUI:Create("AuraFramesButton");
   ButtonCreate:SetText("Create");
   ButtonCreate:SetCallback("OnClick", function()
     CreateContainerConfig();
@@ -151,7 +151,7 @@ function AuraFramesConfig:ContentContainersRefresh(Content)
   Content:AddHeader("Move containers");
   Content:AddText("Containers can only be moved when they are unlocked. Unlock/lock the containers by using the button below:\n\n");
   
-  local ButtonMove = AceGUI:Create("Button");
+  local ButtonMove = AceGUI:Create("AuraFramesButton");
   ButtonMove:SetText(AuraFramesConfig.ContainersUnlocked and "Lock containers" or "Unlock containers");
   ButtonMove:SetCallback("OnClick", function()
     AuraFramesConfig:UnlockContainers(not AuraFramesConfig.ContainersUnlocked);
