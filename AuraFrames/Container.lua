@@ -6,8 +6,6 @@ local string, type, rawget, error, pairs = string, type, rawget, error, pairs;
 
 AuraFrames.Containers = {};
 
-AuraFrames.ContainersUnlocked = false;
-
 
 -----------------------------------------------------------------
 -- Function GenerateContainerId
@@ -98,11 +96,6 @@ function AuraFrames:CreateContainer(Id)
 
     end
 
-  end
-  
-  -- If ContainersUnlocked then unlock the new container also.
-  if self.ContainersUnlocked then
-    self.Containers[Id]:UnlockContainer(true);
   end
   
   return true;

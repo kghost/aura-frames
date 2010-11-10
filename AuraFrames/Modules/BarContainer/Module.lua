@@ -97,6 +97,7 @@ function Module:GetDatabaseDefaults()
       DurationLayout = "ABBREVSPACE",
       ShowCount = true,
       ShowAuraName = true,
+      TextFont = "Friz Quadrata TT",
       TextOutline = "OUTLINE",
       TextMonochrome = false,
       TextSize = 11,

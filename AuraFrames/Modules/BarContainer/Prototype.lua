@@ -393,14 +393,8 @@ function Prototype:Update(...)
     
     self.Frame:SetScale(self.Config.Layout.Scale);
     
-    if self.Unlocked then
+    if self.Unlocked ~= true then
     
-      if self.ConfigFrame then
-        self.ConfigFrame.Text:SetText("Container "..self.Name.."\n"..self.Config.Layout.NumberOfBars);
-      end
-    
-    else
-      
       self.Frame:ClearAllPoints();
       self.Frame:SetPoint(self.Config.Location.FramePoint, self.Config.Location.RelativeTo, self.Config.Location.RelativePoint, self.Config.Location.OffsetX, self.Config.Location.OffsetY);
       
@@ -442,7 +436,7 @@ function Prototype:Update(...)
       tinsert(Flags, "MONOCHROME");
     end
 
-    self.FontObject:SetFont(LSM:Fetch("font", self.Config.Layout.TextFont, true) or "Fonts\\FRIZQT__.TTF", self.Config.Layout.TextSize, tconcat(Flags, ","));
+    self.FontObject:SetFont(LSM:Fetch("font", self.Config.Layout.TextFont), self.Config.Layout.TextSize, tconcat(Flags, ","));
     self.FontObject:SetTextColor(unpack(self.Config.Layout.TextColor));
     
     for _, Bar in pairs(self.Bars) do
@@ -473,46 +467,6 @@ function Prototype:Update(...)
   if Changed == "ALL" or Changed == "ORDER" then
   
     self:UpdateAnchors();
-  
-  end
-
-end
-
-
------------------------------------------------------------------
--- Function UnlockContainer
------------------------------------------------------------------
-function Prototype:UnlockContainer(Unlock)
-
-  self.Unlocked = Unlock;
-  
-  if Unlock == true then
-    
-    if not self.ConfigFrame then
-    
-      self.ConfigFrame = CreateFrame("Frame", "AuraFramesContainerConfig_"..self.Name, self.Frame, "AuraFramesBarContainerConfigTemplate");
-      self.ConfigFrame:SetPoint("TOPLEFT", self.Frame, "TOPLEFT", 0, 0);
-      self.ConfigFrame:SetPoint("BOTTOMRIGHT", self.Frame, "BOTTOMRIGHT", 0, 0);
-      
-      self.ConfigFrame.Text = _G["AuraFramesContainerConfig_"..self.Name.."_Text"];
-      
-    end
-    
-    self.ConfigFrame:Show();
-    
-    self:Update();
-    
-  elseif self.ConfigFrame then
-    
-    -- Make sure wow dont try to save the locations of the frames.
-    self.Frame:SetUserPlaced(false);
-    
-    local RelativeTo;
-    self.Config.Location.FramePoint, self.Config.Location.RelativeTo, self.Config.Location.RelativePoint, self.Config.Location.OffsetX, self.Config.Location.OffsetY = self.Frame:GetPoint();
-    
-    self.ConfigFrame:Hide();
-    
-    self:Update();
   
   end
 

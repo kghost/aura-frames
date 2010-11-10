@@ -6,26 +6,6 @@
 
   <Frame name="AuraFramesButtonContainerTemplate" parent="UIParent" virtual="true" movable="true">
   </Frame>
-  
-  <Frame name="AuraFramesButtonContainerConfigTemplate" frameStrata="MEDIUM" toplevel="true" virtual="true" enableMouse="true">
-    <Scripts>
-      <OnMouseDown>
-        self:GetParent():StartMoving();
-      </OnMouseDown>
-      <OnMouseUp>
-        self:GetParent():StopMovingOrSizing();
-      </OnMouseUp>
-    </Scripts>
-    <Layers>
-      <Layer level="ARTWORK">
-        <Texture> 
-          <Color r="0.5" g="0.8" b="1.0" a="0.6"/>
-        </Texture>
-        <FontString name="$parent_Text" inherits="ChatFontNormal" text="" justifyV="MIDDLE" justifyH="CENTER">
-        </FontString>
-      </Layer>
-    </Layers>
-  </Frame>
 
   <Button name="AuraFramesButtonTemplate" virtual="true">
     <Size>

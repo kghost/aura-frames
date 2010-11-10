@@ -292,13 +292,7 @@ function Prototype:Update(...)
     
     self.Frame:SetScale(self.Config.Layout.Scale);
     
-    if self.Unlocked then
-    
-      if self.ConfigFrame then
-        self.ConfigFrame.Text:SetText("Container "..self.Name.."\n"..self.Config.Layout.HorizontalSize.." X "..self.Config.Layout.VerticalSize);
-      end
-    
-    else
+    if self.Unlocked ~= true then
     
       self.Frame:ClearAllPoints();
       self.Frame:SetPoint(self.Config.Location.FramePoint, self.Config.Location.RelativeTo, self.Config.Location.RelativePoint, self.Config.Location.OffsetX, self.Config.Location.OffsetY);
@@ -322,7 +316,7 @@ function Prototype:Update(...)
       tinsert(Flags, "MONOCHROME");
     end
 
-    self.DurationFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.DurationFont, true) or "Fonts\\FRIZQT__.TTF", self.Config.Layout.DurationSize, tconcat(Flags, ","));
+    self.DurationFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.DurationFont), self.Config.Layout.DurationSize, tconcat(Flags, ","));
     self.DurationFontObject:SetTextColor(unpack(self.Config.Layout.DurationColor));
     
     Flags = {};
@@ -335,7 +329,7 @@ function Prototype:Update(...)
       tinsert(Flags, "MONOCHROME");
     end
     
-    self.CountFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.CountFont, true) or "Fonts\\FRIZQT__.TTF", self.Config.Layout.CountSize, tconcat(Flags, ","));
+    self.CountFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.CountFont), self.Config.Layout.CountSize, tconcat(Flags, ","));
     self.CountFontObject:SetTextColor(unpack(self.Config.Layout.CountColor));
     
     for _, Button in pairs(self.Buttons) do
@@ -385,46 +379,6 @@ function Prototype:Update(...)
   
   end
 
-end
-
-
------------------------------------------------------------------
--- Function UnlockContainer
------------------------------------------------------------------
-function Prototype:UnlockContainer(Unlock)
-
-  self.Unlocked = Unlock;
-  
-  if Unlock == true then
-    
-    if not self.ConfigFrame then
-    
-      self.ConfigFrame = CreateFrame("Frame", "AuraFramesContainerConfig_"..self.Name, self.Frame, "AuraFramesButtonContainerConfigTemplate");
-      self.ConfigFrame:SetPoint("TOPLEFT", self.Frame, "TOPLEFT", 0, 0);
-      self.ConfigFrame:SetPoint("BOTTOMRIGHT", self.Frame, "BOTTOMRIGHT", 0, 0);
-      
-      self.ConfigFrame.Text = _G["AuraFramesContainerConfig_"..self.Name.."_Text"];
-      
-    end
-    
-    self.ConfigFrame:Show();
-    
-    self:Update("LAYOUT");
-    
-  elseif self.ConfigFrame then
-    
-    -- Make sure wow dont try to save the locations of the frames.
-    self.Frame:SetUserPlaced(false);
-    
-    local RelativeTo;
-    self.Config.Location.FramePoint, self.Config.Location.RelativeTo, self.Config.Location.RelativePoint, self.Config.Location.OffsetX, self.Config.Location.OffsetY = self.Frame:GetPoint();
-    
-    self.ConfigFrame:Hide();
-    
-    self:Update("LAYOUT");
-  
-  end
-  
 end
 
 
