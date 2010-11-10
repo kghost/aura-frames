@@ -142,6 +142,51 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   end);
   DurationGroup:AddChild(DurationColor);
   
+  Content:AddSpace(2);
+  Content:AddHeader("Cooldown");
+  
+  local ShowCooldown = AceGUI:Create("CheckBox");
+  ShowCooldown:SetLabel("Show a cooldown");
+  ShowCooldown:SetDescription("Show a cooldown animation on top of the button");
+  ShowCooldown:SetRelativeWidth(1);
+  ShowCooldown:SetValue(LayoutConfig.ShowCooldown);
+  ShowCooldown:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.ShowCooldown = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:ContentLayoutDurationAndCount(Content, ContainerId);
+  end);
+  Content:AddChild(ShowCooldown);
+  
+  local CooldownGroup = AceGUI:Create("SimpleGroup");
+  CooldownGroup:SetLayout("Flow");
+  CooldownGroup:SetRelativeWidth(1);
+  Content:AddChild(CooldownGroup);
+  
+  local CooldownDrawEdge = AceGUI:Create("CheckBox");
+  CooldownDrawEdge:SetLabel("Draw Edge");
+  CooldownDrawEdge:SetDescription("Sets whether a bright line should be drawn on the moving edge of the cooldown animation.");
+  CooldownDrawEdge:SetWidth(260);
+  CooldownDrawEdge:SetDisabled(not LayoutConfig.ShowCooldown);
+  CooldownDrawEdge:SetValue(LayoutConfig.CooldownDrawEdge);
+  CooldownDrawEdge:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.CooldownDrawEdge = Value;
+    ContainerInstance:Update("ALL");
+    Module:ContentLayoutDurationAndCount(Content, ContainerId);
+  end);
+  CooldownGroup:AddChild(CooldownDrawEdge);
+  
+  local CooldownReverse = AceGUI:Create("CheckBox");
+  CooldownReverse:SetLabel("Reverse");
+  CooldownReverse:SetDescription("Sets whether to invert the bright and dark portions of the cooldown animation.");
+  CooldownReverse:SetWidth(260);
+  CooldownReverse:SetDisabled(not LayoutConfig.ShowCooldown);
+  CooldownReverse:SetValue(LayoutConfig.CooldownReverse);
+  CooldownReverse:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.CooldownReverse = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:ContentLayoutDurationAndCount(Content, ContainerId);
+  end);
+  CooldownGroup:AddChild(CooldownReverse);
   
   Content:AddSpace(2);
   Content:AddHeader("Count");
