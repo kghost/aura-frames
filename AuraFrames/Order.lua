@@ -148,7 +148,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
     SubjectCode = "Value1 = Object1.Aura."..Subject.."; Value2 = Object2.Aura."..Subject..";";
   end
 
-  if AuraFrames.AuraDefinition[Subject].List and Args.List and (Operator == "ListAsc" or Operator == "ListDesc") then
+  if Args.List and (Operator == "ListAsc" or Operator == "ListDesc") then
 
     local List = "";
 
@@ -162,7 +162,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
 
     end
 
-      return SubjectCode.."if Value1 ~= Value2 then local List = {"..List.."}; return (List[Value1] or #List + 1) "..OrderOperatorMappings[Operator].." (List[Value2] or #List + 1); end;";
+      return SubjectCode.."if Value1 ~= Value2 then local List = {"..List.."}; return (List[Value1] or "..(#Args.List + 1)..") "..OrderOperatorMappings[Operator].." (List[Value2] or "..(#Args.List + 1).."); end;";
 
   elseif Type == "String" or Type == "SpellName" then
   
@@ -245,6 +245,8 @@ function AuraFrames.OrderPrototype:Build()
   end
 
   local Code = "return function(Object1, Object2) local Value1, Value2; "..tconcat(Rules, " ").." return Object1.Aura.Name > Object2.Aura.Name; end;";
+
+  af:Print(Code);
 
   local Function, ErrorMessage = loadstring(Code);
   

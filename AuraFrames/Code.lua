@@ -17,13 +17,13 @@ function AuraFrames:BuildValue(RequestedType, Value)
 
   if type(Value) == "string" then
   
-    if RequestedType == "String" then
+    if RequestedType == "String" or RequestedType == "SpellName" then
     
       local ValueText = gsub(Value, "\"", "\\\"");
     
       return "\""..ValueText.."\"";
     
-    elseif RequestedType == "Number" then
+    elseif RequestedType == "Number" or RequestedType == "SpellId" then
     
       return tonumber(Value);
     
