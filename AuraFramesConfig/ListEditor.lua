@@ -60,6 +60,34 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
   -- Reset old list value.
   ListValue = "";
   
+  
+  if type(Input) == "table" and Add == false then
+  
+    -- We got a list as input but we can not add items.
+    -- This is only useful for ordering static lists.
+    -- We are merging the List with Input so that List
+    -- contains all the input elements but also not more.
+  
+    -- Add missing items in List.
+    for Index, _ in pairs(Input) do
+    
+      if tContains(List, Index) ~= 1 then
+        tinsert(List, Index);
+      end
+    
+    end
+    
+    -- Remove invalid items from List.
+    for i = #List, 1, -1 do
+    
+      if not Input[List[i]] then
+        tremove(List, i);
+      end
+    
+    end
+    
+  end
+  
   local Value;
   
   if Add == false then
@@ -134,7 +162,7 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
       end
     
     end
-
+    
     Value = AceGUI:Create("Dropdown");
     Value:SetList(Values);
     Value:SetWidth(210);
@@ -147,7 +175,7 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
   end
 
   if Value then
-
+  
     local ButtonAdd = AceGUI:Create("Button");
     ButtonAdd:SetText("Add");
     ButtonAdd:SetWidth(100);
@@ -176,7 +204,7 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
     
     local Label = AceGUI:Create("Label");
     Label:SetFontObject(GameFontNormalSmall);
-    Label:SetWidth(240);
+    Label:SetWidth(210);
     Label:SetText((type(Input) == "table" and Input[Value]) or Value);
     Container:AddChild(Label);
     
@@ -191,6 +219,13 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
         ListEditorRefresh(List, Input, Add, Delete, Order);
       end);
       Container:AddChild(ButtonDelete);
+    
+    else
+    
+      local SpaceDelete = AceGUI:Create("Label");
+      SpaceDelete:SetWidth(26);
+      SpaceDelete:SetText(" ");
+      Container:AddChild(SpaceDelete);
     
     end
     

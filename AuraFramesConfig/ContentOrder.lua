@@ -96,6 +96,11 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
     Subject:SetWidth(150);
     Subject:SetCallback("OnValueChanged", function(_, _, Value)
       Rule.Subject = Value;
+      
+      if Rule.Args and Rule.Args.List then
+        Rule.Args.List = nil;
+      end
+      
       AuraFramesConfig:ContentOrderRefresh(Content, ContainerId);
     end);
     Container:AddChild(Subject);
@@ -257,7 +262,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
           if not Rule.Args.List then
             Rule.Args.List = {};
           end
-          AuraFramesConfig:ShowListEditor(Rule.Args.List, AuraFrames.AuraDefinition[Rule.Subject].List or "None", function() AuraFramesConfig:Show(); ApplyChange(ContainerId); end, false, false, true);
+          AuraFramesConfig:ShowListEditor(Rule.Args.List, AuraFrames.AuraDefinition[Rule.Subject].List or AuraFrames.AuraDefinition[Rule.Subject].Type, function() AuraFramesConfig:Show(); ApplyChange(ContainerId); end, AuraFrames.AuraDefinition[Rule.Subject].List == nil, AuraFrames.AuraDefinition[Rule.Subject].List == nil, true);
           AuraFramesConfig:Close();
         end);
         Container:AddChild(Value);
