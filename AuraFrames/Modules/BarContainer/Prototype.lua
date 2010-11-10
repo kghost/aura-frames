@@ -133,6 +133,8 @@ function Prototype:Delete()
 
   -- Remove our self from LibAura.
   LibAura:UnregisterObjectSource(self, nil, nil);
+  
+  Module.Containers[self.Config.Id] = nil;
 
   self.Frame:Hide();
   self.Frame:UnregisterAllEvents();
@@ -144,9 +146,6 @@ function Prototype:Delete()
     self.LBFGroup:Delete(true);
   end
 
-  if self.ConfigFrame then
-    self.ConfigFrame:Hide();
-  end
 
 end
 
@@ -516,6 +515,7 @@ function Prototype:AuraNew(Aura)
       Bar.Button.Icon = _G[BarId.."ButtonIcon"];
       Bar.Button.Border = _G[BarId.."ButtonBorder"];
       Bar.Button.Background = _G[BarId.."ButtonBackground"];
+      Bar.Button.Cooldown = _G[BarId.."ButtonCooldown"];
   
     else
     
@@ -545,6 +545,10 @@ function Prototype:AuraNew(Aura)
     -- Set the font from this container.
     Bar.Text:SetFontObject(self.FontObject);
     Bar.Duration:SetFontObject(self.FontObject);
+    
+    -- Set cooldown options
+    Bar.Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
+    Bar.Button.Cooldown:SetReverse(self.Config.Layout.CooldownReverse);
   
   end
   
@@ -557,6 +561,24 @@ function Prototype:AuraNew(Aura)
   
   self.Bars[Aura.Id] = Bar;
   self.Order:Add(Bar);
+  
+  if self.Config.Layout.ShowCooldown == true and Aura.ExpirationTime > 0 then
+    
+    local CurrentTime = GetTime();
+    
+    if Aura.Duration then
+      Bar.Button.Cooldown:SetCooldown(Aura.ExpirationTime - Aura.Duration, Aura.ExpirationTime - CurrentTime);
+    else
+      Bar.Button.Cooldown:SetCooldown(CurrentTime, Aura.ExpirationTime - CurrentTime);
+    end
+    
+    Bar.Button.Cooldown:Show();
+  
+  else
+  
+    Bar.Button.Cooldown:Hide();
+  
+  end
   
   if FromContainerPool == true then
   
@@ -673,10 +695,8 @@ function Prototype:UpdateAnchors()
 
     if i > Max then
 
-      if self.Order[i]:IsShown() then
-        self.Order[i]:Hide();
-      end
-    
+      self.Order[i]:Hide();
+
     else
       
       self.Order[i]:SetPoint(
@@ -687,9 +707,7 @@ function Prototype:UpdateAnchors()
         Direction[2] * ((i - 1) * (Module.BarHeight + self.Config.Layout.Space))
       );
 
-      if not self.Order[i]:IsShown() then
-        self.Order[i]:Show();
-      end
+      self.Order[i]:Show();
     
     end
   

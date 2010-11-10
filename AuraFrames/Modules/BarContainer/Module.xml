@@ -32,6 +32,14 @@
           </Layer>
         </Layers>
       </Button>
+      <Cooldown name="$parentButtonCooldown" level="BORDER">
+        <Size>
+          <AbsDimension x="36" y="36"/>
+        </Size>
+        <Anchors>
+          <Anchor point="CENTER" relativeTo="$parentButton" />
+        </Anchors>
+      </Cooldown>
     </Frames>
     <Layers>
       <Layer level="BACKGROUND">
@@ -40,6 +48,9 @@
           <Size>
             <AbsDimension x="36" y="36"/>
           </Size>
+          <Anchors>
+            <Anchor point="CENTER" relativeTo="$parentButton" />
+          </Anchors>
         </Texture>
         <Texture name="$parentTextureBackground">
           <Color r="1.0" g="1.0" b="1.0" a="1.0"/>

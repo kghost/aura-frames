@@ -7,12 +7,12 @@
   <Frame name="AuraFramesButtonContainerTemplate" parent="UIParent" virtual="true" movable="true">
   </Frame>
 
-  <Button name="AuraFramesButtonTemplate" virtual="true">
+  <Button name="AuraFramesButtonTemplate" virtual="true" hidden="true">
     <Size>
       <AbsDimension x="36" y="36"/>
     </Size>
     <Layers>
-      <Layer level="BACKGROUND">
+      <Layer level="BORDER">
         <Texture name="$parentIcon" />
       </Layer>
       <Layer level="ARTWORK">
@@ -31,6 +31,16 @@
         </Texture>
       </Layer>
     </Layers>
+    <Frames>
+      <Cooldown name="$parentCooldown" level="BORDER" hidden="true">
+        <Size>
+          <AbsDimension x="36" y="36"/>
+        </Size>
+        <Anchors>
+          <Anchor point="CENTER" />
+        </Anchors>
+      </Cooldown>
+    </Frames>
   </Button>
 
 </Ui>

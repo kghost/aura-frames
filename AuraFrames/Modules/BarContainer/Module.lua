@@ -19,7 +19,6 @@ local _G = _G;
 Module.MaxBars = 40;
 Module.BarHeight = 36;
 
-
 -- List that contains the function prototypes for container objects.
 Module.Prototype = {};
 
@@ -120,6 +119,9 @@ function Module:GetDatabaseDefaults()
       BarTextureMove = true;
       BarDirection = "LEFTSHRINK",
       Icon = "LEFT",
+      ShowCooldown = false,
+      CooldownDrawEdge = true,
+      CooldownReverse = false,
     },
     Colors = {
       Debuff = {
@@ -149,6 +151,8 @@ function Module:New(Config)
 
   local Container = {};
   setmetatable(Container, { __index = self.Prototype});
+  
+  self.Containers[Config.Id] = Container;
   
   -- Reuse old containers if we can.
   if _G["AuraFramesBarContainer_"..Config.Name] then

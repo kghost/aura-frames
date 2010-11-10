@@ -57,7 +57,7 @@ end
 
 
 -----------------------------------------------------------------
--- Function Test
+-- Function OpenConfigDialog
 -----------------------------------------------------------------
 function AuraFrames:OpenConfigDialog()
 

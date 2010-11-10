@@ -22,6 +22,9 @@ Module.ButtonSizeY = 36;
 -- List that contains the function prototypes for container objects.
 Module.Prototype = {};
 
+-- List of all active containers that are based on this module.
+Module.Containers = {};
+
 
 -----------------------------------------------------------------
 -- Function OnInitialize
@@ -112,6 +115,9 @@ function Module:GetDatabaseDefaults()
       TooltipShowCaster = true,
       TooltipShowSpellId = false,
       TooltipShowClassification = false,
+      ShowCooldown = false,
+      CooldownDrawEdge = true,
+      CooldownReverse = false,
     },
     Colors = {
       Debuff = {
@@ -154,6 +160,8 @@ function Module:New(Config)
   local Container = {};
   setmetatable(Container, { __index = self.Prototype});
   
+  self.Containers[Config.Id] = Container;
+  
   -- Reuse old containers if we can.
   if _G["AuraFramesContainer_"..Config.Id] then
     Container.Frame = _G["AuraFramesContainer_"..Config.Id];
@@ -163,8 +171,7 @@ function Module:New(Config)
   
   Container.Frame:Show();
 
-  Container.Name = Config.Name;
-  Container.ConfigMode = false;
+  Container.Id = Config.Id;
   Container.Config = Config;
   
   Container.Filter = AuraFrames:NewFilter(Config.Filter, function() Container:Update("FILTER"); end);
@@ -181,9 +188,9 @@ function Module:New(Config)
   
   Container.DurationFontObject = _G["AuraFramesContainer_"..Config.Id.."_DurationFont"] or CreateFont("AuraFramesContainer_"..Config.Id.."_DurationFont");
   Container.CountFontObject = _G["AuraFramesContainer_"..Config.Id.."_CountFont"] or CreateFont("AuraFramesContainer_"..Config.Id.."_CountFont");
-  
-  Container:Update("ALL");
-  
+
+  Container:Update();
+
   Container.Frame:SetScript("OnEvent", function() Container:Update(); end);
   Container.Frame:RegisterEvent("PLAYER_ENTERING_WORLD");
   Container.Frame:RegisterEvent("ZONE_CHANGED");

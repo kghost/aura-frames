@@ -46,7 +46,7 @@ function Module:Enable()
 
   -- For the sake of ppl that wining about addon memory... We create the test data table when we are getting enabled.
   
-  -- [SpellId] = {Type, Classification, Duration, MaxStacks}
+  -- [Type][SpellId] = {Classification, Duration, MaxStacks}
   self.TestData = self.TestData or {};
   self.TestData["HELPFUL"] = Module.TestData["HELPFUL"] or {};
   self.TestData["HARMFUL"] = Module.TestData["HARMFUL"] or {};
@@ -103,7 +103,7 @@ function Module:ActivateSource(Unit, Type)
       IsStealable = false,
       IsCancelable = false,
       IsDispellable = false,
-      Duration = Options[3],
+      Duration = Options[2],
       ExpirationTime = (Options[2] ~= 0 and CurrentTime + Options[2]) or 0,
       Count = (Options[3] ~= 0 and 1) or 0;
     };

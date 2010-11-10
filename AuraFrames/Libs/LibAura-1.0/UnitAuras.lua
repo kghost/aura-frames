@@ -51,7 +51,8 @@ Mouseover unit:
   are checking the mouseover unit when we got a UNIT_AURA for mouseover every 0.2 seconds
   until the mouseover until is nil. When the mouseover unit is nil, we trigger an old event
   for all auras we had for the mouseover.
-
+  
+  UPDATE, we get a CURSOR_UPDATE event when leaving a mouse over object!
 
 ]]--
 
@@ -87,7 +88,7 @@ Module.EventsToMonitor = {
   vehicletarget = {"UNIT_AURA", "UNIT_ENTERED_VEHICLE", "UNIT_TARGET"},
   target        = {"UNIT_AURA", "PLAYER_TARGET_CHANGED"},
   targettarget  = {"UNIT_AURA", "PLAYER_TARGET_CHANGED", "UNIT_TARGET"},
-  mouseover     = {"UNIT_AURA", "UPDATE_MOUSEOVER_UNIT"}
+  mouseover     = {"UNIT_AURA", "UPDATE_MOUSEOVER_UNIT", "CURSOR_UPDATE"}
 };
 
 for i = 1, 4 do
@@ -119,10 +120,6 @@ for Unit, _ in pairs(Module.EventsToMonitor) do
 end
 
 
--- How fast we detect mouseout
-local MouseoutScanPeriod = 0.2;
-local TimeSinceLastMouseoutScan = 0.0;
-
 -- Internal db used for storing auras.
 Module.db = Module.db or {};
 
@@ -151,10 +148,6 @@ function Module:ActivateSource(Unit, Type)
     
     for _, Event in ipairs(Module.EventsToMonitor[Unit]) do
       self:RegisterEvent(Event, Event);
-    end
-    
-    if Unit == "mouseover" then
-      self:RegisterEvent("LIBAURA_UPDATE", "UPDATE_MOUSEOVER_UNIT");
     end
     
   elseif not self.db[Unit][Type] then
@@ -194,10 +187,6 @@ function Module:DeactivateSource(Unit, Type)
       self:UnregisterEvent(Event, Event);
     end
     
-    if Unit == "mouseover" then
-      self:UnregisterEvent("LIBAURA_UPDATE", "UPDATE_MOUSEOVER_UNIT");
-    end
-  
   end
   
   if next(self.db) == nil then
@@ -273,6 +262,10 @@ function Module:UNIT_TARGET(Unit)
 end
 
 function Module:UPDATE_MOUSEOVER_UNIT()
+  Module:ScanUnit("mouseover");
+end
+
+function Module:CURSOR_UPDATE()
   Module:ScanUnit("mouseover");
 end
 

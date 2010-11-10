@@ -43,6 +43,40 @@ local ButtonUpdatePeriod = 0.05;
 local PI2 = PI + PI;
 
 
+local CooldownFrame = CreateFrame("Frame");
+CooldownFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
+CooldownFrame:SetScript("OnEvent", function(self, event)
+
+  local TimePast = 0;
+
+  self:SetScript("OnUpdate", function(self, Elapsed)
+
+    TimePast = TimePast + Elapsed;
+    
+    if TimePast > 10 then
+      self:SetScript("OnUpdate", nil);
+    end
+    
+    for _, Container in pairs(Module.Containers) do
+    
+      for _, Button in pairs(Container.Buttons) do
+      
+        if Button.Cooldown:IsShown() == 1 then
+        
+          Button.Cooldown:Hide();
+          Button.Cooldown:Show();
+        
+        end
+      
+      end
+    
+    end
+    
+  end);
+
+end);
+
+
 -----------------------------------------------------------------
 -- Local Function ButtonOnUpdate
 -----------------------------------------------------------------
@@ -122,6 +156,8 @@ function Prototype:Delete()
 
   -- Remove our self from LibAura.
   LibAura:UnregisterObjectSource(self, nil, nil);
+  
+  Module.Containers[self.Config.Id] = nil;
 
   self.Frame:Hide();
   self.Frame:UnregisterAllEvents();
@@ -131,10 +167,6 @@ function Prototype:Delete()
 
   if self.LBFGroup then
     self.LBFGroup:Delete(true);
-  end
-  
-  if self.ConfigFrame then
-    self.ConfigFrame:Hide();
   end
 
 end
@@ -221,6 +253,24 @@ function Prototype:UpdateButtonDisplay(Button)
     Button.Border:SetVertexColor(unpack(Color));
   
   end
+
+  if self.Config.Layout.ShowCooldown == true and Aura.ExpirationTime > 0 then
+    
+    local CurrentTime = GetTime();
+
+    if Aura.Duration then
+      Button.Cooldown:SetCooldown(Aura.ExpirationTime - Aura.Duration, Aura.ExpirationTime - CurrentTime);
+    else
+      Button.Cooldown:SetCooldown(CurrentTime, Aura.ExpirationTime - CurrentTime);
+    end
+    
+    Button.Cooldown:Show();
+  
+  else
+  
+    Button.Cooldown:Hide();
+  
+  end
   
   ButtonOnUpdate(self, Button, 0.0);
 
@@ -273,6 +323,10 @@ function Prototype:UpdateButton(Button)
     Button:SetScript("OnClick", nil);
     
   end
+  
+  -- Set cooldown options
+  Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
+  Button.Cooldown:SetReverse(self.Config.Layout.CooldownReverse);
   
   self:UpdateButtonDisplay(Button);
 
@@ -420,6 +474,7 @@ function Prototype:AuraNew(Aura)
       Button.Icon = _G[ButtonId.."Icon"];
       Button.Count = _G[ButtonId.."Count"];
       Button.Border = _G[ButtonId.."Border"];
+      Button.Cooldown = _G[ButtonId.."Cooldown"];
     
     else
     
@@ -443,7 +498,7 @@ function Prototype:AuraNew(Aura)
     
     if LBF then
       -- Don't skin the count text, we will take care of that.
-      self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false});
+      self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false, Cooldown = false});
     end
     
     -- Set the font from this container.
@@ -580,15 +635,9 @@ function Prototype:UpdateAnchors()
     
     if i > Max then
 
-      if self.Order[i]:IsShown() then
-        self.Order[i]:Hide();
-      end
+      self.Order[i]:Hide();
     
     else
-    
-      if not self.Order[i]:IsShown() then
-        self.Order[i]:Show();
-      end
       
       if Direction[2] == "y" then
         x, y = ((i - 1) % self.Config.Layout.HorizontalSize), math_floor((i - 1) / self.Config.Layout.HorizontalSize);
@@ -604,6 +653,8 @@ function Prototype:UpdateAnchors()
         Direction[4] * (y * (Module.ButtonSizeY + (y and self.Config.Layout.SpaceY)))
       );
     
+      self.Order[i]:Show();
+
     end
   
   end

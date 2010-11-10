@@ -9,7 +9,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 168;
+AuraFrames.DatabaseVersion = 169;
 
 
 --[[
@@ -74,8 +74,9 @@ AuraFrames.DatabaseVersion = 168;
     Bar container new: TextureBackgroundUseTexture, TextureBackgroundUseBarColor,
     TextureBackgroundOpacity and ButtonBackgroundOpacity.
   
-  Version 168:
+  Version 169:
     Set default font to "Friz Quadrata TT" if there isn't one.
+    Added cooldown options to button and bar container.
   
 ]]--
 
@@ -401,7 +402,7 @@ function AuraFrames:DatabaseUpgrade()
     
     end
     
-    if self.db.profile.DbVersion < 167 then
+    if self.db.profile.DbVersion < 169 then
     
       if Container.Type == "ButtonContainer" then
       
@@ -412,6 +413,14 @@ function AuraFrames:DatabaseUpgrade()
       
         Container.Layout.TextFont = Container.Layout.TextFont or "Friz Quadrata TT";
         
+      end
+      
+      if Container.Type == "ButtonContainer" or Container.Type == "BarContainer" then
+
+        Container.Layout.ShowCooldown = false;
+        Container.Layout.CooldownDrawEdge = true;
+        Container.Layout.CooldownReverse = false;
+
       end
     
     end
