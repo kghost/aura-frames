@@ -85,6 +85,18 @@ AuraFrames.OrderTypeOperators = {
     "ListAsc",
     "ListDesc",
   },
+  SpellName = {
+    "First",
+    "Last",
+    "ListAsc",
+    "ListDesc",
+  },
+  SpellId = {
+    "First",
+    "Last",
+    "ListAsc",
+    "ListDesc",
+  },
 };
 
 
@@ -131,7 +143,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
   local SubjectCode;
   
   if AuraFrames.AuraDefinition[Subject].Code then
-    SubjectCode = "do local Object = Object1.Aura; Value1 = "..AuraFrames.AuraDefinition[Subject].Code.."; end; do local Object = Object2.Aura; Value2 = "..AuraFrames.AuraDefinition[Subject].Code.."; end";
+    SubjectCode = "do local Object = Object1.Aura; Value1 = "..AuraFrames.AuraDefinition[Subject].Code.."; end; do local Object = Object2.Aura; Value2 = "..AuraFrames.AuraDefinition[Subject].Code.."; end;";
   else
     SubjectCode = "Value1 = Object1.Aura."..Subject.."; Value2 = Object2.Aura."..Subject..";";
   end
@@ -152,7 +164,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
 
       return SubjectCode.."if Value1 ~= Value2 then local List = {"..List.."}; return (List[Value1] or #List + 1) "..OrderOperatorMappings[Operator].." (List[Value2] or #List + 1); end;";
 
-  elseif Type == "String" then
+  elseif Type == "String" or Type == "SpellName" then
   
     if (Operator == "First" or Operator == "Last") and Args[Type] then
     
@@ -164,7 +176,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
     
     end
     
-  elseif Type == "Number" then
+  elseif Type == "Number" or Type == "SpellId" then
     
     if (Operator == "First" or Operator == "Last") and Args[Type] then
     

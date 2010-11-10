@@ -32,7 +32,7 @@ AuraFrames.AuraDefinition = {
   Name = {
     Type = "SpellName",
     Name = "Spell name",
-    Order = false,
+    Order = true,
     Filter = true,
     Weight = 2,
   },
@@ -96,7 +96,7 @@ AuraFrames.AuraDefinition = {
   CasterName = {
     Type = "String",
     Name = "Caster name",
-    Order = false,
+    Order = true,
     Filter = true,
     Weight = 2,
   },
@@ -124,7 +124,7 @@ AuraFrames.AuraDefinition = {
   SpellId = {
     Type = "SpellId",
     Name = "Spell Id",
-    Order = false,
+    Order = true,
     Filter = true,
     Weight = 1,
   },
