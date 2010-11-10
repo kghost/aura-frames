@@ -12,7 +12,7 @@
       <Button name="$parentButton">
         <Size x="36" y="36"/>
         <Layers>
-          <Layer level="BACKGROUND">
+          <Layer level="BORDER">
             <Texture name="$parentIcon">
               <Size>
                 <AbsDimension x="36" y="36"/>
@@ -35,17 +35,14 @@
     </Frames>
     <Layers>
       <Layer level="BACKGROUND">
-        <Texture name="$parentTextureBackground">
-          <Color r="1.0" g="1.0" b="1.0" a="1.0"/>
-        </Texture>
         <Texture name="$parentButtonBackground">
           <Color r="1.0" g="1.0" b="1.0" a="1.0"/>
           <Size>
             <AbsDimension x="36" y="36"/>
           </Size>
-          <Anchors>
-            <Anchor point="CENTER" relativeTo="$parentButtonIcon" />
-          </Anchors>
+        </Texture>
+        <Texture name="$parentTextureBackground">
+          <Color r="1.0" g="1.0" b="1.0" a="1.0"/>
         </Texture>
       </Layer>
       <Layer level="BORDER">
