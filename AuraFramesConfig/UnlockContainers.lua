@@ -2,6 +2,8 @@ local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AceGUI = LibStub("AceGUI-3.0");
 
+AuraFramesConfig.ContainersUnlocked = false;
+
 local UnlockDialog;
 
 -----------------------------------------------------------------
@@ -74,13 +76,11 @@ end
 -----------------------------------------------------------------
 function AuraFramesConfig:UnlockContainers(Unlock)
   
-  AuraFrames.ContainersUnlocked = Unlock;
+  self.ContainersUnlocked = Unlock;
   
-  for _, Container in pairs(AuraFrames.Containers) do
+  for Id, Config in pairs(AuraFrames.db.profile.Containers) do
   
-    if Container.UnlockContainer then
-      Container:UnlockContainer(Unlock);
-    end
+    self:GetModule(Config.Type):UnlockContainer(Id, Unlock);
   
   end
   

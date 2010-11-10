@@ -256,6 +256,9 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
     
     AuraFrames:Confirm("Are you sure you want to delete the container?", function(Result)
       if Result == true then
+      
+        -- Make sure the container is not unlocked.
+        self:GetModule(AuraFrames.db.profile.Containers[ContainerId].Type):UnlockContainer(ContainerId, false);
         
         -- Delete container instance if it exists.
         AuraFrames:DeleteContainer(ContainerId);

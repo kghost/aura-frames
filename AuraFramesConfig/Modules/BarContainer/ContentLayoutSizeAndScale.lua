@@ -29,6 +29,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   Scale:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.Scale = Value;
     ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
   end);
   Content:AddChild(Scale);
   
@@ -43,6 +44,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   NumberOfBars:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.NumberOfBars = Value;
     ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
   end);
   Content:AddChild(NumberOfBars);
   

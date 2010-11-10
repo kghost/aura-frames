@@ -29,6 +29,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   Scale:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.Scale = Value;
     ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
   end);
   Content:AddChild(Scale);
   
@@ -49,6 +50,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   HorizontalSize:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.HorizontalSize = Value;
     ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
   end);
   SizeGroup:AddChild(HorizontalSize);
   
@@ -61,6 +63,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   VerticalSize:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.VerticalSize = Value;
     ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
   end);
   SizeGroup:AddChild(VerticalSize);
   

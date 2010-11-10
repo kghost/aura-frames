@@ -48,6 +48,17 @@ local function CreateContainerConfig()
     return;
   end
   
+  -- If ContainersUnlocked then unlock the new container also.
+  if AuraFramesConfig.ContainersUnlocked then
+  
+    if not AuraFramesConfig:IsEnabled(ContainerType) then
+      AuraFramesConfig:Enable(ContainerType);
+    end
+  
+    AuraFramesConfig:GetModule(ContainerType):UnlockContainer(ContainerId, false);
+  
+  end
+  
   wipe(ContainerTypeControls);
   
   AuraFramesConfig:RefreshTree();
