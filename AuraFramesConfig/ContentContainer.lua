@@ -91,13 +91,13 @@ function AuraFramesConfig:ContentContainerNoModule(ContainerId)
   
   self.Content:AddText("Container "..ContainerConfig.Name.."\n", GameFontNormalLarge);
   
-  self.Content:AddText("The container "..ContainerConfig.Name.." can not be configured at this time. The container type is "..ContainerConfig.Type.." but no module could be found for that type!\n\n");
+  self.Content:AddText("The container "..ContainerConfig.Name.." can not be configured at this time. The container type is \""..ContainerConfig.Type.."\" but no module could be found for that type!\n\n");
 
   local ButtonDelete = AceGUI:Create("Button");
   ButtonDelete:SetText("Delete container");
   ButtonDelete:SetCallback("OnClick", function()
   
-    AuraFramesConfig:Hide();
+    AuraFramesConfig:Close();
     
     AuraFrames:Confirm("Are you sure you want to delete the container?", function(Result)
       if Result == true then
