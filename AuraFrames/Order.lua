@@ -246,8 +246,6 @@ function AuraFrames.OrderPrototype:Build()
 
   local Code = "return function(Object1, Object2) local Value1, Value2; "..tconcat(Rules, " ").." return Object1.Aura.Name > Object2.Aura.Name; end;";
 
-  af:Print(Code);
-
   local Function, ErrorMessage = loadstring(Code);
   
   if Function then
