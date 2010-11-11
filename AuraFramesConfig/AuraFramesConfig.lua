@@ -6,6 +6,13 @@ local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 -----------------------------------------------------------------
 function AuraFramesConfig:OnInitialize()
 
+end
+
+-----------------------------------------------------------------
+-- Function OnEnable
+-----------------------------------------------------------------
+function AuraFramesConfig:OnEnable()
+
   local CloseSpecialWindowsOld = CloseSpecialWindows;
   
   CloseSpecialWindows = function()
@@ -19,12 +26,10 @@ function AuraFramesConfig:OnInitialize()
     return AuraFramesConfig:Close() or Result;
   end
 
-end
-
------------------------------------------------------------------
--- Function OnEnable
------------------------------------------------------------------
-function AuraFramesConfig:OnEnable()
+  -- Register database callbacks
+  AuraFrames.db.RegisterCallback(self, "OnProfileChanged", "DatabaseChanged");
+  AuraFrames.db.RegisterCallback(self, "OnProfileCopied", "DatabaseChanged");
+  AuraFrames.db.RegisterCallback(self, "OnProfileReset", "DatabaseChanged");
 
 end
 
@@ -35,3 +40,15 @@ end
 function AuraFramesConfig:OnDisable()
 
 end
+
+
+-----------------------------------------------------------------
+-- Function DatabaseChanged
+-----------------------------------------------------------------
+function AuraFramesConfig:DatabaseChanged()
+
+  self:RefreshTree();
+
+end
+
+
