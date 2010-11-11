@@ -12,6 +12,8 @@ function AuraFramesConfig:ContentGeneral()
   
   self.Content:AddText("General Settings\n", GameFontNormalLarge);
 
+  self.Content:AddHeader("Blizzard Buff Frames");
+
   self.Content:AddText("Disable and hide the default frames that are used by Blizzard to display buff/debuff aura's. When you enable the Blizzard frames again you need to reload/relog to show them!\n");
 
   local HideBlizzard = AceGUI:Create("CheckBox");
@@ -24,6 +26,27 @@ function AuraFramesConfig:ContentGeneral()
     end
   end);
   self.Content:AddChild(HideBlizzard);
+
+  self.Content:AddSpace();
+  self.Content:AddHeader("Version Information");
+  
+  local VersionGroup = AceGUI:Create("SimpleGroup");
+  VersionGroup:SetRelativeWidth(1);
+  VersionGroup:SetLayout("Flow");
+  self:EnhanceContainer(VersionGroup)
+  self.Content:AddChild(VersionGroup);
+
+  VersionGroup:AddText("You are running the following version of Aura Frames:");
+  VersionGroup:AddSpace();
+  
+  VersionGroup:AddText("Version", nil, 100);
+  VersionGroup:AddText("|cffff0000: "..AuraFrames.Version.String.."|r", nil, 450);
+  
+  VersionGroup:AddText("Revision", nil, 100);
+  VersionGroup:AddText(": "..AuraFrames.Version.Revision, nil, 450);
+  
+  VersionGroup:AddText("Date", nil, 100);
+  VersionGroup:AddText(": "..AuraFrames.Version.Date, nil, 450);
   
   self.Content:AddSpace();
   self.Content:AddHeader("Credits");

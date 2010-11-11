@@ -21,11 +21,15 @@ function AuraFramesConfig:EnhanceContainer(Container)
   
   end
   
-  Container.AddText = function(Container, Text, Font)
+  Container.AddText = function(Container, Text, Font, Width)
   
     local Label = AceGUI:Create("Label");
     Label:SetFontObject(Font or GameFontNormal);
-    Label:SetRelativeWidth(1);
+    if Width then
+      Label:SetWidth(Width);
+    else
+      Label:SetRelativeWidth(1);
+    end
     Label:SetText(Text);
     Container:AddChild(Label);
     
