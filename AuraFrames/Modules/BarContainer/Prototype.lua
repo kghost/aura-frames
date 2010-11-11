@@ -32,7 +32,65 @@ local DirectionMapping = {
   UP    = {"BOTTOMLEFT",  1},
 };
 
+
+PositionMappings = {
+  NONE = {
+    LEFT = {5, 0},
+    RIGHT = {-5, 0},
+    CENTER = {0, 0},
+  },
+  LEFT = {
+    LEFT = {5 + Module.BarHeight, 0},
+    RIGHT = {-5, 0},
+    CENTER = {Module.BarHeight / 2, 0},
+  },
+  RIGHT = {
+    LEFT = {5, 0},
+    RIGHT = {-5 - Module.BarHeight, 0},
+    CENTER = {-(Module.BarHeight / 2), 0},
+  },
+};
+
+
 local BarUpdatePeriod = 0.05;
+
+
+-----------------------------------------------------------------
+-- Cooldown Fix
+-----------------------------------------------------------------
+local CooldownFrame = CreateFrame("Frame");
+CooldownFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
+CooldownFrame:SetScript("OnEvent", function(self, event)
+
+  local TimePast = 0;
+
+  self:SetScript("OnUpdate", function(self, Elapsed)
+
+    TimePast = TimePast + Elapsed;
+    
+    if TimePast > 10 then
+      self:SetScript("OnUpdate", nil);
+    end
+    
+    for _, Container in pairs(Module.Containers) do
+    
+      for _, Bar in pairs(Container.Bars) do
+      
+        if Bar.Button.Cooldown:IsShown() == 1 then
+        
+          -- Trigger animation code.
+          Bar.Button.Cooldown:Hide();
+          Bar.Button.Cooldown:Show();
+        
+        end
+      
+      end
+    
+    end
+    
+  end);
+
+end);
 
 
 -----------------------------------------------------------------
@@ -52,7 +110,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
       
       if Bar.TimeLeftSeconds ~= TimeLeftSeconds then
     
-        Bar.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft));
+        Bar.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft, false));
       
         Bar.TimeLeftSeconds = TimeLeftSeconds;
       
@@ -262,6 +320,24 @@ function Prototype:UpdateBarDisplay(Bar)
     
     end
     
+    if self.Config.Layout.ShowCooldown == true and Aura.ExpirationTime > 0 then
+      
+      local CurrentTime = GetTime();
+
+      if Aura.Duration > 0 then
+        Bar.Button.Cooldown:SetCooldown(Aura.ExpirationTime - Aura.Duration, Aura.Duration);
+      else
+        Bar.Button.Cooldown:SetCooldown(CurrentTime, Aura.ExpirationTime - CurrentTime);
+      end
+      
+      Bar.Button.Cooldown:Show();
+    
+    else
+    
+      Bar.Button.Cooldown:Hide();
+    
+    end
+    
   end
   
   if Aura.ExpirationTime == 0 or (Aura.ExpirationTime ~= 0 and max(Aura.ExpirationTime - GetTime(), 0) > self.Config.Layout.BarMaxTime) then
@@ -294,9 +370,6 @@ function Prototype:UpdateBar(Bar)
     Bar.Button:Hide();
     Bar.Button.Background:Hide();
     
-    Bar.Text:SetPoint("LEFT", Bar, "LEFT", 5, 0);
-    Bar.Duration:SetPoint("RIGHT", Bar, "RIGHT", -5, 0);
-    
   elseif self.Config.Layout.Icon == "LEFT" then
   
     Bar.Button:ClearAllPoints();
@@ -304,20 +377,20 @@ function Prototype:UpdateBar(Bar)
     Bar.Button:Show();
     Bar.Button.Background:Show();
   
-    Bar.Text:SetPoint("LEFT", Bar, "LEFT", 5 + Module.BarHeight , 0);
-    Bar.Duration:SetPoint("RIGHT", Bar, "RIGHT", -5, 0);
-  
   elseif self.Config.Layout.Icon == "RIGHT" then
   
     Bar.Button:ClearAllPoints();
     Bar.Button:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", 0, 0);
     Bar.Button:Show();
     Bar.Button.Background:Show();
-  
-    Bar.Text:SetPoint("LEFT", Bar, "LEFT", 5, 0);
-    Bar.Duration:SetPoint("RIGHT", Bar, "RIGHT", -5 - Module.BarHeight, 0);
 
   end
+  
+  local Adjust = PositionMappings[self.Config.Layout.Icon][self.Config.Layout.TextPosition];
+  Bar.Text:SetPoint(self.Config.Layout.TextPosition, Bar, self.Config.Layout.TextPosition, Adjust[1], Adjust[2]);
+
+  Adjust = PositionMappings[self.Config.Layout.Icon][self.Config.Layout.DurationPosition];
+  Bar.Duration:SetPoint(self.Config.Layout.DurationPosition, Bar, self.Config.Layout.DurationPosition, Adjust[1], Adjust[2]);
   
   Bar.Texture:ClearAllPoints();
   Bar.Texture:SetHeight(Module.BarHeight);
@@ -347,13 +420,19 @@ function Prototype:UpdateBar(Bar)
   
   if self.Config.Layout.ShowTooltip then
   
-    Bar:SetScript("OnEnter", function(Bar) AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); end);
+    Bar:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); end);
     Bar:SetScript("OnLeave", function() AuraFrames:HideTooltip(); end);
+  
+    Bar.Button:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); end);
+    Bar.Button:SetScript("OnLeave", function() AuraFrames:HideTooltip(); end);
   
   else
   
     Bar:SetScript("OnEnter", nil);
     Bar:SetScript("OnLeave", nil);
+
+    Bar.Button:SetScript("OnEnter", nil);
+    Bar.Button:SetScript("OnLeave", nil);
   
   end
   
@@ -363,15 +442,27 @@ function Prototype:UpdateBar(Bar)
     
     Bar:EnableMouse(true);
     Bar:SetScript("OnMouseUp", BarOnMouseUp);
-    
-    Bar:HookScript("OnEnter", function(Bar) AuraFrames:SetCancelAuraFrame(Bar, Bar.Aura); end);
-    
+    Bar:HookScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Bar, Bar.Aura); end);
+
+    Bar.Button:EnableMouse(true);
+    Bar.Button:RegisterForClicks("RightButtonUp");
+    Bar.Button:SetScript("OnClick", function(_, Button) BarOnMouseUp(Bar, Button) end);
+    Bar.Button:HookScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Bar.Button, Bar.Aura); end);
+
   else
     
     Bar:EnableMouse(false);
     Bar:SetScript("OnMouseUp", nil);
     
+    Bar.Button:EnableMouse(false);
+    Bar.Button:SetScript("OnClick", nil);
+    
   end
+  
+  -- Set cooldown options
+  Bar.Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
+  Bar.Button.Cooldown:SetReverse(self.Config.Layout.CooldownReverse);
+  Bar.Button.Cooldown.noCooldownCount = self.Config.Layout.CooldownDisableOmniCC;
   
   self:UpdateBarDisplay(Bar);
 
@@ -539,7 +630,7 @@ function Prototype:AuraNew(Aura)
   
     if LBF then
       -- We Don't have count text.
-      self.LBFGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border, Count = false});
+      self.LBFGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border, Count = false, Cooldown = Bar.Button.Cooldown});
     end
   
     -- Set the font from this container.
@@ -615,6 +706,10 @@ function Prototype:AuraOld(Aura)
   self.Order:Remove(Bar);
   
   Bar:Hide();
+  
+  if AuraFrames:IsTooltipOwner(Bar) == true then
+    AuraFrames:HideTooltip();
+  end
   
   -- See in what pool we need to drop.
   if #self.BarPool >= ContainerBarPoolSize then

@@ -43,29 +43,42 @@ local Lookup = {
   
 };
 
+-----------------------------------------------------------------
+-- Local Function round
+-----------------------------------------------------------------
+local function round(x)
+  
+  return floor(x + 0.5);
+
+end
+
 
 -----------------------------------------------------------------
 -- Function FormatTimeLeft
 -----------------------------------------------------------------
-function AuraFrames:FormatTimeLeft(Format, TimeLeft)
+function AuraFrames:FormatTimeLeft(Format, TimeLeft, HideZero)
 
   local String;
 
   if Format == "ABBREV" or Format == "ABBREVSPACE" then
 
     if (TimeLeft >= 86400) then
-      return Lookup[Format].Day, math_ceil(TimeLeft / 86400);
+      return Lookup[Format].Day, round(TimeLeft / 86400);
     end
 
     if (TimeLeft >= 3600) then
-      return Lookup[Format].Hour, math_ceil(TimeLeft / 3600);
+      return Lookup[Format].Hour, round(TimeLeft / 3600);
     end
 
     if (TimeLeft >= 60) then
-      return Lookup[Format].Minute, math_ceil(TimeLeft / 60);
+      return Lookup[Format].Minute, round(TimeLeft / 60);
     end
 
-    return Lookup[Format].Second, TimeLeft;
+    if HideZero == true and TimeLeft < 1 then
+      return "";
+    else
+      return Lookup[Format].Second, TimeLeft;
+    end
     
   elseif Format == "SEPCOL" or Format == "SEPDOT" then
   
@@ -76,12 +89,20 @@ function AuraFrames:FormatTimeLeft(Format, TimeLeft)
     elseif Hours ~= 0 then
       return Lookup[Format].Hours, Hours, Minutes, Seconds;
     else
-      return Lookup[Format].Minutes, Minutes, Seconds;
+      if HideZero == true and Minutes+Seconds < 1 then
+        return "";
+      else
+        return Lookup[Format].Minutes, Minutes, Seconds;
+      end
     end
   
   else -- NONE or invalid format.
   
-    return "%d", TimeLeft;
+    if HideZero == true and TimeLeft < 1 then
+      return "";
+    else
+      return "%d", TimeLeft;
+    end
   
   end
 

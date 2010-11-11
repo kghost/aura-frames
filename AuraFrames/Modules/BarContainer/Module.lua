@@ -97,6 +97,7 @@ function Module:GetDatabaseDefaults()
       DynamicSize = false,
       ShowDuration = true,
       DurationLayout = "ABBREVSPACE",
+      DurationPosition = "RIGHT",
       ShowCount = true,
       ShowAuraName = true,
       TextFont = "Friz Quadrata TT",
@@ -104,6 +105,7 @@ function Module:GetDatabaseDefaults()
       TextMonochrome = false,
       TextSize = 11,
       TextColor = {1, 1, 1, 1},
+      TextPosition = "LEFT",
       TextureBackgroundColor = {0, 0, 0, 0.8},
       TextureBackgroundUseTexture = false,
       TextureBackgroundUseBarColor = false,
@@ -125,6 +127,7 @@ function Module:GetDatabaseDefaults()
       ShowCooldown = false,
       CooldownDrawEdge = true,
       CooldownReverse = false,
+      CooldownDisableOmniCC = true,
     },
     Colors = {
       Debuff = {

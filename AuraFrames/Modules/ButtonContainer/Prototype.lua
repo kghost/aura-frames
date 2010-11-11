@@ -43,6 +43,9 @@ local ButtonUpdatePeriod = 0.05;
 local PI2 = PI + PI;
 
 
+-----------------------------------------------------------------
+-- Cooldown Fix
+-----------------------------------------------------------------
 local CooldownFrame = CreateFrame("Frame");
 CooldownFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 CooldownFrame:SetScript("OnEvent", function(self, event)
@@ -91,11 +94,11 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
     
     if Container.Config.Layout.ShowDuration == true then
     
-      local TimeLeftSeconds = math_ceil(TimeLeft);
+      local TimeLeftSeconds = math_ceil(TimeLeft + 0.5);
       
       if Button.TimeLeftSeconds ~= TimeLeftSeconds then
     
-        Button.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft));
+        Button.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft, true));
         Button.TimeLeftSeconds = TimeLeftSeconds;
       
       end
@@ -259,8 +262,8 @@ function Prototype:UpdateButtonDisplay(Button)
     
     local CurrentTime = GetTime();
 
-    if Aura.Duration then
-      Button.Cooldown:SetCooldown(Aura.ExpirationTime - Aura.Duration, Aura.ExpirationTime - CurrentTime);
+    if Aura.Duration > 0 then
+      Button.Cooldown:SetCooldown(Aura.ExpirationTime - Aura.Duration, Aura.Duration);
     else
       Button.Cooldown:SetCooldown(CurrentTime, Aura.ExpirationTime - CurrentTime);
     end
@@ -328,6 +331,7 @@ function Prototype:UpdateButton(Button)
   -- Set cooldown options
   Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
   Button.Cooldown:SetReverse(self.Config.Layout.CooldownReverse);
+  Button.Cooldown.noCooldownCount = self.Config.Layout.CooldownDisableOmniCC;
   
   self:UpdateButtonDisplay(Button);
 
@@ -556,6 +560,10 @@ function Prototype:AuraOld(Aura)
   self.Order:Remove(Button);
   
   Button:Hide();
+  
+  if AuraFrames:IsTooltipOwner(Bar) == true then
+    AuraFrames:HideTooltip();
+  end
   
   -- The warning system can have changed the alpha. Set it back.
   Button.Icon:SetAlpha(1.0);

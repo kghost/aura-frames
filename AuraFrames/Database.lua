@@ -9,7 +9,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 169;
+AuraFrames.DatabaseVersion = 170;
 
 
 --[[
@@ -78,6 +78,12 @@ AuraFrames.DatabaseVersion = 169;
     Set default font to "Friz Quadrata TT" if there isn't one.
     Added cooldown options to button and bar container.
   
+  Version 170:
+    CooldownDisableOmniCC added, default to true.
+
+  Version 171:
+    Bar container text can now have a position.
+    
 ]]--
 
 
@@ -420,6 +426,27 @@ function AuraFrames:DatabaseUpgrade()
         Container.Layout.ShowCooldown = false;
         Container.Layout.CooldownDrawEdge = true;
         Container.Layout.CooldownReverse = false;
+
+      end
+    
+    end
+    
+    if self.db.profile.DbVersion < 170 then
+    
+      if Container.Type == "ButtonContainer" or Container.Type == "BarContainer" then
+
+        Container.Layout.CooldownDisableOmniCC = true;
+
+      end
+    
+    end
+    
+    if self.db.profile.DbVersion < 171 then
+    
+      if Container.Type == "BarContainer" then
+
+        Container.Layout.DurationPosition = "RIGHT";
+        Container.Layout.TextPosition = "LEFT";
 
       end
     

@@ -118,6 +118,7 @@ function Module:GetDatabaseDefaults()
       ShowCooldown = false,
       CooldownDrawEdge = true,
       CooldownReverse = false,
+      CooldownDisableOmniCC = true,
     },
     Colors = {
       Debuff = {
