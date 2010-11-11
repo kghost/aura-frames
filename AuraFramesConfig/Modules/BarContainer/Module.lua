@@ -49,6 +49,10 @@ end
 function Module:UnlockContainer(ContainerId, Unlock)
 
   local Container = AuraFrames.Containers[ContainerId];
+  
+  if not Container then
+    return;
+  end
 
   Container.Unlocked = Unlock;
   
