@@ -9,6 +9,7 @@
 Embeds.xml
 
 AuraFrames.lua
+Version.lua
 Database.lua
 Modules.lua
 Container.lua

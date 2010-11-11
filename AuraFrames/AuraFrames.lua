@@ -37,6 +37,7 @@ function AuraFrames:OnEnable()
   self:CheckBlizzardAuraFrames();
   
   self:RegisterChatCommand("af", "OpenConfigDialog");
+  self:RegisterChatCommand("afver", "DumpVersion");
   
   self:RegisterBlizzardOptions();
 
@@ -51,6 +52,19 @@ end
 function AuraFrames:OnDisable()
 
   self:DeleteAllContainers();
+
+end
+
+
+-----------------------------------------------------------------
+-- Function DumpVersion
+-----------------------------------------------------------------
+function AuraFrames:DumpVersion()
+
+  self:Print("Aura Frames Version Information");
+  self:Print("Version: "..self.Version.String);
+  self:Print("Revision: "..self.Version.Revision);
+  self:Print("Date: "..self.Version.Date);
 
 end
 
