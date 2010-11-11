@@ -143,24 +143,37 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   DurationGroup:AddChild(DurationColor);
   
   Content:AddSpace(2);
-  Content:AddHeader("Cooldown");
+  Content:AddHeader("Cooldown Animation");
+  
+  local CooldownGroup = AceGUI:Create("SimpleGroup");
+  CooldownGroup:SetLayout("Flow");
+  CooldownGroup:SetRelativeWidth(1);
+  Content:AddChild(CooldownGroup);
   
   local ShowCooldown = AceGUI:Create("CheckBox");
   ShowCooldown:SetLabel("Show a cooldown");
   ShowCooldown:SetDescription("Show a cooldown animation on top of the button");
-  ShowCooldown:SetRelativeWidth(1);
+  ShowCooldown:SetWidth(260);
   ShowCooldown:SetValue(LayoutConfig.ShowCooldown);
   ShowCooldown:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.ShowCooldown = Value;
     ContainerInstance:Update("LAYOUT");
     Module:ContentLayoutDurationAndCount(Content, ContainerId);
   end);
-  Content:AddChild(ShowCooldown);
+  CooldownGroup:AddChild(ShowCooldown);
   
-  local CooldownGroup = AceGUI:Create("SimpleGroup");
-  CooldownGroup:SetLayout("Flow");
-  CooldownGroup:SetRelativeWidth(1);
-  Content:AddChild(CooldownGroup);
+  local CooldownDisableOmniCC = AceGUI:Create("CheckBox");
+  CooldownDisableOmniCC:SetLabel("Disable OmniCC support");
+  CooldownDisableOmniCC:SetDescription("This will prevent OmniCC to manage the animation. Changing this setting will only effect new animations!");
+  CooldownDisableOmniCC:SetWidth(260);
+  CooldownDisableOmniCC:SetDisabled(not LayoutConfig.ShowCooldown);
+  CooldownDisableOmniCC:SetValue(LayoutConfig.CooldownDisableOmniCC);
+  CooldownDisableOmniCC:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.CooldownDisableOmniCC = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:ContentLayoutDurationAndCount(Content, ContainerId);
+  end);
+  CooldownGroup:AddChild(CooldownDisableOmniCC);
   
   local CooldownDrawEdge = AceGUI:Create("CheckBox");
   CooldownDrawEdge:SetLabel("Draw Edge");
