@@ -33,27 +33,32 @@
         </Layers>
         <Frames>
           <Cooldown name="$parentCooldown" level="BORDER" hidden="true">
-            <Size>
-              <AbsDimension x="36" y="36"/>
-            </Size>
+            <Size x="36" y="36"/>
             <Anchors>
               <Anchor point="CENTER" />
             </Anchors>
           </Cooldown>
+          <Frame frameStrata="BACKGROUND">
+            <Size x="36" y="36"/>
+            <Anchors>
+              <Anchor point="CENTER" />
+            </Anchors>
+            <Layers>
+              <Layer level="BACKGROUND">
+                <Texture name="$parentBackground">
+                  <Color r="1.0" g="1.0" b="1.0" a="1.0"/>
+                  <Size>
+                    <AbsDimension x="36" y="36"/>
+                  </Size>
+                </Texture>
+              </Layer>
+            </Layers>
+          </Frame>
         </Frames>
       </Button>
     </Frames>
     <Layers>
-      <Layer level="BACKGROUND" textureSubLevel="-2">
-        <Texture name="$parentButtonBackground">
-          <Color r="1.0" g="1.0" b="1.0" a="1.0"/>
-          <Size>
-            <AbsDimension x="36" y="36"/>
-          </Size>
-          <Anchors>
-            <Anchor point="CENTER" relativeTo="$parentButton" />
-          </Anchors>
-        </Texture>
+      <Layer level="BACKGROUND">
         <Texture name="$parentTextureBackground">
           <Color r="1.0" g="1.0" b="1.0" a="1.0"/>
         </Texture>
