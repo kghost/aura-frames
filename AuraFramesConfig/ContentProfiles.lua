@@ -163,6 +163,8 @@ function AuraFramesConfig:ContentProfilesRefresh(Content)
   
   end
   
+  Content:AddSpace();
+  
   Content:ResumeLayout();
   Content:DoLayout();
 
