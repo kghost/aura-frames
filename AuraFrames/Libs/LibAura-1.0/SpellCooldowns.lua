@@ -9,6 +9,19 @@
 --
 -----------------------------------------------------------------
 
+--[[
+
+TODO:
+
+  * On a loading screen, SPELLS_CHANGED will get fired around 100? times.
+    Implement e throttle system?
+
+  * SPELL_UPDATE_USABLE is now used for scanning the whole spell book. This
+    event get fired way to much and scanning the whole book for cooldowns
+    is also not really fast. Need to be improved!
+
+]]--
+
 
 local LibAura = LibStub("LibAura-1.0");
 
@@ -37,7 +50,7 @@ local GetTime, GetSpellBookItemInfo, UnitName, GetSpellInfo, GetSpellCooldown = 
 Module.db = Module.db or {};
 
 -- Number of spells to keep in the history list.
-local SpellMaxHistory = 3;
+local SpellMaxHistory = 5;
 
 -- The minimum duration of a spell cooldown
 local SpellMinimumCooldown = 2;
@@ -66,8 +79,10 @@ function Module:ActivateSource(Unit, Type)
   
   if next(self.db) == nil then
   
+  
     LibAura:RegisterEvent("SPELLS_CHANGED", self, self.UpdateAllSpellBooks);
     LibAura:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", self, self.SpellCasted);
+    LibAura:RegisterEvent("SPELL_UPDATE_USABLE", self, self.UpdateCooldowns);
     LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.ScanAllSpellCooldowns);
   
   end
@@ -114,11 +129,13 @@ function Module:DeactivateSource(Unit, Type)
   
     LibAura:UnregisterEvent("SPELLS_CHANGED", self, self.UpdateAllSpellBooks);
     LibAura:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED", self, self.SpellCasted);
+    LibAura:UnregisterEvent("SPELL_UPDATE_USABLE", self, self.UpdateCooldowns);
     LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.ScanAllSpellCooldowns);
 
   end
 
 end
+
 
 -----------------------------------------------------------------
 -- Function GetAuras
@@ -136,7 +153,6 @@ function Module:GetAuras(Unit, Type)
   end
   
   return self.db[Unit].Auras;
-
 
 end
 
@@ -157,10 +173,6 @@ end
 -- Function UpdateSpellBook
 -----------------------------------------------------------------
 function Module:UpdateSpellBook(Unit)
-
-  for _, Aura in pairs(self.db[Unit].Book) do
-    Aura.Old = true;
-  end
 
   local i = 1
   while true do
@@ -193,7 +205,7 @@ function Module:UpdateSpellBook(Unit)
     Aura.Index = i;
     Aura.Name, _, Aura.Icon = GetSpellInfo(SpellId);
     Aura.SpellId = SpellId;
-    Aura.Id = Unit.."SPELLCOOLDOWN"..Unit..SpellId;
+    Aura.Id = Unit.."SPELLCOOLDOWN"..SpellId;
     Aura.Old = nil;
     
     if Aura.Active == false then
@@ -201,7 +213,7 @@ function Module:UpdateSpellBook(Unit)
       local Start, Duration, Active = GetSpellCooldown(Aura.SpellId);
       
       if Active == 1 and Start > 0 and Duration > SpellMinimumCooldown then
-      
+
         Aura.Duration = Duration;
         Aura.ExpirationTime = Start + Duration;
         Aura.Active = true;
@@ -217,13 +229,38 @@ function Module:UpdateSpellBook(Unit)
     i = i + 1
   end
 
-  for SpellId, Aura in pairs(self.db[Unit].Book) do
-    if Aura.Old == true then
-      Aura.Old = nil;
-      self.db[Unit].Book[SpellId] = nil;
-    end
-  end
+end
 
+
+-----------------------------------------------------------------
+-- Function UpdateCooldowns
+-----------------------------------------------------------------
+function Module:UpdateCooldowns()
+  
+  for _, UnitDb in pairs(self.db) do
+  
+    for SpellId, Aura in pairs(UnitDb.Book) do
+    
+      if Aura.Active ~= true then
+      
+        local Start, Duration, Active = GetSpellCooldown(SpellId);
+        
+        if Active == 1 and Start > 0 and Duration > SpellMinimumCooldown then
+        
+          Aura.Duration = Duration;
+          Aura.ExpirationTime = Start + Duration;
+          Aura.Active = true;
+          LibAura:FireAuraNew(Aura);
+          tinsert(UnitDb.Auras, Aura);
+          
+        end
+      
+      end
+    
+    end
+    
+  end
+  
 end
 
 
@@ -231,8 +268,6 @@ end
 -- Function ScanAllSpellCooldowns
 -----------------------------------------------------------------
 function Module:ScanAllSpellCooldowns()
-
-  local CurrentTime = GetTime();
   
   for Unit, UnitDb in pairs(self.db) do
   
@@ -284,15 +319,18 @@ function Module:ScanSpellCooldowns(Unit)
       
       -- We can have an nil aura (profession cooldown that are not in the spell books).
       
-      if Aura and Aura.Active == false then
+      if Aura then
       
         Aura.Duration = Duration;
         Aura.ExpirationTime = Start + Duration;
-        Aura.Active = true;
         
-        LibAura:FireAuraNew(Aura);
+        if Aura.Active == false then
         
-        tinsert(self.db[Unit].Auras, Aura);
+          Aura.Active = true;
+          LibAura:FireAuraNew(Aura);
+          tinsert(self.db[Unit].Auras, Aura);
+          
+        end
       
       end
       

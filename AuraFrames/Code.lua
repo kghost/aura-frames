@@ -7,7 +7,7 @@ local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, t
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
 local GetTime = GetTime;
-local tolower, toupper, tonumber, gsub = string.lower, string.upper, tonumber, string.gsub;
+local tolower, toupper, tonumber, gsub, strlen = string.lower, string.upper, tonumber, string.gsub, strlen;
 
 
 -----------------------------------------------------------------
@@ -25,7 +25,7 @@ function AuraFrames:BuildValue(RequestedType, Value)
     
     elseif RequestedType == "Number" or RequestedType == "SpellId" then
     
-      return tonumber(Value);
+      return strlen(Value) > 0 and tonumber(Value) or 0;
     
     elseif RequestedType == "Boolean" then
     
@@ -105,6 +105,27 @@ function AuraFrames:BuildValue(RequestedType, Value)
     elseif RequestedType == "Boolean" then
     
       return "(tContains({\"true\", \"on\", \"yes\", \"1\"}, string.lower("..Value.."())) == true)";
+    
+    else
+    
+      AuraFrames:Print("BuildValue: Unsupported value for requested type "..RequestedType);
+      return nil;
+    
+    end
+  
+  elseif Value == nil then
+  
+    if RequestedType == "String" or RequestedType == "SpellName" then
+    
+      return "\"\"";
+    
+    elseif RequestedType == "Number" or RequestedType == "SpellId" then
+    
+      return 0;
+    
+    elseif RequestedType == "Boolean" then
+    
+      return "false";
     
     else
     
