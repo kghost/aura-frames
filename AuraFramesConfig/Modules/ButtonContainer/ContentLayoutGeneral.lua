@@ -111,4 +111,38 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   
   end
   
+  Content:AddSpace();
+
+  Content:AddHeader("General Settings");
+  
+  local SettingsGroup = AceGUI:Create("SimpleGroup");
+  SettingsGroup:SetLayout("Flow");
+  SettingsGroup:SetRelativeWidth(1);
+  AuraFramesConfig:EnhanceContainer(SettingsGroup);
+  Content:AddChild(SettingsGroup);
+  
+  local DropdownDirection = AceGUI:Create("Dropdown");
+  DropdownDirection:SetList({
+    LEFTDOWN = "First left, then down",
+    LEFTUP = "First left, then then up",
+    RIGHTDOWN = "First right, then then down",
+    RIGHTUP = "First right, then then up",
+    DOWNLEFT = "First down, then then left",
+    DOWNRIGHT = "First down, then then right",
+    UPLEFT = "First up, then then left",
+    UPRIGHT = "First up, then then right",
+  });
+  DropdownDirection:SetLabel("Grow direction of aura's");
+  DropdownDirection:SetValue(LayoutConfig.Direction);
+  DropdownDirection:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.Direction = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  SettingsGroup:AddChild(DropdownDirection);
+  
+  SettingsGroup:AddText(" ", nil, 300);
+  
+  SettingsGroup:AddText("The direction aura's will align to within the container.", GameFontHighlightSmall, 200);
+  SettingsGroup:AddSpace();
+  
 end

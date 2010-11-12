@@ -122,7 +122,7 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   Content:AddChild(SettingsGroup);
   
   local BarMaxTime = AceGUI:Create("Slider");
-  BarMaxTime:SetWidth(250);
+  BarMaxTime:SetWidth(200);
   BarMaxTime:SetValue(LayoutConfig.BarMaxTime);
   BarMaxTime:SetLabel("Max Time");
   BarMaxTime:SetSliderValues(1, 300, 1);
@@ -132,15 +132,15 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
     ContainerInstance:Update("LAYOUT");
   end);
   SettingsGroup:AddChild(BarMaxTime);
-  SettingsGroup:AddText(" ", nil, 250);
+  SettingsGroup:AddText(" ", nil, 300);
   
-  SettingsGroup:AddText("The number of seconds a bar will start to resize.", GameFontHighlightSmall);
-  SettingsGroup:AddText(" ", nil, 250);
+  SettingsGroup:AddText("The number of seconds a bar will start to resize.", GameFontHighlightSmall, 200);
+  SettingsGroup:AddText(" ", nil, 200);
   
   SettingsGroup:AddSpace();
   
   local DropdownDirection = AceGUI:Create("Dropdown");
-  DropdownDirection:SetWidth(250);
+  DropdownDirection:SetWidth(200);
   DropdownDirection:SetList({
     DOWN = "Down",
     UP   = "Up",
@@ -154,7 +154,7 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   SettingsGroup:AddChild(DropdownDirection);
 
   local DropdownBarDirection = AceGUI:Create("Dropdown");
-  DropdownBarDirection:SetWidth(250);
+  DropdownBarDirection:SetWidth(200);
   DropdownBarDirection:SetList({
     LEFTGROW = "Left, grow",
     RIGHTGROW = "Right, grow",
@@ -169,8 +169,8 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   end);
   SettingsGroup:AddChild(DropdownBarDirection);
   
-  SettingsGroup:AddText("Where new bars will be placed.", GameFontHighlightSmall, 250);
-  SettingsGroup:AddText("If a bar texture need to shrink or grow.", GameFontHighlightSmall, 250);
+  SettingsGroup:AddText("Where new bars will be placed.", GameFontHighlightSmall, 200);
+  SettingsGroup:AddText("If a bar texture need to shrink or grow.", GameFontHighlightSmall, 200);
   
   Content:AddSpace();
 
@@ -183,7 +183,7 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   Content:AddChild(IconGroup);
   
   local Icon = AceGUI:Create("Dropdown");
-  Icon:SetWidth(250);
+  Icon:SetWidth(200);
   Icon:SetList({
     NONE = "None",
     LEFT = "Left",
@@ -196,9 +196,9 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
     ContainerInstance:Update("LAYOUT");
   end);
   IconGroup:AddChild(Icon);
-  IconGroup:AddText(" ", nil, 250);
+  IconGroup:AddText(" ", nil, 300);
   
-  IconGroup:AddText("The aura icon can be displayed at any side or not at all.", GameFontHighlightSmall, 250);
+  IconGroup:AddText("The aura icon can be displayed at any side or not at all.", GameFontHighlightSmall, 200);
   IconGroup:AddSpace();
   
 end
