@@ -253,6 +253,12 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
   
   Content:AddHeader("Bar texture");
   
+  local BarGroup = AceGUI:Create("SimpleGroup");
+  BarGroup:SetRelativeWidth(1);
+  AuraFramesConfig:EnhanceContainer(BarGroup);
+  BarGroup:SetLayout("Flow");
+  Content:AddChild(BarGroup);
+  
   local BarTexture = AceGUI:Create("LSM30_Statusbar");
   BarTexture:SetList(LSM:HashTable("statusbar"));
   BarTexture:SetLabel("Bar Texture");
@@ -262,7 +268,20 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
     ContainerInstance:Update("LAYOUT");
     BarTexture:SetValue(Value);
   end);
-  Content:AddChild(BarTexture);
+  BarGroup:AddChild(BarTexture);
+  
+  BarGroup:AddText(" ", nil, 50);
+  
+  local TextureMove = AceGUI:Create("CheckBox");
+  TextureMove:SetWidth(250);
+  TextureMove:SetLabel("Bar texture moving");
+  TextureMove:SetDescription("Is the bar texture moving or standing still.");
+  TextureMove:SetValue(LayoutConfig.BarTextureMove);
+  TextureMove:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarTextureMove = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  BarGroup:AddChild(TextureMove);
   
   Content:AddSpace();
 

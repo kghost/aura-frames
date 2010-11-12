@@ -113,23 +113,92 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   
   Content:AddSpace();
 
+  Content:AddHeader("General Settings");
+  
+  local SettingsGroup = AceGUI:Create("SimpleGroup");
+  SettingsGroup:SetLayout("Flow");
+  SettingsGroup:SetRelativeWidth(1);
+  AuraFramesConfig:EnhanceContainer(SettingsGroup);
+  Content:AddChild(SettingsGroup);
+  
+  local BarMaxTime = AceGUI:Create("Slider");
+  BarMaxTime:SetWidth(250);
+  BarMaxTime:SetValue(LayoutConfig.BarMaxTime);
+  BarMaxTime:SetLabel("Max Time");
+  BarMaxTime:SetSliderValues(1, 300, 1);
+  BarMaxTime:SetIsPercent(false);
+  BarMaxTime:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarMaxTime = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  SettingsGroup:AddChild(BarMaxTime);
+  SettingsGroup:AddText(" ", nil, 250);
+  
+  SettingsGroup:AddText("The number of seconds a bar will start to resize.", GameFontHighlightSmall);
+  SettingsGroup:AddText(" ", nil, 250);
+  
+  SettingsGroup:AddSpace();
+  
+  local DropdownDirection = AceGUI:Create("Dropdown");
+  DropdownDirection:SetWidth(250);
+  DropdownDirection:SetList({
+    DOWN = "Down",
+    UP   = "Up",
+  });
+  DropdownDirection:SetLabel("Grow direction of bars");
+  DropdownDirection:SetValue(LayoutConfig.Direction);
+  DropdownDirection:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.Direction = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  SettingsGroup:AddChild(DropdownDirection);
+
+  local DropdownBarDirection = AceGUI:Create("Dropdown");
+  DropdownBarDirection:SetWidth(250);
+  DropdownBarDirection:SetList({
+    LEFTGROW = "Left, grow",
+    RIGHTGROW = "Right, grow",
+    LEFTSHRINK = "Left, shrink",
+    RIGHTSHRINK = "Right, shrink",
+  });
+  DropdownBarDirection:SetLabel("Grow/Shrink direction of bar textures");
+  DropdownBarDirection:SetValue(LayoutConfig.BarDirection);
+  DropdownBarDirection:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarDirection = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  SettingsGroup:AddChild(DropdownBarDirection);
+  
+  SettingsGroup:AddText("Where new bars will be placed.", GameFontHighlightSmall, 250);
+  SettingsGroup:AddText("If a bar texture need to shrink or grow.", GameFontHighlightSmall, 250);
+  
+  Content:AddSpace();
+
   Content:AddHeader("Aura Icon");
   
-  Content:AddText("The aura icon can be displayed at any side or not at all.");
+  local IconGroup = AceGUI:Create("SimpleGroup");
+  IconGroup:SetLayout("Flow");
+  IconGroup:SetRelativeWidth(1);
+  AuraFramesConfig:EnhanceContainer(IconGroup);
+  Content:AddChild(IconGroup);
   
   local Icon = AceGUI:Create("Dropdown");
+  Icon:SetWidth(250);
   Icon:SetList({
     NONE = "None",
     LEFT = "Left",
     RIGHT = "Right",
   });
-  Icon:SetLabel("Icon");
+  Icon:SetLabel("Icon position");
   Icon:SetValue(LayoutConfig.Icon);
   Icon:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.Icon = Value;
     ContainerInstance:Update("LAYOUT");
   end);
-  Content:AddChild(Icon);
+  IconGroup:AddChild(Icon);
+  IconGroup:AddText(" ", nil, 250);
   
+  IconGroup:AddText("The aura icon can be displayed at any side or not at all.", GameFontHighlightSmall, 250);
+  IconGroup:AddSpace();
   
 end

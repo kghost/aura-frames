@@ -23,12 +23,12 @@ local SimpleSourcelist = {
 
 local SimpleSources = {
   {
-    Name = "|cff6af36aBuffs|r on your self",
+    Name = "|cff6af36aBuffs|r on yourself",
     Unit = "player",
     Type = "HELPFUL",
   },
   {
-    Name = "|cfff36a6aDebuffs|r on your self",
+    Name = "|cfff36a6aDebuffs|r on yourself",
     Unit = "player",
     Type = "HARMFUL",
   },

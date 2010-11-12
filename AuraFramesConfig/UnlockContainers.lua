@@ -13,7 +13,8 @@ local function ShowUnlockDialog()
 
   if not UnlockDialog then
     local f = CreateFrame("Frame", nil, UIParent)
-    f:SetFrameStrata("DIALOG")
+    f:SetFrameStrata("TOOLTIP");
+    f:SetFrameLevel(10);
     f:SetToplevel(true)
     f:EnableMouse(true)
     f:SetClampedToScreen(true)

@@ -47,6 +47,7 @@ function AuraFramesConfig:ContentButtonFacade(Content, LBFGroup)
   local GlossGroup = AceGUI:Create("InlineGroup");
   GlossGroup:SetRelativeWidth(1);
   GlossGroup:SetTitle("Gloss Settings");
+  GlossGroup:SetLayout("Flow");
   Content:AddChild(GlossGroup);
   
   local GlossColor = AceGUI:Create("ColorPicker");
@@ -75,7 +76,18 @@ function AuraFramesConfig:ContentButtonFacade(Content, LBFGroup)
   local BackdropGroup = AceGUI:Create("InlineGroup");
   BackdropGroup:SetRelativeWidth(1);
   BackdropGroup:SetTitle("Backdrop Settings");
+  BackdropGroup:SetLayout("Flow");
   Content:AddChild(BackdropGroup);
+  
+  local BackdropEnabled = AceGUI:Create("CheckBox");
+  BackdropEnabled:SetDisabled(GetState(LBFGroup, "Backdrop"));
+  BackdropEnabled:SetLabel("Enable the backdrop");
+  BackdropEnabled:SetValue(LBFGroup.Backdrop);
+  BackdropEnabled:SetCallback("OnValueChanged", function(_, _,Value)
+    LBFGroup:Skin(LBFGroup.SkinID, LBFGroup.Gloss, Value and true or false);
+    AuraFramesConfig:ContentButtonFacade(Content, LBFGroup);
+  end);
+  BackdropGroup:AddChild(BackdropEnabled);
   
   local BackdropColor = AceGUI:Create("ColorPicker");
   BackdropColor:SetDisabled(GetState(LBFGroup, "Backdrop") or not LBFGroup.Backdrop);
@@ -87,15 +99,7 @@ function AuraFramesConfig:ContentButtonFacade(Content, LBFGroup)
   end);
   BackdropGroup:AddChild(BackdropColor);
 
-  local BackdropEnabled = AceGUI:Create("CheckBox");
-  BackdropEnabled:SetDisabled(GetState(LBFGroup, "Backdrop"));
-  BackdropEnabled:SetLabel("Enable the backdrop");
-  BackdropEnabled:SetValue(LBFGroup.Backdrop);
-  BackdropEnabled:SetCallback("OnValueChanged", function(_, _,Value)
-    LBFGroup:Skin(LBFGroup.SkinID, LBFGroup.Gloss, Value and true or false);
-    AuraFramesConfig:ContentButtonFacade(Content, LBFGroup);
-  end);
-  BackdropGroup:AddChild(BackdropEnabled);
+
   
   Content:ResumeLayout();
   Content:DoLayout();
