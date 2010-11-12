@@ -394,6 +394,8 @@ function Prototype:UpdateBar(Bar)
   
   Bar.Texture:ClearAllPoints();
   Bar.Texture:SetHeight(Module.BarHeight);
+  Bar.Texture.Background:ClearAllPoints();
+  Bar.Texture.Background:SetHeight(Module.BarHeight);
   Bar.Spark:ClearAllPoints();
   
   if self.Config.Layout.BarDirection == "LEFTGROW" or self.Config.Layout.BarDirection == "LEFTSHRINK" then
