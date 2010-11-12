@@ -4,7 +4,7 @@
   <Script file="Module.lua" />
   <Script file="Prototype.lua" />
 
-  <Frame name="AuraFramesBarContainerTemplate" parent="UIParent" frameStrata="LOW" toplevel="true" virtual="true" movable="true">
+  <Frame name="AuraFramesBarContainerTemplate" parent="UIParent" virtual="true" movable="true">
   </Frame>
 
   <Frame name="AuraFramesBarTemplate" virtual="true">

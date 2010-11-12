@@ -15,7 +15,6 @@ local _G = _G;
 -- GLOBALS: UIParent
 
 -- Module settings
-Module.MaxButtons = 120;
 Module.ButtonSizeX = 36;
 Module.ButtonSizeY = 36;
 
@@ -108,7 +107,6 @@ function Module:GetDatabaseDefaults()
       CountPosX = 10,
       CountPosY = -6,
       CountColor = {1, 1, 1, 1},
-      SortOrder = "Duration",
       ShowTooltip = true,
       Clickable = true,
       TooltipShowPrefix = false,
@@ -163,11 +161,13 @@ function Module:New(Config)
   
   self.Containers[Config.Id] = Container;
   
+  local FrameId = "AuraFramesButtonContainer_"..Config.Id;
+  
   -- Reuse old containers if we can.
-  if _G["AuraFramesContainer_"..Config.Id] then
-    Container.Frame = _G["AuraFramesContainer_"..Config.Id];
+  if _G[FrameId] then
+    Container.Frame = _G[FrameId];
   else
-    Container.Frame = CreateFrame("Frame", "AuraFramesContainer_"..Config.Id, UIParent, "AuraFramesButtonContainerTemplate");
+    Container.Frame = CreateFrame("Frame", FrameId, UIParent, "AuraFramesButtonContainerTemplate");
   end
   
   Container.Frame:Show();
@@ -187,8 +187,8 @@ function Module:New(Config)
   
   Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
   
-  Container.DurationFontObject = _G["AuraFramesContainer_"..Config.Id.."_DurationFont"] or CreateFont("AuraFramesContainer_"..Config.Id.."_DurationFont");
-  Container.CountFontObject = _G["AuraFramesContainer_"..Config.Id.."_CountFont"] or CreateFont("AuraFramesContainer_"..Config.Id.."_CountFont");
+  Container.DurationFontObject = _G[FrameId.."_DurationFont"] or CreateFont(FrameId..Config.Id.."_DurationFont");
+  Container.CountFontObject = _G[FrameId.."_CountFont"] or CreateFont(FrameId..Config.Id.."_CountFont");
 
   Container:Update();
 

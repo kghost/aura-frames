@@ -113,7 +113,6 @@ function Module:GetDatabaseDefaults()
       ButtonBackgroundColor = {0, 0, 0, 0.8},
       ButtonBackgroundUseBar = true,
       ButtonBackgroundOpacity = 0.5,
-      SortOrder = "Duration",
       ShowTooltip = true,
       Clickable = true,
       TooltipShowPrefix = false,
@@ -160,11 +159,13 @@ function Module:New(Config)
   
   self.Containers[Config.Id] = Container;
   
+  local FrameId = "AuraFramesBarContainer_"..Config.Name;
+  
   -- Reuse old containers if we can.
-  if _G["AuraFramesBarContainer_"..Config.Name] then
-    Container.Frame = _G["AuraFramesBarContainer_"..Config.Name];
+  if _G[FrameId] then
+    Container.Frame = _G[FrameId];
   else
-    Container.Frame = CreateFrame("Frame", "AuraFramesBarContainer_"..Config.Name, UIParent, "AuraFramesBarContainerTemplate");
+    Container.Frame = CreateFrame("Frame", FrameId, UIParent, "AuraFramesBarContainerTemplate");
   end
   
   Container.Frame:Show();
@@ -185,7 +186,7 @@ function Module:New(Config)
   
   Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
   
-  Container.FontObject = _G["AuraFramesContainer_"..Config.Id.."_Font"] or CreateFont("AuraFramesContainer_"..Config.Id.."_Font");
+  Container.FontObject = _G[FrameId.."_Font"] or CreateFont(FrameId.."_Font");
   
   Container:Update();
   
