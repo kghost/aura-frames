@@ -24,8 +24,6 @@ AuraFrames.AuraDefinition = {
       HELPFUL = "Helpful",
       WEAPON = "Weapon enchantment",
       SPELLCOOLDOWN = "Spell Cooldown",
-      INTERNALCOOLDOWNITEM = "Internal Item Cooldown",
-      INTERNALCOOLDOWNTALENT = "Internal Talent Cooldown",
       TOTEM = "Totem",
     },
     Order = true,
@@ -43,7 +41,7 @@ AuraFrames.AuraDefinition = {
     Type = "String",
     Name = "Spell icon",
     Order = false,
-    Filter = true,
+    Filter = false,
     Weight = 2,
   },
   Count = {
@@ -79,12 +77,20 @@ AuraFrames.AuraDefinition = {
     Name = "Time remaining",
     Code = "((Object.ExpirationTime == 0 and 0) or (Object.ExpirationTime - GetTime()))",
     Order = true,
-    Filter = true,
+    Filter = false,
     Weight = 3,
   },
   ExpirationTime = {
     Type = "Number",
     Name = "Expiration time",
+    Order = false,
+    Filter = false,
+    Weight = 1,
+  },
+  IsAura = {
+    Type = "Boolean",
+    Name = "Is Aura",
+    Code = "(Object.ExpirationTime == 0)",
     Order = true,
     Filter = true,
     Weight = 1,
@@ -93,7 +99,7 @@ AuraFrames.AuraDefinition = {
     Type = "String",
     Name = "Caster unit",
     Order = false,
-    Filter = true,
+    Filter = false,
     Weight = 2,
   },
   CasterName = {
@@ -142,8 +148,8 @@ AuraFrames.AuraDefinition = {
   IsStealable = {
     Type = "Boolean",
     Name = "Is stealable",
-    Order = true,
-    Filter = true,
+    Order = false,
+    Filter = false,
     Weight = 1,
   },
   CastedByParty = {
@@ -181,7 +187,7 @@ AuraFrames.AuraDefinition = {
   TargetIsHostile = {
     Type = "Boolean",
     Name = "Unit Is hostile",
-    Code = "(Object.CasterUnit and UnitIsEnemy(\"player\", Object.Unit) == 1)",
+    Code = "(Object.Unit and UnitIsEnemy(\"player\", Object.Unit) == 1)",
     Order = false,
     Filter = true,
     Weight = 3,
@@ -197,7 +203,7 @@ AuraFrames.AuraDefinition = {
   TargetIsFriendly = {
     Type = "Boolean",
     Name = "Unit Is friendly",
-    Code = "(Object.CasterUnit and UnitIsFriend(\"player\", Object.Unit) == 1)",
+    Code = "(Object.Unit and UnitIsFriend(\"player\", Object.Unit) == 1)",
     Order = false,
     Filter = true,
     Weight = 3,
