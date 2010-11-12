@@ -9,19 +9,6 @@
 --
 -----------------------------------------------------------------
 
---[[
-
-TODO:
-
-  * On a loading screen, SPELLS_CHANGED will get fired around 100? times.
-    Implement e throttle system?
-
-  * SPELL_UPDATE_USABLE is now used for scanning the whole spell book. This
-    event get fired way to much and scanning the whole book for cooldowns
-    is also not really fast. Need to be improved!
-
-]]--
-
 
 local LibAura = LibStub("LibAura-1.0");
 
@@ -241,6 +228,10 @@ end
 -----------------------------------------------------------------
 function Module:UpdateSpellBook(Unit)
 
+  for _, Aura in pairs(self.db[Unit].Book) do
+    Aura.Old = true;
+  end
+
   local i = 1
   while true do
 
@@ -295,6 +286,17 @@ function Module:UpdateSpellBook(Unit)
     
     i = i + 1
   end
+  
+  for SpellId, Aura in pairs(self.db[Unit].Book) do
+    if Aura.Old == true then
+      Aura.Old = nil;
+      self.db[Unit].Book[SpellId] = nil;
+      if Aura.Active == true then
+        LibAura:FireAuraOld(Aura);
+        Aura.Active = false;
+      end
+    end
+  end
 
 end
 
@@ -344,8 +346,11 @@ function Module:ScanAllSpellCooldowns()
       
       if Active ~= 1 or Duration == 0 then
       
-        LibAura:FireAuraOld(UnitDb.Auras[i]);
-        UnitDb.Auras[i].Active = false;
+        if UnitDb.Auras[i].Active == true then
+          LibAura:FireAuraOld(UnitDb.Auras[i]);
+          UnitDb.Auras[i].Active = false;
+        end
+        
         tremove(UnitDb.Auras, i);
       
       else
