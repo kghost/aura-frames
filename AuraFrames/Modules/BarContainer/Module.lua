@@ -120,7 +120,7 @@ function Module:GetDatabaseDefaults()
       TooltipShowSpellId = false,
       TooltipShowClassification = false,
       BarTexture = "BantoBar",
-      BarTextureMove = true;
+      BarTextureMove = false;
       BarDirection = "LEFTSHRINK",
       Icon = "LEFT",
       ShowCooldown = false,

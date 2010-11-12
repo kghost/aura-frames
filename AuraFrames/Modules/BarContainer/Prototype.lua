@@ -150,7 +150,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
       end
       
       if Container.Config.Layout.BarTextureMove then
-        Left, Right = Right, Left;
+        Left, Right = 1 - Right, 1 - Left;
       end
       
       Bar.Texture:SetTexCoord(Left, Right, 0, 1);
@@ -189,7 +189,8 @@ end
 -----------------------------------------------------------------
 function Prototype:Delete()
 
-  -- Remove our self from LibAura.
+  -- Remove our self from LibAura. This will also cause all
+  -- aura's to be fired with AuraOld for this container.
   LibAura:UnregisterObjectSource(self, nil, nil);
   
   Module.Containers[self.Config.Id] = nil;

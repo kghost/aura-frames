@@ -38,8 +38,10 @@ local DirectionMapping = {
   UPRIGHT   = {"BOTTOMLEFT",  "x",  1,  1},
 };
 
+-- How fast a button will get updated.
 local ButtonUpdatePeriod = 0.05;
 
+-- Pre calculate pi*2 (used for flashing buttons).
 local PI2 = PI + PI;
 
 
@@ -50,6 +52,13 @@ local CooldownFrame = CreateFrame("Frame");
 CooldownFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 CooldownFrame:SetScript("OnEvent", function(self, event)
 
+  -- When we are in a loadding screen, all cooldown
+  -- animations will be created and started but due
+  -- a bug in wow the animations will not be showned.
+  -- The first 10 seconds after the PLAYER_ENTERING_WORLD
+  -- we hide/show the cooldown which will trigger the 
+  -- internal animation at some point.
+
   local TimePast = 0;
 
   self:SetScript("OnUpdate", function(self, Elapsed)
@@ -57,7 +66,10 @@ CooldownFrame:SetScript("OnEvent", function(self, event)
     TimePast = TimePast + Elapsed;
     
     if TimePast > 10 then
+    
+      -- Disable our self after the first 10 seconds.
       self:SetScript("OnUpdate", nil);
+      
     end
     
     for _, Container in pairs(Module.Containers) do
@@ -66,7 +78,7 @@ CooldownFrame:SetScript("OnEvent", function(self, event)
       
         if Button.Cooldown:IsShown() == 1 then
         
-          -- Trigger animation code.
+          -- Try trigger animation code.
           Button.Cooldown:Hide();
           Button.Cooldown:Show();
         
@@ -94,6 +106,9 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
     
     if Container.Config.Layout.ShowDuration == true then
     
+      -- We don't have to update the duration every frame. We round up
+      -- the seconds and compare if it's different from the last update.
+    
       local TimeLeftSeconds = math_ceil(TimeLeft + 0.5);
       
       if Button.TimeLeftSeconds ~= TimeLeftSeconds then
@@ -106,6 +121,13 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
     end
     
     if Button.ExpireFlashTime and TimeLeft < Button.ExpireFlashTime then
+      
+      -- We need to flash for an aura that is expiring. Let's have some
+      -- geek match involved to make the flash look nice.
+      --
+      -- We are starting with Alpha(1.0) and going in a sinus down and up
+      -- and ending in a down. We don't go totally transpirant and the max
+      -- is Alpha(0.15);
     
       local Alpha = ((math_cos((((Button.ExpireFlashTime - TimeLeft) % Config.Warnings.Expire.FlashSpeed) / Config.Warnings.Expire.FlashSpeed) * PI2) / 2 + 0.5) * 0.85) + 0.15;
       
@@ -117,11 +139,17 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
       
       if TimeFromStart < Button.NewFlashTime then
       
+        -- See the ExpireFlash. The only difference is that we start with
+        -- Alpha(0.15) and that we are ending with Alpha(1.0).
+      
         local Alpha = ((math_cos((((TimeFromStart % Config.Warnings.New.FlashSpeed) / Config.Warnings.New.FlashSpeed) * PI2) + PI) / 2 + 0.5) * 0.85) + 0.15;
       
         Button.Icon:SetAlpha(Alpha);
       
       else
+        
+        -- At the end of the new flash animation make sure that we end
+        -- with SetAlpha(1.0) and that we stop the animation.
       
         Button.NewFlashTime = nil;
         Button.Icon:SetAlpha(1.0);
@@ -139,6 +167,9 @@ end
 -- Local Function ButtonOnClick
 -----------------------------------------------------------------
 local function ButtonOnClick(Button)
+
+  -- When a key modifier is pressed, dump the aura to the
+  -- chat window, otherwise just try to cancel the aura.
 
   if IsModifierKeyDown() == 1 then
   
@@ -158,7 +189,8 @@ end
 -----------------------------------------------------------------
 function Prototype:Delete()
 
-  -- Remove our self from LibAura.
+  -- Remove our self from LibAura. This will also cause all
+  -- aura's to be fired with AuraOld for this container.
   LibAura:UnregisterObjectSource(self, nil, nil);
   
   Module.Containers[self.Config.Id] = nil;
@@ -167,6 +199,7 @@ function Prototype:Delete()
   self.Frame:UnregisterAllEvents();
   self.Frame = nil;
 
+  -- Release the container pool into the general pool.
   self:ReleasePool();
 
   if self.LBFGroup then
@@ -204,6 +237,11 @@ end
 -- Function UpdateButtonDisplay
 -----------------------------------------------------------------
 function Prototype:UpdateButtonDisplay(Button)
+
+  -- Only update settings that can be changed between
+  -- different aura's. We can assume we are still having
+  -- the same container. If not then the function
+  -- UpdateButton will have taken care of that for us.
 
   local Aura = Button.Aura;
 
@@ -285,6 +323,11 @@ end
 -----------------------------------------------------------------
 function Prototype:UpdateButton(Button)
 
+  -- Update settings that can be changed between 
+  -- different containers. After that call function
+  -- UpdateButtonDisplay to update the things that
+  -- can be changed between aura's.
+
   local Container, Aura = self, Button.Aura;
 
   if Button.Duration ~= nil and self.Config.Layout.ShowDuration == true then
@@ -341,6 +384,12 @@ end
 -- Function Update
 -----------------------------------------------------------------
 function Prototype:Update(...)
+
+  -- Update the whole container. This function is called
+  -- on login and when settings are changed for the
+  -- container. To optimize it a little bit, the caller
+  -- can indicate what changed. The following is supported:
+  -- ALL, LAYOUT, WARNINGS, FILTER or ORDER.
 
   local Changed = select(1, ...) or "ALL";
 
@@ -463,7 +512,8 @@ function Prototype:AuraNew(Aura)
   
   if not Button then
   
-    -- Try the general pool.
+    -- We didn't had a button in the container pool.
+    -- Trying the general pool.
     Button = tremove(ButtonPool);
     
     if not Button then
@@ -635,6 +685,9 @@ function Prototype:UpdateAnchors()
   local Max = min(#self.Order, self.Config.Layout.HorizontalSize * self.Config.Layout.VerticalSize);
 
   local i, x, y;
+  
+  -- We use a mapping table that is defined at the top
+  -- of the file to do quickly placement of aura's.
   local Direction = DirectionMapping[self.Config.Layout.Direction];
 
   -- Anchor the buttons in the correct order.
@@ -644,16 +697,20 @@ function Prototype:UpdateAnchors()
     
     if i > Max then
 
+      -- We already have the maximum amount of buttons,
+      -- hide this one.
       self.Order[i]:Hide();
     
     else
       
+      -- Calculate the x and y of the button.
       if Direction[2] == "y" then
         x, y = ((i - 1) % self.Config.Layout.HorizontalSize), math_floor((i - 1) / self.Config.Layout.HorizontalSize);
       else
         x, y = math_floor((i - 1) / self.Config.Layout.VerticalSize), ((i - 1) % self.Config.Layout.VerticalSize);
       end
       
+      -- Set the position.
       self.Order[i]:SetPoint(
         Direction[1],
         self.Frame,
@@ -662,6 +719,7 @@ function Prototype:UpdateAnchors()
         Direction[4] * (y * (Module.ButtonSizeY + (y and self.Config.Layout.SpaceY)))
       );
     
+      -- Make sure the button is showned.
       self.Order[i]:Show();
 
     end
