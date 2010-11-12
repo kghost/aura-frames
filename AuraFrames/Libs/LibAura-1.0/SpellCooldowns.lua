@@ -62,6 +62,15 @@ local BookType = {
 };
 
 
+-- Update spell book throttle.
+local SpellBookLastScan = nil;
+local SpellBookScanThrottle = 1.0;
+
+-- Update cooldowns throttle.
+local UpdateCooldownsLastScan = nil;
+UpdateCooldownsScanThrottle = 0.2;
+
+
 -----------------------------------------------------------------
 -- Function ActivateSource
 -----------------------------------------------------------------
@@ -79,11 +88,12 @@ function Module:ActivateSource(Unit, Type)
   
   if next(self.db) == nil then
   
-  
-    LibAura:RegisterEvent("SPELLS_CHANGED", self, self.UpdateAllSpellBooks);
+    LibAura:RegisterEvent("SPELLS_CHANGED", self, self.TriggerUpdateAllSpellBooks);
+    LibAura:RegisterEvent("PLAYER_ENTERING_WORLD", self, self.TriggerUpdateAllSpellBooks);
     LibAura:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", self, self.SpellCasted);
-    LibAura:RegisterEvent("SPELL_UPDATE_USABLE", self, self.UpdateCooldowns);
+    LibAura:RegisterEvent("SPELL_UPDATE_USABLE", self, self.TriggerUpdateCooldowns);
     LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.ScanAllSpellCooldowns);
+    LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.Update);
   
   end
   
@@ -127,10 +137,12 @@ function Module:DeactivateSource(Unit, Type)
   
   if next(self.db) == nil then
   
-    LibAura:UnregisterEvent("SPELLS_CHANGED", self, self.UpdateAllSpellBooks);
+    LibAura:UnregisterEvent("SPELLS_CHANGED", self, self.TriggerUpdateAllSpellBooks);
+    LibAura:UnregisterEvent("PLAYER_ENTERING_WORLD", self, self.TriggerUpdateAllSpellBooks);
     LibAura:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED", self, self.SpellCasted);
-    LibAura:UnregisterEvent("SPELL_UPDATE_USABLE", self, self.UpdateCooldowns);
+    LibAura:UnregisterEvent("SPELL_UPDATE_USABLE", self, self.TriggerUpdateCooldowns);
     LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.ScanAllSpellCooldowns);
+    LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.Update);
 
   end
 
@@ -153,6 +165,61 @@ function Module:GetAuras(Unit, Type)
   end
   
   return self.db[Unit].Auras;
+
+end
+
+-----------------------------------------------------------------
+-- Function TriggerUpdateAllSpellBooks
+-----------------------------------------------------------------
+function Module:TriggerUpdateAllSpellBooks()
+
+  -- We reset the throttle here.
+  SpellBookLastScan = 0;
+
+end
+
+
+-----------------------------------------------------------------
+-- Function TriggerUpdateCooldowns
+-----------------------------------------------------------------
+function Module:TriggerUpdateCooldowns()
+
+  -- We don't reset the throttle here, only activate it if it isnt active.
+  UpdateCooldownsLastScan = UpdateCooldownsLastScan or 0;
+
+end
+
+
+-----------------------------------------------------------------
+-- Function Update
+-----------------------------------------------------------------
+function Module:Update(Elapsed)
+
+  if SpellBookLastScan ~= nil then
+  
+    SpellBookLastScan = SpellBookLastScan + Elapsed;
+    
+    if SpellBookLastScan > SpellBookScanThrottle then
+      
+      SpellBookLastScan = nil;
+      self:UpdateAllSpellBooks();
+    
+    end
+  
+  end
+  
+  if UpdateCooldownsLastScan ~= nil then
+  
+    UpdateCooldownsLastScan = UpdateCooldownsLastScan + Elapsed;
+    
+    if UpdateCooldownsLastScan > UpdateCooldownsScanThrottle then
+    
+      UpdateCooldownsLastScan = nil;
+      self:ScanAllSpellBooksForCooldowns();
+    
+    end
+  
+  end
 
 end
 
@@ -233,9 +300,9 @@ end
 
 
 -----------------------------------------------------------------
--- Function UpdateCooldowns
+-- Function ScanAllSpellBooksForCooldowns
 -----------------------------------------------------------------
-function Module:UpdateCooldowns()
+function Module:ScanAllSpellBooksForCooldowns()
   
   for _, UnitDb in pairs(self.db) do
   
