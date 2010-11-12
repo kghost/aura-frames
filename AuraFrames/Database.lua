@@ -65,7 +65,7 @@ function AuraFrames:DatabaseInitialize()
 
   -- Register db chat commands.
   self:RegisterChatCommand("afreset", "DatabaseReset");
-  self:RegisterChatCommand("affixdb", "DatabaseUpgrade");
+  self:RegisterChatCommand("affixdb", "DatabaseFix");
 
   -- Register database callbacks
   self.db.RegisterCallback(self, "OnProfileChanged", "DatabaseChanged");
@@ -74,6 +74,21 @@ function AuraFrames:DatabaseInitialize()
 
 end
 
+
+-----------------------------------------------------------------
+-- Function DatabaseFix
+-----------------------------------------------------------------
+function AuraFrames:DatabaseFix()
+
+  self:Print("Trying to fix the database");
+
+  -- Force run the upgrade code.
+  self:DatabaseUpgrade();
+  
+  -- Notify of the db changes.
+  self:DatabaseChanged();
+
+end
 
 -----------------------------------------------------------------
 -- Function DatabaseChanged
@@ -97,6 +112,16 @@ end
 function AuraFrames:DatabaseReset()
 
   self.db:ResetDB();
+  
+  -- With a db reset we lose LibDualSpec. But LibDualSpec don't
+  -- let us register the db again. So lets do some hacking.
+  
+  -- Reset the registry state for our db.
+  LibStub("LibDualSpec-1.0").registry[self.db] = nil;
+  
+  -- Register our self with LibDualSpec.
+  LibStub("LibDualSpec-1.0"):EnhanceDatabase(self.db, "AuraFrames");
+  
   self:Print("Database is reseted to the default settings");
 
 end
@@ -156,7 +181,7 @@ function AuraFrames:DatabaseUpgrade()
   
   if self.db.profile.DbVersion < 200 then
   
-    self.db:ResetDB();
+    self:DatabaseReset();
     self:Message("Aura Frames\n\nAn alpha/beta database was found, your database have been reseted. Thanks for testing Aura Frames and sorry for reseting your database.", nil, "Okay");
   
   end
