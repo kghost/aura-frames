@@ -1,6 +1,5 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:GetModule("ButtonContainer");
-local LibAura = LibStub("LibAura-1.0");
 local LBF = LibStub("LibButtonFacade", true);
 local LSM = LibStub("LibSharedMedia-3.0");
 
@@ -189,9 +188,7 @@ end
 -----------------------------------------------------------------
 function Prototype:Delete()
 
-  -- Remove our self from LibAura. This will also cause all
-  -- aura's to be fired with AuraOld for this container.
-  LibAura:UnregisterObjectSource(self, nil, nil);
+  self.AuraList:Delete();
   
   Module.Containers[self.Config.Id] = nil;
 
@@ -446,10 +443,6 @@ function Prototype:Update(...)
     
     -- We have buttons in the container pool that doesn't match the settings anymore. Release them into the general pool.
     self:ReleasePool();
-  
-    if Changed ~= "ALL" then
-      self:UpdateAnchors();
-    end
     
   end
 
@@ -477,16 +470,10 @@ function Prototype:Update(...)
     end
     
     -- Resync all auras
-    LibAura:ObjectSync(self, nil, nil);
+    self.AuraList:ResyncSources();
   
   end
   
-  if Changed == "ALL" or Changed == "ORDER" then
-  
-    self:UpdateAnchors();
-  
-  end
-
 end
 
 
@@ -494,10 +481,6 @@ end
 -- Function AuraNew
 -----------------------------------------------------------------
 function Prototype:AuraNew(Aura)
-
-  if self.Filter and self.Filter.Test(Aura) == false then
-    return;
-  end
 
   if self.Buttons[Aura.Id] then
   
@@ -572,7 +555,7 @@ function Prototype:AuraNew(Aura)
   Button.Icon:SetTexture(Aura.Icon);
   
   self.Buttons[Aura.Id] = Button;
-  self.Order:Add(Button);
+  --self.Order:Add(Button);
   
   if FromContainerPool == true then
 
@@ -585,9 +568,6 @@ function Prototype:AuraNew(Aura)
     self:UpdateButton(Button);
 
   end
-
-  -- UpdateAnchors will also make sure the button is showned.
-  self:UpdateAnchors();
 
 end
 
@@ -607,7 +587,7 @@ function Prototype:AuraOld(Aura)
   self.Buttons[Aura.Id] = nil;
   
   -- Remove the button from the container order list.
-  self.Order:Remove(Button);
+  --self.Order:Remove(Button);
   
   Button:Hide();
   
@@ -641,8 +621,6 @@ function Prototype:AuraOld(Aura)
     tinsert(self.ButtonPool, Button);
   
   end
-  
-  self:UpdateAnchors();
 
 end
 
@@ -669,9 +647,48 @@ function Prototype:AuraChanged(Aura)
     
   end
   
-  self.Order:Update(Button);
+end
 
-  self:UpdateAnchors();
+
+-----------------------------------------------------------------
+-- Function AuraAnchor
+-----------------------------------------------------------------
+function Prototype:AuraAnchor(Aura, Index)
+
+  -- Hide button if the index is greater then the maximum number of buttons to anchor
+  if Index > self.Config.Layout.HorizontalSize * self.Config.Layout.VerticalSize then
+  
+    self.Buttons[Aura.Id]:Hide();
+    return;
+    
+  end
+  
+  local x, y;
+  
+  -- We use a mapping table that is defined at the top
+  -- of the file to do quickly placement of aura's.
+  local Direction = DirectionMapping[self.Config.Layout.Direction];
+
+  -- Calculate the x and y of the button.
+  if Direction[2] == "y" then
+    x, y = ((Index - 1) % self.Config.Layout.HorizontalSize), math_floor((Index - 1) / self.Config.Layout.HorizontalSize);
+  else
+    x, y = math_floor((Index - 1) / self.Config.Layout.VerticalSize), ((Index - 1) % self.Config.Layout.VerticalSize);
+  end
+  
+  self.Buttons[Aura.Id]:ClearAllPoints();
+  
+  -- Set the position.
+  self.Buttons[Aura.Id]:SetPoint(
+    Direction[1],
+    self.Frame,
+    Direction[1],
+    Direction[3] * (x * (Module.ButtonSizeX + (x and self.Config.Layout.SpaceX))),
+    Direction[4] * (y * (Module.ButtonSizeY + (y and self.Config.Layout.SpaceY)))
+  );
+
+  -- Make sure the button is showned.
+  self.Buttons[Aura.Id]:Show();
 
 end
 
@@ -679,6 +696,7 @@ end
 -----------------------------------------------------------------
 -- Function UpdateAnchors
 -----------------------------------------------------------------
+--[[
 function Prototype:UpdateAnchors()
 
   -- Maximune number of buttons to anchor.
@@ -725,5 +743,6 @@ function Prototype:UpdateAnchors()
     end
   
   end
-  
+
 end
+]]--

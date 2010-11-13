@@ -1,5 +1,4 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
-local LibAura = LibStub("LibAura-1.0");
 
 -- Import used global references into the local namespace.
 local string, type, rawget, error, pairs = string, type, rawget, error, pairs;
@@ -90,7 +89,7 @@ function AuraFrames:CreateContainer(Id)
   
       if ContainerConfig.Sources[Unit][Type] == true then
 
-        LibAura:RegisterObjectSource(self.Containers[Id], Unit, Type);
+        self.Containers[Id].AuraList:AddSource(Unit, Type);
 
       end
 

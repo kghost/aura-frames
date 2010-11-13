@@ -143,9 +143,9 @@ local function BuildExpresion(Type, Operator, Subject, Args)
   local SubjectCode;
   
   if AuraFrames.AuraDefinition[Subject].Code then
-    SubjectCode = "do local Object = Object1.Aura; Value1 = "..AuraFrames.AuraDefinition[Subject].Code.."; end; do local Object = Object2.Aura; Value2 = "..AuraFrames.AuraDefinition[Subject].Code.."; end;";
+    SubjectCode = "do local Object = Object1; Value1 = "..AuraFrames.AuraDefinition[Subject].Code.."; end; do local Object = Object2; Value2 = "..AuraFrames.AuraDefinition[Subject].Code.."; end;";
   else
-    SubjectCode = "Value1 = Object1.Aura."..Subject.."; Value2 = Object2.Aura."..Subject..";";
+    SubjectCode = "Value1 = Object1."..Subject.."; Value2 = Object2."..Subject..";";
   end
 
   if Args.List and (Operator == "ListAsc" or Operator == "ListDesc") then
@@ -244,7 +244,7 @@ function AuraFrames.OrderPrototype:Build()
   
   end
 
-  local Code = "return function(Object1, Object2) local Value1, Value2; "..tconcat(Rules, " ").." return Object1.Aura.Name > Object2.Aura.Name; end;";
+  local Code = "return function(Object1, Object2) local Value1, Value2; "..tconcat(Rules, " ").." return Object1.Name > Object2.Name; end;";
 
   local Function, ErrorMessage = loadstring(Code);
   
@@ -292,7 +292,13 @@ function AuraFrames.OrderPrototype:UpdateAll()
 
   -- Sort the list using the default sort function.
   if self.Compare then
+    
     sort(self, self.Compare);
+    
+    for Index, Item in ipairs(self) do
+      self.NotifyFunc(Item, Index);
+    end
+    
   end
 
 end
@@ -326,6 +332,12 @@ function AuraFrames.OrderPrototype:Add(Item)
     
       if self.Compare(Item, self[i]) == true then
         tinsert(self, i, Item);
+        self.NotifyFunc(Item, i);
+        
+        for j = i + 1, #self do
+          self.NotifyFunc(self[j], j);
+        end
+        
         return;
       end
     
@@ -333,6 +345,7 @@ function AuraFrames.OrderPrototype:Add(Item)
   end
   
   tinsert(self, Item);
+  self.NotifyFunc(Item, #self);
 
 end
 
@@ -345,7 +358,13 @@ function AuraFrames.OrderPrototype:Remove(Item)
   local Index = self:Find(Item);
   
   if Index ~= nil then
+  
     tremove(self, Index);
+    
+    for i = Index, #self do
+      self.NotifyFunc(self[i], i);
+    end
+    
   end
 
 end
@@ -366,24 +385,38 @@ function AuraFrames.OrderPrototype:Update(Item)
     return;
   end
 
+  -- The item need to be moved up in the list.
   if Index ~= 1 and self.Compare(Item, self[Index - 1]) == false then
+  
     tremove(self, Index);
     
     for i = Index - 1, 2, -1 do
     
       if self.Compare(Item, self[i - 1]) == true then
+      
         tinsert(self, i, Item);
+        
+        for j = i, Index do
+          self.NotifyFunc(self[j], j);
+        end
+        
         return;
+        
       end
     
     end
     
     tinsert(self, 1, Item);
     
+    for i = 1, Index do
+      self.NotifyFunc(self[i], i);
+    end
+    
     return;
 
   end
   
+  -- The item need to be moved down in the list.
   if Index ~= #self and self.Compare(Item, self[Index + 1]) == true then
 
     tremove(self, Index);
@@ -391,13 +424,22 @@ function AuraFrames.OrderPrototype:Update(Item)
     for i = Index + 1, #self do
     
       if self.Compare(self[i], Item) == true then
+      
         tinsert(self, i, Item);
+        
+        for j = i, #self do
+          self.NotifyFunc(self[j], j);
+        end
+        
         return;
+        
       end
     
     end
     
     tinsert(self, Item);
+    
+    self.NotifyFunc(Item, #self);
     
     return;
     

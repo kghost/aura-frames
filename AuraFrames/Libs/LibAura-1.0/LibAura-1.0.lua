@@ -155,7 +155,6 @@ function LibAura:RegisterModuleSource(Module, Unit, Type)
     -- We got already objects for this Unit/type, directly activate this source for the module.
     Module:ActivateSource(Unit, Type);
     
-
   end
 
 end

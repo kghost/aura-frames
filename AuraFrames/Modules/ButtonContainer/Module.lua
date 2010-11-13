@@ -175,9 +175,7 @@ function Module:New(Config)
   Container.Id = Config.Id;
   Container.Config = Config;
   
-  Container.Filter = AuraFrames:NewFilter(Config.Filter, function() Container:Update("FILTER"); end);
-  
-  Container.Order = AuraFrames:NewOrder(Config.Order, function() Container:Update("ORDER"); end);
+  Container.AuraList = AuraFrames:NewAuraList(Container, Config.Filter, Config.Order);
   
   Container.TooltipOptions = {};
   

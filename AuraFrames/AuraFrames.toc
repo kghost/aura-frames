@@ -18,6 +18,7 @@ CancelAura.lua
 Tooltip.lua
 Config.lua
 Code.lua
+AuraList.lua
 Filter.lua
 Order.lua
 ButtonFacade.lua

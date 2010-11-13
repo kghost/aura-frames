@@ -1,6 +1,5 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:GetModule("BarContainer");
-local LibAura = LibStub("LibAura-1.0");
 local LBF = LibStub("LibButtonFacade", true);
 local LSM = LibStub("LibSharedMedia-3.0");
 
@@ -189,9 +188,7 @@ end
 -----------------------------------------------------------------
 function Prototype:Delete()
 
-  -- Remove our self from LibAura. This will also cause all
-  -- aura's to be fired with AuraOld for this container.
-  LibAura:UnregisterObjectSource(self, nil, nil);
+  self.AuraList:Delete();
   
   Module.Containers[self.Config.Id] = nil;
 
@@ -199,6 +196,7 @@ function Prototype:Delete()
   self.Frame:UnregisterAllEvents();
   self.Frame = nil;
   
+  -- Release the container pool into the general pool.
   self:ReleasePool();
 
   if self.LBFGroup then
@@ -541,28 +539,6 @@ function Prototype:Update(...)
     -- We have bars in the container pool that doesn't match the settings anymore. Release them into the general pool.
     self:ReleasePool();
     
-    if Changed ~= "ALL" then
-      self:UpdateAnchors();
-    end
-
-  end
-  
-  if Changed == "ALL" or Changed == "FILTER" then
-
-    -- Delete all current auras.
-    for _, Bar in pairs(self.Bars) do
-      self:AuraOld(Bar.Aura);
-    end
-    
-    -- Resync all auras
-    LibAura:ObjectSync(self, nil, nil);
-
-  end
-  
-  if Changed == "ALL" or Changed == "ORDER" then
-  
-    self:UpdateAnchors();
-  
   end
 
 end
@@ -572,10 +548,6 @@ end
 -- Function AuraNew
 -----------------------------------------------------------------
 function Prototype:AuraNew(Aura)
-
-  if self.Filter and self.Filter.Test(Aura) == false then
-    return;
-  end
   
   if self.Bars[Aura.Id] then
   
@@ -656,7 +628,6 @@ function Prototype:AuraNew(Aura)
   Bar.Aura = Aura;
   
   self.Bars[Aura.Id] = Bar;
-  self.Order:Add(Bar);
   
   if self.Config.Layout.ShowCooldown == true and Aura.ExpirationTime > 0 then
     
@@ -687,8 +658,6 @@ function Prototype:AuraNew(Aura)
     self:UpdateBar(Bar);
   
   end
-  
-  self:UpdateAnchors();
 
 end
 
@@ -706,9 +675,6 @@ function Prototype:AuraOld(Aura)
   
   -- Remove the bar from the container list.
   self.Bars[Aura.Id] = nil;
-  
-  -- Remove the bar from the container order list.
-  self.Order:Remove(Bar);
   
   Bar:Hide();
   
@@ -739,8 +705,6 @@ function Prototype:AuraOld(Aura)
     tinsert(self.BarPool, Bar);
     
   end
-  
-  self:UpdateAnchors();
 
 end
 
@@ -769,17 +733,46 @@ function Prototype:AuraChanged(Aura)
   end
   
   Bar.Text:SetText(tconcat(Text, " "));
+
+end
+
+
+-----------------------------------------------------------------
+-- Function AuraAnchor
+-----------------------------------------------------------------
+function Prototype:AuraAnchor(Aura, Index)
+
+  -- Hide bar if the index is greater then the maximum number of bars to anchor
+  if Index > self.Config.Layout.NumberOfBars then
   
-  self.Order:Update(Bar);
+    self.Bars[Aura.Id]:Hide();
+    return;
+    
+  end
+  
+  local x, y;
+  
+  local Direction = DirectionMapping[self.Config.Layout.Direction];
+  
+  self.Bars[Aura.Id]:ClearAllPoints();
+  
+  self.Bars[Aura.Id]:SetPoint(
+    Direction[1],
+    self.Frame,
+    Direction[1],
+    0,
+    Direction[2] * ((Index - 1) * (Module.BarHeight + self.Config.Layout.Space))
+  );
 
-  self:UpdateAnchors();
-
+  self.Bars[Aura.Id]:Show();
+  
 end
 
 
 -----------------------------------------------------------------
 -- Function UpdateAnchors
 -----------------------------------------------------------------
+--[[
 function Prototype:UpdateAnchors()
 
   -- Maximune number of bars to anchor.
@@ -814,3 +807,4 @@ function Prototype:UpdateAnchors()
   end
   
 end
+]]--

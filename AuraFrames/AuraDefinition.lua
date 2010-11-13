@@ -15,6 +15,10 @@ The following types are supported atm:
 
 ]]--
 
+
+-----------------------------------------------------------------
+-- AuraDefinition list
+-----------------------------------------------------------------
 AuraFrames.AuraDefinition = {
   Type = {
     Type = "String",
@@ -77,7 +81,8 @@ AuraFrames.AuraDefinition = {
     Name = "Time remaining",
     Code = "((Object.ExpirationTime == 0 and 0) or (Object.ExpirationTime - GetTime()))",
     Order = true,
-    Filter = false,
+    Filter = true,
+    Changing = true,
     Weight = 3,
   },
   ExpirationTime = {

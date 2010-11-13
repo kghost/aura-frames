@@ -240,6 +240,8 @@ end
 -----------------------------------------------------------------
 function AuraFrames.FilterPrototype:Build()
 
+  self.Changing = false;
+
   if not self.Config.Expert or self.Config.Expert == false then
   
     self.Config.Groups = {};
@@ -273,6 +275,10 @@ function AuraFrames.FilterPrototype:Build()
       
         if AuraFrames.AuraDefinition[Value.Subject] ~= nil and not (Value.Disabled and Value.Disabled == true) and Value.Operator then
         
+          -- Update changing flag.
+          self.Changing = self.Changing or AuraFrames.AuraDefinition[Value.Subject].Changing or false;
+        
+          -- Build and insert rule.
           tinsert(Rules, BuildExpresion(AuraFrames.AuraDefinition[Value.Subject].Type, Value.Operator, Value.Subject, Value.Args or {}));
         
         end
