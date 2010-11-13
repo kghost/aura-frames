@@ -410,7 +410,7 @@ function Prototype:UpdateBar(Bar)
 
     Bar.Texture:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
     Bar.Texture.Background:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
-    Bar.Texture.Background:SetPoint("BOTTOMLEFT", Bar, "BOTTOMRIGHT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
+    Bar.Texture.Background:SetPoint("BOTTOMLEFT", Bar, "BOTTOMLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
     Bar.Spark:SetPoint("CENTER", Bar.Texture, "LEFT", 0, -2);
   
   end
