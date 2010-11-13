@@ -36,13 +36,12 @@ local function ApplyChange(ContainerId)
 
   local ContainerInstance = AuraFrames.Containers[ContainerId];
 
-  ContainerInstance.Filter:Build();
+  ContainerInstance.AuraList.Filter:Build();
   
-  if ContainerInstance.Filter.NotifyFunc then
-    ContainerInstance.Filter.NotifyFunc();
+  if ContainerInstance.AuraList.Filter.NotifyFunc then
+    ContainerInstance.AuraList.Filter.NotifyFunc();
   end
   
-
 end
 
 
@@ -104,6 +103,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
     Subject:SetCallback("OnValueChanged", function(_, _, Value)
       Rule.Subject = Value;
       AuraFramesConfig:ContentFilterRefresh(Content, ContainerId);
+      ApplyChange(ContainerId);
     end);
     Container:AddChild(Subject);
     

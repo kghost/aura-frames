@@ -1,7 +1,6 @@
 local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AceGUI = LibStub("AceGUI-3.0");
-local LibAura = LibStub("LibAura-1.0");
 
 local ExpertMode = false;
 
@@ -278,7 +277,7 @@ local function BuildOptions(Content, ContainerId, Options, Width)
           end
         
           SourceConfig[Item.Unit][Item.Type] = true;
-          LibAura:RegisterObjectSource(ContainerInstance, Item.Unit, Item.Type);
+          ContainerInstance.AuraList:AddSource(Item.Unit, Item.Type);
         
         else
         
@@ -287,7 +286,7 @@ local function BuildOptions(Content, ContainerId, Options, Width)
           end
           
           SourceConfig[Item.Unit][Item.Type] = nil;
-          LibAura:UnregisterObjectSource(ContainerInstance, Item.Unit, Item.Type);
+          ContainerInstance.AuraList:RemoveSource(Item.Unit, Item.Type);
           
           if next(SourceConfig[Item.Unit]) == nil then
             SourceConfig[Item.Unit] = nil;
@@ -355,7 +354,7 @@ function AuraFramesConfig:ContentSourcesRefresh(Content, ContainerId)
           if not SimpleSourcelist[Unit] or not SimpleSourcelist[Unit][Type] or SimpleSourcelist[Unit][Type] ~= true then
           
             SourceConfig[Unit][Type] = nil;
-            LibAura:UnregisterObjectSource(ContainerInstance, Unit, Type);
+            ContainerInstance.AuraList:RemoveSource(Unit, Type);
           
           end
           

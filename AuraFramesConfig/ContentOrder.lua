@@ -43,12 +43,9 @@ local function ApplyChange(ContainerId)
 
   local ContainerInstance = AuraFrames.Containers[ContainerId];
 
-  ContainerInstance.Order:Build();
+  ContainerInstance.AuraList.Order:Build();
+  ContainerInstance.AuraList.Order:UpdateAll();
   
-  if ContainerInstance.Order.NotifyFunc then
-    ContainerInstance.Order.NotifyFunc();
-  end
-
 end
 
 
@@ -102,6 +99,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
       end
       
       AuraFramesConfig:ContentOrderRefresh(Content, ContainerId);
+      ApplyChange(ContainerId);
     end);
     Container:AddChild(Subject);
     
