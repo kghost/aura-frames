@@ -3,5 +3,7 @@
 
   <Include file="Modules\ButtonContainer\Module.xml" />
   <Include file="Modules\BarContainer\Module.xml" />
+  <Include file="Modules\TimeLineContainer\Module.xml" />
+  
 
 </Ui>

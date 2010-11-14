@@ -83,6 +83,7 @@ function Module:GetDatabaseDefaults()
       RelativePoint = "CENTER",
     },
     Layout = {
+    
       Scale = 1.0,
       HorizontalSize = 16,
       VerticalSize = 2,
@@ -90,6 +91,7 @@ function Module:GetDatabaseDefaults()
       SpaceY = 15,
       Direction = "LEFTDOWN",
       DynamicSize = false,
+
       ShowDuration = true,
       DurationFont = "Friz Quadrata TT",
       DurationOutline = "OUTLINE",
@@ -99,6 +101,7 @@ function Module:GetDatabaseDefaults()
       DurationPosX = 0,
       DurationPosY = -25,
       DurationColor = {1, 1, 1, 1},
+
       ShowCount = true,
       CountFont = "Friz Quadrata TT",
       CountOutline = "OUTLINE",
@@ -107,16 +110,19 @@ function Module:GetDatabaseDefaults()
       CountPosX = 10,
       CountPosY = -6,
       CountColor = {1, 1, 1, 1},
-      ShowTooltip = true,
+
       Clickable = true,
+      ShowTooltip = true,
       TooltipShowPrefix = false,
       TooltipShowCaster = true,
       TooltipShowSpellId = false,
       TooltipShowClassification = false,
+
       ShowCooldown = false,
       CooldownDrawEdge = true,
       CooldownReverse = false,
       CooldownDisableOmniCC = true,
+
     },
     Colors = {
       Debuff = {

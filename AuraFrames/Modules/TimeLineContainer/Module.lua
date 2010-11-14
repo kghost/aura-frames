@@ -83,6 +83,7 @@ function Module:GetDatabaseDefaults()
       RelativePoint = "CENTER",
     },
     Layout = {
+    
       Scale = 1.0,
       Size = 300,
       Style = "HORIZONTAL",
@@ -115,16 +116,18 @@ function Module:GetDatabaseDefaults()
       TextPos = 0,
       TextColor = {1, 1, 1, 1},
       
-      ShowTooltip = true,
       Clickable = true,
+      ShowTooltip = true,
       TooltipShowPrefix = false,
       TooltipShowCaster = true,
       TooltipShowSpellId = false,
       TooltipShowClassification = false,
+
       ShowCooldown = false,
       CooldownDrawEdge = true,
       CooldownReverse = false,
       CooldownDisableOmniCC = true,
+
     },
     Colors = {
       Debuff = {
@@ -149,8 +152,12 @@ function Module:GetDatabaseDefaults()
         FlashNumber = 5.0,
         FlashSpeed = 1.0,
       },
+      Changing = {
+        Popup = false,
+        PopupTime = 0.5,
+        PopupScale = 3.0,
+      },
     },
-    Order = AuraFrames:GetDatabaseDefaultsOrder(),
     Filter = AuraFrames:GetDatabaseDefaultsFilter(),
   };
   
@@ -175,17 +182,15 @@ function Module:New(Config)
   if _G[FrameId] then
     Container.Frame = _G[FrameId];
   else
-    Container.Frame = CreateFrame("Frame", FrameId, UIParent, "AuraFramesButtonContainerTemplate");
+    Container.Frame = CreateFrame("Frame", FrameId, UIParent, "AuraFramesTimeLineContainerTemplate");
   end
   
   Container.Frame:Show();
 
   Container.Id = Config.Id;
-  Container.Config = Config;
+  Container.Config = Config;  
   
-  Container.Filter = AuraFrames:NewFilter(Config.Filter, function() Container:Update("FILTER"); end);
-  
-  Container.Order = AuraFrames:NewOrder(Config.Order, function() Container:Update("ORDER"); end);
+  Container.AuraList = AuraFrames:NewAuraList(Container, Config.Filter, nil);
   
   Container.TooltipOptions = {};
   

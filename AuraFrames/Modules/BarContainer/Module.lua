@@ -88,6 +88,7 @@ function Module:GetDatabaseDefaults()
       RelativePoint = "CENTER",
     },
     Layout = {
+    
       Scale = 1.0,
       NumberOfBars = 10,
       Space = 0,
@@ -96,38 +97,47 @@ function Module:GetDatabaseDefaults()
       BarUseAuraTime = false,
       Direction = "DOWN",
       DynamicSize = false,
+      Icon = "LEFT",
+
       ShowDuration = true,
       DurationLayout = "ABBREVSPACE",
       DurationPosition = "RIGHT",
+
       ShowCount = true,
       ShowAuraName = true,
+
       TextFont = "Friz Quadrata TT",
       TextOutline = "OUTLINE",
       TextMonochrome = false,
       TextSize = 11,
       TextColor = {1, 1, 1, 1},
       TextPosition = "LEFT",
+
       TextureBackgroundColor = {0, 0, 0, 0.8},
       TextureBackgroundUseTexture = false,
       TextureBackgroundUseBarColor = false,
       TextureBackgroundOpacity = 0.5,
+
       ButtonBackgroundColor = {0, 0, 0, 0.8},
       ButtonBackgroundUseBar = true,
       ButtonBackgroundOpacity = 0.5,
-      ShowTooltip = true,
+
       Clickable = true,
+      ShowTooltip = true,
       TooltipShowPrefix = false,
       TooltipShowCaster = true,
       TooltipShowSpellId = false,
       TooltipShowClassification = false,
+
       BarTexture = "BantoBar",
       BarTextureMove = false;
       BarDirection = "LEFTSHRINK",
-      Icon = "LEFT",
+
       ShowCooldown = false,
       CooldownDrawEdge = true,
       CooldownReverse = false,
       CooldownDisableOmniCC = true,
+      
     },
     Colors = {
       Debuff = {
@@ -188,8 +198,7 @@ function Module:New(Config)
   
   Container.Frame:Show();
 
-  Container.Name = Config.Name;
-  Container.ConfigMode = false;
+  Container.Id = Config.Id;
   Container.Config = Config;
   
   Container.AuraList = AuraFrames:NewAuraList(Container, Config.Filter, Config.Order);
