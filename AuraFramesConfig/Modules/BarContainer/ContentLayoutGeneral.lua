@@ -122,20 +122,33 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   Content:AddChild(SettingsGroup);
   
   local BarMaxTime = AceGUI:Create("Slider");
+  BarMaxTime:SetDisabled(LayoutConfig.BarUseAuraTime);
   BarMaxTime:SetWidth(200);
   BarMaxTime:SetValue(LayoutConfig.BarMaxTime);
   BarMaxTime:SetLabel("Max Time");
-  BarMaxTime:SetSliderValues(1, 300, 1);
+  BarMaxTime:SetSliderValues(5, 3600, 1);
   BarMaxTime:SetIsPercent(false);
   BarMaxTime:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.BarMaxTime = Value;
     ContainerInstance:Update("LAYOUT");
   end);
   SettingsGroup:AddChild(BarMaxTime);
-  SettingsGroup:AddText(" ", nil, 300);
+  
+  local BarUseAuraTime = AceGUI:Create("CheckBox");
+  BarUseAuraTime:SetWidth(260);
+  BarUseAuraTime:SetLabel("Use aura time");
+  BarUseAuraTime:SetDescription("Use the entire aura duration for the bar.");
+  BarUseAuraTime:SetValue(LayoutConfig.BarUseAuraTime);
+  BarUseAuraTime:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarUseAuraTime = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:ContentLayoutGeneral(Content, ContainerId);
+  end);
+  SettingsGroup:AddChild(BarUseAuraTime);
   
   SettingsGroup:AddText("The number of seconds a bar will start to resize.", GameFontHighlightSmall, 200);
   SettingsGroup:AddText(" ", nil, 200);
+  
   
   SettingsGroup:AddSpace();
   
