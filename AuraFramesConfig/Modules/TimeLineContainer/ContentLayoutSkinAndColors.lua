@@ -142,29 +142,53 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
   BackgroundGroup:SetLayout("Flow");
   Content:AddChild(BackgroundGroup);
   
-  local Texture = AceGUI:Create("LSM30_Statusbar");
-  Texture:SetList(LSM:HashTable("statusbar"));
-  Texture:SetLabel("Texture");
-  Texture:SetValue(LayoutConfig.Texture);
-  Texture:SetCallback("OnValueChanged", function(_, _, Value)
-    LayoutConfig.Texture = Value;
+  local BackgroundTexture = AceGUI:Create("LSM30_Statusbar");
+  BackgroundTexture:SetList(LSM:HashTable("statusbar"));
+  BackgroundTexture:SetLabel("Texture");
+  BackgroundTexture:SetValue(LayoutConfig.BackgroundTexture);
+  BackgroundTexture:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BackgroundTexture = Value;
     ContainerInstance:Update("LAYOUT");
-    Texture:SetValue(Value);
+    BackgroundTexture:SetValue(Value);
   end);
-  BackgroundGroup:AddChild(Texture);
+  BackgroundGroup:AddChild(BackgroundTexture);
   
   BackgroundGroup:AddText(" ", nil, 50);
   
-  local TextureColor = AceGUI:Create("ColorPicker");
-  TextureColor:SetHasAlpha(true);
-  TextureColor:SetColor(unpack(LayoutConfig.TextureColor));
-  TextureColor:SetLabel("Texture color");
-  TextureColor:SetCallback("OnValueChanged", function(_, _, ...)
-    LayoutConfig.TextureColor = {...};
+  local BackgroundTextureColor = AceGUI:Create("ColorPicker");
+  BackgroundTextureColor:SetHasAlpha(true);
+  BackgroundTextureColor:SetColor(unpack(LayoutConfig.BackgroundTextureColor));
+  BackgroundTextureColor:SetLabel("Texture color");
+  BackgroundTextureColor:SetCallback("OnValueChanged", function(_, _, ...)
+    LayoutConfig.BackgroundTextureColor = {...};
     ContainerInstance:Update("LAYOUT");
   end);
-  BackgroundGroup:AddChild(TextureColor);
-
+  BackgroundGroup:AddChild(BackgroundTextureColor);
+  
+  local BackgroundBorder = AceGUI:Create("LSM30_Border");
+  BackgroundBorder:SetList(LSM:HashTable("border"));
+  BackgroundBorder:SetLabel("Texture");
+  BackgroundBorder:SetValue(LayoutConfig.BackgroundBorder);
+  BackgroundBorder:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BackgroundBorder = Value;
+    ContainerInstance:Update("LAYOUT");
+    BackgroundBorder:SetValue(Value);
+  end);
+  BackgroundGroup:AddChild(BackgroundBorder);
+  
+  BackgroundGroup:AddText(" ", nil, 50);
+  
+  local BackgroundBorderColor = AceGUI:Create("ColorPicker");
+  BackgroundBorderColor:SetHasAlpha(true);
+  BackgroundBorderColor:SetColor(unpack(LayoutConfig.BackgroundBorderColor));
+  BackgroundBorderColor:SetLabel("Texture color");
+  BackgroundBorderColor:SetCallback("OnValueChanged", function(_, _, ...)
+    LayoutConfig.BackgroundBorderColor = {...};
+    ContainerInstance:Update("LAYOUT");
+  end);
+  BackgroundGroup:AddChild(BackgroundBorderColor);
+  
+  
   Content:AddSpace();
 
   Content:AddHeader("ButtonFacade");
