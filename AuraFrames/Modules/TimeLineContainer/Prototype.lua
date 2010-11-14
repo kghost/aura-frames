@@ -52,54 +52,6 @@ local PopupFrameLevelNormal = 4;
 
 
 -----------------------------------------------------------------
--- Cooldown Fix
------------------------------------------------------------------
-local CooldownFrame = CreateFrame("Frame");
-CooldownFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
-CooldownFrame:SetScript("OnEvent", function(self, event)
-
-  -- When we are in a loadding screen, all cooldown
-  -- animations will be created and started but due
-  -- a bug in wow the animations will not be showned.
-  -- The first 10 seconds after the PLAYER_ENTERING_WORLD
-  -- we hide/show the cooldown which will trigger the 
-  -- internal animation at some point.
-
-  local TimePast = 0;
-
-  self:SetScript("OnUpdate", function(self, Elapsed)
-
-    TimePast = TimePast + Elapsed;
-    
-    if TimePast > 10 then
-    
-      -- Disable our self after the first 10 seconds.
-      self:SetScript("OnUpdate", nil);
-      
-    end
-    
-    for _, Container in pairs(Module.Containers) do
-    
-      for _, Button in pairs(Container.Buttons) do
-      
-        if Button.Cooldown:IsShown() == 1 then
-        
-          -- Try trigger animation code.
-          Button.Cooldown:Hide();
-          Button.Cooldown:Show();
-        
-        end
-      
-      end
-    
-    end
-    
-  end);
-
-end);
-
-
------------------------------------------------------------------
 -- Local Function ButtonOnUpdate
 -----------------------------------------------------------------
 local function ButtonOnUpdate(Container, Button, Elapsed)
@@ -198,11 +150,10 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
   
   local Offset;
   
-  if TimeLeft == 0 or Config.Layout.MaxTime < TimeLeft then
+  if Button.Aura.ExpirationTime == 0 or Config.Layout.MaxTime < TimeLeft then
     Offset = Container.Direction[4];
   else
-    local Width = (Config.Layout.Size - (Container.Direction[4] * 2))
-    Offset = ((Width / Config.Layout.MaxTime) * (Config.Layout.MaxTime - TimeLeft)) + Container.Direction[4];
+    Offset = ((Container.StepPerSecond * (Config.Layout.MaxTime - TimeLeft)) + Container.Direction[4]) / Scale;
   end
   
   -- Set the position.
@@ -349,24 +300,6 @@ function Prototype:UpdateButtonDisplay(Button)
   
   end
 
-  if self.Config.Layout.ShowCooldown == true and Aura.ExpirationTime > 0 then
-    
-    local CurrentTime = GetTime();
-
-    if Aura.Duration > 0 then
-      Button.Cooldown:SetCooldown(Aura.ExpirationTime - Aura.Duration, Aura.Duration);
-    else
-      Button.Cooldown:SetCooldown(CurrentTime, Aura.ExpirationTime - CurrentTime);
-    end
-    
-    Button.Cooldown:Show();
-  
-  else
-  
-    Button.Cooldown:Hide();
-  
-  end
-  
   ButtonOnUpdate(self, Button, 0.0);
 
 end
@@ -425,11 +358,6 @@ function Prototype:UpdateButton(Button)
     
   end
   
-  -- Set cooldown options
-  Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
-  Button.Cooldown:SetReverse(self.Config.Layout.CooldownReverse);
-  Button.Cooldown.noCooldownCount = self.Config.Layout.CooldownDisableOmniCC;
-  
   self:UpdateButtonDisplay(Button);
 
 end
@@ -470,6 +398,9 @@ function Prototype:Update(...)
       self.Frame:SetPoint(self.Config.Location.FramePoint, self.Config.Location.RelativeTo, self.Config.Location.RelativePoint, self.Config.Location.OffsetX, self.Config.Location.OffsetY);
     
     end
+    
+    self.Background:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.Texture));
+    self.Background:SetVertexColor(unpack(self.Config.Layout.TextureColor));
   
     self.TooltipOptions = {
       ShowPrefix = self.Config.Layout.TooltipShowPrefix,
@@ -518,6 +449,7 @@ function Prototype:Update(...)
     self.TextFontObject:SetTextColor(unpack(self.Config.Layout.TextColor));
     
     self.Direction = DirectionMapping[self.Config.Layout.Style][self.Config.Layout.Direction];
+    self.StepPerSecond = ((self.Config.Layout.Size - (self.Direction[4] * 2)) / self.Config.Layout.MaxTime);
     
     for _, Button in pairs(self.Buttons) do
       self:UpdateButton(Button);
@@ -574,7 +506,6 @@ function Prototype:AuraNew(Aura)
       Button.Icon = _G[ButtonId.."Icon"];
       Button.Count = _G[ButtonId.."Count"];
       Button.Border = _G[ButtonId.."Border"];
-      Button.Cooldown = _G[ButtonId.."Cooldown"];
     
     else
     
@@ -598,7 +529,7 @@ function Prototype:AuraNew(Aura)
     
     if LBF then
       -- Don't skin the count text, we will take care of that.
-      self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false, Cooldown = Button.Cooldown});
+      self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false});
     end
     
     -- Set the font from this container.

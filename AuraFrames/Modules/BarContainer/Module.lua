@@ -1,6 +1,5 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:NewContainerModule("BarContainer");
-local LSM = LibStub("LibSharedMedia-3.0");
 
 -- Import most used functions into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
@@ -25,35 +24,10 @@ Module.Prototype = {};
 -- List of all active containers that are based on this module.
 Module.Containers = {};
 
-local StatusBarTextures = {
-  ["Aluminum"]    = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Aluminum.tga]],
-  ["Armory"]      = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Armory.tga]],
-  ["BantoBar"]    = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\BantoBar.tga]],
-  ["DarkBottom"]  = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Darkbottom.tga]],
-  ["Default"]     = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Default.tga]],
-  ["Flat"]        = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Flat.tga]],
-  ["Glaze"]       = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Glaze.tga]],
-  ["Gloss"]       = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Gloss.tga]],
-  ["Graphite"]    = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Graphite.tga]],
-  ["Minimalist"]  = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Minimalist.tga]],
-  ["Otravi"]      = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Otravi.tga]],
-  ["Smooth"]      = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Smooth.tga]],
-  ["Smooth v2"]   = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Smoothv2.tga]],
-  ["Striped"]     = [[Interface\Addons\AuraFrames\Modules\BarContainer\Textures\Striped.tga]],
-};
-
 -----------------------------------------------------------------
 -- Function OnInitialize
 -----------------------------------------------------------------
 function Module:OnInitialize()
-
-  for Name, Texture in pairs(StatusBarTextures) do
-  
-    if not LSM:Fetch("statusbar", Name, true) then
-      LSM:Register("statusbar", Name, Texture);
-    end
-  
-  end
 
 end
 

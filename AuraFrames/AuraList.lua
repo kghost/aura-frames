@@ -148,7 +148,9 @@ function AuraFrames.AuraListPrototype:AuraChanged(Aura)
   
     self.Container:AuraChanged(Aura);
 
-    self.Order:Update(Aura);
+    if self.Order then
+      self.Order:Update(Aura);
+    end
     
   elseif self.Auras[Aura] == false and self.NotStatic ~= true then
 

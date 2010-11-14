@@ -22,6 +22,7 @@ AuraList.lua
 Filter.lua
 Order.lua
 ButtonFacade.lua
+SharedMedia.lua
 FormatTime.lua
 
 Modules.xml

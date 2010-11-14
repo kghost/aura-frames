@@ -95,12 +95,12 @@ function Module:GetDatabaseDefaults()
       DurationOutline = "OUTLINE",
       DurationMonochrome = false,
       DurationLayout = "ABBREVSPACE",
-      DurationSize = 10,
+      DurationSize = 12,
       DurationPosX = 0,
-      DurationPosY = -25,
+      DurationPosY = -8.5,
       DurationColor = {1, 1, 1, 1},
 
-      ShowCount = true,
+      ShowCount = false,
       CountFont = "Friz Quadrata TT",
       CountOutline = "OUTLINE",
       CountMonochrome = false,
@@ -124,10 +124,8 @@ function Module:GetDatabaseDefaults()
       TooltipShowSpellId = false,
       TooltipShowClassification = false,
 
-      ShowCooldown = false,
-      CooldownDrawEdge = true,
-      CooldownReverse = false,
-      CooldownDisableOmniCC = true,
+      Texture = "BantoBar",
+      TextureColor = {1, 1, 1, 0.8},
 
     },
     Colors = {
@@ -185,6 +183,8 @@ function Module:New(Config)
   else
     Container.Frame = CreateFrame("Frame", FrameId, UIParent, "AuraFramesTimeLineContainerTemplate");
   end
+  
+  Container.Background = _G[FrameId.."Background"];
   
   Container.Frame:Show();
 

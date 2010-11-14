@@ -7,9 +7,7 @@
   <Frame name="AuraFramesTimeLineContainerTemplate" parent="UIParent" virtual="true" movable="true">
     <Layers>
       <Layer level="BACKGROUND">
-        <Texture name="$parentBackground">
-          <Color r="0.5" g="0.5" b="0.5" a="1.0"/>
-        </Texture>
+        <Texture name="$parentBackground" />
       </Layer>
     </Layers>
   </Frame>

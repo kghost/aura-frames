@@ -32,6 +32,8 @@ end
 -----------------------------------------------------------------
 function AuraFrames:OnEnable()
 
+  self:SharedMadiaInitialize();
+
   self:DatabaseInitialize();
 
   self:CheckBlizzardAuraFrames();
