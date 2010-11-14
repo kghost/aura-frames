@@ -14,7 +14,22 @@ function Module:ContentLayout(ContainerId)
   local Tab = AceGUI:Create("TabGroup");
   Tab:SetRelativeWidth(1);
   Tab:SetTabs({
-
+    {
+      value = "General",
+      text = "General",
+    },
+    {
+      value = "SizeAndScale",
+      text = "Size and Scale",
+    },
+    {
+      value = "Text",
+      text = "Text",
+    },
+    {
+      value = "SkinAndColors",
+      text = "Skin and Colors",
+    },
   });
   Tab:SetCallback("OnGroupSelected", function(_, _, Value)
 
@@ -43,7 +58,7 @@ function Module:ContentLayout(ContainerId)
   Tab:AddChild(self.Layout);
   
   -- Select last tab otherwise if first tab.
-  --Tab:SelectTab(SelectedTabs[ContainerId] or "General");
+  Tab:SelectTab(SelectedTabs[ContainerId] or "General");
 
 end
 
