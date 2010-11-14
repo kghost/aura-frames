@@ -93,6 +93,7 @@ function Module:GetDatabaseDefaults()
       Space = 0,
       BarWidth = 250,
       BarMaxTime = 30,
+      BarUseAuraTime = false,
       Direction = "DOWN",
       DynamicSize = false,
       ShowDuration = true,

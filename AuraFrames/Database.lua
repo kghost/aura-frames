@@ -9,7 +9,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 201;
+AuraFrames.DatabaseVersion = 202;
 
 
 --[[
@@ -22,6 +22,10 @@ AuraFrames.DatabaseVersion = 201;
   Version 201:
     Added warning changing.
     Added warnings to bar containers.
+  
+  version 202:
+    Add BarUseAuraTime for bar containers
+   
     
 ]]--
 
@@ -225,6 +229,16 @@ function AuraFrames:DatabaseUpgrade()
             PopupScale = 3.0,
           },
         };
+      
+      end
+    
+    end
+
+    if OldVersion < 201 then
+    
+      if Container.Type == "BarContainer" then
+      
+        Container.Layout.BarUseAuraTime = false;
       
       end
     

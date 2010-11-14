@@ -127,17 +127,17 @@ local function BarOnUpdate(Container, Bar, Elapsed)
     
     end
     
-    if TimeLeft < Container.Config.Layout.BarMaxTime then
+    if TimeLeft < Bar.BarMaxTime then
     
-      local Part = TimeLeft / Container.Config.Layout.BarMaxTime;
+      local Part = TimeLeft / Bar.BarMaxTime;
     
       if Container.Shrink then
-        Bar.Texture:SetWidth((Container.WidthPerSecond * TimeLeft) + 1.0);
+        Bar.Texture:SetWidth((Bar.WidthPerSecond * TimeLeft) + 1.0);
       else
-        Bar.Texture:SetWidth(Container.BarWidth - (Container.WidthPerSecond * TimeLeft));
+        Bar.Texture:SetWidth(Container.BarWidth - (Bar.WidthPerSecond * TimeLeft));
       end
       
-      local Part = TimeLeft / Container.Config.Layout.BarMaxTime;
+      local Part = TimeLeft / Bar.BarMaxTime;
       local Left, Right;
       
       if Container.Config.Layout.BarDirection == "LEFTGROW" then
@@ -418,7 +418,12 @@ function Prototype:UpdateBarDisplay(Bar)
     
   end
   
-  if Aura.ExpirationTime == 0 or (Aura.ExpirationTime ~= 0 and max(Aura.ExpirationTime - GetTime(), 0) > self.Config.Layout.BarMaxTime) then
+  Bar.BarMaxTime = self.Config.Layout.BarUseAuraTime and Aura.Duration or self.Config.Layout.BarMaxTime;
+  
+  -- 1 is the min.
+  Bar.WidthPerSecond = (self.BarWidth - 1) / Bar.BarMaxTime;
+  
+  if Aura.ExpirationTime == 0 or (Aura.ExpirationTime ~= 0 and max(Aura.ExpirationTime - GetTime(), 0) > Bar.BarMaxTime) then
     
     Bar.Texture:SetWidth(self.BarWidth);
     Bar.Texture:SetTexCoord(0, 1, 0, 1);
@@ -594,9 +599,6 @@ function Prototype:Update(...)
     else
       self.Shrink = false;
     end
-  
-    -- 1.0 is the min.
-    self.WidthPerSecond = (self.BarWidth - 1) / self.Config.Layout.BarMaxTime;
     
     local Flags = {};
 
