@@ -153,9 +153,20 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
   end);
   BackgroundGroup:AddChild(BackgroundTexture);
   
-  BackgroundGroup:AddText(" ", nil, 50);
+  local BackgroundTextureInsets = AceGUI:Create("Slider");
+  BackgroundTextureInsets:SetWidth(150);
+  BackgroundTextureInsets:SetValue(LayoutConfig.BackgroundTextureInsets);
+  BackgroundTextureInsets:SetLabel("Background insets");
+  BackgroundTextureInsets:SetSliderValues(0, 16, 1);
+  BackgroundTextureInsets:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BackgroundTextureInsets = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
+  end);
+  BackgroundGroup:AddChild(BackgroundTextureInsets);
   
   local BackgroundTextureColor = AceGUI:Create("ColorPicker");
+  BackgroundTextureColor:SetWidth(150);
   BackgroundTextureColor:SetHasAlpha(true);
   BackgroundTextureColor:SetColor(unpack(LayoutConfig.BackgroundTextureColor));
   BackgroundTextureColor:SetLabel("Texture color");
@@ -167,7 +178,7 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
   
   local BackgroundBorder = AceGUI:Create("LSM30_Border");
   BackgroundBorder:SetList(LSM:HashTable("border"));
-  BackgroundBorder:SetLabel("Texture");
+  BackgroundBorder:SetLabel("Border");
   BackgroundBorder:SetValue(LayoutConfig.BackgroundBorder);
   BackgroundBorder:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.BackgroundBorder = Value;
@@ -176,12 +187,23 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
   end);
   BackgroundGroup:AddChild(BackgroundBorder);
   
-  BackgroundGroup:AddText(" ", nil, 50);
+  local BackgroundBorderSize = AceGUI:Create("Slider");
+  BackgroundBorderSize:SetWidth(150);
+  BackgroundBorderSize:SetValue(LayoutConfig.BackgroundBorderSize);
+  BackgroundBorderSize:SetLabel("Border size");
+  BackgroundBorderSize:SetSliderValues(2, 24, 1);
+  BackgroundBorderSize:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BackgroundBorderSize = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
+  end);
+  BackgroundGroup:AddChild(BackgroundBorderSize);
   
   local BackgroundBorderColor = AceGUI:Create("ColorPicker");
+  BackgroundBorderColor:SetWidth(150);
   BackgroundBorderColor:SetHasAlpha(true);
   BackgroundBorderColor:SetColor(unpack(LayoutConfig.BackgroundBorderColor));
-  BackgroundBorderColor:SetLabel("Texture color");
+  BackgroundBorderColor:SetLabel("Border color");
   BackgroundBorderColor:SetCallback("OnValueChanged", function(_, _, ...)
     LayoutConfig.BackgroundBorderColor = {...};
     ContainerInstance:Update("LAYOUT");

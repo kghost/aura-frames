@@ -69,7 +69,7 @@ function Module:ContentWarnings(ContainerId)
   Content:AddHeader("Changing Aura's");
   
   local GroupChangingPopup = AceGUI:Create("InlineGroup");
-  GroupChangingPopup:SetTitle("Flash");
+  GroupChangingPopup:SetTitle("Popup");
   GroupChangingPopup:SetRelativeWidth(1);
   GroupChangingPopup:SetLayout("Flow");
   Content:AddChild(GroupChangingPopup);
