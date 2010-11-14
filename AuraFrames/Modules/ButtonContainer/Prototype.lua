@@ -264,6 +264,7 @@ function Prototype:ReleasePool()
   
 end
 
+
 -----------------------------------------------------------------
 -- Function UpdateButtonDisplay
 -----------------------------------------------------------------
@@ -576,7 +577,6 @@ function Prototype:AuraNew(Aura)
   Button.Icon:SetTexture(Aura.Icon);
   
   self.Buttons[Aura] = Button;
-  --self.Order:Add(Button);
   
   if FromContainerPool == true then
 
@@ -607,12 +607,9 @@ function Prototype:AuraOld(Aura)
   -- Remove the button from the container list.
   self.Buttons[Aura] = nil;
   
-  -- Remove the button from the container order list.
-  --self.Order:Remove(Button);
-  
   Button:Hide();
   
-  if AuraFrames:IsTooltipOwner(Bar) == true then
+  if AuraFrames:IsTooltipOwner(Button) == true then
     AuraFrames:HideTooltip();
   end
   

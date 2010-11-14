@@ -88,6 +88,7 @@ function Module:GetDatabaseDefaults()
       Size = 300,
       Style = "HORIZONTAL",
       Direction = "HIGH",
+      MaxTime = 30,
 
       ShowDuration = true,
       DurationFont = "Friz Quadrata TT",

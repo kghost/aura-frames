@@ -12,7 +12,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime, CreateFrame, IsModifierKeyDown = GetTime, CreateFrame, IsModifierKeyDown;
 local math_sin, math_cos, math_floor, math_ceil = math.sin, math.cos, math.floor, math.ceil;
 local min, max = min, max;
-local _G = _G;
+local _G, PI = _G, PI;
 
 local Prototype = Module.Prototype;
 
@@ -31,8 +31,7 @@ local DirectionMapping = {
   UP    = {"BOTTOMLEFT",  1},
 };
 
-
-PositionMappings = {
+local PositionMappings = {
   NONE = {
     LEFT = {5, 0},
     RIGHT = {-5, 0},
