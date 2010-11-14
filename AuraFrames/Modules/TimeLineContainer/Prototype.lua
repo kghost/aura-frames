@@ -399,8 +399,15 @@ function Prototype:Update(...)
     
     end
     
-    self.Background:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.Texture));
-    self.Background:SetVertexColor(unpack(self.Config.Layout.TextureColor));
+    self.Frame:SetBackdrop({
+      bgFile = LSM:Fetch("statusbar", self.Config.Layout.BackgroundTexture), 
+      edgeFile = LSM:Fetch("border", self.Config.Layout.BackgroundBorder), 
+      tile = false,
+      edgeSize = 8, 
+      insets = {left = 2, right = 2, top = 2, bottom = 2}
+    });
+    self.Frame:SetBackdropColor(unpack(self.Config.Layout.BackgroundTextureColor));
+    self.Frame:SetBackdropBorderColor(unpack(self.Config.Layout.BackgroundBorderColor));
   
     self.TooltipOptions = {
       ShowPrefix = self.Config.Layout.TooltipShowPrefix,

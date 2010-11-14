@@ -124,8 +124,11 @@ function Module:GetDatabaseDefaults()
       TooltipShowSpellId = false,
       TooltipShowClassification = false,
 
-      Texture = "BantoBar",
-      TextureColor = {1, 1, 1, 0.8},
+      BackgroundTexture = "BantoBar",
+      BackgroundTextureColor = {1, 1, 1, 0.8},
+      
+      BackgroundBorder = "Blizzard Tooltip",
+      BackgroundBorderColor = {1, 1, 1, 0.8},
 
     },
     Colors = {
@@ -183,8 +186,6 @@ function Module:New(Config)
   else
     Container.Frame = CreateFrame("Frame", FrameId, UIParent, "AuraFramesTimeLineContainerTemplate");
   end
-  
-  Container.Background = _G[FrameId.."Background"];
   
   Container.Frame:Show();
 

@@ -5,11 +5,6 @@
   <Script file="Prototype.lua" />
 
   <Frame name="AuraFramesTimeLineContainerTemplate" parent="UIParent" virtual="true" movable="true">
-    <Layers>
-      <Layer level="BACKGROUND">
-        <Texture name="$parentBackground" />
-      </Layer>
-    </Layers>
   </Frame>
 
   <Button name="AuraFramesTimeLineTemplate" virtual="true" hidden="true">
