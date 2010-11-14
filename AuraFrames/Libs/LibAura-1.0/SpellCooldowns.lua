@@ -48,7 +48,6 @@ local BookType = {
   pet     = BOOKTYPE_PET,
 };
 
-
 -- Update spell book throttle.
 local SpellBookLastScan = nil;
 local SpellBookScanThrottle = 1.0;
@@ -340,13 +339,20 @@ end
 -----------------------------------------------------------------
 function Module:ScanAllSpellCooldowns()
   
+  local CurrentTime = GetTime();
+  
   for Unit, UnitDb in pairs(self.db) do
   
     for i = #UnitDb.Auras, 1, -1 do
     
       local Start, Duration, Active = GetSpellCooldown(UnitDb.Auras[i].SpellId);
+      local UnderMin = Start + Duration < CurrentTime + 1.5;
       
-      if Active ~= 1 or Duration == 0 then
+      if (Active ~= 1 or Duration == 0) or (UnderMin == true and UnitDb.Auras[i].ExpirationTime < CurrentTime) then
+      
+        -- if the cooldown it not active or when we have lesser then
+        -- "UnderMin" left and we are passed the last ExpirationTime
+        -- then deactive it.
       
         if UnitDb.Auras[i].Active == true then
           LibAura:FireAuraOld(UnitDb.Auras[i]);
@@ -355,7 +361,10 @@ function Module:ScanAllSpellCooldowns()
         
         tremove(UnitDb.Auras, i);
       
-      else
+      elseif UnderMin == false then
+      
+        -- We update only the cooldown when a minimum of "UnderMin"
+        -- is still left. This to prevent the gcd to bump the spell cd.
       
         UnitDb.Auras[i].ExpirationTime = Start + Duration;
       

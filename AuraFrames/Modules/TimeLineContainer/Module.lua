@@ -126,10 +126,12 @@ function Module:GetDatabaseDefaults()
 
       BackgroundTexture = "BantoBar",
       BackgroundTextureColor = {1, 1, 1, 0.8},
+      BackgroundTextureInsets = 2,
       
       BackgroundBorder = "Blizzard Tooltip",
       BackgroundBorderColor = {1, 1, 1, 0.8},
-
+      BackgroundBorderSize = 8,
+    
     },
     Colors = {
       Debuff = {

@@ -403,8 +403,8 @@ function Prototype:Update(...)
       bgFile = LSM:Fetch("statusbar", self.Config.Layout.BackgroundTexture), 
       edgeFile = LSM:Fetch("border", self.Config.Layout.BackgroundBorder), 
       tile = false,
-      edgeSize = 8, 
-      insets = {left = 2, right = 2, top = 2, bottom = 2}
+      edgeSize = self.Config.Layout.BackgroundBorderSize, 
+      insets = {left = self.Config.Layout.BackgroundTextureInsets, right = self.Config.Layout.BackgroundTextureInsets, top = self.Config.Layout.BackgroundTextureInsets, bottom = self.Config.Layout.BackgroundTextureInsets}
     });
     self.Frame:SetBackdropColor(unpack(self.Config.Layout.BackgroundTextureColor));
     self.Frame:SetBackdropBorderColor(unpack(self.Config.Layout.BackgroundBorderColor));
@@ -505,9 +505,9 @@ function Prototype:AuraNew(Aura)
     
       ButtonCounter = ButtonCounter + 1;
     
-      local ButtonId = "AuraFramesButton"..ButtonCounter;
+      local ButtonId = "AuraFramesTimeLineButton"..ButtonCounter;
 
-      Button = CreateFrame("Button", ButtonId, self.Frame, "AuraFramesButtonTemplate");
+      Button = CreateFrame("Button", ButtonId, self.Frame, "AuraFramesTimeLineTemplate");
       
       Button.Duration = _G[ButtonId.."Duration"];
       Button.Icon = _G[ButtonId.."Icon"];

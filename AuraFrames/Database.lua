@@ -9,7 +9,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 202;
+AuraFrames.DatabaseVersion = 203;
 
 
 --[[
@@ -26,7 +26,9 @@ AuraFrames.DatabaseVersion = 202;
   version 202:
     Add BarUseAuraTime for bar containers
    
-    
+  version 203:
+    Added BackgroundBorderSize to timeline container
+   
 ]]--
 
 
@@ -234,11 +236,22 @@ function AuraFrames:DatabaseUpgrade()
     
     end
 
-    if OldVersion < 201 then
+    if OldVersion < 202 then
     
       if Container.Type == "BarContainer" then
       
         Container.Layout.BarUseAuraTime = false;
+      
+      end
+    
+    end
+    
+    if OldVersion < 203 then
+    
+      if Container.Type == "TimeLineContainer" then
+      
+        Container.Layout.BackgroundTextureInsets = 2;
+        Container.Layout.BackgroundBorderSize = 8;
       
       end
     

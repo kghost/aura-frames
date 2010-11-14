@@ -59,7 +59,9 @@ function AuraFrames.AuraListPrototype:ResyncSources()
   
   wipe(self.Auras);
   
-  self.Order:Reset();
+  if self.Order then
+    self.Order:Reset();
+  end
   
   self.NotStatic = self.Filter.NotStatic or false;
   
