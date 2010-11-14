@@ -140,6 +140,23 @@ function Module:GetDatabaseDefaults()
       Weapon        = {1.0, 1.0, 1.0, 1.0},
       Other         = {1.0, 1.0, 1.0, 1.0},
     },
+    Warnings = {
+      New = {
+        Flash = false,
+        FlashNumber = 3.0,
+        FlashSpeed = 1.0,
+      },
+      Expire = {
+        Flash = false,
+        FlashNumber = 5.0,
+        FlashSpeed = 1.0,
+      },
+      Changing = {
+        Popup = false,
+        PopupTime = 0.5,
+        PopupScale = 3.0,
+      },
+    },
     Order = AuraFrames:GetDatabaseDefaultsOrder(),
     Filter = AuraFrames:GetDatabaseDefaultsFilter(),
   };

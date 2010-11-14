@@ -384,9 +384,9 @@ function AuraFrames.OrderPrototype:Update(Item)
   if Index == nil then
     return;
   end
-
+  
   -- The item need to be moved up in the list.
-  if Index ~= 1 and self.Compare(Item, self[Index - 1]) == false then
+  if Index ~= 1 and self.Compare(Item, self[Index - 1]) == true then
   
     tremove(self, Index);
     
@@ -417,13 +417,13 @@ function AuraFrames.OrderPrototype:Update(Item)
   end
   
   -- The item need to be moved down in the list.
-  if Index ~= #self and self.Compare(Item, self[Index + 1]) == true then
+  if Index ~= #self and self.Compare(Item, self[Index + 1]) == false then
 
     tremove(self, Index);
     
     for i = Index + 1, #self do
     
-      if self.Compare(self[i], Item) == true then
+      if self.Compare(self[i], Item) == false then
       
         tinsert(self, i, Item);
         

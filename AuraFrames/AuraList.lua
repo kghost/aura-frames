@@ -61,9 +61,9 @@ function AuraFrames.AuraListPrototype:ResyncSources()
   
   self.Order:Reset();
   
-  self.Changing = self.Filter.Changing;
+  self.NotStatic = self.Filter.NotStatic or false;
   
-  if self.Changing == true then
+  if self.NotStatic == true then
     
     self.CheckingFrame:Show();
     
@@ -74,6 +74,20 @@ function AuraFrames.AuraListPrototype:ResyncSources()
   end
 
   LibAura:ObjectSync(self, nil, nil);
+
+end
+
+
+-----------------------------------------------------------------
+-- Function AnchorAllAuras
+-----------------------------------------------------------------
+function AuraFrames.AuraListPrototype:AnchorAllAuras()
+
+  for Index, Aura in ipairs(self.Order) do
+
+    self.Container:AuraAnchor(Aura, Index)  
+  
+  end
 
 end
 
@@ -101,7 +115,7 @@ function AuraFrames.AuraListPrototype:AuraNew(Aura)
 
   if self.Filter.Test(Aura) == false then
   
-    if self.Changing == true then
+    if self.NotStatic == true then
       self.Auras[Aura] = false;
     end
   
@@ -133,9 +147,10 @@ function AuraFrames.AuraListPrototype:AuraChanged(Aura)
     -- No aura changes, just fire a AuraChanged.
   
     self.Container:AuraChanged(Aura);
+
     self.Order:Update(Aura);
     
-  elseif self.Auras[Aura] == false and self.Changing == false then
+  elseif self.Auras[Aura] == false and self.NotStatic ~= true then
 
     -- Remove the aura if he didn't pass the filter and we are not
     -- checking realtime.
@@ -213,7 +228,7 @@ function AuraFrames:NewAuraList(Container, FilterConfig, OrderConfig)
   
   AuraList.Container = Container;
   
-  AuraList.Changing = false;
+  AuraList.NotStatic = false;
   
   AuraList.CheckingFrame = CreateFrame("Frame");
   AuraList.CheckingFrame.LastScan = 0;

@@ -9,7 +9,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 200;
+AuraFrames.DatabaseVersion = 201;
 
 
 --[[
@@ -18,6 +18,10 @@ AuraFrames.DatabaseVersion = 200;
 
   Version 200:
     First release. Any older database will be reseted (alpha and beta versions).
+  
+  Version 201:
+    Added warning changing.
+    Added warnings to bar containers.
     
 ]]--
 
@@ -179,7 +183,7 @@ function AuraFrames:DatabaseUpgrade()
   
   -- General upgrade code.
   
-  if self.db.profile.DbVersion < 200 then
+  if OldVersion < 200 then
   
     self:DatabaseReset();
     self:Message("Aura Frames\n\nAn alpha/beta database was found, your database have been reseted. Thanks for testing Aura Frames and sorry for reseting your database.", nil, "Okay");
@@ -191,6 +195,40 @@ function AuraFrames:DatabaseUpgrade()
   for _, Container in pairs(self.db.profile.Containers) do
 
     -- Container upgrade code.
+    
+    if OldVersion < 201 then
+    
+      if Container.Type == "ButtonContainer" then
+    
+        Container.Warnings.Changing = {
+          Popup = false,
+          PopupTime = 0.5,
+          PopupScale = 3.0,
+        };
+      
+      elseif Container.Type == "BarContainer" then
+      
+        Container.Warnings = {
+          New = {
+            Flash = false,
+            FlashNumber = 3.0,
+            FlashSpeed = 1.0,
+          },
+          Expire = {
+            Flash = false,
+            FlashNumber = 5.0,
+            FlashSpeed = 1.0,
+          },
+          Changing = {
+            Popup = false,
+            PopupTime = 0.5,
+            PopupScale = 3.0,
+          },
+        };
+      
+      end
+    
+    end
 
   end
   

@@ -50,8 +50,18 @@ PositionMappings = {
   },
 };
 
-
+-- How fast a bar will get updated.
 local BarUpdatePeriod = 0.05;
+
+-- Pre calculate pi * 2 (used for flashing bars).
+local PI2 = PI + PI;
+
+-- Pre calculate pi / 2 (used for popup bars).
+local PI_2 = PI / 2;
+
+-- Frame levels used for poping up bars.
+local PopupFrameLevel = 9;
+local PopupFrameLevelNormal = 4;
 
 
 -----------------------------------------------------------------
@@ -97,9 +107,9 @@ end);
 -----------------------------------------------------------------
 local function BarOnUpdate(Container, Bar, Elapsed)
 
-  if Bar.Aura.ExpirationTime ~= 0 then
+  local Config = Container.Config;
   
-    local Config = Container.Config;
+  if Bar.Aura.ExpirationTime ~= 0 then
     
     local TimeLeft = max(Bar.Aura.ExpirationTime - GetTime(), 0);
     
@@ -154,6 +164,75 @@ local function BarOnUpdate(Container, Bar, Elapsed)
       
       Bar.Texture:SetTexCoord(Left, Right, 0, 1);
       
+    end
+    
+    if Bar.ExpireFlashTime and TimeLeft < Bar.ExpireFlashTime then
+      
+      -- We need to flash for an aura that is expiring. Let's have some
+      -- geek match involved to make the flash look nice.
+      --
+      -- We are starting with Alpha(1.0) and going in a sinus down and up
+      -- and ending in a down. We don't go totally transpirant and the min
+      -- is Alpha(0.15);
+    
+      local Alpha = ((math_cos((((Bar.ExpireFlashTime - TimeLeft) % Config.Warnings.Expire.FlashSpeed) / Config.Warnings.Expire.FlashSpeed) * PI2) / 2 + 0.5) * 0.85) + 0.15;
+      
+      Bar.Button.Icon:SetAlpha(Alpha);
+      Bar.Texture:SetAlpha(Alpha);
+    
+    elseif Bar.NewFlashTime and Bar.Aura.Duration ~= 0 then
+    
+      local TimeFromStart = Bar.Aura.Duration - TimeLeft;
+      
+      if TimeFromStart < Bar.NewFlashTime then
+      
+        -- See the ExpireFlash. The only difference is that we start with
+        -- Alpha(0.15) and that we are ending with Alpha(1.0).
+      
+        local Alpha = ((math_cos((((TimeFromStart % Config.Warnings.New.FlashSpeed) / Config.Warnings.New.FlashSpeed) * PI2) + PI) / 2 + 0.5) * 0.85) + 0.15;
+      
+        Bar.Button.Icon:SetAlpha(Alpha);
+        Bar.Texture:SetAlpha(Alpha);
+      
+      else
+        
+        -- At the end of the new flash animation make sure that we end
+        -- with SetAlpha(1.0) and that we stop the animation.
+      
+        Bar.NewFlashTime = nil;
+        Bar.Button.Icon:SetAlpha(1.0);
+        Bar.Texture:SetAlpha(1.0);
+      
+      end
+    
+    end
+  
+  end
+  
+  if Bar.PopupTime ~= nil and Config.Warnings.Changing.Popup == true then
+  
+    if Bar.PopupTime == 0 then
+    
+      Bar:SetFrameLevel(PopupFrameLevel);
+    
+    end
+  
+    Bar.PopupTime = Bar.PopupTime + Elapsed;
+  
+    if Bar.PopupTime > Config.Warnings.Changing.PopupTime then
+    
+      Bar.PopupTime = nil;
+      Bar:SetScale(1.0);
+      Container:AuraAnchor(Bar.Aura, Bar.OrderPos);
+      Bar:SetFrameLevel(PopupFrameLevelNormal);
+    
+    else
+    
+      local Scale = 1 + (((math_sin(-PI_2 + ((Bar.PopupTime / Config.Warnings.Changing.PopupTime) * PI2)) + 1) / 2) * (Config.Warnings.Changing.PopupScale - 1));
+      
+      Bar:SetScale(Scale);
+      Container:AuraAnchor(Bar.Aura, Bar.OrderPos);
+    
     end
   
   end
@@ -532,12 +611,33 @@ function Prototype:Update(...)
     self.FontObject:SetFont(LSM:Fetch("font", self.Config.Layout.TextFont), self.Config.Layout.TextSize, tconcat(Flags, ","));
     self.FontObject:SetTextColor(unpack(self.Config.Layout.TextColor));
     
+    self.Direction = DirectionMapping[self.Config.Layout.Direction];
+    
     for _, Bar in pairs(self.Bars) do
       self:UpdateBar(Bar);
     end
     
+    -- Anchor all bars.
+    self.AuraList:AnchorAllAuras();
+
     -- We have bars in the container pool that doesn't match the settings anymore. Release them into the general pool.
     self:ReleasePool();
+    
+  end
+  
+  if Changed == "ALL" or Changed == "WARNINGS" then
+
+    if self.Config.Warnings.New.Flash == true then
+      self.NewFlashTime = self.Config.Warnings.New.FlashSpeed * (self.Config.Warnings.New.FlashNumber + 0.5);
+    else
+      self.NewFlashTime = nil;
+    end
+    
+    if self.Config.Warnings.Expire.Flash == true then
+      self.ExpireFlashTime = self.Config.Warnings.Expire.FlashSpeed * (self.Config.Warnings.Expire.FlashNumber + 0.5);
+    else
+      self.ExpireFlashTime = nil;
+    end
     
   end
 
@@ -549,14 +649,7 @@ end
 -----------------------------------------------------------------
 function Prototype:AuraNew(Aura)
   
-  if self.Bars[Aura.Id] then
-  
-    AuraFrames:Print("Double aura trying to be added!!! Id: "..Aura.Id);
-    return;
-  
-  end
-  
-  -- Pop the last button out the container pool.
+  -- Pop the last bar out the container pool.
   local Bar = tremove(self.BarPool);
   local FromContainerPool = Bar and true or false;
   
@@ -620,6 +713,9 @@ function Prototype:AuraNew(Aura)
   
   end
   
+  Bar.NewFlashTime = self.NewFlashTime;
+  Bar.ExpireFlashTime = self.ExpireFlashTime;
+  
   Bar.TimeSinceLastUpdate = 0.0;
   Bar.TimeLeftSeconds = 0;
   
@@ -627,7 +723,7 @@ function Prototype:AuraNew(Aura)
     
   Bar.Aura = Aura;
   
-  self.Bars[Aura.Id] = Bar;
+  self.Bars[Aura] = Bar;
   
   if self.Config.Layout.ShowCooldown == true and Aura.ExpirationTime > 0 then
     
@@ -667,20 +763,29 @@ end
 -----------------------------------------------------------------
 function Prototype:AuraOld(Aura)
 
-  if not self.Bars[Aura.Id] then
+  if not self.Bars[Aura] then
     return
   end
   
-  local Bar = self.Bars[Aura.Id];
+  local Bar = self.Bars[Aura];
   
   -- Remove the bar from the container list.
-  self.Bars[Aura.Id] = nil;
+  self.Bars[Aura] = nil;
   
   Bar:Hide();
   
   if AuraFrames:IsTooltipOwner(Bar) == true then
     AuraFrames:HideTooltip();
   end
+  
+  -- The warning system can have changed the alpha and scale. Set it back.
+  Bar.Button.Icon:SetAlpha(1.0);
+  Bar.Texture:SetAlpha(1.0);
+  Bar:SetScale(1.0);
+  
+  -- Reset popup animation trigger and restore the frame level.
+  Bar.PopupTime = nil;
+  Bar:SetFrameLevel(PopupFrameLevelNormal);
   
   -- See in what pool we need to drop.
   if #self.BarPool >= ContainerBarPoolSize then
@@ -714,11 +819,11 @@ end
 -----------------------------------------------------------------
 function Prototype:AuraChanged(Aura)
 
-  if not self.Bars[Aura.Id] then
+  if not self.Bars[Aura] then
     return
   end
   
-  local Bar = self.Bars[Aura.Id];
+  local Bar = self.Bars[Aura];
   
   local Text = {};
   
@@ -733,6 +838,9 @@ function Prototype:AuraChanged(Aura)
   end
   
   Bar.Text:SetText(tconcat(Text, " "));
+  
+  -- Start popup animation.
+  Bar.PopupTime = 0.0;
 
 end
 
@@ -742,69 +850,32 @@ end
 -----------------------------------------------------------------
 function Prototype:AuraAnchor(Aura, Index)
 
+  local Bar = self.Bars[Aura];
+
+  -- Save the order position.
+  Bar.OrderPos = Index;
+
   -- Hide bar if the index is greater then the maximum number of bars to anchor
   if Index > self.Config.Layout.NumberOfBars then
   
-    self.Bars[Aura.Id]:Hide();
+    Bar:Hide();
     return;
     
   end
   
-  local x, y;
+  local Scale = Bar:GetScale();
   
-  local Direction = DirectionMapping[self.Config.Layout.Direction];
+  Bar:ClearAllPoints();
   
-  self.Bars[Aura.Id]:ClearAllPoints();
-  
-  self.Bars[Aura.Id]:SetPoint(
-    Direction[1],
+  Bar:SetPoint(
+    "CENTER",
     self.Frame,
-    Direction[1],
-    0,
-    Direction[2] * ((Index - 1) * (Module.BarHeight + self.Config.Layout.Space))
+    self.Direction[1],
+    (Bar:GetWidth() / 2) / Scale,
+    ((self.Direction[2] * ((Index - 1) * (Module.BarHeight + self.Config.Layout.Space))) + ((Module.BarHeight / 2) * self.Direction[2])) / Scale
   );
 
-  self.Bars[Aura.Id]:Show();
+  Bar:Show();
   
 end
 
-
------------------------------------------------------------------
--- Function UpdateAnchors
------------------------------------------------------------------
---[[
-function Prototype:UpdateAnchors()
-
-  -- Maximune number of bars to anchor.
-  local Max = min(#self.Order, self.Config.Layout.NumberOfBars);
-
-  local i, x, y;
-  local Direction = DirectionMapping[self.Config.Layout.Direction];
-
-  -- Anchor the bars in the correct order.
-  for i = 1, #self.Order do
-  
-    self.Order[i]:ClearAllPoints();
-
-    if i > Max then
-
-      self.Order[i]:Hide();
-
-    else
-      
-      self.Order[i]:SetPoint(
-        Direction[1],
-        self.Frame,
-        Direction[1],
-        0,
-        Direction[2] * ((i - 1) * (Module.BarHeight + self.Config.Layout.Space))
-      );
-
-      self.Order[i]:Show();
-    
-    end
-  
-  end
-  
-end
-]]--

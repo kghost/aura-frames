@@ -13,6 +13,12 @@ The following types are supported atm:
   SpellName
   SpellId
 
+By default every attribute is defined as static unless there
+is NotStatic = true is defined. If the filter contains one or
+more attributes that are not static then the filter will be
+checked every x time. (This is implemented in the AuraList
+leyer).
+
 ]]--
 
 
@@ -82,7 +88,7 @@ AuraFrames.AuraDefinition = {
     Code = "((Object.ExpirationTime == 0 and 0) or (Object.ExpirationTime - GetTime()))",
     Order = true,
     Filter = true,
-    Changing = true,
+    NotStatic = true,
     Weight = 3,
   },
   ExpirationTime = {

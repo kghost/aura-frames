@@ -79,6 +79,7 @@ function Module:ActivateSource(Unit, Type)
     LibAura:RegisterEvent("PLAYER_ENTERING_WORLD", self, self.TriggerUpdateAllSpellBooks);
     LibAura:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", self, self.SpellCasted);
     LibAura:RegisterEvent("SPELL_UPDATE_USABLE", self, self.TriggerUpdateCooldowns);
+    LibAura:RegisterEvent("UNIT_SPELLCAST_FAILED", self, self.SpellCastFailed);
     LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.ScanAllSpellCooldowns);
     LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.Update);
   
@@ -128,6 +129,7 @@ function Module:DeactivateSource(Unit, Type)
     LibAura:UnregisterEvent("PLAYER_ENTERING_WORLD", self, self.TriggerUpdateAllSpellBooks);
     LibAura:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED", self, self.SpellCasted);
     LibAura:UnregisterEvent("SPELL_UPDATE_USABLE", self, self.TriggerUpdateCooldowns);
+    LibAura:UnregisterEvent("UNIT_SPELLCAST_FAILED", self, self.SpellCastFailed);
     LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.ScanAllSpellCooldowns);
     LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.Update);
 
@@ -430,6 +432,23 @@ function Module:SpellCasted(Unit, _, _, _, SpellId)
 
   if #self.db[Unit].History > SpellMaxHistory then
     tremove(self.db[Unit].History, 1);
+  end
+
+end
+
+-----------------------------------------------------------------
+-- Function SpellCastFailed
+-----------------------------------------------------------------
+function Module:SpellCastFailed(Unit, _, _, _, SpellId)
+
+  if not self.db[Unit] then
+    return;
+  end
+  
+  if self.db[Unit].Book[SpellId] and self.db[Unit].Book[SpellId].Active == true then
+  
+    LibAura:FireAuraChanged(self.db[Unit].Book[SpellId]);
+  
   end
 
 end

@@ -25,24 +25,30 @@ local ContainerButtonPoolSize = 5;
 -- Counters for each butten type.
 local ButtonCounter = 0;
 
--- Direction = {AnchorPoint, first X or Y, X Direction, Y Direction}
+-- Direction = {AnchorPoint, first Horizontal or Vertical, X Direction, Y Direction}
 local DirectionMapping = {
-  LEFTDOWN  = {"TOPRIGHT",    "y", -1, -1},
-  LEFTUP    = {"BOTTOMRIGHT", "y", -1,  1},
-  RIGHTDOWN = {"TOPLEFT",     "y",  1, -1},
-  RIGHTUP   = {"BOTTOMLEFT",  "y",  1,  1},
-  DOWNLEFT  = {"TOPRIGHT",    "x", -1, -1},
-  DOWNRIGHT = {"TOPLEFT",     "x",  1, -1},
-  UPLEFT    = {"BOTTOMRIGHT", "x", -1,  1},
-  UPRIGHT   = {"BOTTOMLEFT",  "x",  1,  1},
+  LEFTDOWN  = {"TOPRIGHT",    "V", -1, -1},
+  LEFTUP    = {"BOTTOMRIGHT", "V", -1,  1},
+  RIGHTDOWN = {"TOPLEFT",     "V",  1, -1},
+  RIGHTUP   = {"BOTTOMLEFT",  "V",  1,  1},
+  DOWNLEFT  = {"TOPRIGHT",    "H", -1, -1},
+  DOWNRIGHT = {"TOPLEFT",     "H",  1, -1},
+  UPLEFT    = {"BOTTOMRIGHT", "H", -1,  1},
+  UPRIGHT   = {"BOTTOMLEFT",  "H",  1,  1},
 };
 
 -- How fast a button will get updated.
 local ButtonUpdatePeriod = 0.05;
 
--- Pre calculate pi*2 (used for flashing buttons).
+-- Pre calculate pi * 2 (used for flashing buttons).
 local PI2 = PI + PI;
 
+-- Pre calculate pi / 2 (used for popup buttons).
+local PI_2 = PI / 2;
+
+-- Frame levels used for poping up buttons.
+local PopupFrameLevel = 9;
+local PopupFrameLevelNormal = 4;
 
 -----------------------------------------------------------------
 -- Cooldown Fix
@@ -97,13 +103,13 @@ end);
 -----------------------------------------------------------------
 local function ButtonOnUpdate(Container, Button, Elapsed)
 
+  local Config = Container.Config;
+
   if Button.Aura.ExpirationTime ~= 0 then
-  
-    local Config = Container.Config;
     
     local TimeLeft = max(Button.Aura.ExpirationTime - GetTime(), 0);
     
-    if Container.Config.Layout.ShowDuration == true then
+    if Config.Layout.ShowDuration == true then
     
       -- We don't have to update the duration every frame. We round up
       -- the seconds and compare if it's different from the last update.
@@ -125,7 +131,7 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
       -- geek match involved to make the flash look nice.
       --
       -- We are starting with Alpha(1.0) and going in a sinus down and up
-      -- and ending in a down. We don't go totally transpirant and the max
+      -- and ending in a down. We don't go totally transpirant and the min
       -- is Alpha(0.15);
     
       local Alpha = ((math_cos((((Button.ExpireFlashTime - TimeLeft) % Config.Warnings.Expire.FlashSpeed) / Config.Warnings.Expire.FlashSpeed) * PI2) / 2 + 0.5) * 0.85) + 0.15;
@@ -157,6 +163,34 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
     
     end
     
+  end
+  
+  if Button.PopupTime ~= nil and Config.Warnings.Changing.Popup == true then
+  
+    if Button.PopupTime == 0 then
+    
+      Button:SetFrameLevel(PopupFrameLevel);
+    
+    end
+  
+    Button.PopupTime = Button.PopupTime + Elapsed;
+  
+    if Button.PopupTime > Config.Warnings.Changing.PopupTime then
+    
+      Button.PopupTime = nil;
+      Button:SetScale(1.0);
+      Container:AuraAnchor(Button.Aura, Button.OrderPos);
+      Button:SetFrameLevel(PopupFrameLevelNormal);
+    
+    else
+    
+      local Scale = 1 + (((math_sin(-PI_2 + ((Button.PopupTime / Config.Warnings.Changing.PopupTime) * PI2)) + 1) / 2) * (Config.Warnings.Changing.PopupScale - 1));
+      
+      Button:SetScale(Scale);
+      Container:AuraAnchor(Button.Aura, Button.OrderPos);
+    
+    end
+  
   end
 
 end
@@ -386,7 +420,7 @@ function Prototype:Update(...)
   -- on login and when settings are changed for the
   -- container. To optimize it a little bit, the caller
   -- can indicate what changed. The following is supported:
-  -- ALL, LAYOUT, WARNINGS, FILTER or ORDER.
+  -- ALL, LAYOUT or WARNINGS.
 
   local Changed = select(1, ...) or "ALL";
 
@@ -437,9 +471,15 @@ function Prototype:Update(...)
     self.CountFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.CountFont), self.Config.Layout.CountSize, tconcat(Flags, ","));
     self.CountFontObject:SetTextColor(unpack(self.Config.Layout.CountColor));
     
+    self.MaxButtons = self.Config.Layout.HorizontalSize * self.Config.Layout.VerticalSize;
+    self.Direction = DirectionMapping[self.Config.Layout.Direction];
+    
     for _, Button in pairs(self.Buttons) do
       self:UpdateButton(Button);
     end
+    
+    -- Anchor all buttons.
+    self.AuraList:AnchorAllAuras();
     
     -- We have buttons in the container pool that doesn't match the settings anymore. Release them into the general pool.
     self:ReleasePool();
@@ -462,18 +502,6 @@ function Prototype:Update(...)
     
   end
   
-  if Changed == "ALL" or Changed == "FILTER" then
-  
-    -- Delete all current auras.
-    for _, Button in pairs(self.Buttons) do
-      self:AuraOld(Button.Aura);
-    end
-    
-    -- Resync all auras
-    self.AuraList:ResyncSources();
-  
-  end
-  
 end
 
 
@@ -481,13 +509,6 @@ end
 -- Function AuraNew
 -----------------------------------------------------------------
 function Prototype:AuraNew(Aura)
-
-  if self.Buttons[Aura.Id] then
-  
-    AuraFrames:Print("Double aura trying to be added!!! Id: "..Aura.Id);
-    return;
-  
-  end
 
   -- Pop the last button out the container pool.
   local Button = tremove(self.ButtonPool);
@@ -554,7 +575,7 @@ function Prototype:AuraNew(Aura)
   Button.Aura = Aura;
   Button.Icon:SetTexture(Aura.Icon);
   
-  self.Buttons[Aura.Id] = Button;
+  self.Buttons[Aura] = Button;
   --self.Order:Add(Button);
   
   if FromContainerPool == true then
@@ -577,14 +598,14 @@ end
 -----------------------------------------------------------------
 function Prototype:AuraOld(Aura)
 
-  if not self.Buttons[Aura.Id] then
+  if not self.Buttons[Aura] then
     return
   end
   
-  local Button = self.Buttons[Aura.Id];
+  local Button = self.Buttons[Aura];
   
   -- Remove the button from the container list.
-  self.Buttons[Aura.Id] = nil;
+  self.Buttons[Aura] = nil;
   
   -- Remove the button from the container order list.
   --self.Order:Remove(Button);
@@ -595,8 +616,13 @@ function Prototype:AuraOld(Aura)
     AuraFrames:HideTooltip();
   end
   
-  -- The warning system can have changed the alpha. Set it back.
+  -- The warning system can have changed the alpha and scale. Set it back.
   Button.Icon:SetAlpha(1.0);
+  Button:SetScale(1.0);
+  
+  -- Reset popup animation trigger and restore the frame level.
+  Button.PopupTime = nil;
+  Button:SetFrameLevel(PopupFrameLevelNormal);
   
   -- See in what pool we need to drop.
   if #self.ButtonPool >= ContainerButtonPoolSize then
@@ -630,11 +656,11 @@ end
 -----------------------------------------------------------------
 function Prototype:AuraChanged(Aura)
 
-  if not self.Buttons[Aura.Id] then
+  if not self.Buttons[Aura] then
     return
   end
   
-  local Button = self.Buttons[Aura.Id];
+  local Button = self.Buttons[Aura];
   
   if Button.Count and self.Config.Layout.ShowCount and Aura.Count > 0 then
   
@@ -647,6 +673,9 @@ function Prototype:AuraChanged(Aura)
     
   end
   
+  -- Start popup animation.
+  Button.PopupTime = 0.0;
+  
 end
 
 
@@ -655,94 +684,43 @@ end
 -----------------------------------------------------------------
 function Prototype:AuraAnchor(Aura, Index)
 
+  local Button = self.Buttons[Aura];
+
+  -- Save the order position.
+  Button.OrderPos = Index;
+
   -- Hide button if the index is greater then the maximum number of buttons to anchor
-  if Index > self.Config.Layout.HorizontalSize * self.Config.Layout.VerticalSize then
+  if Index > self.MaxButtons then
   
-    self.Buttons[Aura.Id]:Hide();
+    Button:Hide();
     return;
     
   end
   
   local x, y;
   
-  -- We use a mapping table that is defined at the top
-  -- of the file to do quickly placement of aura's.
-  local Direction = DirectionMapping[self.Config.Layout.Direction];
-
   -- Calculate the x and y of the button.
-  if Direction[2] == "y" then
+  if self.Direction[2] == "V" then
     x, y = ((Index - 1) % self.Config.Layout.HorizontalSize), math_floor((Index - 1) / self.Config.Layout.HorizontalSize);
   else
     x, y = math_floor((Index - 1) / self.Config.Layout.VerticalSize), ((Index - 1) % self.Config.Layout.VerticalSize);
   end
   
-  self.Buttons[Aura.Id]:ClearAllPoints();
+  local Scale = Button:GetScale();
+  
+  Button:ClearAllPoints();
   
   -- Set the position.
-  self.Buttons[Aura.Id]:SetPoint(
-    Direction[1],
+  Button:SetPoint(
+    "CENTER",
     self.Frame,
-    Direction[1],
-    Direction[3] * (x * (Module.ButtonSizeX + (x and self.Config.Layout.SpaceX))),
-    Direction[4] * (y * (Module.ButtonSizeY + (y and self.Config.Layout.SpaceY)))
+    self.Direction[1],
+    (self.Direction[3] * ((x * (Module.ButtonSizeX + (x and self.Config.Layout.SpaceX))) + (Module.ButtonSizeX / 2))) / Scale,
+    (self.Direction[4] * ((y * (Module.ButtonSizeY + (y and self.Config.Layout.SpaceY))) + (Module.ButtonSizeY / 2))) / Scale
   );
 
   -- Make sure the button is showned.
-  self.Buttons[Aura.Id]:Show();
+  Button:Show();
 
 end
 
-
------------------------------------------------------------------
--- Function UpdateAnchors
------------------------------------------------------------------
---[[
-function Prototype:UpdateAnchors()
-
-  -- Maximune number of buttons to anchor.
-  local Max = min(#self.Order, self.Config.Layout.HorizontalSize * self.Config.Layout.VerticalSize);
-
-  local i, x, y;
-  
-  -- We use a mapping table that is defined at the top
-  -- of the file to do quickly placement of aura's.
-  local Direction = DirectionMapping[self.Config.Layout.Direction];
-
-  -- Anchor the buttons in the correct order.
-  for i = 1, #self.Order do
-
-    self.Order[i]:ClearAllPoints();
-    
-    if i > Max then
-
-      -- We already have the maximum amount of buttons,
-      -- hide this one.
-      self.Order[i]:Hide();
-    
-    else
-      
-      -- Calculate the x and y of the button.
-      if Direction[2] == "y" then
-        x, y = ((i - 1) % self.Config.Layout.HorizontalSize), math_floor((i - 1) / self.Config.Layout.HorizontalSize);
-      else
-        x, y = math_floor((i - 1) / self.Config.Layout.VerticalSize), ((i - 1) % self.Config.Layout.VerticalSize);
-      end
-      
-      -- Set the position.
-      self.Order[i]:SetPoint(
-        Direction[1],
-        self.Frame,
-        Direction[1],
-        Direction[3] * (x * (Module.ButtonSizeX + (x and self.Config.Layout.SpaceX))),
-        Direction[4] * (y * (Module.ButtonSizeY + (y and self.Config.Layout.SpaceY)))
-      );
-    
-      -- Make sure the button is showned.
-      self.Order[i]:Show();
-
-    end
-  
-  end
-
-end
-]]--

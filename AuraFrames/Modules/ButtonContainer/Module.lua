@@ -141,6 +141,11 @@ function Module:GetDatabaseDefaults()
         FlashNumber = 5.0,
         FlashSpeed = 1.0,
       },
+      Changing = {
+        Popup = false,
+        PopupTime = 0.5,
+        PopupScale = 3.0,
+      },
     },
     Order = AuraFrames:GetDatabaseDefaultsOrder(),
     Filter = AuraFrames:GetDatabaseDefaultsFilter(),
