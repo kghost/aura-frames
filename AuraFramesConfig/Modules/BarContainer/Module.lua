@@ -123,6 +123,11 @@ function Module:GetTree(ContainerId)
       execute = function() Module:ContentLayout(ContainerId); end,
     },
     {
+      value = "Warnings",
+      text = "Warnings",
+      execute = function() Module:ContentWarnings(ContainerId); end,
+    },
+    {
       value = "Order",
       text = "Order",
       execute = function() AuraFramesConfig:ContentOrder(ContainerId); end,

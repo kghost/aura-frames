@@ -1,6 +1,6 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
-local Module = AuraFramesConfig:GetModule("ButtonContainer");
+local Module = AuraFramesConfig:GetModule("BarContainer");
 local AceGUI = LibStub("AceGUI-3.0");
 
 
