@@ -154,7 +154,7 @@ function Module:GetDatabaseDefaults()
         FlashSpeed = 1.0,
       },
       Expire = {
-        Flash = true,
+        Flash = false,
         FlashNumber = 5.0,
         FlashSpeed = 1.0,
       },

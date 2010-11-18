@@ -144,6 +144,16 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
   
   end
   
+  if TimeLeft < 0.3 then
+    
+    -- Part is going from 0 to 1.
+    local Part = (0.3 - TimeLeft) * (1 / 0.3);
+  
+    Button:SetScale(1 + (Part * 2));
+    Button.Icon:SetAlpha(1 - Part);
+    
+  end  
+  
   local Scale = Button:GetScale();
   
   Button:ClearAllPoints();
