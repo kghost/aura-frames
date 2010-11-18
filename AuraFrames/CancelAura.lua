@@ -128,7 +128,7 @@ function AuraFrames:SetCancelAuraFrame(Frame, Aura)
   end
 
   -- Check if we can cancel the aura.
-  if not (Aura.Type == "HELPFUL" and (Aura.Unit == "player" or Aura.Unit == "pet" or Aura.Unit == "vehicle")) then
+  if not ((Aura.Type == "HELPFUL" and (Aura.Unit == "player" or Aura.Unit == "pet" or Aura.Unit == "vehicle")) or Aura.Type == "WEAPON") then
     return;
   end
 
@@ -138,8 +138,19 @@ function AuraFrames:SetCancelAuraFrame(Frame, Aura)
   
   CancelAuraButton:SetAllPoints(Frame);
 
-  CancelAuraButton:SetAttribute("unit", Aura.Unit);
-  CancelAuraButton:SetAttribute("index", Aura.Index);
+  if Aura.Type == "HELPFUL" then
+  
+    CancelAuraButton:SetAttribute("unit", Aura.Unit);
+    CancelAuraButton:SetAttribute("index", Aura.Index);
+    CancelAuraButton:SetAttribute("target-slot", nil);
+  
+  else -- WEAPON
+  
+    CancelAuraButton:SetAttribute("unit", nil);
+    CancelAuraButton:SetAttribute("index", nil);
+    CancelAuraButton:SetAttribute("target-slot", Aura.Index);
+    
+  end
 
   CancelAuraButton:Show();
   
@@ -163,13 +174,7 @@ function AuraFrames:CancelAura(Aura)
 
     DestroyTotem(Aura.Index);
   
-  elseif Aura.Type == "WEAPON" then
-  
-    -- Not working at all it seems?
-    -- http://www.wowinterface.com/forums/showthread.php?t=36117&highlight=sigg
-    --CancelItemTempEnchantment((Aura.Index == 16 and 1) or 2);
-  
-  end
+ end
 
 end
 
