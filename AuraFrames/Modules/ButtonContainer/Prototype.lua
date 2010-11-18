@@ -446,31 +446,23 @@ function Prototype:Update(...)
       ShowClassification = self.Config.Layout.TooltipShowClassification,
     };
     
-    local Flags = {};
-
-    if self.Config.Layout.DurationOutline and self.Config.Layout.DurationOutline ~= "NONE" then
-      tinsert(Flags, self.Config.Layout.DurationOutline);
-    end
-
-    if self.Config.Layout.DurationMonochrome == true then
-      tinsert(Flags, "MONOCHROME");
-    end
-
-    self.DurationFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.DurationFont), self.Config.Layout.DurationSize, tconcat(Flags, ","));
-    self.DurationFontObject:SetTextColor(unpack(self.Config.Layout.DurationColor));
+    AuraFrames:SetFontObjectProperties(
+      self.DurationFontObject,
+      self.Config.Layout.DurationFont,
+      self.Config.Layout.DurationSize,
+      self.Config.Layout.DurationOutline,
+      self.Config.Layout.DurationMonochrome,
+      self.Config.Layout.DurationColor
+    );
     
-    Flags = {};
-
-    if self.Config.Layout.CountOutline and self.Config.Layout.CountOutline ~= "NONE" then
-      tinsert(Flags, self.Config.Layout.CountOutline);
-    end
-
-    if self.Config.Layout.CountMonochrome == true then
-      tinsert(Flags, "MONOCHROME");
-    end
-    
-    self.CountFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.CountFont), self.Config.Layout.CountSize, tconcat(Flags, ","));
-    self.CountFontObject:SetTextColor(unpack(self.Config.Layout.CountColor));
+    AuraFrames:SetFontObjectProperties(
+      self.CountFontObject,
+      self.Config.Layout.CountFont,
+      self.Config.Layout.CountSize,
+      self.Config.Layout.CountOutline,
+      self.Config.Layout.CountMonochrome,
+      self.Config.Layout.CountColor
+    );
     
     self.MaxButtons = self.Config.Layout.HorizontalSize * self.Config.Layout.VerticalSize;
     self.Direction = DirectionMapping[self.Config.Layout.Direction];

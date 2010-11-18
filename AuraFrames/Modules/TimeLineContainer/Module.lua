@@ -85,7 +85,7 @@ function Module:GetDatabaseDefaults()
     Layout = {
     
       Scale = 1.0,
-      Size = 300,
+      Size = 400,
       Style = "HORIZONTAL",
       Direction = "HIGH",
       MaxTime = 30,
@@ -118,7 +118,7 @@ function Module:GetDatabaseDefaults()
       TextSize = 10,
       TextPos = 0,
       TextColor = {1, 1, 1, 1},
-      TextLabels = {1, 10, 20, 30},
+      TextLabels = {1, 5, 10, 15, 20, 30},
       
       Clickable = true,
       ShowTooltip = true,
@@ -127,12 +127,12 @@ function Module:GetDatabaseDefaults()
       TooltipShowSpellId = false,
       TooltipShowClassification = false,
 
-      BackgroundTexture = "BantoBar",
-      BackgroundTextureColor = {1, 1, 1, 0.8},
+      BackgroundTexture = "Blizzard",
+      BackgroundTextureColor = {0, 0.32, 0.82, 0.8},
       BackgroundTextureInsets = 2,
       
       BackgroundBorder = "Blizzard Tooltip",
-      BackgroundBorderColor = {1, 1, 1, 0.8},
+      BackgroundBorderColor = {0, 0.1, 0.57, 0.8},
       BackgroundBorderSize = 8,
     
     },

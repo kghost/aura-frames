@@ -599,18 +599,14 @@ function Prototype:Update(...)
       self.Shrink = false;
     end
     
-    local Flags = {};
-
-    if self.Config.Layout.TextOutline and self.Config.Layout.TextOutline ~= "NONE" then
-      tinsert(Flags, self.Config.Layout.TextOutline);
-    end
-
-    if self.Config.Layout.TextMonochrome == true then
-      tinsert(Flags, "MONOCHROME");
-    end
-
-    self.FontObject:SetFont(LSM:Fetch("font", self.Config.Layout.TextFont), self.Config.Layout.TextSize, tconcat(Flags, ","));
-    self.FontObject:SetTextColor(unpack(self.Config.Layout.TextColor));
+    AuraFrames:SetFontObjectProperties(
+      self.FontObject,
+      self.Config.Layout.TextFont,
+      self.Config.Layout.TextSize,
+      self.Config.Layout.TextOutline,
+      self.Config.Layout.TextMonochrome,
+      self.Config.Layout.TextColor
+    );
     
     self.Direction = DirectionMapping[self.Config.Layout.Direction];
     
