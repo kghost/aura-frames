@@ -17,8 +17,137 @@ function Module:ContentLayoutText(Content, ContainerId)
 
   Content:SetLayout("List");
 
-  Content:AddText("Duration and Count\n", GameFontNormalLarge);
+  Content:AddText("Text\n", GameFontNormalLarge);
 
+  Content:AddHeader("Text");
+  
+  local ShowText = AceGUI:Create("CheckBox");
+  ShowText:SetLabel("Show Text");
+  ShowText:SetDescription("Show the time left on an aura.");
+  ShowText:SetRelativeWidth(1);
+  ShowText:SetValue(LayoutConfig.ShowText);
+  ShowText:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.ShowText = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:ContentLayoutText(Content, ContainerId);
+  end);
+  Content:AddChild(ShowText);
+  
+  Content:AddSpace();
+  
+  local TextLayout = AceGUI:Create("Dropdown");
+  TextLayout:SetWidth(150);
+  TextLayout:SetList({
+    ABBREVSPACE   = "10 m",
+    ABBREV        = "10m",
+    SEPCOL        = "10:15",
+    SEPDOT        = "10.15",
+    NONE          = "615",
+  });
+  TextLayout:SetLabel("Time layout");
+  TextLayout:SetDisabled(not LayoutConfig.ShowText);
+  TextLayout:SetValue(LayoutConfig.TextLayout);
+  TextLayout:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.TextLayout = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  Content:AddChild(TextLayout);
+  
+  local TextGroup = AceGUI:Create("SimpleGroup");
+  TextGroup:SetLayout("Flow");
+  TextGroup:SetRelativeWidth(1);
+  Content:AddChild(TextGroup);
+  
+  local TextFont = AceGUI:Create("LSM30_Font");
+  TextFont:SetList(LSM:HashTable("font"));
+  TextFont:SetLabel("Font");
+  TextFont:SetDisabled(not LayoutConfig.ShowText);
+  TextFont:SetValue(LayoutConfig.TextFont);
+  TextFont:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.TextFont = Value;
+    ContainerInstance:Update("LAYOUT");
+    TextFont:SetValue(Value);
+  end);
+  TextGroup:AddChild(TextFont);
+  
+  local TextSize = AceGUI:Create("Slider");
+  TextSize:SetValue(LayoutConfig.TextSize);
+  TextSize:SetLabel("Font Size");
+  TextSize:SetDisabled(not LayoutConfig.ShowText);
+  TextSize:SetSliderValues(6, 30, 0.1);
+  TextSize:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.TextSize = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  TextGroup:AddChild(TextSize);
+  
+  local TextOutline = AceGUI:Create("Dropdown");
+  TextOutline:SetWidth(150);
+  TextOutline:SetLabel("Outline");
+  TextOutline:SetList({
+    NONE = "None",
+    OUTLINE = "Outline",
+    THICKOUTLINE = "Thick Outline",
+  });
+  TextOutline:SetValue(LayoutConfig.TextOutline);
+  TextOutline:SetDisabled(not LayoutConfig.ShowText);
+  TextOutline:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.TextOutline = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  TextGroup:AddChild(TextOutline);
+  
+  local TextMonochrome = AceGUI:Create("CheckBox");
+  TextMonochrome:SetWidth(150);
+  TextMonochrome:SetLabel("Monochrome");
+  TextMonochrome:SetValue(LayoutConfig.TextMonochrome);
+  TextMonochrome:SetDisabled(not LayoutConfig.ShowText);
+  TextMonochrome:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.TextMonochrome = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  TextGroup:AddChild(TextMonochrome);
+  
+  local TextColor = AceGUI:Create("ColorPicker");
+  TextColor:SetWidth(150);
+  TextColor:SetLabel("Color");
+  TextColor:SetDisabled(not LayoutConfig.ShowText);
+  TextColor:SetHasAlpha(true);
+  TextColor:SetColor(unpack(LayoutConfig.TextColor));
+  TextColor:SetCallback("OnValueChanged", function(_, _, ...)
+    LayoutConfig.TextColor = {...};
+    ContainerInstance:Update("LAYOUT");
+  end);
+  TextGroup:AddChild(TextColor);
+  
+  Content:AddSpace();
+  
+  local TextLabels = AceGUI:Create("AuraFramesEditBox");
+  TextLabels:SetLabel("Time labels to show");
+  TextLabels:SetText(table.concat(LayoutConfig.TextLabels, ", "));
+  TextLabels:SetCallback("OnEnterPressed", function(_, _, Text)
+
+    wipe(LayoutConfig.TextLabels);
+    
+    for _, Value in ipairs({string.split(",", Text)}) do
+      
+      local Time = tonumber(string.trim(Value));
+      
+      if Value ~= nil then
+        table.insert(LayoutConfig.TextLabels, Time);
+      end
+      
+    end
+    
+    sort(LayoutConfig.TextLabels);
+    
+    TextLabels:SetText(table.concat(LayoutConfig.TextLabels, ", "));
+    
+    ContainerInstance:Update("LAYOUT");
+  end);
+  Content:AddChild(TextLabels);
+  
+  Content:AddSpace(2);
   Content:AddHeader("Duration");
   
   local ShowDuration = AceGUI:Create("CheckBox");
