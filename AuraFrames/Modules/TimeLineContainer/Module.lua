@@ -89,6 +89,7 @@ function Module:GetDatabaseDefaults()
       Style = "HORIZONTAL",
       Direction = "HIGH",
       MaxTime = 30,
+      TimeCompression = 0.3,
 
       ShowDuration = true,
       DurationFont = "Friz Quadrata TT",

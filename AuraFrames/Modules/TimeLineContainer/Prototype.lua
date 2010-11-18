@@ -10,7 +10,7 @@ local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
 local GetTime, CreateFrame, IsModifierKeyDown = GetTime, CreateFrame, IsModifierKeyDown;
-local math_sin, math_cos, math_floor, math_ceil = math.sin, math.cos, math.floor, math.ceil;
+local math_sin, math_cos, math_floor, math_ceil, math_pow = math.sin, math.cos, math.floor, math.ceil, math.pow;
 local min, max = min, max;
 local _G, PI = _G, PI;
 
@@ -49,6 +49,36 @@ local PI_2 = PI / 2;
 -- Frame levels used for poping up buttons.
 local PopupFrameLevel = 9;
 local PopupFrameLevelNormal = 4;
+
+-----------------------------------------------------------------
+-- Local Function CalcPos
+-----------------------------------------------------------------
+local function CalcPos(TimeLeft, MaxTime, Compression)
+
+  -- We make here the calculations for nice time lines.
+  -- This function will always return between 0 and 1.
+  -- So that the caller can do CalcPos() * width for
+  -- example.
+  
+  -- Few ways of making nice time lines, we can use power
+  -- of or we can use a sinus or straith (always return 1).
+
+
+  local Pos = math_pow(MaxTime - TimeLeft, Compression) / math_pow(MaxTime, Compression);
+
+  return Pos > 1 and 1 or Pos;
+  
+
+--[[
+  return 1;
+]]--
+
+--[[
+  local Part = ((MaxTime - TimeLeft) / MaxTime);
+
+  return math_sin(Part * PI_2);
+]]--
+end
 
 
 -----------------------------------------------------------------
@@ -163,7 +193,7 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
   if Button.Aura.ExpirationTime == 0 or Config.Layout.MaxTime < TimeLeft then
     Offset = Container.Direction[4];
   else
-    Offset = ((Container.StepPerSecond * (Config.Layout.MaxTime - TimeLeft)) + Container.Direction[4]) / Scale;
+    Offset = (((Container.StepPerSecond * (Config.Layout.MaxTime - TimeLeft)) * CalcPos(TimeLeft, Config.Layout.MaxTime, Config.Layout.TimeCompression)) + Container.Direction[4]) / Scale;
   end
   
   -- Set the position.
@@ -481,7 +511,7 @@ function Prototype:Update(...)
           
           Label:ClearAllPoints();
           
-          local Offset = self.Direction[4] + ((self.Config.Layout.MaxTime - Time) * self.StepPerSecond);
+          local Offset = self.Direction[4] + (((self.Config.Layout.MaxTime - Time) * self.StepPerSecond) * CalcPos(Time, self.Config.Layout.MaxTime, self.Config.Layout.TimeCompression));
           
           Label:SetPoint("CENTER", self.Frame, self.Direction[1], Offset * self.Direction[2], Offset * self.Direction[3]);
           

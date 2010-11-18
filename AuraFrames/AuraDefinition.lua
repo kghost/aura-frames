@@ -281,10 +281,18 @@ function AuraFrames:DumpAura(Aura)
     
     end
     
+    
+    
     if Error == true then
       self:Print("|cff00ffff"..Definition.Name.." |cffffffff- |cffff0000Error |cffffffff= |cffff0000"..tostring(Value).."|r");
     else
-      self:Print("|cff00ffff"..Definition.Name.." |cffffffff= |cff00ff00"..tostring(Value).."|r");
+    
+      if Definition.Type == "SpellId" then
+        self:Print("|cff00ffff"..Definition.Name.." |cffffffff= |cff00ff00|Hspell:"..tostring(Value).."|h"..tostring(Value).."|h|r");
+      else
+        self:Print("|cff00ffff"..Definition.Name.." |cffffffff= |cff00ff00"..tostring(Value).."|r");
+      end
+      
     end
     
   end
