@@ -141,7 +141,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
       
       if Container.Config.Layout.BarDirection == "LEFTGROW" then
 
-        Left, Right = 0, 1 - Part; -- k
+        Left, Right = 0, 1 - Part;
 
       elseif Container.Config.Layout.BarDirection == "RIGHTGROW" then
 
@@ -149,7 +149,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
 
       elseif Container.Config.Layout.BarDirection == "LEFTSHRINK" then
 
-        Left, Right = 0, Part; -- k
+        Left, Right = 0, Part;
 
       else -- RIGHTSHRINK
 

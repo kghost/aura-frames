@@ -415,45 +415,33 @@ function Prototype:Update(...)
       ShowSpellId = self.Config.Layout.TooltipShowSpellId,
       ShowClassification = self.Config.Layout.TooltipShowClassification,
     };
-  
-    local Flags = {};
-
-    if self.Config.Layout.DurationOutline and self.Config.Layout.DurationOutline ~= "NONE" then
-      tinsert(Flags, self.Config.Layout.DurationOutline);
-    end
-
-    if self.Config.Layout.DurationMonochrome == true then
-      tinsert(Flags, "MONOCHROME");
-    end
-
-    self.DurationFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.DurationFont), self.Config.Layout.DurationSize, tconcat(Flags, ","));
-    self.DurationFontObject:SetTextColor(unpack(self.Config.Layout.DurationColor));
     
-    Flags = {};
-
-    if self.Config.Layout.CountOutline and self.Config.Layout.CountOutline ~= "NONE" then
-      tinsert(Flags, self.Config.Layout.CountOutline);
-    end
-
-    if self.Config.Layout.CountMonochrome == true then
-      tinsert(Flags, "MONOCHROME");
-    end
+    AuraFrames:SetFontObjectProperties(
+      self.DurationFontObject,
+      self.Config.Layout.DurationFont,
+      self.Config.Layout.DurationSize,
+      self.Config.Layout.DurationOutline,
+      self.Config.Layout.DurationMonochrome,
+      self.Config.Layout.DurationColor
+    );
     
-    self.CountFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.CountFont), self.Config.Layout.CountSize, tconcat(Flags, ","));
-    self.CountFontObject:SetTextColor(unpack(self.Config.Layout.CountColor));
+    AuraFrames:SetFontObjectProperties(
+      self.CountFontObject,
+      self.Config.Layout.CountFont,
+      self.Config.Layout.CountSize,
+      self.Config.Layout.CountOutline,
+      self.Config.Layout.CountMonochrome,
+      self.Config.Layout.CountColor
+    );
     
-    Flags = {};
-
-    if self.Config.Layout.TextOutline and self.Config.Layout.TextOutline ~= "NONE" then
-      tinsert(Flags, self.Config.Layout.TextOutline);
-    end
-
-    if self.Config.Layout.TextMonochrome == true then
-      tinsert(Flags, "MONOCHROME");
-    end
-    
-    self.TextFontObject:SetFont(LSM:Fetch("font", self.Config.Layout.TextFont), self.Config.Layout.TextSize, tconcat(Flags, ","));
-    self.TextFontObject:SetTextColor(unpack(self.Config.Layout.TextColor));
+    AuraFrames:SetFontObjectProperties(
+      self.TextFontObject,
+      self.Config.Layout.TextFont,
+      self.Config.Layout.TextSize,
+      self.Config.Layout.TextOutline,
+      self.Config.Layout.TextMonochrome,
+      self.Config.Layout.TextColor
+    );
     
     self.Direction = DirectionMapping[self.Config.Layout.Style][self.Config.Layout.Direction];
     self.StepPerSecond = ((self.Config.Layout.Size - (self.Direction[4] * 2)) / self.Config.Layout.MaxTime);
@@ -464,7 +452,41 @@ function Prototype:Update(...)
     
     -- We have buttons in the container pool that doesn't match the settings anymore. Release them into the general pool.
     self:ReleasePool();
-  
+    
+    for _, Label in ipairs(self.TextLabels) do
+      Label:Hide();
+    end
+    
+    wipe(self.TextLabels);
+    
+    if self.Config.Layout.ShowText == true then
+    
+      local FrameId = self.Frame:GetName();
+      
+      for Index, Time in ipairs(self.Config.Layout.TextLabels) do
+
+        if self.Config.Layout.Size >= Time and Time >= 0 then
+
+          local Label = _G[FrameId.."_Label"..Index] or self.Frame:CreateFontString(FrameId.."_Label"..Index, "ARTWORK");
+          
+          Label:ClearAllPoints();
+          
+          local Offset = self.Direction[4] + ((self.Config.Layout.MaxTime - Time) * self.StepPerSecond);
+          
+          Label:SetPoint("CENTER", self.Frame, self.Direction[1], Offset * self.Direction[2], Offset * self.Direction[3]);
+          
+          Label:SetFontObject(self.TextFontObject);
+          Label:SetFormattedText(AuraFrames:FormatTimeLeft(self.Config.Layout.TextLayout, Time, false));
+          Label:Show();
+          
+          tinsert(self.TextLabels, Label);
+        
+        end
+        
+      end
+    
+    end
+    
   end
 
   if Changed == "ALL" or Changed == "WARNINGS" then

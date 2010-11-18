@@ -113,9 +113,11 @@ function Module:GetDatabaseDefaults()
       TextFont = "Friz Quadrata TT",
       TextOutline = "OUTLINE",
       TextMonochrome = false,
+      TextLayout = "ABBREVSPACE",
       TextSize = 10,
       TextPos = 0,
       TextColor = {1, 1, 1, 1},
+      TextLabels = {1, 10, 20, 30},
       
       Clickable = true,
       ShowTooltip = true,
@@ -207,6 +209,8 @@ function Module:New(Config)
   Container.DurationFontObject = _G[FrameId.."_DurationFont"] or CreateFont(FrameId.."_DurationFont");
   Container.CountFontObject = _G[FrameId.."_CountFont"] or CreateFont(FrameId.."_CountFont");
   Container.TextFontObject = _G[FrameId.."_TextFont"] or CreateFont(FrameId.."_TextFont");
+
+  Container.TextLabels = {};
 
   Container:Update();
 

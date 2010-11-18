@@ -9,7 +9,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 203;
+AuraFrames.DatabaseVersion = 204;
 
 
 --[[
@@ -23,11 +23,15 @@ AuraFrames.DatabaseVersion = 203;
     Added warning changing.
     Added warnings to bar containers.
   
-  version 202:
+  Version 202:
     Add BarUseAuraTime for bar containers
    
-  version 203:
+  Version 203:
     Added BackgroundBorderSize to timeline container
+  
+  Version 204:
+    Added time labels to timeline container
+  
    
 ]]--
 
@@ -60,18 +64,8 @@ function AuraFrames:DatabaseInitialize()
   -- Enable dual spec.
   LibStub("LibDualSpec-1.0"):EnhanceDatabase(self.db, "AuraFrames");
   
-  -- Set version if we don't have it.
-  if self.db.profile.DbVersion == 0 then
-    self.db.profile.DbVersion = AuraFrames.DatabaseVersion;
-  end
-
-  -- Check if we need a db upgrade.
-  if self.db.profile.DbVersion < AuraFrames.DatabaseVersion then
-    
-     self:Print("Old database version found, going to automatically trying to upgrade.");
-     self:DatabaseUpgrade();
-  
-  end
+  -- Init profile.
+  self:DatabaseProfileInitialize();
 
   -- Register db chat commands.
   self:RegisterChatCommand("afreset", "DatabaseReset");
@@ -81,6 +75,27 @@ function AuraFrames:DatabaseInitialize()
   self.db.RegisterCallback(self, "OnProfileChanged", "DatabaseChanged");
   self.db.RegisterCallback(self, "OnProfileCopied", "DatabaseChanged");
   self.db.RegisterCallback(self, "OnProfileReset", "DatabaseChanged");
+
+end
+
+
+-----------------------------------------------------------------
+-- Function DatabaseProfileInitialize
+-----------------------------------------------------------------
+function AuraFrames:DatabaseProfileInitialize()
+
+  -- Set version if we don't have it.
+  if self.db.profile.DbVersion == 0 then
+    self.db.profile.DbVersion = AuraFrames.DatabaseVersion;
+  end
+
+  -- Check if we need a db upgrade.
+  if self.db.profile.DbVersion < AuraFrames.DatabaseVersion then
+    
+     self:Print("Old database version found, upgrading it automatically.");
+     self:DatabaseUpgrade();
+  
+  end
 
 end
 
@@ -110,11 +125,16 @@ function AuraFrames:DatabaseChanged()
   -- new database.
   
   self:DeleteAllContainers();
+  
+  -- Check new profile.
+  self:DatabaseProfileInitialize();
+  
   self:CreateAllContainers();
   
   self:CheckBlizzardAuraFrames();
 
 end
+
 
 -----------------------------------------------------------------
 -- Function DatabaseReset
@@ -252,6 +272,16 @@ function AuraFrames:DatabaseUpgrade()
       
         Container.Layout.BackgroundTextureInsets = 2;
         Container.Layout.BackgroundBorderSize = 8;
+      
+      end
+    
+    end
+    
+    if OldVersion < 204 then
+    
+      if Container.Type == "TimeLineContainer" then
+      
+        Container.Layout.TextLabels = {1, 10, 20, 30};
       
       end
     
