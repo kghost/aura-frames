@@ -6,6 +6,9 @@ move-folders:
     AuraFrames/AuraFrames: AuraFrames
     AuraFrames/AuraFramesConfig: AuraFramesConfig
 
+required-dependencies:
+    - buttonfacade
+
 externals:
     AuraFrames/Libs/LibStub:
         url: svn://svn.wowace.com/wow/libstub/mainline/trunk
