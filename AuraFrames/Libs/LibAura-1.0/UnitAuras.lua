@@ -253,6 +253,12 @@ function Module:UNIT_ENTERED_VEHICLE(Unit)
   end
 end
 
+function Module:UNIT_EXITED_VEHICLE(Unit)
+  if Unit == "player" then
+    Module:ScanUnit("vehicle");
+  end
+end
+
 function Module:UNIT_PET(Unit)
   Module:ScanUnit(Unit.."pet");
 end
