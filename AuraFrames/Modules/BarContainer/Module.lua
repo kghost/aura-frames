@@ -112,6 +112,13 @@ function Module:GetDatabaseDefaults()
       CooldownReverse = false,
       CooldownDisableOmniCC = true,
       
+      ButtonFacade = {
+        Gloss = 0.8,
+        SkinId = "Aura Frames Default",
+        Backdrop = false,
+        Colors = {},
+      },
+      
     },
     Colors = {
       Debuff = {

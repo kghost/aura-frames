@@ -39,6 +39,8 @@ end
 -----------------------------------------------------------------
 function Module:OnEnable()
 
+  self.Pool = self.Pool or AuraFrames:NewPool(0, nil);
+
 end
 
 
@@ -46,6 +48,8 @@ end
 -- Function OnDisable
 -----------------------------------------------------------------
 function Module:OnDisable()
+
+  self.Pool:Flush();
 
 end
 
@@ -134,6 +138,13 @@ function Module:GetDatabaseDefaults()
       BackgroundBorder = "Blizzard Tooltip",
       BackgroundBorderColor = {0, 0.1, 0.57, 0.8},
       BackgroundBorderSize = 8,
+      
+      ButtonFacade = {
+        Gloss = 0.8,
+        SkinId = "Aura Frames Default",
+        Backdrop = false,
+        Colors = {},
+      },
     
     },
     Colors = {
@@ -204,6 +215,7 @@ function Module:New(Config)
   Container.Buttons = {};
   
   Container.ButtonPool = {};
+  Container.Pool = AuraFrames:NewPool(5, self.Pool);
   
   Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
   

@@ -10,6 +10,7 @@ Embeds.xml
 
 AuraFrames.lua
 Version.lua
+Pool.lua
 Database.lua
 Modules.lua
 Container.lua
@@ -25,5 +26,7 @@ ButtonFacade.lua
 SharedMedia.lua
 FormatTime.lua
 FontObject.lua
+ButtonFacade\Skins.lua
+
 
 Modules.xml

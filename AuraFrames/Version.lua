@@ -5,8 +5,10 @@ local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 -----------------------------------------------------------------
 AuraFrames.Version = {
   
-  String  = "@project-version@",
+  String   = "@project-version@",
   Revision = "@project-revision@",
-  Date     = "@project-date-iso@",
+  Date     = date("%m/%d/%y %H:%M:%S", tonumber("@project-date-integer@")),
   
 };
+
+

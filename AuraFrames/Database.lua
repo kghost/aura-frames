@@ -64,7 +64,7 @@ function AuraFrames:DatabaseInitialize()
   -- Enable dual spec.
   LibStub("LibDualSpec-1.0"):EnhanceDatabase(self.db, "AuraFrames");
   
-  -- Init profile.
+  -- Initialize profile.
   self:DatabaseProfileInitialize();
 
   -- Register db chat commands.
@@ -84,9 +84,24 @@ end
 -----------------------------------------------------------------
 function AuraFrames:DatabaseProfileInitialize()
 
-  -- Set version if we don't have it.
+  
   if self.db.profile.DbVersion == 0 then
+    
+    -- New profile.
+    
     self.db.profile.DbVersion = AuraFrames.DatabaseVersion;
+    
+    -- Setup a default profile.
+    self.db.profile.HideBlizzardAuraFrames = true;
+    
+    af:Print("1");
+    
+    self:CreateNewContainer("Player Buffs", "ButtonContainer");
+    af:Print("2");
+    self:CreateNewContainer("Player Debuffs", "ButtonContainer");
+    af:Print("3");
+    
+    
   end
 
   -- Check if we need a db upgrade.

@@ -8,14 +8,14 @@ local CreateFrame = CreateFrame;
 --[[
 
 
-Container.AuraList = AuraFrames:NewAuraList(Container, Container.Config.Filter, Container.Config.Order);
+  Container.AuraList = AuraFrames:NewAuraList(Container, Container.Config.Filter, Container.Config.Order);
 
-Container functions:
+  Container functions:
 
-  AuraNew(Aura);
-  AuraOld(Aura);
-  AuraChanged(Aura);
-  AuraAnchor(Aura, Index);
+    AuraNew(Aura);
+    AuraOld(Aura);
+    AuraChanged(Aura);
+    AuraAnchor(Aura, Index);
 
 ]]--
 

@@ -64,9 +64,9 @@ end
 function AuraFrames:DumpVersion()
 
   self:Print("Aura Frames Version Information");
-  self:Print("Version: "..self.Version.String);
-  self:Print("Revision: "..self.Version.Revision);
-  self:Print("Date: "..self.Version.Date);
+  self:Print("  Version: |cffff0000"..self.Version.String.."|r");
+  self:Print("  Revision: "..self.Version.Revision);
+  self:Print("  Date: "..self.Version.Date);
 
 end
 
