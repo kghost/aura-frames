@@ -128,7 +128,7 @@ function AuraFrames:GetDatabaseDefaultsOrder()
 
   return {
     Expert = false,
-    Predefined = "TypeNoTimeTimeDesc",
+    Predefined = "NoTimeTimeLeftDesc",
     Rules = {},
   };
 

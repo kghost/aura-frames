@@ -103,9 +103,9 @@ end
 
 
 -----------------------------------------------------------------
--- Function CreateNewContainer
+-- Function CreateNewContainerConfig
 -----------------------------------------------------------------
-function AuraFrames:CreateNewContainer(Name, Type)
+function AuraFrames:CreateNewContainerConfig(Name, Type)
 
   -- Create a new container configuration and create
   -- a new container instance based on that.
@@ -132,8 +132,6 @@ function AuraFrames:CreateNewContainer(Name, Type)
 
   -- Copy the container defaults into the new config.
   self:CopyDatabaseDefaults(ContainerModule:GetDatabaseDefaults(), self.db.profile.Containers[Id]);
-  
-  self:CreateContainer(Id);
   
   return Id;
 

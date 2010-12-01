@@ -94,12 +94,31 @@ function AuraFrames:DatabaseProfileInitialize()
     -- Setup a default profile.
     self.db.profile.HideBlizzardAuraFrames = true;
     
-    af:Print("1");
+    local Id, Container;
     
-    self:CreateNewContainer("Player Buffs", "ButtonContainer");
-    af:Print("2");
-    self:CreateNewContainer("Player Debuffs", "ButtonContainer");
-    af:Print("3");
+    Id = self:CreateNewContainerConfig("Player Buffs", "ButtonContainer");
+    
+    Container = self.db.profile.Containers[Id];
+    Container.Location.FramePoint = "TOPRIGHT";
+    Container.Location.RelativePoint = "TOPRIGHT";
+    Container.Location.OffsetY = -7.5;
+    Container.Location.OffsetX = -183.5;
+    Container.Sources.player = {
+      HELPFUL = true,
+      WEAPON = true,
+    };
+    
+    
+    Id = self:CreateNewContainerConfig("Player Debuffs", "ButtonContainer");
+
+    Container = self.db.profile.Containers[Id];
+    Container.Location.FramePoint = "TOPRIGHT";
+    Container.Location.RelativePoint = "TOPRIGHT";
+    Container.Location.OffsetY = -106.5;
+    Container.Location.OffsetX = -183.5;
+    Container.Sources.player = {
+      HARMFUL = true,
+    };
     
     
   end
