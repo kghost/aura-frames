@@ -82,7 +82,7 @@ function AuraFramesConfig:ContentContainersRefresh(Content)
   Content:SetLayout("List");
   
   Content:AddText("Containers\n", GameFontNormalLarge);
-  Content:AddText("Containers are used for grouping aura's together. There are different kind of containers, every type with there own ways of displaying aura's.\n\n");
+  Content:AddText("Containers are used for grouping aura's together. There are different kind of containers, every type with there own ways of displaying aura's. You can create multiple containers.\n\n");
   
   Content:AddHeader("Create new container");
   
