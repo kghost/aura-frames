@@ -40,13 +40,17 @@ local function CreateContainerConfig()
     return
   end
   
-  local ContainerId = AuraFrames:CreateNewContainer(ContainerName, ContainerType);
+  -- Create config.
+  local ContainerId = AuraFrames:CreateNewContainerConfig(ContainerName, ContainerType);
 
   if not ContainerId then
     AuraFramesConfig:Close();
     AuraFrames:Message("Failed to create the container! Please contact the addon author!", function() AuraFramesConfig:Show(); end);
     return;
   end
+  
+  -- Create instance.
+  AuraFrames:CreateContainer(ContainerId);
   
   -- If ContainersUnlocked then unlock the new container also.
   if AuraFramesConfig.ContainersUnlocked then
