@@ -88,7 +88,7 @@ end
 function AuraFrames:DatabaseProfileInitialize()
 
   
-  if self.db.profile.DbVersion == 0 then
+  if self.db.profile.DbVersion == 0 and next(self.db.profile.Containers) == nil then
     
     -- New profile.
     
