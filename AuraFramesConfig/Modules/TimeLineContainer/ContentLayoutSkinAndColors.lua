@@ -210,6 +210,18 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
   end);
   BackgroundGroup:AddChild(BackgroundBorderColor);
   
+  local InactiveAlpha = AceGUI:Create("Slider");
+  InactiveAlpha:SetWidth(200);
+  InactiveAlpha:SetValue(LayoutConfig.InactiveAlpha);
+  InactiveAlpha:SetLabel("Inactive transparency");
+  InactiveAlpha:SetSliderValues(0, 1, 0.01);
+  InactiveAlpha:SetIsPercent(true);
+  InactiveAlpha:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.InactiveAlpha = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
+  end);
+  BackgroundGroup:AddChild(InactiveAlpha);
   
   Content:AddSpace();
 
