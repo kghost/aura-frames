@@ -33,7 +33,7 @@ local OrderPredefinedConfig = {
   },
 };
 
-local OrderPredefinedDefault = "TypeNoTimeTimeDesc";
+local OrderPredefinedDefault = "NoTimeTimeLeftDesc";
 
 
 -----------------------------------------------------------------

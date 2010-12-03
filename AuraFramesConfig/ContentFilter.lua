@@ -382,18 +382,42 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
     CheckBoxExpert:SetRelativeWidth(1);
     CheckBoxExpert:SetLabel("Expert Mode");
     CheckBoxExpert:SetCallback("OnValueChanged", function(_, _, Value)
-      AuraFramesConfig:Close();
-      AuraFrames:Confirm("Are you sure you want to turn off expert mode? You will lose your custom filters!", function(Result)
-        if Result == true then
-          FilterConfig.Expert = false;
-          FilterConfig.Groups = {};
-          ApplyChange(ContainerId);
-        else
-          CheckBoxExpert:SetValue(true);
+
+      local Ops = false;
+      
+      for _, Rules in ipairs(FilterConfig.Groups) do
+        for _, Rule in ipairs(Rules) do
+          if Rule.Operator then
+            Ops = true;
+            break;
+          end
         end
+        if Ops == true then
+          break;
+        end
+      end
+    
+      if Ops == true then
+        AuraFramesConfig:Close();
+        AuraFrames:Confirm("Are you sure you want to turn off expert mode? You will lose your custom filters!", function(Result)
+          if Result == true then
+            FilterConfig.Expert = false;
+            FilterConfig.Groups = {};
+            ApplyChange(ContainerId);
+          else
+            CheckBoxExpert:SetValue(true);
+          end
+          AuraFramesConfig:ContentFilterRefresh(Content, ContainerId);
+          AuraFramesConfig:Show();
+        end);
+      else
+        FilterConfig.Expert = false;
+        FilterConfig.Groups = {};
+        ApplyChange(ContainerId);
         AuraFramesConfig:ContentFilterRefresh(Content, ContainerId);
         AuraFramesConfig:Show();
-      end);
+      end
+
     end);
     Content:AddChild(CheckBoxExpert);
   
