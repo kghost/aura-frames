@@ -7,7 +7,7 @@ AuraFrames.Version = {
   
   String   = "@project-version@",
   Revision = "@project-revision@",
-  Date     = date("%m/%d/%y %H:%M:%S", tonumber("@project-date-integer@")),
+  Date     = date("%m/%d/%y %H:%M:%S", tonumber("@project-timestamp@")),
   
 };
 

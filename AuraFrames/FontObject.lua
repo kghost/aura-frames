@@ -25,3 +25,11 @@ function AuraFrames:SetFontObjectProperties(FontObject, Font, Size, Outline, Mon
 end
 
 
+-----------------------------------------------------------------
+-- Function SetFontObjectPropertyList
+-----------------------------------------------------------------
+function AuraFrames:SetFontObjectPropertyList(FontObject, Properties)
+
+  return self:SetFontObjectProperties(FontObject, Properties.Font, Properties.Size, Properties.Outline, Properties.Monochrome, Properties.Color);
+
+end
