@@ -87,13 +87,14 @@ end
 -----------------------------------------------------------------
 function AuraFrames:DatabaseProfileInitialize()
 
+  af:Print("Version: "..self.db.profile.DbVersion);
+
+  if self.db.profile.DbVersion == 0 then
   
-  if self.db.profile.DbVersion == 0 and next(self.db.profile.Containers) == nil then
-    
-    -- New profile.
-    
     self.db.profile.DbVersion = AuraFrames.DatabaseVersion;
-    
+  
+    af:Print("new profile");
+
     -- Setup a default profile.
     self.db.profile.HideBlizzardAuraFrames = true;
     
@@ -122,9 +123,9 @@ function AuraFrames:DatabaseProfileInitialize()
     Container.Sources.player = {
       HARMFUL = true,
     };
-    
-    
+
   end
+
 
   -- Check if we need a db upgrade.
   if self.db.profile.DbVersion < AuraFrames.DatabaseVersion then
@@ -152,10 +153,13 @@ function AuraFrames:DatabaseFix()
 
 end
 
+
 -----------------------------------------------------------------
 -- Function DatabaseChanged
 -----------------------------------------------------------------
 function AuraFrames:DatabaseChanged()
+
+  af:Print("DatabaseChanged");
 
   -- The database changed, destroy all current container
   -- instances and create the containers based on the
@@ -246,13 +250,6 @@ function AuraFrames:DatabaseUpgrade()
   
   -- General upgrade code.
   
-  if OldVersion < 200 then
-  
-    self:DatabaseReset();
-    self:Message("Aura Frames\n\nAn alpha/beta database was found, your database have been reseted. Thanks for testing Aura Frames and sorry for reseting your database.", nil, "Okay");
-  
-  end
-  
   
   -- Loop thru the containers and update the defaults.
   for _, Container in pairs(self.db.profile.Containers) do
@@ -336,7 +333,7 @@ function AuraFrames:DatabaseUpgrade()
 
   end
   
-  self.db.profile.DbVersion = AuraFrames.DbVersion;
-
+  self.db.profile.DbVersion = AuraFrames.DatabaseVersion;
+  
 end
 
