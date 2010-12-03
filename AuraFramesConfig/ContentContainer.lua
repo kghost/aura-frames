@@ -157,6 +157,10 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
   
   Content:AddSpace();
   
+  Content:AddText("Container ID: "..ContainerId);
+  
+  Content:AddSpace();
+  
   if ContainerConfig.Enabled == true then
   
     local SettingsToCopy = {};
