@@ -9,7 +9,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 204;
+AuraFrames.DatabaseVersion = 205;
 
 
 --[[
@@ -31,6 +31,9 @@ AuraFrames.DatabaseVersion = 204;
   
   Version 204:
     Added time labels to timeline container
+  
+  Version 205:
+    Added InactiveAlpha to timeline container
   
    
 ]]--
@@ -316,6 +319,16 @@ function AuraFrames:DatabaseUpgrade()
       if Container.Type == "TimeLineContainer" then
       
         Container.Layout.TextLabels = {1, 10, 20, 30};
+      
+      end
+    
+    end
+    
+    if OldVersion < 205 then
+    
+      if Container.Type == "TimeLineContainer" then
+      
+        Container.Layout.InactiveAlpha = 1.0;
       
       end
     

@@ -139,6 +139,8 @@ function Module:GetDatabaseDefaults()
       BackgroundBorderColor = {0, 0.1, 0.57, 0.8},
       BackgroundBorderSize = 8,
       
+      InactiveAlpha = 0.35,
+      
       ButtonFacade = {
         Gloss = 0.8,
         SkinId = "Aura Frames Default",

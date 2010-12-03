@@ -527,6 +527,12 @@ function Prototype:Update(...)
     
     end
     
+    if next(self.Buttons) == nil then
+      self.Frame:SetAlpha(self.Config.Layout.InactiveAlpha);
+    else
+      self.Frame:SetAlpha(1.0);
+    end
+    
   end
 
   if Changed == "ALL" or Changed == "WARNINGS" then
@@ -616,6 +622,10 @@ function Prototype:AuraNew(Aura)
   Button.Aura = Aura;
   Button.Icon:SetTexture(Aura.Icon);
   
+  if next(self.Buttons) == nil then
+    self.Frame:SetAlpha(1.0);
+  end
+  
   self.Buttons[Aura] = Button;
   
   if FromContainerPool == true then
@@ -684,6 +694,10 @@ function Prototype:AuraOld(Aura)
     -- Release the button back in the container pool for later use.
     tinsert(self.ButtonPool, Button);
   
+  end
+  
+  if next(self.Buttons) == nil then
+    self.Frame:SetAlpha(self.Config.Layout.InactiveAlpha);
   end
   
 end
