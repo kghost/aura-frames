@@ -39,8 +39,6 @@ end
 -----------------------------------------------------------------
 function Module:OnEnable()
 
-  self.Pool = self.Pool or AuraFrames:NewPool(0, nil);
-
 end
 
 
@@ -48,8 +46,6 @@ end
 -- Function OnDisable
 -----------------------------------------------------------------
 function Module:OnDisable()
-
-  self.Pool:Flush();
 
 end
 
@@ -217,7 +213,6 @@ function Module:New(Config)
   Container.Buttons = {};
   
   Container.ButtonPool = {};
-  Container.Pool = AuraFrames:NewPool(5, self.Pool);
   
   Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
   
