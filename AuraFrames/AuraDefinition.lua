@@ -94,8 +94,8 @@ AuraFrames.AuraDefinition = {
   ExpirationTime = {
     Type = "Number",
     Name = "Expiration time",
-    Order = false,
-    Filter = false,
+    Order = true,
+    Filter = true,
     Weight = 1,
   },
   IsAura = {
