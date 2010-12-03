@@ -82,7 +82,7 @@ function Module:GetDatabaseDefaults()
   local DatabaseDefaults = {
     Location= {
       OffsetX = 0,
-      OffsetY = 0,
+      OffsetY = -300,
       FramePoint = "CENTER",
       RelativePoint = "CENTER",
     },
@@ -124,7 +124,7 @@ function Module:GetDatabaseDefaults()
       TextColor = {1, 1, 1, 1},
       TextLabels = {1, 5, 10, 15, 20, 30},
       
-      Clickable = true,
+      Clickable = false,
       ShowTooltip = true,
       TooltipShowPrefix = false,
       TooltipShowCaster = true,
@@ -173,7 +173,7 @@ function Module:GetDatabaseDefaults()
         FlashSpeed = 1.0,
       },
       Changing = {
-        Popup = false,
+        Popup = true,
         PopupTime = 0.5,
         PopupScale = 3.0,
       },
