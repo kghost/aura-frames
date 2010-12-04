@@ -251,86 +251,97 @@ function AuraFrames:DatabaseUpgrade()
   -- Loop thru the containers and update the defaults.
   for _, Container in pairs(self.db.profile.Containers) do
 
-    -- Container upgrade code.
-    
-    if OldVersion < 201 then
-    
-      if Container.Type == "ButtonContainer" then
-    
-        Container.Warnings.Changing = {
-          Popup = false,
-          PopupTime = 0.5,
-          PopupScale = 3.0,
-        };
-      
-      elseif Container.Type == "BarContainer" then
-      
-        Container.Warnings = {
-          New = {
-            Flash = false,
-            FlashNumber = 3.0,
-            FlashSpeed = 1.0,
-          },
-          Expire = {
-            Flash = false,
-            FlashNumber = 5.0,
-            FlashSpeed = 1.0,
-          },
-          Changing = {
-            Popup = false,
-            PopupTime = 0.5,
-            PopupScale = 3.0,
-          },
-        };
-      
-      end
-    
-    end
-
-    if OldVersion < 202 then
-    
-      if Container.Type == "BarContainer" then
-      
-        Container.Layout.BarUseAuraTime = false;
-      
-      end
-    
-    end
-    
-    if OldVersion < 203 then
-    
-      if Container.Type == "TimeLineContainer" then
-      
-        Container.Layout.BackgroundTextureInsets = 2;
-        Container.Layout.BackgroundBorderSize = 8;
-      
-      end
-    
-    end
-    
-    if OldVersion < 204 then
-    
-      if Container.Type == "TimeLineContainer" then
-      
-        Container.Layout.TextLabels = {1, 10, 20, 30};
-      
-      end
-    
-    end
-    
-    if OldVersion < 205 then
-    
-      if Container.Type == "TimeLineContainer" then
-      
-        Container.Layout.InactiveAlpha = 1.0;
-      
-      end
-    
-    end
+    self:DatabaseContainerUpgrade(Container);
 
   end
   
   self.db.profile.DbVersion = AuraFrames.DatabaseVersion;
   
 end
+
+
+-----------------------------------------------------------------
+-- Function DatabaseContainerUpgrade
+-----------------------------------------------------------------
+function AuraFrames:DatabaseContainerUpgrade(Container)
+
+  local OldVersion = self.db.profile.DbVersion;
+
+  if OldVersion < 201 then
+  
+    if Container.Type == "ButtonContainer" then
+  
+      Container.Warnings.Changing = {
+        Popup = false,
+        PopupTime = 0.5,
+        PopupScale = 3.0,
+      };
+    
+    elseif Container.Type == "BarContainer" then
+    
+      Container.Warnings = {
+        New = {
+          Flash = false,
+          FlashNumber = 3.0,
+          FlashSpeed = 1.0,
+        },
+        Expire = {
+          Flash = false,
+          FlashNumber = 5.0,
+          FlashSpeed = 1.0,
+        },
+        Changing = {
+          Popup = false,
+          PopupTime = 0.5,
+          PopupScale = 3.0,
+        },
+      };
+    
+    end
+  
+  end
+
+  if OldVersion < 202 then
+  
+    if Container.Type == "BarContainer" then
+    
+      Container.Layout.BarUseAuraTime = false;
+    
+    end
+  
+  end
+  
+  if OldVersion < 203 then
+  
+    if Container.Type == "TimeLineContainer" then
+    
+      Container.Layout.BackgroundTextureInsets = 2;
+      Container.Layout.BackgroundBorderSize = 8;
+    
+    end
+  
+  end
+  
+  if OldVersion < 204 then
+  
+    if Container.Type == "TimeLineContainer" then
+    
+      Container.Layout.TextLabels = {1, 10, 20, 30};
+    
+    end
+  
+  end
+  
+  if OldVersion < 205 then
+  
+    if Container.Type == "TimeLineContainer" then
+    
+      Container.Layout.InactiveAlpha = 1.0;
+    
+    end
+  
+  end
+
+end
+
 
