@@ -78,6 +78,11 @@ local function CreateImportWindow()
         LabelInfo:SetText("Status: |cfff36a6aInvalid (wrong container type)|r\nVersion: |cfff36a6aUnknown|r\n");
         ButtonImport:SetDisabled(true);
         
+      elseif Config.Version > AuraFrames.DatabaseVersion then
+      
+        LabelInfo:SetText("Status: |cfff36a6aInvalid (higher version then you have installed)|r\nVersion: |cfff36a6a"..Config.Version.."|r\n");
+        ButtonImport:SetDisabled(true);
+
       else
       
         LabelInfo:SetText("Status: |cff6af36aValid|r\nVersion: "..Config.Version.."\n");
