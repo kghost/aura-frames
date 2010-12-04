@@ -87,8 +87,6 @@ end
 -----------------------------------------------------------------
 function AuraFrames:DatabaseProfileInitialize()
 
-  af:Print("Version: "..self.db.profile.DbVersion);
-
   if self.db.profile.DbVersion == 0 then
   
     self.db.profile.DbVersion = AuraFrames.DatabaseVersion;
