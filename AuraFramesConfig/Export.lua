@@ -107,9 +107,10 @@ function AuraFramesConfig:ShowExportWindow(ContainerId)
   ExportString = AceSerializer:Serialize(ExportConfig);
 
   ExportEditBox:SetText(ExportString);
-  ExportEditBox:SetFocus();
 
   ExportWindow:Show();
+  
+  ExportEditBox:SetFocus();
   
 end
 

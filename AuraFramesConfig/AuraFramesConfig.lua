@@ -23,6 +23,11 @@ function AuraFramesConfig:OnEnable()
       return true;
     end
     
+    if self:IsImportWindowShown() == true then
+      self:CloseImportWindow()
+      return true;
+    end
+    
     if self:IsListEditorShown() == true then
       self:CloseListEditor()
       return true;

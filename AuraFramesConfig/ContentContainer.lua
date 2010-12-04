@@ -166,6 +166,11 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
     Content:AddHeader("Import/Export Settings");
     Content:AddText("You can import and export parts of an container configuration for sharing or later usage.\n");
     
+    local ExportImport = AceGUI:Create("SimpleGroup");
+    ExportImport:SetRelativeWidth(1);
+    ExportImport:SetLayout("Flow");
+    Content:AddChild(ExportImport);
+    
     local ButtonExport = AceGUI:Create("Button");
     ButtonExport:SetText("Export settings");
     ButtonExport:SetCallback("OnClick", function()
@@ -174,7 +179,17 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
       AuraFramesConfig:ShowExportWindow(ContainerId);
     
     end);
-    Content:AddChild(ButtonExport);
+    ExportImport:AddChild(ButtonExport);
+    
+    local ButtonImport = AceGUI:Create("Button");
+    ButtonImport:SetText("Import settings");
+    ButtonImport:SetCallback("OnClick", function()
+
+      AuraFramesConfig:Close();
+      AuraFramesConfig:ShowImportWindow(ContainerId);
+    
+    end);
+    ExportImport:AddChild(ButtonImport);
 
     Content:AddSpace();
     
