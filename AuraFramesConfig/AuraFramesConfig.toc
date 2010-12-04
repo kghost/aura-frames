@@ -12,6 +12,7 @@ AuraFramesConfig.lua
 Config.lua
 UnlockContainers.lua
 ListEditor.lua
+Export.lua
 
 ContentGeneral.lua
 ContentContainers.lua

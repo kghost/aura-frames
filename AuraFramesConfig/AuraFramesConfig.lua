@@ -18,6 +18,11 @@ function AuraFramesConfig:OnEnable()
   CloseSpecialWindows = function()
     local Result = CloseSpecialWindowsOld();
     
+    if self:IsExportWindowShown() == true then
+      self:CloseExportWindow()
+      return true;
+    end
+    
     if self:IsListEditorShown() == true then
       self:CloseListEditor()
       return true;

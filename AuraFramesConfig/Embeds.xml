@@ -2,6 +2,7 @@
 ..\FrameXML\UI.xsd">
 
   <Include file="Libs\AceGUI-3.0\AceGUI-3.0.xml" />
+  <Include file="Libs\AceSerializer-3.0\AceSerializer-3.0.xml" />
   <Include file="Libs\AceGUI-3.0-SharedMediaWidgets\widget.xml" />
   <Include file="Libs\AceGUI-3.0-Spell-EditBox\AceGUI-3.0-Spell-EditBox.xml" />
 

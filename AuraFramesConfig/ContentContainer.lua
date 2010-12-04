@@ -163,6 +163,24 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
   
   if ContainerConfig.Enabled == true then
   
+    Content:AddHeader("Import/Export Settings");
+    Content:AddText("You can import and export parts of an container configuration for sharing or later usage.\n");
+    
+    local ButtonExport = AceGUI:Create("Button");
+    ButtonExport:SetText("Export settings");
+    ButtonExport:SetCallback("OnClick", function()
+
+      AuraFramesConfig:Close();
+      AuraFramesConfig:ShowExportWindow(ContainerId);
+    
+    end);
+    Content:AddChild(ButtonExport);
+
+    Content:AddSpace();
+    
+    Content:AddHeader("Copy Settings");
+    Content:AddText("You can only copy settings from the same type of container.\n");
+    
     local SettingsToCopy = {};
     
     for Key, Value in pairs(ContainerConfig) do
@@ -178,10 +196,7 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
         CopyFrom[Key] = Key;
       end
     end
-  
-    Content:AddHeader("Copy Settings");
-    Content:AddText("You can only copy settings from the same type of container.\n");
-    
+
     if next(CopyFrom) == nil then
     
       Content:AddText("There are no other containers of the same type available for copying settings from");
