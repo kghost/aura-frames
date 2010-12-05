@@ -94,7 +94,7 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
   
    -- Do nothing :)
 
-  elseif Input == "Number" then
+  elseif Input == "Number" or Input == "ItemId" then
   
     Value = AceGUI:Create("AuraFramesEditBox");
     Value:DisableButton(true);
@@ -138,7 +138,7 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
     end);
     ListContainer:AddChild(Value);
   
-  elseif Input == "String" then
+  elseif Input == "String" or Input == "ItemName" then
   
     Value = AceGUI:Create("AuraFramesEditBox");
     Value:DisableButton(true);

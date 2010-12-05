@@ -160,7 +160,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
       local ValueType = AuraFrames.AuraDefinition[Rule.Subject].Type;
       local Operator = Rule.Operator;
       
-      if (ValueType == "String" or ValueType == "SpellName") and (Operator == "Equal" or Operator == "NotEqual") then
+      if (ValueType == "String" or ValueType == "SpellName" or ValueType == "ItemName") and (Operator == "Equal" or Operator == "NotEqual") then
       
         if AuraFrames.AuraDefinition[Rule.Subject].List then
         
@@ -212,7 +212,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
           
         end
         
-      elseif (ValueType == "Number" or ValueType == "SpellId") and (Operator == "Equal" or Operator == "NotEqual" or Operator == "Greater" or Operator == "GreaterOrEqual" or Operator == "Lesser" or Operator == "LesserOrEqual") then
+      elseif (ValueType == "Number" or ValueType == "SpellId" or ValueType == "ItemId") and (Operator == "Equal" or Operator == "NotEqual" or Operator == "Greater" or Operator == "GreaterOrEqual" or Operator == "Lesser" or Operator == "LesserOrEqual") then
       
         local Value = AceGUI:Create("AuraFramesEditBox");
         Value:DisableButton(true);

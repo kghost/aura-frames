@@ -65,7 +65,7 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
     TooltipShowPrefix:SetDisabled(not LayoutConfig.ShowTooltip);
     TooltipShowPrefix:SetWidth(260);
     TooltipShowPrefix:SetLabel("Show Prefix");
-    TooltipShowPrefix:SetDescription("Put before the extra information the type of information");
+    TooltipShowPrefix:SetDescription("Put before the extra information the type of information.");
     TooltipShowPrefix:SetValue(LayoutConfig.TooltipShowPrefix);
     TooltipShowPrefix:SetCallback("OnValueChanged", function(_, _, Value)
       LayoutConfig.TooltipShowPrefix = Value;
@@ -77,7 +77,7 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
     TooltipShowCaster:SetDisabled(not LayoutConfig.ShowTooltip);
     TooltipShowCaster:SetWidth(260);
     TooltipShowCaster:SetLabel("Show Caster");
-    TooltipShowCaster:SetDescription("Show who have casted the aura");
+    TooltipShowCaster:SetDescription("Show who have casted the aura.");
     TooltipShowCaster:SetValue(LayoutConfig.TooltipShowCaster);
     TooltipShowCaster:SetCallback("OnValueChanged", function(_, _, Value)
       LayoutConfig.TooltipShowCaster = Value;
@@ -85,23 +85,23 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
     end);
     ContentTooltip:AddChild(TooltipShowCaster);
     
-    local TooltipShowSpellId = AceGUI:Create("CheckBox");
-    TooltipShowSpellId:SetDisabled(not LayoutConfig.ShowTooltip);
-    TooltipShowSpellId:SetWidth(260);
-    TooltipShowSpellId:SetLabel("Show SpellId");
-    TooltipShowSpellId:SetDescription("Show the internal ID of the casted spell");
-    TooltipShowSpellId:SetValue(LayoutConfig.TooltipShowSpellId);
-    TooltipShowSpellId:SetCallback("OnValueChanged", function(_, _, Value)
-      LayoutConfig.TooltipShowSpellId = Value;
+    local TooltipShowAuraId = AceGUI:Create("CheckBox");
+    TooltipShowAuraId:SetDisabled(not LayoutConfig.ShowTooltip);
+    TooltipShowAuraId:SetWidth(260);
+    TooltipShowAuraId:SetLabel("Show Aura Id");
+    TooltipShowAuraId:SetDescription("Show the internal ID of the casted spell or item.");
+    TooltipShowAuraId:SetValue(LayoutConfig.TooltipShowAuraId);
+    TooltipShowAuraId:SetCallback("OnValueChanged", function(_, _, Value)
+      LayoutConfig.TooltipShowAuraId = Value;
       ContainerInstance:Update("LAYOUT");
     end);
-    ContentTooltip:AddChild(TooltipShowSpellId);
+    ContentTooltip:AddChild(TooltipShowAuraId);
     
     local TooltipShowClassification = AceGUI:Create("CheckBox");
     TooltipShowClassification:SetDisabled(not LayoutConfig.ShowTooltip);
     TooltipShowClassification:SetWidth(260);
     TooltipShowClassification:SetLabel("Show Classification");
-    TooltipShowClassification:SetDescription("Show the aura classification the tooltip (magic, curse, poison or none)");
+    TooltipShowClassification:SetDescription("Show the aura classification the tooltip (magic, curse, poison or none).");
     TooltipShowClassification:SetValue(LayoutConfig.TooltipShowClassification);
     TooltipShowClassification:SetCallback("OnValueChanged", function(_, _, Value)
       LayoutConfig.TooltipShowClassification = Value;

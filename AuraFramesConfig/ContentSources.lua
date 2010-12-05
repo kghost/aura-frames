@@ -221,6 +221,11 @@ local AllSources = {
         Type = "SPELLCOOLDOWN",
       },
       {
+        Name = "Item Cooldowns",
+        Unit = "player",
+        Type = "ITEMCOOLDOWN",
+      },
+      {
         Name = "Totems",
         Unit = "player",
         Type = "TOTEM",
