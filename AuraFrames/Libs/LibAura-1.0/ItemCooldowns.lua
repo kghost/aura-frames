@@ -30,6 +30,12 @@ local fmt, tostring = string.format, tostring;
 local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
+local GetInventoryItemID, GetContainerNumSlots, GetContainerItemID = GetInventoryItemID, GetContainerNumSlots, GetContainerItemID;
+local UnitName, GetItemInfo, GetTime, GetItemCooldown = UnitName, GetItemInfo, GetTime, GetItemCooldown;
+
+-- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
+-- List them here for Mikk's FindGlobals script
+-- GLOBALS: NUM_BAG_SLOTS
 
 -- Internal db used for storing auras, spellbooks and spell history.
 Module.db = Module.db or {};
@@ -40,7 +46,7 @@ local ItemMinimumCooldown = 2;
 
 -- Update cooldowns throttle.
 local UpdateCooldownsLastScan = 0;
-UpdateCooldownsScanThrottle = 0.2;
+local UpdateCooldownsScanThrottle = 0.2;
 
 -----------------------------------------------------------------
 -- Function ActivateSource
@@ -86,7 +92,7 @@ function Module:DeactivateSource(Unit, Type)
     return;
   end
   
-  for _, Aura in ipairs(self.db.Auras) do
+  for _, Aura in pairs(self.db) do
     LibAura:FireAuraOld(Aura);
   end
 
@@ -175,7 +181,7 @@ function Module:UpdateDbItem(ItemId)
   if self.db[ItemId] then
     return;
   end
-
+  
   self.db[ItemId] = {
     Type = "ITEMCOOLDOWN",
     Count = 0,
@@ -195,6 +201,8 @@ function Module:UpdateDbItem(ItemId)
     ItemId = ItemId,
     Active = false,
   };
+  
+  local _; -- Keep _ in the local namespace.
   
   self.db[ItemId].Name, _, _, _, _, _, _, _, _, self.db[ItemId].Icon = GetItemInfo(ItemId);
   
