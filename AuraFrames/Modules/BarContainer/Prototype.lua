@@ -161,7 +161,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
         Left, Right = 1 - Right, 1 - Left;
       end
       
-      Bar.Texture:SetTexCoord(Left, Right, 0, 1);
+      Bar.TextureTexture:SetTexCoord(Left, Right, 0, 1);
       
     end
     
@@ -365,7 +365,14 @@ function Prototype:UpdateBarDisplay(Bar)
   end
   
   Bar.Button.Border:SetVertexColor(unpack(Color));
-  Bar.Texture:SetVertexColor(unpack(Color));
+  Bar.TextureTexture:SetVertexColor(unpack(Color));
+  Bar.Texture:SetBackdropBorderColor(min(Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), Color[4]);
+  
+  if self.Config.Layout.ShowSpark and self.Config.Layout.SparkUseBarColor then
+  
+    Bar.Spark:SetVertexColor(unpack(Color));
+  
+  end
   
   if self.Config.Layout.TextureBackgroundUseBarColor then
   
@@ -425,7 +432,7 @@ function Prototype:UpdateBarDisplay(Bar)
   if Aura.ExpirationTime == 0 or (Aura.ExpirationTime ~= 0 and max(Aura.ExpirationTime - GetTime(), 0) > Bar.BarMaxTime) then
     
     Bar.Texture:SetWidth(self.BarWidth);
-    Bar.Texture:SetTexCoord(0, 1, 0, 1);
+    Bar.TextureTexture:SetTexCoord(0, 1, 0, 1);
     
   end
 
@@ -496,7 +503,31 @@ function Prototype:UpdateBar(Bar)
   
   end
   
-  Bar.Texture:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
+  if self.Config.Layout.ShowSpark then
+  
+    Bar.Spark:Show();
+    
+    if not self.Config.Layout.SparkUseBarColor then
+    
+      Bar.Spark:SetVertexColor(unpack(self.Config.Layout.SparkColor));
+    
+    end
+  
+  else
+  
+    Bar.Spark:Hide();
+  
+  end
+  
+  Bar.TextureTexture:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
+  
+  Bar.Texture:SetBackdrop({
+    edgeFile = LSM:Fetch("border", self.Config.Layout.BarBorder), 
+    edgeSize = self.Config.Layout.BarBorderSize, 
+  });
+  
+  Bar.TextureTexture:SetPoint("TOPLEFT", Bar.Texture, "TOPLEFT", self.Config.Layout.BarTextureInsets, -self.Config.Layout.BarTextureInsets);
+  Bar.TextureTexture:SetPoint("BOTTOMRIGHT", Bar.Texture, "BOTTOMRIGHT", -self.Config.Layout.BarTextureInsets, self.Config.Layout.BarTextureInsets);
   
   if self.Config.Layout.TextureBackgroundUseTexture == true then
     Bar.Texture.Background:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
@@ -666,8 +697,9 @@ function Prototype:AuraNew(Aura)
       Bar.Text = _G[BarId.."Text"];
       Bar.Duration = _G[BarId.."Duration"];
       Bar.Texture = _G[BarId.."Texture"];
+      Bar.TextureTexture = _G[BarId.."TextureTexture"];
       Bar.Texture.Background = _G[BarId.."TextureBackground"];
-      Bar.Spark = _G[BarId.."Spark"];
+      Bar.Spark = _G[BarId.."TextureSpark"];
       
       Bar.Button = _G[BarId.."Button"];
       Bar.Button.Icon = _G[BarId.."ButtonIcon"];

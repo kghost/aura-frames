@@ -9,7 +9,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 205;
+AuraFrames.DatabaseVersion = 206;
 
 
 --[[
@@ -34,6 +34,10 @@ AuraFrames.DatabaseVersion = 205;
   
   Version 205:
     Added InactiveAlpha to timeline container
+  
+  Version 206:
+    BarContainer now have borders
+    BarContainer now also support configuration of the spark
   
    
 ]]--
@@ -338,6 +342,23 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
     
       Container.Layout.InactiveAlpha = 1.0;
     
+    end
+  
+  end
+  
+  if OldVersion < 206 then
+  
+    if Container.Type == "BarContainer" then
+    
+      Container.Layout.BarTextureInsets = 2;
+      Container.Layout.BarBorder = "Blizzard Tooltip";
+      Container.Layout.BarBorderSize = 8;
+      Container.Layout.BarBorderColorAdjust = 0.4;
+
+      Container.Layout.ShowSpark = true;
+      Container.Layout.SparkUseBarColor = false;
+      Container.Layout.SparkColor = {1.0, 1.0, 1.0, 1.0};
+      
     end
   
   end

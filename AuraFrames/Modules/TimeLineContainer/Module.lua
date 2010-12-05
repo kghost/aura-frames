@@ -132,7 +132,7 @@ function Module:GetDatabaseDefaults()
       BackgroundTextureInsets = 2,
       
       BackgroundBorder = "Blizzard Tooltip",
-      BackgroundBorderColor = {0, 0.1, 0.57, 0.8},
+      BackgroundBorderColor = {0.05, 0.3, 0.8, 0.8},
       BackgroundBorderSize = 8,
       
       InactiveAlpha = 0.35,

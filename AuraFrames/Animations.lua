@@ -16,13 +16,6 @@ local PI_2 = PI / 2;
 -----------------------------------------------------------------
 function Animators:Flash(Elapsed, Properties)
 
-Properties.Time 
-
-
-((math_cos((((Button.ExpireFlashTime - TimeLeft) % Config.Warnings.Expire.FlashSpeed) / Config.Warnings.Expire.FlashSpeed) * PI2) / 2 + 0.5) * 0.85) + 0.15
-
-
-
   local Alpha = ((math_cos((((Button.ExpireFlashTime - TimeLeft) % Config.Warnings.Expire.FlashSpeed) / Config.Warnings.Expire.FlashSpeed) * PI2) / 2 + 0.5) * 0.85) + 0.15;
   
   return nil, Alpha;

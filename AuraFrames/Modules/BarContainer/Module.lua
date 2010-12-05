@@ -103,9 +103,17 @@ function Module:GetDatabaseDefaults()
       TooltipShowSpellId = false,
       TooltipShowClassification = false,
 
-      BarTexture = "BantoBar",
+      BarTexture = "Blizzard",
+      BarTextureInsets = 2,
       BarTextureMove = false;
       BarDirection = "LEFTSHRINK",
+      BarBorder = "Blizzard Tooltip",
+      BarBorderSize = 8,
+      BarBorderColorAdjust = 0.4,
+      
+      ShowSpark = true,
+      SparkUseBarColor = false,
+      SparkColor = {1.0, 1.0, 1.0, 1.0},
 
       ShowCooldown = false,
       CooldownDrawEdge = true,

@@ -56,26 +56,34 @@
           </Frame>
         </Frames>
       </Button>
+      <Frame level="BORDER" name="$parentTexture">
+        <Layers>
+          <Layer level="BACKGROUND">
+            <Texture name="$parentTexture" />
+          </Layer>
+          <Layer level="ARTWORK">
+            <Texture name="$parentSpark" file="Interface\CastingBar\UI-CastingBar-Spark" alphaMode="ADD">
+              <Size>
+                <AbsDimension x="36" y="100"/>
+              </Size>
+            </Texture>
+          </Layer>
+        </Layers>
+      </Frame>
+      <Frame>
+        <Layers>
+          <Layer level="OVERLAY">
+            <FontString name="$parentText" />
+            <FontString name="$parentDuration" hidden="true" />
+          </Layer>
+        </Layers>
+      </Frame>
     </Frames>
     <Layers>
       <Layer level="BACKGROUND">
         <Texture name="$parentTextureBackground">
           <Color r="1.0" g="1.0" b="1.0" a="1.0"/>
         </Texture>
-      </Layer>
-      <Layer level="BORDER">
-        <Texture name="$parentTexture" />
-      </Layer>
-      <Layer level="ARTWORK">
-        <Texture name="$parentSpark" file="Interface\CastingBar\UI-CastingBar-Spark" alphaMode="ADD">
-          <Size>
-            <AbsDimension x="36" y="100"/>
-          </Size>
-        </Texture>
-      </Layer>
-      <Layer level="OVERLAY">
-        <FontString name="$parentText" />
-        <FontString name="$parentDuration" hidden="true" />
       </Layer>
     </Layers>
   </Frame>
