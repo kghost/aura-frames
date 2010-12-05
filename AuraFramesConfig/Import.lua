@@ -197,7 +197,9 @@ function AuraFramesConfig:ShowImportWindow(ContainerId)
     CopySettingsSelection[Key] = true;
   
   end
-      
+  
+  ImportWindow:DoLayout();
+  
   ImportWindow:Show();
   
   ImportEditBox:SetFocus();

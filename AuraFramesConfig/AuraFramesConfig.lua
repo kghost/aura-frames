@@ -58,6 +58,8 @@ end
 function AuraFramesConfig:DatabaseChanged()
 
   self:RefreshTree();
+  
+  self:RefreshContent();
 
 end
 

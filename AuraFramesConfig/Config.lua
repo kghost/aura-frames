@@ -3,6 +3,7 @@ local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AceGUI = LibStub("AceGUI-3.0");
 
 AuraFramesConfig.Tree = {};
+AuraFramesConfig.TreeSelectedPath = nil;
 
 
 -----------------------------------------------------------------
@@ -58,7 +59,7 @@ function AuraFramesConfig:GetTreeByPath(...)
   local FoundItem = nil;
   
   for _, Key in ipairs({...}) do
-  
+
     local Found = false;
   
     for _, Item in ipairs(Tree) do
@@ -110,17 +111,9 @@ function AuraFramesConfig:CreateWindow()
   self.Content:SetTreeWidth(180, false);
   self.Content:SetCallback("OnGroupSelected", function(TreeControl, Event, Group)
     
-    AuraFramesConfig.Content:PauseLayout();
-    AuraFramesConfig.Content:ReleaseChildren();
+    AuraFramesConfig.TreeSelectedPath = {string.split("\001", Group)};
     
-    local Item = AuraFramesConfig:GetTreeByPath(string.split("\001", Group));
-    
-    if Item and Item.execute then
-      Item.execute();
-    end
-    
-    AuraFramesConfig.Content:ResumeLayout();
-    AuraFramesConfig.Content:DoLayout();
+    AuraFramesConfig:RefreshContent();
     
   end);
   
@@ -131,6 +124,32 @@ function AuraFramesConfig:CreateWindow()
   
   self.Window:AddChild(self.Content);
 
+
+end
+
+
+-----------------------------------------------------------------
+-- Function RefreshContent
+-----------------------------------------------------------------
+function AuraFramesConfig:RefreshContent()
+
+  AuraFramesConfig.Content:PauseLayout();
+  AuraFramesConfig.Content:ReleaseChildren();
+  
+  if AuraFramesConfig.TreeSelectedPath then
+  
+    local Item = AuraFramesConfig:GetTreeByPath(unpack(AuraFramesConfig.TreeSelectedPath));
+    
+    if Item and Item.execute then
+    
+      Item.execute();
+    
+    end
+  
+  end
+  
+  AuraFramesConfig.Content:ResumeLayout();
+  AuraFramesConfig.Content:DoLayout();
 
 end
 
