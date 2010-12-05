@@ -270,18 +270,117 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
   end);
   BarGroup:AddChild(BarTexture);
   
-  BarGroup:AddText(" ", nil, 50);
+  local BarTextureInsets = AceGUI:Create("Slider");
+  BarTextureInsets:SetWidth(150);
+  BarTextureInsets:SetValue(LayoutConfig.BarTextureInsets);
+  BarTextureInsets:SetLabel("Background insets");
+  BarTextureInsets:SetSliderValues(0, 16, 1);
+  BarTextureInsets:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarTextureInsets = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
+  end);
+  BarGroup:AddChild(BarTextureInsets);
   
-  local TextureMove = AceGUI:Create("CheckBox");
-  TextureMove:SetWidth(250);
-  TextureMove:SetLabel("Bar texture moving");
-  TextureMove:SetDescription("Is the bar texture moving or standing still.");
-  TextureMove:SetValue(LayoutConfig.BarTextureMove);
-  TextureMove:SetCallback("OnValueChanged", function(_, _, Value)
+  local BarTextureMove = AceGUI:Create("CheckBox");
+  BarTextureMove:SetWidth(150);
+  BarTextureMove:SetLabel("Bar texture moving");
+  BarTextureMove:SetDescription("Is the bar texture moving or standing still.");
+  BarTextureMove:SetValue(LayoutConfig.BarTextureMove);
+  BarTextureMove:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.BarTextureMove = Value;
     ContainerInstance:Update("LAYOUT");
   end);
-  BarGroup:AddChild(TextureMove);
+  BarGroup:AddChild(BarTextureMove);
+  
+  local BarBorder = AceGUI:Create("LSM30_Border");
+  BarBorder:SetList(LSM:HashTable("border"));
+  BarBorder:SetLabel("Border");
+  BarBorder:SetValue(LayoutConfig.BarBorder);
+  BarBorder:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarBorder = Value;
+    ContainerInstance:Update("LAYOUT");
+    BarBorder:SetValue(Value);
+  end);
+  BarGroup:AddChild(BarBorder);
+  
+  local BarBorderSize = AceGUI:Create("Slider");
+  BarBorderSize:SetWidth(150);
+  BarBorderSize:SetValue(LayoutConfig.BarBorderSize);
+  BarBorderSize:SetLabel("Border size");
+  BarBorderSize:SetSliderValues(2, 24, 1);
+  BarBorderSize:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarBorderSize = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
+  end);
+  BarGroup:AddChild(BarBorderSize);
+  
+  local BarBorderColorAdjust = AceGUI:Create("Slider");
+  BarBorderColorAdjust:SetWidth(150);
+  BarBorderColorAdjust:SetIsPercent(true);
+  BarBorderColorAdjust:SetValue(LayoutConfig.BarBorderColorAdjust);
+  BarBorderColorAdjust:SetLabel("Border dark adjust");
+  BarBorderColorAdjust:SetSliderValues(0, 2, 0.01);
+  BarBorderColorAdjust:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarBorderColorAdjust = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
+  end);
+  BarGroup:AddChild(BarBorderColorAdjust);
+  
+  Content:AddSpace();
+
+  Content:AddHeader("Spark");
+  
+  
+  local SparkUseBarColor, SparkColor;
+  
+  local ShowSpark = AceGUI:Create("CheckBox");
+  ShowSpark:SetRelativeWidth(1);
+  ShowSpark:SetLabel("Enable Spark");
+  ShowSpark:SetDescription("Show a spark at the moving side of the bar.");
+  ShowSpark:SetValue(LayoutConfig.ShowSpark);
+  ShowSpark:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.ShowSpark = Value;
+    ContainerInstance:Update("LAYOUT");
+    
+    SparkUseBarColor:SetDisabled(not LayoutConfig.ShowSpark);
+    SparkColor:SetDisabled(not LayoutConfig.ShowSpark or LayoutConfig.SparkUseBarColor);
+    
+  end);
+  Content:AddChild(ShowSpark);
+  
+  local SparkGroup = AceGUI:Create("SimpleGroup");
+  SparkGroup:SetRelativeWidth(1);
+  SparkGroup:SetLayout("Flow");
+  Content:AddChild(SparkGroup);
+  
+  SparkUseBarColor = AceGUI:Create("CheckBox");
+  SparkUseBarColor:SetLabel("Use bar color");
+  SparkUseBarColor:SetDisabled(not LayoutConfig.ShowSpark);
+  SparkUseBarColor:SetDescription("Use the bar color for the spark.");
+  SparkUseBarColor:SetValue(LayoutConfig.SparkUseBarColor);
+  SparkUseBarColor:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.SparkUseBarColor = Value;
+    ContainerInstance:Update("LAYOUT");
+    
+    SparkColor:SetDisabled(not LayoutConfig.ShowSpark or LayoutConfig.SparkUseBarColor);
+    
+  end);
+  SparkGroup:AddChild(SparkUseBarColor);
+
+  SparkColor = AceGUI:Create("ColorPicker");
+  SparkColor:SetHasAlpha(true);
+  SparkColor:SetDisabled(not LayoutConfig.ShowSpark or LayoutConfig.SparkUseBarColor);
+  SparkColor:SetColor(unpack(LayoutConfig.SparkColor));
+  SparkColor:SetLabel("Spark color");
+  SparkColor:SetCallback("OnValueChanged", function(_, _, ...)
+    LayoutConfig.SparkColor = {...};
+    ContainerInstance:Update("LAYOUT");
+  end);
+  SparkGroup:AddChild(SparkColor);
+
   
   Content:AddSpace();
 
