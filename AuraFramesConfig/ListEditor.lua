@@ -229,16 +229,31 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
     Label:SetWidth(210);
     
     if type(Input) == "table" and Input[Value] then
+    
       Label:SetText(Input[Value]);
+    
     elseif Input == "SpellId" then
+    
       local SpellName = GetSpellInfo(Value);
       if SpellName then
         Label:SetText(Value.." ("..SpellName..")");
       else
         Label:SetText(Value);
       end
+      
+    elseif Input == "ItemId" then
+    
+      local ItemName = GetItemInfo(Value);
+      if ItemName then
+        Label:SetText(Value.." ("..ItemName..")");
+      else
+        Label:SetText(Value);
+      end
+    
     else
+    
       Label:SetText(Value);
+    
     end
     
     Container:AddChild(Label);
