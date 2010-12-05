@@ -105,7 +105,19 @@ AuraFrames.FilterTypeOperators = {
     "NotEqual",
     "InList",
     "NotInList"
-  }
+  },
+  ItemName = {
+    "Equal",
+    "NotEqual",
+    "InList",
+    "NotInList"
+  },
+  ItemId = {
+    "Equal",
+    "NotEqual",
+    "InList",
+    "NotInList"
+  },
 };
 
 
@@ -122,7 +134,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
     SubjectCode = "Object."..Subject;
   end
 
-  if Type == "String" or Type == "SpellName" then
+  if Type == "String" or Type == "SpellName" or Type == "ItemName" then
   
     if (Operator == "Equal" or Operator == "NotEqual") and Args[Type] then
       
@@ -150,7 +162,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
     
     end
     
-  elseif Type == "Number" or Type == "SpellId" then
+  elseif Type == "Number" or Type == "SpellId" or Type == "ItemId" then
   
     if (Operator == "Equal" or Operator == "NotEqual" or Operator == "Greater" or Operator == "GreaterOrEqual" or Operator == "Lesser" or Operator == "LesserOrEqual") and Args[Type] then
       

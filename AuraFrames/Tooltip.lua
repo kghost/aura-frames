@@ -37,6 +37,10 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
   
     GameTooltip:SetSpellBookItem(Aura.Index, BOOKTYPE_SPELL);
   
+  elseif Aura.Type == "ITEMCOOLDOWN" or Aura.Type == "ITEMCOOLDOWNOLD" then
+  
+    GameTooltip:SetInventoryItemByID(Aura.ItemId);
+  
   elseif Aura.Type == "INTERNALCOOLDOWNITEM" or Aura.Type == "INTERNALCOOLDOWNITEMOLD" then
   
     GameTooltip:SetInventoryItem(Aura.Unit, Aura.Index);
@@ -59,7 +63,7 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
   
   end
   
-  if Options.ShowCaster == true or Options.ShowSpellId == true or Options.ShowClassification then
+  if Options.ShowCaster == true or Options.ShowAuraId == true or Options.ShowClassification then
     GameTooltip:AddLine(" ")
   end
   
@@ -95,12 +99,26 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
     
   end
   
-  if Options.ShowSpellId == true and Aura.SpellId then
+  if Options.ShowAuraId == true then
+  
+    if Aura.SpellId ~= 0 then
     
-    if Options.ShowPrefix == true then
-      GameTooltip:AddLine("Spell ID: |cffff0000"..Aura.SpellId.."|r");
-    else
-      GameTooltip:AddLine("|cffff0000"..Aura.SpellId.."|r");
+      if Options.ShowPrefix == true then
+        GameTooltip:AddLine("Spell ID: |cffff0000"..Aura.SpellId.."|r");
+      else
+        GameTooltip:AddLine("|cffff0000"..Aura.SpellId.."|r");
+      end
+    
+    end
+    
+    if Aura.ItemId ~= 0 then
+    
+      if Options.ShowPrefix == true then
+        GameTooltip:AddLine("Item ID: |cffff0000"..Aura.ItemId.."|r");
+      else
+        GameTooltip:AddLine("|cffff0000"..Aura.ItemId.."|r");
+      end
+    
     end
     
   end

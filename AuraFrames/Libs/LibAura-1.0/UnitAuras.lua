@@ -374,7 +374,9 @@ function Module:ScanUnitAurasChanges(Unit, Type)
       if Id then
       
         -- Pop an aura table out the pool or create an new one.
-        local Aura = tremove(AuraPool) or {};
+        local Aura = tremove(AuraPool) or {
+          ItemId = 0,
+        };
         
         Aura.Type = Type;
         Aura.Index = i;
@@ -524,7 +526,9 @@ function Module:ScanUnitAuras(Unit, Type)
       if Id then
 
         -- Pop an aura table out the pool or create an new one.
-        local Aura = tremove(AuraPool) or {};
+        local Aura = tremove(AuraPool) or {
+          ItemId = 0,
+        };
         
         Aura.Type = Type;
         Aura.Index = i;

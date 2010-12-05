@@ -452,7 +452,7 @@ function Prototype:Update(...)
     self.TooltipOptions = {
       ShowPrefix = self.Config.Layout.TooltipShowPrefix,
       ShowCaster = self.Config.Layout.TooltipShowCaster,
-      ShowSpellId = self.Config.Layout.TooltipShowSpellId,
+      ShowAuraId = self.Config.Layout.TooltipShowAuraId,
       ShowClassification = self.Config.Layout.TooltipShowClassification,
     };
     

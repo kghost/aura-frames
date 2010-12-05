@@ -9,7 +9,7 @@ local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, r
 local GetTime = GetTime;
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 206;
+AuraFrames.DatabaseVersion = 209;
 
 
 --[[
@@ -41,6 +41,12 @@ AuraFrames.DatabaseVersion = 206;
   
   Version 207:
     ButtonFacade skin "Aura Frames Default" renamed to "Aura Frames"
+  
+  Version 208:
+    AuraDefinition: Name changed to SpellName, ItemName added
+  
+  Version 209:
+    ShowSpellId renamed to ShowAuraId
    
 ]]--
 
@@ -370,6 +376,49 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
     if Container.ButtonFacade and Container.ButtonFacade.SkinId == "Aura Frames Default" then
     
       Container.ButtonFacade.SkinId = "Aura Frames";
+    
+    end
+  
+  end
+  
+  if OldVersion < 208 then
+  
+    if Container.Filter and Container.Filter.Groups then
+    
+      for _, Group in pairs(Container.Filter.Groups) do
+      
+        for _, Rule in pairs(Group) do
+        
+          if Rule.Subject == "Name" then
+            Rule.Subject = "SpellName";
+          end
+        
+        end
+      
+      end
+    
+    end
+
+    if Container.Order and Container.Order.Rules then
+    
+      for _, Rule in pairs(Container.Order.Rules) do
+      
+        if Rule.Subject == "Name" then
+          Rule.Subject = "SpellName";
+        end
+      
+      end
+      
+    end
+  
+  end
+  
+  if OldVersion < 209 then
+  
+    if Container.Layout and Container.Layout.TooltipShowSpellId then
+    
+       Container.Layout.TooltipShowAuraId = Container.Layout.TooltipShowSpellId;
+       Container.Layout.TooltipShowSpellId = nil;
     
     end
   

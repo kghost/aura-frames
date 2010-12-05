@@ -20,7 +20,7 @@ if not Module then return; end -- No upgrade needed.
 -- Make sure that we dont have old unit/types if we upgrade.
 LibAura:UnregisterModuleSource(Module, nil, nil);
 
--- Register the test unit/types.
+-- Register the unit/types.
 LibAura:RegisterModuleSource(Module, "player", "SPELLCOOLDOWN");
 LibAura:RegisterModuleSource(Module, "pet", "SPELLCOOLDOWN");
 
@@ -256,6 +256,9 @@ function Module:UpdateSpellBook(Unit)
         IsCancelable = false,
         IsDispellable = false,
         Active = false,
+        Id = Unit.."SPELLCOOLDOWN"..SpellId,
+        SpellId = SpellId,
+        ItemId = 0,
       };
     end
 
@@ -263,8 +266,6 @@ function Module:UpdateSpellBook(Unit)
 
     Aura.Index = i;
     Aura.Name, _, Aura.Icon = GetSpellInfo(SpellId);
-    Aura.SpellId = SpellId;
-    Aura.Id = Unit.."SPELLCOOLDOWN"..SpellId;
     Aura.Old = nil;
     
     if Aura.Active == false then

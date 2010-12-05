@@ -9,6 +9,7 @@
   <Script file="TestUnit.lua"/>
   <Script file="Totems.lua"/>
   <Script file="SpellCooldowns.lua"/>
+  <Script file="ItemCooldowns.lua"/>
   <Script file="InternalCooldowns.lua"/>
   
   <!--

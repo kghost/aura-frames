@@ -47,9 +47,13 @@ The following list is the minimal requirements for an aura.
 
   SpellId
     The spell id, 0 for no spell
+  
+  ItemId
+    The item id, 0 for no item
+    
 
 
-The following reasons may be used for new and old auras:
+The following reasons may be used for new and old auras (not implemented):
 
   TARGETGAINED
   TARGETLOST

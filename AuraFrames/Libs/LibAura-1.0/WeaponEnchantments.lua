@@ -62,6 +62,7 @@ function Module:Enable()
       IsCancelable = true,
       IsDispellable = false,
       SpellId = 0,
+      ItemId = 0,
     },
     OffHand = {
       Id = "PlayerWEAPONOffHand",
@@ -77,6 +78,7 @@ function Module:Enable()
       IsCancelable = true,
       IsDispellable = false,
       SpellId = 0,
+      ItemId = 0,
     },
     Thrown = {
       Id = "PlayerWEAPONThrown",
@@ -92,6 +94,7 @@ function Module:Enable()
       IsCancelable = true,
       IsDispellable = false,
       SpellId = 0,
+      ItemId = 0,
     },
   };
   
@@ -291,6 +294,7 @@ function Module:ScanWeapon(Slot, HasEnchant, ExpirationTime, Charges)
       
       Aura.Name = self:GetWeaponEnchantName(Aura.Index);
       Aura.Icon = GetInventoryItemTexture("player", Aura.Index);
+      Aura.ItemId = GetInventoryItemID("player", Aura.Index);
       Aura.ExpirationTime = ExpirationTime;
       Aura.Duration = ExpirationTime - GetTime();
       Aura.Count = Charges;

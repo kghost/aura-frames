@@ -100,7 +100,7 @@ function Module:GetDatabaseDefaults()
       ShowTooltip = true,
       TooltipShowPrefix = false,
       TooltipShowCaster = true,
-      TooltipShowSpellId = false,
+      TooltipShowAuraId = false,
       TooltipShowClassification = false,
 
       BarTexture = "Blizzard",

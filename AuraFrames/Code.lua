@@ -17,13 +17,13 @@ function AuraFrames:BuildValue(RequestedType, Value)
 
   if type(Value) == "string" then
   
-    if RequestedType == "String" or RequestedType == "SpellName" then
+    if RequestedType == "String" or RequestedType == "SpellName" or RequestedType == "ItemName" then
     
       local ValueText = gsub(Value, "\"", "\\\"");
     
       return "\""..ValueText.."\"";
     
-    elseif RequestedType == "Number" or RequestedType == "SpellId" then
+    elseif RequestedType == "Number" or RequestedType == "SpellId" or RequestedType == "ItemId" then
     
       return strlen(Value) > 0 and tonumber(Value) or 0;
     
@@ -44,11 +44,11 @@ function AuraFrames:BuildValue(RequestedType, Value)
   
   elseif type(Value) == "number" then
   
-    if RequestedType == "String" or RequestedType == "SpellName" then
+    if RequestedType == "String" or RequestedType == "SpellName" or RequestedType == "ItemName" then
     
       return "\""..tostring(Value).."\"";
     
-    elseif RequestedType == "Number" or RequestedType == "SpellId" then
+    elseif RequestedType == "Number" or RequestedType == "SpellId" or RequestedType == "ItemId" then
     
       return tonumber(Value);
     
@@ -69,11 +69,11 @@ function AuraFrames:BuildValue(RequestedType, Value)
   
   elseif type(Value) == "boolean" then
 
-    if RequestedType == "String" or RequestedType == "SpellName" then
+    if RequestedType == "String" or RequestedType == "SpellName" or RequestedType == "ItemName" then
     
       return "\""..tostring(Value).."\"";
     
-    elseif RequestedType == "Number" or RequestedType == "SpellId" then
+    elseif RequestedType == "Number" or RequestedType == "SpellId" or RequestedType == "ItemId" then
     
       if Value == true then
         return 1;
@@ -94,11 +94,11 @@ function AuraFrames:BuildValue(RequestedType, Value)
   
   elseif type(Value) == "function" then
   
-    if RequestedType == "String" or RequestedType == "SpellName" then
+    if RequestedType == "String" or RequestedType == "SpellName" or RequestedType == "ItemName" then
     
       return "\"tostring("..Value.."())\"";
     
-    elseif RequestedType == "Number" or RequestedType == "SpellId" then
+    elseif RequestedType == "Number" or RequestedType == "SpellId" or RequestedType == "ItemId" then
     
       return "\"tonumber("..Value.."())\"";
     
@@ -115,11 +115,11 @@ function AuraFrames:BuildValue(RequestedType, Value)
   
   elseif Value == nil then
   
-    if RequestedType == "String" or RequestedType == "SpellName" then
+    if RequestedType == "String" or RequestedType == "SpellName" or RequestedType == "ItemName" then
     
       return "\"\"";
     
-    elseif RequestedType == "Number" or RequestedType == "SpellId" then
+    elseif RequestedType == "Number" or RequestedType == "SpellId" or RequestedType == "ItemId" then
     
       return 0;
     

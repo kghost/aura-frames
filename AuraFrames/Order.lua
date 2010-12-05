@@ -97,6 +97,18 @@ AuraFrames.OrderTypeOperators = {
     "ListAsc",
     "ListDesc",
   },
+  ItemName = {
+    "First",
+    "Last",
+    "ListAsc",
+    "ListDesc",
+  },
+  ItemId = {
+    "First",
+    "Last",
+    "ListAsc",
+    "ListDesc",
+  },
 };
 
 
@@ -164,7 +176,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
 
       return SubjectCode.."if Value1 ~= Value2 then local List = {"..List.."}; return (List[Value1] or "..(#Args.List + 1)..") "..OrderOperatorMappings[Operator].." (List[Value2] or "..(#Args.List + 1).."); end;";
 
-  elseif Type == "String" or Type == "SpellName" then
+  elseif Type == "String" or Type == "SpellName" or Type == "ItemName" then
   
     if (Operator == "First" or Operator == "Last") and Args[Type] then
     
@@ -176,7 +188,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
     
     end
     
-  elseif Type == "Number" or Type == "SpellId" then
+  elseif Type == "Number" or Type == "SpellId" or Type == "ItemId" then
     
     if (Operator == "First" or Operator == "Last") and Args[Type] then
     

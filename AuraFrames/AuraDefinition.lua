@@ -34,17 +34,34 @@ AuraFrames.AuraDefinition = {
       HELPFUL = "Helpful",
       WEAPON = "Weapon enchantment",
       SPELLCOOLDOWN = "Spell Cooldown",
+      ITEMCOOLDOWN = "Item Cooldown",
       TOTEM = "Totem",
     },
     Order = true,
     Filter = true,
     Weight = 2,
   },
-  Name = {
+  Name = { -- Used for build in filters
+    Type = "String",
+    Name = "Name",
+    Order = false,
+    Filter = false,
+    Weight = 2,
+  },
+  SpellName = {
     Type = "SpellName",
     Name = "Spell name",
     Order = true,
     Filter = true,
+    Code = "(Object.SpellId ~= 0 and Object.Name or \"\")",
+    Weight = 2,
+  },
+  ItemName = {
+    Type = "ItemName",
+    Name = "Item name",
+    Order = true,
+    Filter = true,
+    Code = "(Object.ItemId ~= 0 and Object.Name or \"\")",
     Weight = 2,
   },
   Icon = {
@@ -148,6 +165,13 @@ AuraFrames.AuraDefinition = {
     Filter = true,
     Weight = 1,
   },
+  ItemId = {
+    Type = "ItemId",
+    Name = "Item Id",
+    Order = true,
+    Filter = true,
+    Weight = 1,
+  },
   CastedByMe = {
     Type = "Boolean",
     Name = "Casted by me",
@@ -235,9 +259,25 @@ AuraFrames.AuraDefinition = {
 -----------------------------------------------------------------
 function AuraFrames:DumpAura(Aura)
 
-  self:Print("--------------------");
-
+  local List = {};
+  
   for Key, Definition in pairs(AuraFrames.AuraDefinition) do
+  
+    tinsert(List, {Key = Key, Definition = Definition});
+  
+  end
+  
+  sort(List, function(Item1, Item2)
+  
+    return Item1.Definition.Name < Item2.Definition.Name;
+  
+  end);
+
+  self:Print("--------------------");
+  
+  for _, Item in ipairs(List) do
+  
+    local Key, Definition = Item.Key, Item.Definition;
   
     local Value;
     local Error = false;
@@ -281,16 +321,22 @@ function AuraFrames:DumpAura(Aura)
     
     end
     
-    
-    
     if Error == true then
       self:Print("|cff00ffff"..Definition.Name.." |cffffffff- |cffff0000Error |cffffffff= |cffff0000"..tostring(Value).."|r");
     else
     
       if Definition.Type == "SpellId" then
+      
         self:Print("|cff00ffff"..Definition.Name.." |cffffffff= |cff00ff00|Hspell:"..tostring(Value).."|h"..tostring(Value).."|h|r");
+     
+      elseif Definition.Type == "ItemId" then
+      
+        self:Print("|cff00ffff"..Definition.Name.." |cffffffff= |cff00ff00|Hitem:"..tostring(Value).."|h"..tostring(Value).."|h|r");
+      
       else
+      
         self:Print("|cff00ffff"..Definition.Name.." |cffffffff= |cff00ff00"..tostring(Value).."|r");
+      
       end
       
     end

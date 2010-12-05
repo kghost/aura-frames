@@ -59,6 +59,7 @@ function Module:Enable()
       IsCancelable = true,
       IsDispellable = false,
       Count = 0,
+      ItemId = 0,
     },
     [2] = {
       Id = "PlayerTOTEM2",
@@ -73,6 +74,7 @@ function Module:Enable()
       IsCancelable = true,
       IsDispellable = false,
       Count = 0,
+      ItemId = 0,
     },
     [3] = {
       Id = "PlayerTOTEM3",
@@ -87,6 +89,7 @@ function Module:Enable()
       IsCancelable = true,
       IsDispellable = false,
       Count = 0,
+      ItemId = 0,
     },
     [4] = {
       Id = "PlayerTOTEM4",
@@ -101,6 +104,7 @@ function Module:Enable()
       IsCancelable = true,
       IsDispellable = false,
       Count = 0,
+      ItemId = 0,
     },
   };
 

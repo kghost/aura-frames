@@ -225,6 +225,7 @@ function Module:InternalCooldowns_Proc(_, ItemId, SpellId, Start, Duration)
   
   Aura.Type = "INTERNALCOOLDOWNITEM";
   Aura.SpellId = SpellId;
+  Aura.ItemId = ItemId;
   Aura.Name, _, _, _, _, _, _, _, _,  Aura.Icon, _ = GetItemInfo(ItemId);
   Aura.ExpirationTime = Start + Duration;
   Aura.Duration = Duration;
@@ -257,6 +258,7 @@ function Module:InternalCooldowns_TalentProc(_, SpellId, Start, Duration)
       IsCancelable = true,
       IsDispellable = false,
       Count = 0,
+      ItemId = 0,
     };
   
   end

@@ -105,7 +105,8 @@ function Module:ActivateSource(Unit, Type)
       IsDispellable = false,
       Duration = Options[2],
       ExpirationTime = (Options[2] ~= 0 and CurrentTime + Options[2]) or 0,
-      Count = (Options[3] ~= 0 and 1) or 0;
+      Count = (Options[3] ~= 0 and 1) or 0,
+      ItemId = 0,
     };
     
     Aura.Name, _, Aura.Icon = GetSpellInfo(SpellId);
