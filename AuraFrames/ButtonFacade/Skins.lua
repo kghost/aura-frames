@@ -2,7 +2,7 @@ local LBF = LibStub("LibButtonFacade", true)
 if not LBF then return end
 
 -- Aura Frames Default
-LBF:AddSkin("Aura Frames Default", {
+LBF:AddSkin("Aura Frames", {
 	Backdrop = {
 		Width = 42,
 		Height = 42,

@@ -87,13 +87,13 @@ function Module:GetDatabaseDefaults()
       TextColor = {1, 1, 1, 1},
       TextPosition = "LEFT",
 
-      TextureBackgroundColor = {0, 0, 0, 0.8},
-      TextureBackgroundUseTexture = false,
+      TextureBackgroundColor = {0.3, 0.3, 0.3, 0.8},
+      TextureBackgroundUseTexture = true,
       TextureBackgroundUseBarColor = false,
       TextureBackgroundOpacity = 0.5,
 
-      ButtonBackgroundColor = {0, 0, 0, 0.8},
-      ButtonBackgroundUseBar = true,
+      ButtonBackgroundColor = {0.3, 0.3, 0.3, 0.0},
+      ButtonBackgroundUseBar = false,
       ButtonBackgroundOpacity = 0.5,
 
       Clickable = true,
@@ -122,7 +122,7 @@ function Module:GetDatabaseDefaults()
       
       ButtonFacade = {
         Gloss = 0.8,
-        SkinId = "Aura Frames Default",
+        SkinId = "Aura Frames",
         Backdrop = false,
         Colors = {},
       },

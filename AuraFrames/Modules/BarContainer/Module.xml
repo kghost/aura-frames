@@ -4,9 +4,8 @@
   <Script file="Module.lua" />
   <Script file="Prototype.lua" />
 
-  <Frame name="AuraFramesBarContainerTemplate" parent="UIParent" virtual="true" movable="true">
-  </Frame>
-
+  <Frame name="AuraFramesBarContainerTemplate" parent="UIParent" virtual="true" movable="true" />
+  
   <Frame name="AuraFramesBarTemplate" virtual="true">
     <Frames>
       <Button name="$parentButton">
@@ -38,25 +37,16 @@
               <Anchor point="CENTER" />
             </Anchors>
           </Cooldown>
-          <Frame frameStrata="BACKGROUND">
+          <Frame frameStrata="BACKGROUND" name="$parentBackground">
             <Size x="36" y="36"/>
             <Anchors>
               <Anchor point="CENTER" />
             </Anchors>
-            <Layers>
-              <Layer level="BACKGROUND">
-                <Texture name="$parentBackground">
-                  <Color r="1.0" g="1.0" b="1.0" a="1.0"/>
-                  <Size>
-                    <AbsDimension x="36" y="36"/>
-                  </Size>
-                </Texture>
-              </Layer>
-            </Layers>
           </Frame>
         </Frames>
       </Button>
-      <Frame level="BORDER" name="$parentTexture">
+      <Frame level="BACKGROUND" frameStrata="BACKGROUND" name="$parentBarBackground" />
+      <Frame level="BORDER" name="$parentBar">
         <Layers>
           <Layer level="BACKGROUND">
             <Texture name="$parentTexture" />
@@ -79,13 +69,6 @@
         </Layers>
       </Frame>
     </Frames>
-    <Layers>
-      <Layer level="BACKGROUND">
-        <Texture name="$parentTextureBackground">
-          <Color r="1.0" g="1.0" b="1.0" a="1.0"/>
-        </Texture>
-      </Layer>
-    </Layers>
   </Frame>
 
 </Ui>

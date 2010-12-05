@@ -2,7 +2,7 @@ local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local LibAura = LibStub("LibAura-1.0");
 
 -- Import used global references into the local namespace.
-local pairs, wipe, setmetatable = pairs, wipe, setmetatable;
+local pairs, ipairs, wipe, setmetatable = pairs, ipairs, wipe, setmetatable;
 local CreateFrame = CreateFrame;
 
 --[[

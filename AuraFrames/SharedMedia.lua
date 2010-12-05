@@ -1,7 +1,10 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local LSM = LibStub("LibSharedMedia-3.0");
 
+-- Import used global references into the local namespace.
+local pairs = pairs;
 
+-- Default bar texture list
 local StatusBarTextures = {
   ["Aluminum"]    = [[Interface\Addons\AuraFrames\Textures\Aluminum.tga]],
   ["Armory"]      = [[Interface\Addons\AuraFrames\Textures\Armory.tga]],

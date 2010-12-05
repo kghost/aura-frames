@@ -1,6 +1,9 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local LSM = LibStub("LibSharedMedia-3.0");
 
+-- Import used global references into the local namespace.
+local unpack = unpack;
+
 -----------------------------------------------------------------
 -- Function SetFontObjectProperties
 -----------------------------------------------------------------

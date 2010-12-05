@@ -139,7 +139,7 @@ function Module:GetDatabaseDefaults()
       
       ButtonFacade = {
         Gloss = 0.8,
-        SkinId = "Aura Frames Default",
+        SkinId = "Aura Frames",
         Backdrop = false,
         Colors = {},
       },

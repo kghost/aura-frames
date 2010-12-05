@@ -131,9 +131,9 @@ local function BarOnUpdate(Container, Bar, Elapsed)
       local Part = TimeLeft / Bar.BarMaxTime;
     
       if Container.Shrink then
-        Bar.Texture:SetWidth((Bar.WidthPerSecond * TimeLeft) + 1.0);
+        Bar.Bar:SetWidth((Bar.WidthPerSecond * TimeLeft) + 1.0);
       else
-        Bar.Texture:SetWidth(Container.BarWidth - (Bar.WidthPerSecond * TimeLeft));
+        Bar.Bar:SetWidth(Container.BarWidth - (Bar.WidthPerSecond * TimeLeft));
       end
       
       local Part = TimeLeft / Bar.BarMaxTime;
@@ -161,7 +161,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
         Left, Right = 1 - Right, 1 - Left;
       end
       
-      Bar.TextureTexture:SetTexCoord(Left, Right, 0, 1);
+      Bar.Bar.Texture:SetTexCoord(Left, Right, 0, 1);
       
     end
     
@@ -177,7 +177,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
       local Alpha = ((math_cos((((Bar.ExpireFlashTime - TimeLeft) % Config.Warnings.Expire.FlashSpeed) / Config.Warnings.Expire.FlashSpeed) * PI2) / 2 + 0.5) * 0.85) + 0.15;
       
       Bar.Button.Icon:SetAlpha(Alpha);
-      Bar.Texture:SetAlpha(Alpha);
+      Bar.Bar:SetAlpha(Alpha);
     
     elseif Bar.NewFlashTime and Bar.Aura.Duration ~= 0 then
     
@@ -191,7 +191,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
         local Alpha = ((math_cos((((TimeFromStart % Config.Warnings.New.FlashSpeed) / Config.Warnings.New.FlashSpeed) * PI2) + PI) / 2 + 0.5) * 0.85) + 0.15;
       
         Bar.Button.Icon:SetAlpha(Alpha);
-        Bar.Texture:SetAlpha(Alpha);
+        Bar.Bar:SetAlpha(Alpha);
       
       else
         
@@ -200,7 +200,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
       
         Bar.NewFlashTime = nil;
         Bar.Button.Icon:SetAlpha(1.0);
-        Bar.Texture:SetAlpha(1.0);
+        Bar.Bar:SetAlpha(1.0);
       
       end
     
@@ -365,22 +365,24 @@ function Prototype:UpdateBarDisplay(Bar)
   end
   
   Bar.Button.Border:SetVertexColor(unpack(Color));
-  Bar.TextureTexture:SetVertexColor(unpack(Color));
-  Bar.Texture:SetBackdropBorderColor(min(Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), Color[4]);
+  Bar.Bar.Texture:SetVertexColor(unpack(Color));
+  Bar.Bar:SetBackdropBorderColor(min(Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), Color[4]);
   
   if self.Config.Layout.ShowSpark and self.Config.Layout.SparkUseBarColor then
   
-    Bar.Spark:SetVertexColor(unpack(Color));
+    Bar.Bar.Spark:SetVertexColor(unpack(Color));
   
   end
   
   if self.Config.Layout.TextureBackgroundUseBarColor then
   
-    Bar.Texture.Background:SetVertexColor(Color[1], Color[2], Color[3], self.Config.Layout.TextureBackgroundOpacity);
+    Bar.Bar.Background:SetBackdropColor(Color[1], Color[2], Color[3], self.Config.Layout.TextureBackgroundOpacity);
+    Bar.Bar.Background:SetBackdropBorderColor(min(Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.TextureBackgroundOpacity);
   
   else
   
-    Bar.Texture.Background:SetVertexColor(unpack(self.Config.Layout.TextureBackgroundColor));
+    Bar.Bar.Background:SetBackdropColor(unpack(self.Config.Layout.TextureBackgroundColor));
+    Bar.Bar.Background:SetBackdropBorderColor(min(self.Config.Layout.TextureBackgroundColor[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.TextureBackgroundColor[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.TextureBackgroundColor[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.TextureBackgroundColor[4]);
   
   end
   
@@ -390,17 +392,20 @@ function Prototype:UpdateBarDisplay(Bar)
     
       if self.Config.Layout.TextureBackgroundUseBarColor then
       
-        Bar.Button.Background:SetVertexColor(Color[1], Color[2], Color[3], self.Config.Layout.ButtonBackgroundOpacity);
+        Bar.Button.Background:SetBackdropColor(Color[1], Color[2], Color[3], self.Config.Layout.ButtonBackgroundOpacity);
+        Bar.Button.Background:SetBackdropBorderColor(min(Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.ButtonBackgroundOpacity);
       
       else
       
-        Bar.Button.Background:SetVertexColor(unpack(self.Config.Layout.TextureBackgroundColor));
+        Bar.Button.Background:SetBackdropColor(unpack(self.Config.Layout.TextureBackgroundColor));
+        Bar.Button.Background:SetBackdropBorderColor(min(self.Config.Layout.TextureBackgroundColor[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.TextureBackgroundColor[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.TextureBackgroundColor[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.TextureBackgroundColor[4]);
       
       end
     
     else
     
-      Bar.Button.Background:SetVertexColor(unpack(self.Config.Layout.ButtonBackgroundColor));
+      Bar.Button.Background:SetBackdropColor(unpack(self.Config.Layout.ButtonBackgroundColor));
+      Bar.Button.Background:SetBackdropBorderColor(min(self.Config.Layout.ButtonBackgroundColor[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.ButtonBackgroundColor[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.ButtonBackgroundColor[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.ButtonBackgroundColor[4]);
     
     end
     
@@ -431,8 +436,8 @@ function Prototype:UpdateBarDisplay(Bar)
   
   if Aura.ExpirationTime == 0 or (Aura.ExpirationTime ~= 0 and max(Aura.ExpirationTime - GetTime(), 0) > Bar.BarMaxTime) then
     
-    Bar.Texture:SetWidth(self.BarWidth);
-    Bar.TextureTexture:SetTexCoord(0, 1, 0, 1);
+    Bar.Bar:SetWidth(self.BarWidth);
+    Bar.Bar.Texture:SetTexCoord(0, 1, 0, 1);
     
   end
 
@@ -481,58 +486,98 @@ function Prototype:UpdateBar(Bar)
   Adjust = PositionMappings[self.Config.Layout.Icon][self.Config.Layout.DurationPosition];
   Bar.Duration:SetPoint(self.Config.Layout.DurationPosition, Bar, self.Config.Layout.DurationPosition, Adjust[1], Adjust[2]);
   
-  Bar.Texture:ClearAllPoints();
-  Bar.Texture:SetHeight(Module.BarHeight);
-  Bar.Texture.Background:ClearAllPoints();
-  Bar.Texture.Background:SetHeight(Module.BarHeight);
-  Bar.Spark:ClearAllPoints();
+  Bar.Bar:ClearAllPoints();
+  Bar.Bar:SetHeight(Module.BarHeight);
+  Bar.Bar.Background:ClearAllPoints();
+  Bar.Bar.Background:SetHeight(Module.BarHeight);
+  Bar.Bar.Spark:ClearAllPoints();
   
   if self.Config.Layout.BarDirection == "LEFTGROW" or self.Config.Layout.BarDirection == "LEFTSHRINK" then
   
-    Bar.Texture:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
-    Bar.Texture.Background:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
-    Bar.Texture.Background:SetPoint("BOTTOMRIGHT", Bar, "BOTTOMRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
-    Bar.Spark:SetPoint("CENTER", Bar.Texture, "RIGHT", 0, -2);
+    Bar.Bar:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
+    Bar.Bar.Background:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
+    Bar.Bar.Background:SetPoint("BOTTOMRIGHT", Bar, "BOTTOMRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
+    Bar.Bar.Spark:SetPoint("CENTER", Bar.Bar, "RIGHT", 0, -2);
     
   else
 
-    Bar.Texture:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
-    Bar.Texture.Background:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
-    Bar.Texture.Background:SetPoint("BOTTOMLEFT", Bar, "BOTTOMLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
-    Bar.Spark:SetPoint("CENTER", Bar.Texture, "LEFT", 0, -2);
+    Bar.Bar:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
+    Bar.Bar.Background:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
+    Bar.Bar.Background:SetPoint("BOTTOMLEFT", Bar, "BOTTOMLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
+    Bar.Bar.Spark:SetPoint("CENTER", Bar.Bar, "LEFT", 0, -2);
   
   end
   
   if self.Config.Layout.ShowSpark then
   
-    Bar.Spark:Show();
+    Bar.Bar.Spark:Show();
     
     if not self.Config.Layout.SparkUseBarColor then
     
-      Bar.Spark:SetVertexColor(unpack(self.Config.Layout.SparkColor));
+      Bar.Bar.Spark:SetVertexColor(unpack(self.Config.Layout.SparkColor));
     
     end
   
   else
   
-    Bar.Spark:Hide();
+    Bar.Bar.Spark:Hide();
   
   end
   
-  Bar.TextureTexture:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
+  Bar.Bar.Texture:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
   
-  Bar.Texture:SetBackdrop({
+  Bar.Bar:SetBackdrop({
     edgeFile = LSM:Fetch("border", self.Config.Layout.BarBorder), 
     edgeSize = self.Config.Layout.BarBorderSize, 
   });
   
-  Bar.TextureTexture:SetPoint("TOPLEFT", Bar.Texture, "TOPLEFT", self.Config.Layout.BarTextureInsets, -self.Config.Layout.BarTextureInsets);
-  Bar.TextureTexture:SetPoint("BOTTOMRIGHT", Bar.Texture, "BOTTOMRIGHT", -self.Config.Layout.BarTextureInsets, self.Config.Layout.BarTextureInsets);
+  Bar.Bar.Texture:SetPoint("TOPLEFT", Bar.Bar, "TOPLEFT", self.Config.Layout.BarTextureInsets, -self.Config.Layout.BarTextureInsets);
+  Bar.Bar.Texture:SetPoint("BOTTOMRIGHT", Bar.Bar, "BOTTOMRIGHT", -self.Config.Layout.BarTextureInsets, self.Config.Layout.BarTextureInsets);
   
   if self.Config.Layout.TextureBackgroundUseTexture == true then
-    Bar.Texture.Background:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
+    
+    Bar.Bar.Background:SetBackdrop({
+      bgFile = LSM:Fetch("statusbar", self.Config.Layout.BarTexture),
+      edgeFile = LSM:Fetch("border", self.Config.Layout.BarBorder),
+      tile = false,
+      edgeSize = self.Config.Layout.BarBorderSize,
+      insets = {left = self.Config.Layout.BarTextureInsets, right = self.Config.Layout.BarTextureInsets, top = self.Config.Layout.BarTextureInsets, bottom = self.Config.Layout.BarTextureInsets}
+    });
+    
   else
-    Bar.Texture.Background:SetTexture(1, 1, 1, 1);
+  
+    Bar.Bar.Background:SetBackdrop({
+      bgFile = "Interface\\CHATFRAME\\CHATFRAMEBACKGROUND",
+      tile = false,
+      edgeSize = 0,
+      insets = {left = 0, right = 0, top = 0, bottom = 0}
+    });
+  
+  end
+  
+  if self.Config.Layout.Icon ~= "NONE" then
+  
+    if self.Config.Layout.TextureBackgroundUseTexture == true then
+    
+      Bar.Button.Background:SetBackdrop({
+        bgFile = "Interface\\CHATFRAME\\CHATFRAMEBACKGROUND",
+        edgeFile = LSM:Fetch("border", self.Config.Layout.BarBorder),
+        tile = false,
+        edgeSize = self.Config.Layout.BarBorderSize,
+        insets = {left = self.Config.Layout.BarTextureInsets, right = self.Config.Layout.BarTextureInsets, top = self.Config.Layout.BarTextureInsets, bottom = self.Config.Layout.BarTextureInsets}
+      });
+    
+    else
+    
+      Bar.Button.Background:SetBackdrop({
+        bgFile = "Interface\\CHATFRAME\\CHATFRAMEBACKGROUND",
+        tile = false,
+        edgeSize = 0,
+        insets = {left = 0, right = 0, top = 0, bottom = 0}
+      });
+    
+    end
+  
   end
   
   if self.Config.Layout.ShowTooltip then
@@ -553,7 +598,7 @@ function Prototype:UpdateBar(Bar)
   
   end
   
-  Bar.Texture.Background:SetWidth(self.Config.Layout.BarWidth);
+  Bar.Bar.Background:SetWidth(self.Config.Layout.BarWidth);
   
   if self.Config.Layout.Clickable then
     
@@ -696,10 +741,12 @@ function Prototype:AuraNew(Aura)
       
       Bar.Text = _G[BarId.."Text"];
       Bar.Duration = _G[BarId.."Duration"];
-      Bar.Texture = _G[BarId.."Texture"];
-      Bar.TextureTexture = _G[BarId.."TextureTexture"];
-      Bar.Texture.Background = _G[BarId.."TextureBackground"];
-      Bar.Spark = _G[BarId.."TextureSpark"];
+      
+      Bar.Bar = _G[BarId.."Bar"];
+      Bar.Bar.Texture = _G[BarId.."BarTexture"];
+      Bar.Bar.Spark = _G[BarId.."BarSpark"];
+      Bar.Bar.Background = _G[BarId.."BarBackground"];
+      Bar.Bar.Background.Texture = _G[BarId.."BarBackgroundTexture"];
       
       Bar.Button = _G[BarId.."Button"];
       Bar.Button.Icon = _G[BarId.."ButtonIcon"];
@@ -809,7 +856,7 @@ function Prototype:AuraOld(Aura)
   
   -- The warning system can have changed the alpha and scale. Set it back.
   Bar.Button.Icon:SetAlpha(1.0);
-  Bar.Texture:SetAlpha(1.0);
+  Bar.Bar:SetAlpha(1.0);
   Bar:SetScale(1.0);
   
   -- Reset popup animation trigger and restore the frame level.

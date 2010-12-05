@@ -6,7 +6,7 @@ local LSM = LibStub("LibSharedMedia-3.0");
 -- Import most used functions into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
 local fmt, tostring = string.format, tostring;
-local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
+local select, pairs, ipairs, next, wipe, type, unpack = select, pairs, ipairs, next, wipe, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
 local GetTime, CreateFrame, IsModifierKeyDown = GetTime, CreateFrame, IsModifierKeyDown;

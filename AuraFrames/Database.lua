@@ -39,6 +39,8 @@ AuraFrames.DatabaseVersion = 206;
     BarContainer now have borders
     BarContainer now also support configuration of the spark
   
+  Version 207:
+    ButtonFacade skin "Aura Frames Default" renamed to "Aura Frames"
    
 ]]--
 
@@ -362,7 +364,15 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
     end
   
   end
+  
+  if OldVersion < 207 then
+  
+    if Container.ButtonFacade and Container.ButtonFacade.SkinId == "Aura Frames Default" then
+    
+      Container.ButtonFacade.SkinId = "Aura Frames";
+    
+    end
+  
+  end
 
 end
-
-

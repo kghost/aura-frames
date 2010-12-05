@@ -48,7 +48,7 @@ local Lookup = {
 -----------------------------------------------------------------
 local function round(x)
   
-  return floor(x + 0.5);
+  return math_floor(x + 0.5);
 
 end
 
