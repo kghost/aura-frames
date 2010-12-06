@@ -230,6 +230,11 @@ local AllSources = {
         Unit = "player",
         Type = "TOTEM",
       },
+      {
+        Name = "Boss Mods",
+        Unit = "boss",
+        Type = "ALERT",
+      },
     }
   },
 };
