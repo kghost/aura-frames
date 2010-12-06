@@ -126,16 +126,6 @@ end
 -- Function ActivateSource
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
-
-  -- We only support Unit "player".
-  if Unit ~= "player" then
-    return;
-  end
-  
-  -- We only support Type "TOTEM".
-  if Type ~= "TOTEM" then
-    return;
-  end
   
   LibAura:RegisterEvent("PLAYER_TOTEM_UPDATE", self, self.Update);
   LibAura:RegisterEvent("SPELLS_CHANGED", self, self.Update);
@@ -150,16 +140,6 @@ end
 -- Function DeactivateSource
 -----------------------------------------------------------------
 function Module:DeactivateSource(Unit, Type)
-
-  -- We only support Unit "player".
-  if Unit ~= "player" then
-    return;
-  end
-  
-  -- We only support Type "TOTEM".
-  if Type ~= "TOTEM" then
-    return;
-  end
   
   for _, Aura in ipairs(self.db) do
   
@@ -179,16 +159,6 @@ end
 -- Function GetAuras
 -----------------------------------------------------------------
 function Module:GetAuras(Unit, Type)
-
-  -- We only support Unit "player".
-  if Unit ~= "player" then
-    return {};
-  end
-  
-  -- We only support Type "TOTEM".
-  if Type ~= "TOTEM" then
-    return {};
-  end
   
   local Auras = {};
   

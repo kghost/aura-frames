@@ -128,14 +128,6 @@ Module.db = Module.db or {};
 -- Function ActivateSource
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
-
-  if not Module.EventsToMonitor[Unit] then
-    return;
-  end
-  
-  if Type ~= "HELPFUL" and Type ~= "HARMFUL" then
-    return;
-  end
   
   if next(self.db) == nil then
     self:RegisterEvent("PLAYER_ENTERING_WORLD", "ScanAllUnits");
@@ -164,14 +156,6 @@ end
 -- Function DeactivateSource
 -----------------------------------------------------------------
 function Module:DeactivateSource(Unit, Type)
-
-  if not self.db[Unit] then
-    return;
-  end
-  
-  if not self.db[Unit][Type] then
-    return;
-  end
   
   for _, Aura in ipairs(self.db[Unit][Type]) do
     LibAura:FireAuraOld(Aura);
@@ -200,14 +184,6 @@ end
 -- Function GetAuras
 -----------------------------------------------------------------
 function Module:GetAuras(Unit, Type)
-
-  if not self.db[Unit] then
-    return {};
-  end
-  
-  if not self.db[Unit][Type] then
-    return {};
-  end
 
   return self.db[Unit][Type];
 

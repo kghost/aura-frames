@@ -62,16 +62,6 @@ UpdateCooldownsScanThrottle = 0.2;
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
 
-  -- We only support Unit "player" and "pet".
-  if Unit ~= "player" and Unit ~= "pet" then
-    return;
-  end
-  
-  -- We only support Type "SPELLCOOLDOWN".
-  if Type ~= "SPELLCOOLDOWN" then
-    return;
-  end
-  
   if next(self.db) == nil then
   
     LibAura:RegisterEvent("SPELLS_CHANGED", self, self.TriggerUpdateAllSpellBooks);
@@ -105,15 +95,6 @@ end
 -- Function DeactivateSource
 -----------------------------------------------------------------
 function Module:DeactivateSource(Unit, Type)
-
-  if not self.db[Unit] then
-    return;
-  end
-  
-  -- We only support Type "SPELLCOOLDOWN".
-  if Type ~= "SPELLCOOLDOWN" then
-    return;
-  end
   
   for _, Aura in ipairs(self.db[Unit].Auras) do
     LibAura:FireAuraOld(Aura);
@@ -141,16 +122,6 @@ end
 -- Function GetAuras
 -----------------------------------------------------------------
 function Module:GetAuras(Unit, Type)
-
-  -- We only support Unit "player" and "pet".
-  if Unit ~= "player" and Unit ~= "pet" then
-    return {};
-  end
-  
-  -- We only support Type "SPELLCOOLDOWN".
-  if Type ~= "SPELLCOOLDOWN" then
-    return {};
-  end
   
   return self.db[Unit].Auras;
 

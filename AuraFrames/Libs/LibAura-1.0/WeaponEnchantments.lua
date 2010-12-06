@@ -118,16 +118,6 @@ end
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
 
-  -- We only support Unit "player".
-  if Unit ~= "player" then
-    return;
-  end
-  
-  -- We only support Type "WEAPON".
-  if Type ~= "WEAPON" then
-    return;
-  end
-  
   self.ScanTooltip = self.ScanTooltip  or CreateFrame("GameTooltip", "LibAura-1.0_ScanTooltip", nil, "GameTooltipTemplate");
   self.ScanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
   
@@ -140,15 +130,6 @@ end
 -----------------------------------------------------------------
 function Module:DeactivateSource(Unit, Type)
 
-  -- We only support Unit "player".
-  if Unit ~= "player" then
-    return;
-  end
-  
-  -- We only support Type "WEAPON".
-  if Type ~= "WEAPON" then
-    return;
-  end
   
   if self.db then
     for _, Aura in pairs(self.db) do
@@ -172,16 +153,6 @@ end
 function Module:GetAuras(Unit, Type)
 
   -- This function is rarely called. So we also not try to optimize it.
-
-  -- We only support Unit "player".
-  if Unit ~= "player" then
-    return {};
-  end
-  
-  -- We only support Type "WEAPON".
-  if Type ~= "WEAPON" then
-    return {};
-  end
 
   local Auras = {};
   

@@ -17,7 +17,7 @@ By default every attribute is defined as static unless there
 is NotStatic = true is defined. If the filter contains one or
 more attributes that are not static then the filter will be
 checked every x time. (This is implemented in the AuraList
-leyer).
+layer).
 
 ]]--
 
@@ -36,6 +36,7 @@ AuraFrames.AuraDefinition = {
       SPELLCOOLDOWN = "Spell Cooldown",
       ITEMCOOLDOWN = "Item Cooldown",
       TOTEM = "Totem",
+      ALERT = "Boss Mod Alert",
     },
     Order = true,
     Filter = true,

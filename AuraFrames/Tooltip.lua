@@ -22,11 +22,17 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
 
   GameTooltip:SetOwner(Frame, "ANCHOR_BOTTOMLEFT");
   
-  if Aura.Unit == "test" then
+  if Aura.Unit == "boss" and Aura.Type == "ALERT" then
+  
+    GameTooltip:AddLine("Boss Mod Alert!");
+    GameTooltip:AddLine("")
+    GameTooltip:AddLine("|cffff0000"..Aura.Name.."|r");
+
+  elseif Aura.Unit == "test" then
   
     GameTooltip:SetHyperlink("spell:"..Aura.SpellId);
   
-    GameTooltip:AddLine(" ")
+    GameTooltip:AddLine(" ");
     GameTooltip:AddLine("|cffff0000Test Aura|r");
 
   elseif Aura.Type == "WEAPON" then

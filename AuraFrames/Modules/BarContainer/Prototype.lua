@@ -163,6 +163,11 @@ local function BarOnUpdate(Container, Bar, Elapsed)
       
       Bar.Bar.Texture:SetTexCoord(Left, Right, 0, 1);
       
+    else
+    
+      Bar.Bar:SetWidth(Container.BarWidth);
+      Bar.Bar.Texture:SetTexCoord(0, 1, 0, 1);
+    
     end
     
     if Bar.ExpireFlashTime and TimeLeft < Bar.ExpireFlashTime then
@@ -434,13 +439,6 @@ function Prototype:UpdateBarDisplay(Bar)
   -- 1 is the min.
   Bar.WidthPerSecond = (self.BarWidth - 1) / Bar.BarMaxTime;
   
-  if Aura.ExpirationTime == 0 or (Aura.ExpirationTime ~= 0 and max(Aura.ExpirationTime - GetTime(), 0) > Bar.BarMaxTime) then
-    
-    Bar.Bar:SetWidth(self.BarWidth);
-    Bar.Bar.Texture:SetTexCoord(0, 1, 0, 1);
-    
-  end
-
   BarOnUpdate(self, Bar, 0.0);
 
 end

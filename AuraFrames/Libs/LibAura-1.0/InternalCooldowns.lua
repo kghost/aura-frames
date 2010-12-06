@@ -51,16 +51,6 @@ local AuraPool = {};
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
 
-  -- We only support Unit "player".
-  if Unit ~= "player" then
-    return;
-  end
-  
-  -- We only support Type "INTERNALCOOLDOWNITEM" and "INTERNALCOOLDOWNTALENT".
-  if Type ~= "INTERNALCOOLDOWNITEM" and Type ~= "INTERNALCOOLDOWNTALENT"  then
-    return;
-  end
-  
   self.ICD = self.ICD or LibStub("LibInternalCooldowns-1.0", true);
   
   -- No LibInternalCooldowns. Return :(
@@ -95,16 +85,6 @@ end
 -----------------------------------------------------------------
 function Module:DeactivateSource(Unit, Type)
 
-  -- We only support Unit "player".
-  if Unit ~= "player" then
-    return;
-  end
-  
-  -- We only support Type "INTERNALCOOLDOWNITEM" and "INTERNALCOOLDOWNTALENT".
-  if Type ~= "INTERNALCOOLDOWNITEM" and Type ~= "INTERNALCOOLDOWNTALENT"  then
-    return;
-  end
-  
   if not self.ICD then
     return;
   end
@@ -148,11 +128,6 @@ end
 -----------------------------------------------------------------
 function Module:GetAuras(Unit, Type)
 
-  -- We only support Unit "player".
-  if Unit ~= "player" then
-    return {};
-  end
-  
   if Type == "INTERNALCOOLDOWNITEM" then
 
     return self.db.Items or {};

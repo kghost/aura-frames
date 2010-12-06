@@ -71,11 +71,6 @@ end
 -- Function ActivateSource
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
-
-  -- We only support Unit "test".
-  if Unit ~= "test" then
-    return;
-  end
   
   -- If we don't have test date for Type or if we are already active for Type then return.
   if not Module.TestData[Type] or self.db[Type] then
@@ -124,13 +119,7 @@ end
 -- Function DeactivateSource
 -----------------------------------------------------------------
 function Module:DeactivateSource(Unit, Type)
-
-  -- We only support Unit "test".
-  if Unit ~= "test" then
-    return;
-  end
   
-      
   if not self.db[Type] then
     return;
   end
@@ -153,11 +142,6 @@ end
 -- Function GetAuras
 -----------------------------------------------------------------
 function Module:GetAuras(Unit, Type)
-
-  -- We only support Unit "test".
-  if Unit ~= "test" then
-    return {};
-  end
 
   return self.db[Type] or {};
 

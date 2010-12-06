@@ -52,16 +52,6 @@ local UpdateCooldownsScanThrottle = 0.2;
 -- Function ActivateSource
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
-
-  -- We only support Unit "player".
-  if Unit ~= "player" then
-    return;
-  end
-  
-  -- We only support Type "ITEMCOOLDOWN".
-  if Type ~= "ITEMCOOLDOWN" then
-    return;
-  end
   
   self.db = {};
   
@@ -81,17 +71,7 @@ end
 -- Function DeactivateSource
 -----------------------------------------------------------------
 function Module:DeactivateSource(Unit, Type)
-  
-  -- We only support Unit "player".
-  if Unit ~= "player" then
-    return;
-  end
-  
-  -- We only support Type "ITEMCOOLDOWN".
-  if Type ~= "ITEMCOOLDOWN" then
-    return;
-  end
-  
+
   for _, Aura in pairs(self.db) do
     LibAura:FireAuraOld(Aura);
   end
@@ -106,16 +86,8 @@ end
 -- Function GetAuras
 -----------------------------------------------------------------
 function Module:GetAuras(Unit, Type)
-
-  -- We only support Unit "player".
-  if Unit ~= "player" then
-    return {};
-  end
   
-  -- We only support Type "ITEMCOOLDOWN".
-  if Type ~= "ITEMCOOLDOWN" then
-    return {};
-  end
+  -- This function is rarely called. So we also not try to optimize it.
   
   local Auras = {};
   
@@ -189,14 +161,12 @@ function Module:UpdateDbItem(ItemId)
     Unit = "player",
     CasterUnit = "player",
     CasterName = UnitName("player"),
-    Duration = 0,
-    ExpirationTime = 0,
     IsStealable = false,
     IsCancelable = false,
     IsDispellable = false,
     Active = false,
     Index = ItemId,
-    AuraId = "playerITEMCOOLDOWN"..ItemId,
+    Id = "playerITEMCOOLDOWN"..ItemId,
     SpellId = 0,
     ItemId = ItemId,
     Active = false,

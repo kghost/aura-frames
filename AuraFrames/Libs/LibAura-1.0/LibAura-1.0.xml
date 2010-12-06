@@ -11,6 +11,7 @@
   <Script file="SpellCooldowns.lua"/>
   <Script file="ItemCooldowns.lua"/>
   <Script file="InternalCooldowns.lua"/>
+  <Script file="BossMods.lua"/>
   
   <!--
   <Script file="OldAuras.lua"/>
