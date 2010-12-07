@@ -29,7 +29,7 @@ local fmt, tostring = string.format, tostring;
 local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetTime, UnitName, CreateFrame, GetInventoryItemTexture, GetWeaponEnchantInfo = GetTime, UnitName, CreateFrame, GetInventoryItemTexture, GetWeaponEnchantInfo;
+local GetTime, UnitName, CreateFrame, GetInventoryItemTexture, GetWeaponEnchantInfo, GetInventoryItemID = GetTime, UnitName, CreateFrame, GetInventoryItemTexture, GetWeaponEnchantInfo, GetInventoryItemID;
 local ceil, abs = ceil, abs;
 local _G, WorldFrame = _G, WorldFrame;
 

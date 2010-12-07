@@ -1,7 +1,7 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
 -- Import used global references into the local namespace.
-local pairs, loadstring, pcall, tostring = pairs, loadstring, pcall, tostring;
+local pairs, ipairs, loadstring, pcall, tostring, tinsert, sort = pairs, ipairs, loadstring, pcall, tostring, tinsert, sort;
 
 --[[
 

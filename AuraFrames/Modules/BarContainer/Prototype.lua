@@ -164,10 +164,19 @@ local function BarOnUpdate(Container, Bar, Elapsed)
       Bar.Bar.Texture:SetTexCoord(Left, Right, 0, 1);
       
     else
-    
-      Bar.Bar:SetWidth(Container.BarWidth);
+      
       Bar.Bar.Texture:SetTexCoord(0, 1, 0, 1);
-    
+      
+      if Container.Config.Layout.BarDirection == "LEFTGROW" or Container.Config.Layout.BarDirection == "RIGHTGROW" then
+      
+        Bar.Bar:SetWidth(1);
+      
+      else
+      
+        Bar.Bar:SetWidth(Container.BarWidth);
+      
+      end
+      
     end
     
     if Bar.ExpireFlashTime and TimeLeft < Bar.ExpireFlashTime then
@@ -208,6 +217,20 @@ local function BarOnUpdate(Container, Bar, Elapsed)
         Bar.Bar:SetAlpha(1.0);
       
       end
+    
+    end
+  
+  else
+  
+    Bar.Bar.Texture:SetTexCoord(0, 1, 0, 1);
+    
+    if Container.Config.Layout.BarDirection == "LEFTGROW" or Container.Config.Layout.BarDirection == "RIGHTGROW" then
+    
+      Bar.Bar:SetWidth(Container.BarWidth);
+    
+    else
+    
+      Bar.Bar:SetWidth(1);
     
     end
   

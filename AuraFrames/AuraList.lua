@@ -15,7 +15,7 @@ local CreateFrame = CreateFrame;
     AuraNew(Aura);
     AuraOld(Aura);
     AuraChanged(Aura);
-    AuraAnchor(Aura, Index);
+    AuraAnchor(Aura, Index); -- Only when there is an Order config.
 
 ]]--
 

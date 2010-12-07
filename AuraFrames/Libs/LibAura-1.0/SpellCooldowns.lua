@@ -54,7 +54,7 @@ local SpellBookScanThrottle = 1.0;
 
 -- Update cooldowns throttle.
 local UpdateCooldownsLastScan = nil;
-UpdateCooldownsScanThrottle = 0.2;
+local UpdateCooldownsScanThrottle = 0.2;
 
 
 -----------------------------------------------------------------
@@ -417,19 +417,25 @@ function Module:SpellCasted(Unit, _, _, _, SpellId)
 
 end
 
+
 -----------------------------------------------------------------
 -- Function SpellCastFailed
 -----------------------------------------------------------------
 function Module:SpellCastFailed(Unit, _, _, _, SpellId)
 
-  if not self.db[Unit] then
+  if not self.db[Unit] or not self.db[Unit].Book[SpellId] then
     return;
   end
   
-  if self.db[Unit].Book[SpellId] and self.db[Unit].Book[SpellId].Active == true then
+  if self.db[Unit].Book[SpellId].Active == true then
   
     LibAura:FireAuraChanged(self.db[Unit].Book[SpellId]);
+  
+  elseif self.db[Unit].Book[SpellId].RefSpellId and self.db[Unit].Book[self.db[Unit].Book[SpellId].RefSpellId].Active == true then
+  
+    LibAura:FireAuraChanged(self.db[Unit].Book[self.db[Unit].Book[SpellId].RefSpellId]);
   
   end
 
 end
+

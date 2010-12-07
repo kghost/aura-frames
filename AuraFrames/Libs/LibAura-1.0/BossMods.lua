@@ -6,6 +6,9 @@
 --
 --  Description:
 --
+--    Hook into boss mods to receive timer information.
+--
+--    The following Boss Mods are supported: DBM, DXE and BigWings
 --
 -----------------------------------------------------------------
 
@@ -30,6 +33,12 @@ local fmt, tostring = string.format, tostring;
 local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
+local UnitName = UnitName;
+local GetTime, _G = GetTime, _G;
+
+-- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
+-- List them here for Mikk's FindGlobals script
+-- GLOBALS: DBM, DXE, BigWigs
 
 
 -- Internal db used for storing auras, spellbooks and spell history.
@@ -72,6 +81,27 @@ function Module:ActivateSource(Unit, Type)
     self.DXE_Alerts.Dropdown     = self.DXE_Dropdown;
     self.DXE_Alerts.CenterPopup  = self.DXE_CenterPopup;
     self.DXE_Alerts.Simple       = self.DXE_Simple;
+  
+  end
+  
+  if BigWigs then
+  
+    self.db.BigWigs = {};
+    self.Pool.BigWigs = {};
+    
+    -- Hook BigWigs functions.
+    
+    self.BigWigs_Bars = BigWigs:GetPlugin("Bars");
+    
+    -- Save old functions.
+    self.BigWigs_Bars.BigWigs_StartBarHooked  = self.BigWigs_Bars.BigWigs_StartBar;
+    self.BigWigs_Bars.BigWigs_StopBarHooked   = self.BigWigs_Bars.BigWigs_StopBar;
+    self.BigWigs_Bars.BigWigs_StopBarsHooked  = self.BigWigs_Bars.BigWigs_StopBars;
+  
+    -- Set new functions.
+    self.BigWigs_Bars.BigWigs_StartBar = self.BigWigs_StartBar;
+    self.BigWigs_Bars.BigWigs_StopBar  = self.BigWigs_StopBar;
+    self.BigWigs_Bars.BigWigs_StopBars = self.BigWigs_StopBars;
   
   end
   
@@ -214,9 +244,9 @@ function Module.DXE_Dropdown(...)
 
   local _, Id, Text, TotalTime, FlashTime, _, _, _, FlashScreen, Icon = ...;
   
-  af:Print("Found: ", Text);
+  af:Print("Dropdown: ", Text);
 
-  return self.DXE_Alerts.Dropdown(...);
+  return Module.DXE_Alerts.DropdownHooked(...);
 
 end
 
@@ -228,9 +258,9 @@ function Module.DXE_CenterPopup(...)
 
   local _, Id, Text, TotalTime, FlashTime, _, _, _, FlashScreen, Icon = ...;
   
-  af:Print("Found: ", Text);
+  af:Print("CenterPopup: ", Text);
 
-  return self.DXE_Alerts.CenterPopup(...);
+  return Module.DXE_Alerts.CenterPopupHooked(...);
 
 end
 
@@ -242,8 +272,48 @@ function Module.DXE_Simple(...)
 
   local _, Text, TotalTime, _, _, FlashScreen, Icon = ...;
   
-  af:Print("Found: ", Text);
+  af:Print("Simple: ", Text);
 
-  return self.DXE_Alerts.Simple(...);
+  return Module.DXE_Alerts.SimpleHooked(...);
+
+end
+
+
+-----------------------------------------------------------------
+-- Function BigWigs_StartBar
+-----------------------------------------------------------------
+function Module.BigWigs_StartBar(...)
+
+  local _, _, _, Key, Text, Time, Icon = ...;
+  
+  af:Print("Start: ", Text);
+
+  return Module.BigWigs_Bars.BigWigs_StartBarHooked(...);
+
+end
+
+
+-----------------------------------------------------------------
+-- Function BigWigs_StopBar
+-----------------------------------------------------------------
+function Module.BigWigs_StopBar(...)
+
+  local _, _, _, Text = ...;
+  
+  af:Print("Stop: ", Text);
+
+  return Module.BigWigs_Bars.BigWigs_StopBarHooked(...);
+
+end
+
+
+-----------------------------------------------------------------
+-- Function BigWigs_StopBars
+-----------------------------------------------------------------
+function Module.BigWigs_StopBars(...)
+
+  af:Print("Stop all bars");
+
+  return Module.BigWigs_Bars.BigWigs_StopBarsHooked(...);
 
 end
