@@ -29,7 +29,7 @@ LibAura:RegisterModuleSource(Module, "boss", "ALERT");
 
 -- Import used global references into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
-local fmt, tostring = string.format, tostring;
+local fmt, tostring, find = string.format, tostring, string.find;
 local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
@@ -54,7 +54,11 @@ local PoolSize = 5;
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
 
-  if DBM then
+  if not self.BossModBarsVisibility then
+    self.BossModBarsVisibility = true;
+  end
+
+  if DBM and not self.db.DBM then
     
     self.db.DBM = {};
     self.Pool.DBM = {};
@@ -62,9 +66,9 @@ function Module:ActivateSource(Unit, Type)
     LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.DBM_Scan);
     
   end
-  
-  if DXE then
-  
+
+  if DXE and not self.db.DXE then
+
     self.db.DXE = {};
     self.Pool.DXE = {};
   
@@ -73,18 +77,28 @@ function Module:ActivateSource(Unit, Type)
     self.DXE_Alerts = DXE:GetModule("Alerts");
     
     -- Save old functions.
-    self.DXE_Alerts.DropdownHooked    = self.DXE_Alerts.Dropdown;
-    self.DXE_Alerts.CenterPopupHooked = self.DXE_Alerts.CenterPopup;
-    self.DXE_Alerts.SimpleHooked      = self.DXE_Alerts.Simple;
+    self.DXE_Alerts.DropdownHooked       = self.DXE_Alerts.Dropdown;
+    self.DXE_Alerts.CenterPopupHooked    = self.DXE_Alerts.CenterPopup;
+    self.DXE_Alerts.SimpleHooked         = self.DXE_Alerts.Simple;
+
+    self.DXE_Alerts.QuashAllHooked       = self.DXE_Alerts.QuashAll;
+    self.DXE_Alerts.QuashByPatternHooked = self.DXE_Alerts.QuashByPattern;
+    self.DXE_Alerts.SetTimeleftHooked    = self.DXE_Alerts.SetTimeleft;
   
     -- Set new functions.
-    self.DXE_Alerts.Dropdown     = self.DXE_Dropdown;
-    self.DXE_Alerts.CenterPopup  = self.DXE_CenterPopup;
-    self.DXE_Alerts.Simple       = self.DXE_Simple;
+    self.DXE_Alerts.Dropdown        = self.DXE_Dropdown;
+    self.DXE_Alerts.CenterPopup     = self.DXE_CenterPopup;
+    self.DXE_Alerts.Simple          = self.DXE_Simple;
+  
+    self.DXE_Alerts.QuashAll        = self.DXE_QuashAll;
+    self.DXE_Alerts.QuashByPattern  = self.DXE_QuashByPattern;
+    self.DXE_Alerts.SetTimeleft     = self.DXE_SetTimeleft;
+    
+    LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.DXE_Scan);
   
   end
   
-  if BigWigs then
+  if BigWigs and not self.db.BigWigs then
   
     self.db.BigWigs = {};
     self.Pool.BigWigs = {};
@@ -105,6 +119,8 @@ function Module:ActivateSource(Unit, Type)
   
   end
   
+  LibAura:RegisterEvent("ADDON_LOADED", self, self.AddonLoaded);
+  
 end
 
 
@@ -116,7 +132,11 @@ function Module:DeactivateSource(Unit, Type)
   if DBM then
   
     LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.DBM_Scan);
-
+    
+    for Bar in DBM.Bars:GetBarIterator() do
+      _G[Bar.frame:GetName().."Bar"]:Show();
+    end
+    
     for _, Aura in pairs(self.db.DBM) do
       LibAura:FireAuraOld(Aura);
     end
@@ -128,16 +148,44 @@ function Module:DeactivateSource(Unit, Type)
     -- Unhook DXE functions.
     
     -- Restore old functions.
-    self.DXE_Alerts.Dropdown    = self.DXE_Alerts.DropdownHooked;
-    self.DXE_Alerts.CenterPopup = self.DXE_Alerts.CenterPopupHooked;
-    self.DXE_Alerts.Simple      = self.DXE_Alerts.SimpleHooked;
+    self.DXE_Alerts.Dropdown       = self.DXE_Alerts.DropdownHooked;
+    self.DXE_Alerts.CenterPopup    = self.DXE_Alerts.CenterPopupHooked;
+    self.DXE_Alerts.Simple         = self.DXE_Alerts.SimpleHooked;
+    
+    self.DXE_Alerts.QuashAll       = self.DXE_Alerts.QuashAllHooked;
+    self.DXE_Alerts.QuashByPattern = self.DXE_Alerts.QuashByPatternHooked;
+    self.DXE_Alerts.SetTimeleft    = self.DXE_Alerts.SetTimeleftHooked;
   
     -- Remove old functions.
-    self.DXE_Alerts.DropdownHooked    = nil;
-    self.DXE_Alerts.CenterPopupHooked = nil;
-    self.DXE_Alerts.SimpleHooked      = nil;
+    self.DXE_Alerts.DropdownHooked       = nil;
+    self.DXE_Alerts.CenterPopupHooked    = nil;
+    self.DXE_Alerts.SimpleHooked         = nil;
+  
+    self.DXE_Alerts.QuashAllHooked       = nil;
+    self.DXE_Alerts.QuashByPatternHooked = nil;
+    self.DXE_Alerts.SetTimeleftHooked    = nil;
+    
+    LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.DXE_Scan);
   
   end
+  
+  if self.BigWigs_Bars then
+  
+    -- Unhook BigWigs functions.
+  
+    -- Restore old functions.
+    self.BigWigs_Bars.BigWigs_StartBar = self.BigWigs_Bars.BigWigs_StartBarHooked;
+    self.BigWigs_Bars.BigWigs_StopBar  = self.BigWigs_Bars.BigWigs_StopBarHooked;
+    self.BigWigs_Bars.BigWigs_StopBars = self.BigWigs_Bars.BigWigs_StopBarsHooked;
+  
+    -- Remove old functions.
+    self.BigWigs_Bars.BigWigs_StartBarHooked  = nil;
+    self.BigWigs_Bars.BigWigs_StopBarHooked   = nil;
+    self.BigWigs_Bars.BigWigs_StopBarsHooked  = nil;
+  
+  end
+  
+  LibAura:UnregisterEvent("ADDON_LOADED", self, self.AddonLoaded);
 
   self.db = {};
   self.Pool = {};
@@ -150,19 +198,54 @@ end
 -----------------------------------------------------------------
 function Module:GetAuras(Unit, Type)
 
-  return {};
+  local Auras = {};
+  
+  for _, Aura in pairs(self.db.DBM) do
+  
+    tinsert(Auras, Aura);
+  
+  end
+  
+  return Auras;
 
 end
 
 
 -----------------------------------------------------------------
+-- Function AddonLoaded
+-----------------------------------------------------------------
+function Module:AddonLoaded(Name)
+
+  if Name == "DXE" then
+    self:ActivateSource(nil, nil);
+  end
+
+end
+
+
+-----------------------------------------------------------------
+-- Function SetBossModBarsVisibility
+-----------------------------------------------------------------
+function Module:SetBossModBarsVisibility(Visible)
+
+  self.BossModBarsVisibility = Visible;
+
+end
+
+
+-----------------------------------------------------------------
+-- Function GetBossModBarsVisibility
+-----------------------------------------------------------------
+function Module:GetBossModBarsVisibility()
+
+  return self.BossModBarsVisibility or true;
+
+end
+
+-----------------------------------------------------------------
 -- Function DBM_Scan
 -----------------------------------------------------------------
 function Module:DBM_Scan()
-
-  if not DBM then
-    return;
-  end
   
   local db, CurrentTime = self.db.DBM, GetTime();
   
@@ -173,6 +256,12 @@ function Module:DBM_Scan()
   end
 
   for Bar in DBM.Bars:GetBarIterator() do
+  
+    if self.BossModBarsVisibility == true then
+      _G[Bar.frame:GetName().."Bar"]:Show();
+    else
+      _G[Bar.frame:GetName().."Bar"]:Hide();
+    end
   
     local Name, Icon = _G[Bar.frame:GetName().."BarName"]:GetText(), _G[Bar.frame:GetName().."BarIcon1"]:GetTexture();
     
@@ -195,12 +284,12 @@ function Module:DBM_Scan()
           Index = 0,
           SpellId = 0,
           ItemId = 0,
-          Duration = Bar.totalTime,
-          ExpirationTime = CurrentTime + Bar.timer,
         };
         
         db[Id].Name = Name;
         db[Id].Icon = Icon;
+        db[Id].Duration = Bar.totalTime;
+        db[Id].ExpirationTime = CurrentTime + Bar.timer;
         db[Id].Id = "bossALERT_DBM"..Id;
         
         LibAura:FireAuraNew(db[Id]);
@@ -238,13 +327,79 @@ end
 
 
 -----------------------------------------------------------------
+-- Function DXE_Scan
+-----------------------------------------------------------------
+function Module:DXE_Scan()
+
+  local CurrentTime = GetTime();
+
+  local i = 1;
+  while (self.db.DXE[i]) do
+  
+    if self.db.DXE[i].ExpirationTime <= CurrentTime then
+    
+      local Aura = tremove(self.db.DXE, i);
+
+      LibAura:FireAuraOld(Aura);
+      
+      if PoolSize > #self.Pool.DXE then
+        tinsert(self.Pool.DXE, Aura);
+      end
+
+    else
+    
+      i = i + 1;
+    
+    end
+  
+  end
+
+end
+
+-----------------------------------------------------------------
+-- Function DXE_NewBar
+-----------------------------------------------------------------
+function Module:DXE_NewBar(Id, Text, TotalTime, Icon)
+
+  local Aura = tremove(self.Pool.DXE) or {
+    Type = "ALERT",
+    Count = 0,
+    Classification = "None",
+    Unit = "boss",
+    CasterUnit = "player",
+    CasterName = UnitName("player"),
+    IsStealable = false,
+    IsCancelable = false,
+    IsDispellable = false,
+    Index = 0,
+    SpellId = 0,
+    ItemId = 0,
+    DXE_Id = Id or "",
+  };
+  
+  Aura.Name = Text;
+  Aura.Icon = Icon;
+  Aura.Duration = TotalTime;
+  Aura.ExpirationTime = GetTime() + TotalTime;
+  Aura.Id = "bossALERT_DXE"..tostring(Aura);
+
+  tinsert(self.db.DXE, Aura);
+  
+  LibAura:FireAuraNew(Aura);
+
+end
+
+
+-----------------------------------------------------------------
 -- Function DXE_Dropdown
 -----------------------------------------------------------------
 function Module.DXE_Dropdown(...)
 
-  local _, Id, Text, TotalTime, FlashTime, _, _, _, FlashScreen, Icon = ...;
+  -- Hooked function, no self.
+
+  local _, Id, Text, TotalTime, _, _, _, _, _, Icon = ...;
   
-  af:Print("Dropdown: ", Text);
+  Module:DXE_NewBar(Id, Text, TotalTime, Icon);
 
   return Module.DXE_Alerts.DropdownHooked(...);
 
@@ -256,9 +411,11 @@ end
 -----------------------------------------------------------------
 function Module.DXE_CenterPopup(...)
 
-  local _, Id, Text, TotalTime, FlashTime, _, _, _, FlashScreen, Icon = ...;
+  -- Hooked function, no self.
+
+  local _, Id, Text, TotalTime, _, _, _, _, _, Icon = ...;
   
-  af:Print("CenterPopup: ", Text);
+  Module:DXE_NewBar(Id, Text, TotalTime, Icon);
 
   return Module.DXE_Alerts.CenterPopupHooked(...);
 
@@ -270,12 +427,101 @@ end
 -----------------------------------------------------------------
 function Module.DXE_Simple(...)
 
-  local _, Text, TotalTime, _, _, FlashScreen, Icon = ...;
+  -- Hooked function, no self.
+
+  local _, Text, TotalTime, _, _, _, Icon = ...;
   
-  af:Print("Simple: ", Text);
+  Module:DXE_NewBar(nil, Text, TotalTime, Icon);
 
   return Module.DXE_Alerts.SimpleHooked(...);
 
+end
+
+
+-----------------------------------------------------------------
+-- Function DXE_QuashAll
+-----------------------------------------------------------------
+function Module.DXE_QuashAll(...)
+
+  -- Hooked function, no self.
+
+  while (#Module.db.DXE > 0) do
+  
+    local Aura = tremove(Module.db.DXE);
+    
+    LibAura:FireAuraOld(Aura);
+    
+    if PoolSize > #Module.Pool.DXE then
+      tinsert(Module.Pool.DXE, Aura);
+    end
+    
+  end
+
+  return Module.DXE_Alerts.QuashAllHooked(...);
+  
+end
+
+
+-----------------------------------------------------------------
+-- Function DXE_QuashByPattern
+-----------------------------------------------------------------
+function Module.DXE_QuashByPattern(...)
+
+  -- Hooked function, no self.
+
+  local Pattern = ...;
+  
+  local i = 1;
+  while (Module.db.DXE[i]) do
+  
+    if Module.db.DXE[i].DXE_Id and find(Module.db.DXE[i].DXE_Id, Pattern) then
+    
+      local Aura = tremove(Module.db.DXE, i);
+
+      LibAura:FireAuraOld(Aura);
+      
+      if PoolSize > #Module.Pool.DXE then
+        tinsert(Module.Pool.DXE, Aura);
+      end
+    
+    else
+    
+      i = i + 1;
+    
+    end
+  
+  end
+
+  return Module.DXE_Alerts.QuashByPatternHooked(...);
+  
+end
+
+
+-----------------------------------------------------------------
+-- Function DXE_SetTimeleft
+-----------------------------------------------------------------
+function Module.DXE_SetTimeleft(...)
+
+  -- Hooked function, no self.
+
+  local Id, TimeLeft = ...;
+  
+  for _, Aura in ipairs(Module.db.DXE) do
+  
+    if Aura.DXE_Id == Id then
+    
+      Aura.ExpirationTime = GetTime() + TimeLeft;
+    
+      if Aura.Duration < TimeLeft then
+        Aura.Duration = TimeLeft;
+      end
+    
+    end
+  
+  end
+
+  return Module.DXE_Alerts.SetTimeleftHooked(...);
+  
 end
 
 

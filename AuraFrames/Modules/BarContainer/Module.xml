@@ -63,7 +63,7 @@
       <Frame>
         <Layers>
           <Layer level="OVERLAY">
-            <FontString name="$parentText" />
+            <FontString name="$parentText" nonspacewrap="true" wordwrap="false" />
             <FontString name="$parentDuration" hidden="true" />
           </Layer>
         </Layers>

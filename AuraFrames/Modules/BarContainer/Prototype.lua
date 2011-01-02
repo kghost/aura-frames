@@ -503,7 +503,8 @@ function Prototype:UpdateBar(Bar)
   
   local Adjust = PositionMappings[self.Config.Layout.Icon][self.Config.Layout.TextPosition];
   Bar.Text:SetPoint(self.Config.Layout.TextPosition, Bar, self.Config.Layout.TextPosition, Adjust[1], Adjust[2]);
-
+  Bar.Text:SetWidth(self.Config.Layout.BarWidth - ((self.Config.Layout.Icon == "NONE" and Module.BarHeight or 0) + (self.Config.Layout.ShowDuration and 60 or 0) + 20));
+  
   Adjust = PositionMappings[self.Config.Layout.Icon][self.Config.Layout.DurationPosition];
   Bar.Duration:SetPoint(self.Config.Layout.DurationPosition, Bar, self.Config.Layout.DurationPosition, Adjust[1], Adjust[2]);
   
