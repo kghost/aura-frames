@@ -38,7 +38,7 @@ local _G, WorldFrame = _G, WorldFrame;
 -- GLOBALS: UIParent
 
 
-Module.TimeSinceLastUpdate = 0;
+Module.TimeSinceLastUpdate = 1;
 
 -----------------------------------------------------------------
 -- Function Enable
@@ -118,8 +118,11 @@ end
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
 
-  self.ScanTooltip = self.ScanTooltip  or CreateFrame("GameTooltip", "LibAura-1.0_ScanTooltip", nil, "GameTooltipTemplate");
+  self.ScanTooltip = self.ScanTooltip or CreateFrame("GameTooltip", "LibAura-1.0_ScanTooltip", nil, "GameTooltipTemplate");
   self.ScanTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
+  
+  self.TimeSinceLastUpdate = 1; -- Make sure we get a real update.
+  self:Update(0);
   
   LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.Update);
 

@@ -230,6 +230,53 @@ function Module:SetBossModBarsVisibility(Visible)
 
   self.BossModBarsVisibility = Visible;
 
+  if DBM then
+  
+    for Bar in DBM.Bars:GetBarIterator() do
+    
+      if Visible == true then
+        _G[Bar.frame:GetName().."Bar"]:Show();
+      else
+        _G[Bar.frame:GetName().."Bar"]:Hide();
+      end
+    
+    end
+  
+  end
+
+  if self.DXE_Alerts then
+
+    local i = 1;
+    
+    while (_G["DXEAlertBar"..i]) do
+    
+      if Visible == true then
+      
+        if _G["DXEAlertBar"..i].ShowHooked then
+          
+          _G["DXEAlertBar"..i].Show = _G["DXEAlertBar"..i].ShowHooked;
+          _G["DXEAlertBar"..i].ShowHooked = nil;
+
+        end
+      
+      else
+      
+        if not _G["DXEAlertBar"..i].ShowHooked then
+      
+          _G["DXEAlertBar"..i]:Hide();
+          _G["DXEAlertBar"..i].ShowHooked = _G["DXEAlertBar"..i].Show;
+          _G["DXEAlertBar"..i].Show = function() end;
+        
+        end
+        
+      end
+      
+      i = i + 1;
+    
+    end
+
+  end
+
 end
 
 
@@ -391,6 +438,34 @@ end
 
 
 -----------------------------------------------------------------
+-- Function DXE_CheckBarVisibility
+-----------------------------------------------------------------
+function Module:DXE_CheckBarVisibility()
+
+  if self.BossModBarsVisibility == true then
+    return;
+  end
+  
+  local i = 1;
+  
+  while (_G["DXEAlertBar"..i]) do
+  
+    if not _G["DXEAlertBar"..i].ShowHooked then
+  
+      _G["DXEAlertBar"..i]:Hide();
+      _G["DXEAlertBar"..i].ShowHooked = _G["DXEAlertBar"..i].Show;
+      _G["DXEAlertBar"..i].Show = function() end;
+    
+    end
+    
+    i = i + 1;
+  
+  end
+
+end
+
+
+-----------------------------------------------------------------
 -- Function DXE_Dropdown
 -----------------------------------------------------------------
 function Module.DXE_Dropdown(...)
@@ -401,7 +476,9 @@ function Module.DXE_Dropdown(...)
   
   Module:DXE_NewBar(Id, Text, TotalTime, Icon);
 
-  return Module.DXE_Alerts.DropdownHooked(...);
+  Module.DXE_Alerts.DropdownHooked(...);
+  
+  Module:DXE_CheckBarVisibility();
 
 end
 
@@ -417,7 +494,9 @@ function Module.DXE_CenterPopup(...)
   
   Module:DXE_NewBar(Id, Text, TotalTime, Icon);
 
-  return Module.DXE_Alerts.CenterPopupHooked(...);
+  Module.DXE_Alerts.CenterPopupHooked(...);
+
+  Module:DXE_CheckBarVisibility();
 
 end
 
@@ -433,7 +512,9 @@ function Module.DXE_Simple(...)
   
   Module:DXE_NewBar(nil, Text, TotalTime, Icon);
 
-  return Module.DXE_Alerts.SimpleHooked(...);
+  Module.DXE_Alerts.SimpleHooked(...);
+  
+  Module:DXE_CheckBarVisibility();
 
 end
 
