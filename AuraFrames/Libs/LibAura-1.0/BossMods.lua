@@ -34,6 +34,7 @@ local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, t
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
 local UnitName = UnitName;
+local abs = abs;
 local GetTime, _G = GetTime, _G;
 
 -- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
@@ -343,8 +344,16 @@ function Module:DBM_Scan()
       
       else
       
+        local OldExpirationTime = db[Id].ExpirationTime;
+      
         db[Id].Duration = Bar.totalTime;
         db[Id].ExpirationTime = CurrentTime + Bar.timer;
+        
+        if abs(OldExpirationTime - db[Id].ExpirationTime) > 0.1 then
+        
+          LibAura:FireAuraChanged(db[Id]);
+        
+        end
       
       end
       
