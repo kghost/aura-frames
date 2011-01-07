@@ -52,8 +52,11 @@ AuraFrames.DatabaseVersion = 210;
   Version 209:
     ShowSpellId renamed to ShowAuraId
    
-  Version 209:
+  Version 210:
     Added to TimeLine: Length/Width, ButtonOffset, ButtonIndent, ButtonScale, TextOffset and BackgroundTextureFlipX/BackgroundTextureFlipY/BackgroundTextureRotate
+  
+  Version 211:
+    Removed from the BarContainer the button background options, added BarTextureFlipX/BarTextureFlipY/BarTextureRotate
     
 ]]--
 
@@ -71,6 +74,7 @@ local DatabaseDefaults = {
       },
     },
     HideBlizzardAuraFrames = true,
+    HideBossModsBars = false,
   },
 };
 
@@ -284,7 +288,7 @@ end
 -----------------------------------------------------------------
 function AuraFrames:DatabaseContainerUpgrade(Container)
 
-  local OldVersion = self.db.profile.DbVersion;
+  local OldVersion = Container.Version or self.db.profile.DbVersion;
 
   if OldVersion < 201 then
   
@@ -453,4 +457,20 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
   
   end
 
+  if OldVersion < 211 then
+  
+    if Container.Type == "BarContainer" then
+    
+      Container.Layout.ButtonBackgroundColor = nil;
+      Container.Layout.ButtonBackgroundUseBar = nil;
+      Container.Layout.ButtonBackgroundOpacity = nil;
+      
+      Container.Layout.BarTextureFlipX = false;
+      Container.Layout.BarTextureFlipY = false;
+      Container.Layout.BarTextureRotate = false;
+      
+    end
+  
+  end
+  
 end

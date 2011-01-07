@@ -37,15 +37,15 @@
               <Anchor point="CENTER" />
             </Anchors>
           </Cooldown>
-          <Frame frameStrata="BACKGROUND" name="$parentBackground">
-            <Size x="36" y="36"/>
-            <Anchors>
-              <Anchor point="CENTER" />
-            </Anchors>
-          </Frame>
         </Frames>
       </Button>
-      <Frame level="BACKGROUND" frameStrata="BACKGROUND" name="$parentBarBackground" />
+      <Frame level="BACKGROUND" frameStrata="BACKGROUND" name="$parentBarBackground">
+        <Layers>
+          <Layer level="BACKGROUND">
+            <Texture name="$parentTexture" />
+          </Layer>
+        </Layers>
+      </Frame>
       <Frame level="BORDER" name="$parentBar">
         <Layers>
           <Layer level="BACKGROUND">

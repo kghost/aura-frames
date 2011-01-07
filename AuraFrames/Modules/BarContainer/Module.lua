@@ -92,10 +92,6 @@ function Module:GetDatabaseDefaults()
       TextureBackgroundUseBarColor = false,
       TextureBackgroundOpacity = 0.5,
 
-      ButtonBackgroundColor = {0.3, 0.3, 0.3, 0.0},
-      ButtonBackgroundUseBar = false,
-      ButtonBackgroundOpacity = 0.5,
-
       Clickable = true,
       ShowTooltip = true,
       TooltipShowPrefix = false,
@@ -105,7 +101,10 @@ function Module:GetDatabaseDefaults()
 
       BarTexture = "Blizzard",
       BarTextureInsets = 2,
-      BarTextureMove = false;
+      BarTextureFlipX = false,
+      BarTextureFlipY = false,
+      BarTextureRotate = false,
+      BarTextureMove = false,
       BarDirection = "LEFTSHRINK",
       BarBorder = "Blizzard Tooltip",
       BarBorderSize = 8,

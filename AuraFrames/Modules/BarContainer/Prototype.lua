@@ -102,11 +102,73 @@ end);
 
 
 -----------------------------------------------------------------
+-- Local Function SetBarCoords
+-----------------------------------------------------------------
+local function SetBarCoords(Texture, FlipX, FlipY, Rotate, TexStart, TexEnd)
+
+  local ULx, ULy, LLx, LLy, URx, URy, LRx, LRy = 0, 0, 0, 1, 1, 0, 1, 1;
+  
+  if FlipX == true then
+  
+    ULy, LLy = LLy, ULy; -- Flip upper left to lower left.
+    URy, LRy = LRy, URy; -- Flip upper right to lower right.
+  
+  end
+  
+  if FlipY == true then
+  
+    ULx, URx = URx, ULx; -- Flip upper left to upper right.
+    LLx, LRx = LRx, LLx; -- Flip lower left to lower right.
+  
+  end
+  
+  if Rotate == true then
+  
+    -- We rotate 90 degrees to the right.
+    
+    ULx, ULy, URx, URy, LRx, LRy, LLx, LLy = LLx, LLy, ULx, ULy, URx, URy, LRx, LRy;
+    
+  end
+  
+  if Rotate == true then
+  
+    Texture:SetTexCoord(
+      ULx,
+      ULy == 0 and TexStart or 1 - TexStart,
+      LLx,
+      LLy == 0 and TexStart or 1 - TexStart,
+      URx,
+      URy == 0 and 1 - TexEnd or TexEnd,
+      LRx,
+      LRy == 0 and 1 - TexEnd or TexEnd
+    );
+  
+  else
+  
+    Texture:SetTexCoord(
+      ULx == 0 and TexStart or 1 - TexStart,
+      ULy,
+      LLx == 0 and TexStart or 1 - TexStart,
+      LLy,
+      URx == 0 and 1 - TexEnd or TexEnd,
+      URy,
+      LRx == 0 and 1 - TexEnd or TexEnd,
+      LRy
+    );
+  
+  end
+
+end
+
+
+-----------------------------------------------------------------
 -- Local Function BarOnUpdate
 -----------------------------------------------------------------
 local function BarOnUpdate(Container, Bar, Elapsed)
 
   local Config = Container.Config;
+  
+  local TexStart, TexEnd = 0, 1;
   
   if Bar.Aura.ExpirationTime ~= 0 then
     
@@ -140,32 +202,32 @@ local function BarOnUpdate(Container, Bar, Elapsed)
       local Left, Right;
       
       if Container.Config.Layout.BarDirection == "LEFTGROW" then
-
-        Left, Right = 0, 1 - Part;
+        
+        TexStart, TexEnd = 0, 1 - Part;
 
       elseif Container.Config.Layout.BarDirection == "RIGHTGROW" then
 
-        Left, Right = 1 - Part, 0;
+        TexStart, TexEnd = 1 - Part, 0;
 
       elseif Container.Config.Layout.BarDirection == "LEFTSHRINK" then
 
-        Left, Right = 0, Part;
+        TexStart, TexEnd = 0, Part;
 
       else -- RIGHTSHRINK
 
-        Left, Right = Part, 0;
+        TexStart, TexEnd = Part, 0;
 
       end
       
       if Container.Config.Layout.BarTextureMove then
-        Left, Right = 1 - Right, 1 - Left;
+        TexStart, TexEnd = 1 - TexEnd, 1 - TexStart;
       end
       
-      Bar.Bar.Texture:SetTexCoord(Left, Right, 0, 1);
+      --Bar.Bar.Texture:SetTexCoord(Left, Right, 0, 1);
       
     else
       
-      Bar.Bar.Texture:SetTexCoord(0, 1, 0, 1);
+      --Bar.Bar.Texture:SetTexCoord(0, 1, 0, 1);
       
       if Container.Config.Layout.BarDirection == "LEFTGROW" or Container.Config.Layout.BarDirection == "RIGHTGROW" then
       
@@ -222,7 +284,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
   
   else
   
-    Bar.Bar.Texture:SetTexCoord(0, 1, 0, 1);
+    --Bar.Bar.Texture:SetTexCoord(0, 1, 0, 1);
     
     if Container.Config.Layout.BarDirection == "LEFTGROW" or Container.Config.Layout.BarDirection == "RIGHTGROW" then
     
@@ -263,7 +325,9 @@ local function BarOnUpdate(Container, Bar, Elapsed)
     end
   
   end
-
+  
+  SetBarCoords(Bar.Bar.Texture, Container.Config.Layout.BarTextureFlipX, Container.Config.Layout.BarTextureFlipY, Container.Config.Layout.BarTextureRotate, TexStart, TexEnd);
+  
 end
 
 
@@ -404,39 +468,18 @@ function Prototype:UpdateBarDisplay(Bar)
   
   if self.Config.Layout.TextureBackgroundUseBarColor then
   
-    Bar.Bar.Background:SetBackdropColor(Color[1], Color[2], Color[3], self.Config.Layout.TextureBackgroundOpacity);
+    Bar.Bar.Background.Texture:SetVertexColor(Color[1], Color[2], Color[3], self.Config.Layout.TextureBackgroundOpacity);
     Bar.Bar.Background:SetBackdropBorderColor(min(Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.TextureBackgroundOpacity);
   
   else
   
-    Bar.Bar.Background:SetBackdropColor(unpack(self.Config.Layout.TextureBackgroundColor));
+    Bar.Bar.Background.Texture:SetVertexColor(unpack(self.Config.Layout.TextureBackgroundColor));
     Bar.Bar.Background:SetBackdropBorderColor(min(self.Config.Layout.TextureBackgroundColor[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.TextureBackgroundColor[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.TextureBackgroundColor[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.TextureBackgroundColor[4]);
   
   end
   
   if self.Config.Layout.Icon ~= "NONE" then
   
-    if self.Config.Layout.ButtonBackgroundUseBar == true then
-    
-      if self.Config.Layout.TextureBackgroundUseBarColor then
-      
-        Bar.Button.Background:SetBackdropColor(Color[1], Color[2], Color[3], self.Config.Layout.ButtonBackgroundOpacity);
-        Bar.Button.Background:SetBackdropBorderColor(min(Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.ButtonBackgroundOpacity);
-      
-      else
-      
-        Bar.Button.Background:SetBackdropColor(unpack(self.Config.Layout.TextureBackgroundColor));
-        Bar.Button.Background:SetBackdropBorderColor(min(self.Config.Layout.TextureBackgroundColor[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.TextureBackgroundColor[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.TextureBackgroundColor[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.TextureBackgroundColor[4]);
-      
-      end
-    
-    else
-    
-      Bar.Button.Background:SetBackdropColor(unpack(self.Config.Layout.ButtonBackgroundColor));
-      Bar.Button.Background:SetBackdropBorderColor(min(self.Config.Layout.ButtonBackgroundColor[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.ButtonBackgroundColor[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.ButtonBackgroundColor[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.ButtonBackgroundColor[4]);
-    
-    end
-    
     if self.Config.Layout.ShowCooldown == true and Aura.ExpirationTime > 0 then
       
       local CurrentTime = GetTime();
@@ -483,21 +526,18 @@ function Prototype:UpdateBar(Bar)
   if self.Config.Layout.Icon == "NONE" then
     
     Bar.Button:Hide();
-    Bar.Button.Background:Hide();
     
   elseif self.Config.Layout.Icon == "LEFT" then
   
     Bar.Button:ClearAllPoints();
     Bar.Button:SetPoint("TOPLEFT", Bar, "TOPLEFT", 0, 0);
     Bar.Button:Show();
-    Bar.Button.Background:Show();
   
   elseif self.Config.Layout.Icon == "RIGHT" then
   
     Bar.Button:ClearAllPoints();
     Bar.Button:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", 0, 0);
     Bar.Button:Show();
-    Bar.Button.Background:Show();
 
   end
   
@@ -558,48 +598,22 @@ function Prototype:UpdateBar(Bar)
   
   if self.Config.Layout.TextureBackgroundUseTexture == true then
     
+    Bar.Bar.Background.Texture:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
+    
     Bar.Bar.Background:SetBackdrop({
-      bgFile = LSM:Fetch("statusbar", self.Config.Layout.BarTexture),
       edgeFile = LSM:Fetch("border", self.Config.Layout.BarBorder),
-      tile = false,
       edgeSize = self.Config.Layout.BarBorderSize,
-      insets = {left = self.Config.Layout.BarTextureInsets, right = self.Config.Layout.BarTextureInsets, top = self.Config.Layout.BarTextureInsets, bottom = self.Config.Layout.BarTextureInsets}
     });
+    
+    Bar.Bar.Background.Texture:SetPoint("TOPLEFT", Bar.Bar.Background, "TOPLEFT", self.Config.Layout.BarTextureInsets, -self.Config.Layout.BarTextureInsets);
+    Bar.Bar.Background.Texture:SetPoint("BOTTOMRIGHT", Bar.Bar.Background, "BOTTOMRIGHT", -self.Config.Layout.BarTextureInsets, self.Config.Layout.BarTextureInsets);
+    
+    SetBarCoords(Bar.Bar.Background.Texture, self.Config.Layout.BarTextureFlipX, self.Config.Layout.BarTextureFlipY, self.Config.Layout.BarTextureRotate, 0, 1);
     
   else
   
-    Bar.Bar.Background:SetBackdrop({
-      bgFile = "Interface\\CHATFRAME\\CHATFRAMEBACKGROUND",
-      tile = false,
-      edgeSize = 0,
-      insets = {left = 0, right = 0, top = 0, bottom = 0}
-    });
-  
-  end
-  
-  if self.Config.Layout.Icon ~= "NONE" then
-  
-    if self.Config.Layout.TextureBackgroundUseTexture == true then
-    
-      Bar.Button.Background:SetBackdrop({
-        bgFile = "Interface\\CHATFRAME\\CHATFRAMEBACKGROUND",
-        edgeFile = LSM:Fetch("border", self.Config.Layout.BarBorder),
-        tile = false,
-        edgeSize = self.Config.Layout.BarBorderSize,
-        insets = {left = self.Config.Layout.BarTextureInsets, right = self.Config.Layout.BarTextureInsets, top = self.Config.Layout.BarTextureInsets, bottom = self.Config.Layout.BarTextureInsets}
-      });
-    
-    else
-    
-      Bar.Button.Background:SetBackdrop({
-        bgFile = "Interface\\CHATFRAME\\CHATFRAMEBACKGROUND",
-        tile = false,
-        edgeSize = 0,
-        insets = {left = 0, right = 0, top = 0, bottom = 0}
-      });
-    
-    end
-  
+    Bar.Bar.Background.Texture:SetTexture(1.0, 1.0, 1.0, 1.0);
+
   end
   
   if self.Config.Layout.ShowTooltip then
@@ -773,7 +787,6 @@ function Prototype:AuraNew(Aura)
       Bar.Button = _G[BarId.."Button"];
       Bar.Button.Icon = _G[BarId.."ButtonIcon"];
       Bar.Button.Border = _G[BarId.."ButtonBorder"];
-      Bar.Button.Background = _G[BarId.."ButtonBackground"];
       Bar.Button.Cooldown = _G[BarId.."ButtonCooldown"];
   
     else

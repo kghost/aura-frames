@@ -478,6 +478,14 @@ function Prototype:Update(...)
       
     end
     
+    if self.Config.Layout.Style ~= "HORIZONTAL" then
+    
+      -- We rotate 90 degrees to the right if we are vertical.
+      
+      ULx, ULy, URx, URy, LRx, LRy, LLx, LLy = LLx, LLy, ULx, ULy, URx, URy, LRx, LRy;
+      
+    end
+    
     self.FrameTexture:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
     
     self.Frame:SetBackdrop({

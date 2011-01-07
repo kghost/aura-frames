@@ -38,6 +38,10 @@ function AuraFrames:OnEnable()
 
   self:CheckBlizzardAuraFrames();
   
+  if self.db.profile.HideBossModsBars == true then
+    LibStub("LibAura-1.0"):GetModule("BossMods-1.0"):SetBossModBarsVisibility(false);
+  end
+  
   self:RegisterChatCommand("af", "OpenConfigDialog");
   self:RegisterChatCommand("afver", "DumpVersion");
   

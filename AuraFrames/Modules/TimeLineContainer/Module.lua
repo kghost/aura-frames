@@ -144,7 +144,7 @@ function Module:GetDatabaseDefaults()
       BackgroundBorderColor = {0.05, 0.3, 0.8, 0.8},
       BackgroundBorderSize = 8,
       
-      InactiveAlpha = 0.35,
+      InactiveAlpha = 0.65,
       
       ButtonFacade = {
         Gloss = 0.8,
