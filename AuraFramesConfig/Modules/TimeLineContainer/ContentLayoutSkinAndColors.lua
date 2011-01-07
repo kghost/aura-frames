@@ -176,6 +176,40 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
   end);
   BackgroundGroup:AddChild(BackgroundTextureColor);
   
+  local BackgroundTextureRotate = AceGUI:Create("CheckBox");
+  BackgroundTextureRotate:SetLabel("Rotate background texture");
+  --BackgroundTextureRotate:SetDescription("");
+  BackgroundTextureRotate:SetValue(LayoutConfig.BackgroundTextureRotate);
+  BackgroundTextureRotate:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BackgroundTextureRotate = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  BackgroundGroup:AddChild(BackgroundTextureRotate);
+  
+  local BackgroundTextureFlipX = AceGUI:Create("CheckBox");
+  BackgroundTextureFlipX:SetLabel("Flip horizontal");
+  --BackgroundTextureFlipX:SetDescription("");
+  BackgroundTextureFlipX:SetWidth(150);
+  BackgroundTextureFlipX:SetValue(LayoutConfig.BackgroundTextureFlipX);
+  BackgroundTextureFlipX:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BackgroundTextureFlipX = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  BackgroundGroup:AddChild(BackgroundTextureFlipX);
+  
+  local BackgroundTextureFlipY = AceGUI:Create("CheckBox");
+  BackgroundTextureFlipY:SetLabel("Flip vertical");
+  --BackgroundTextureFlipY:SetDescription("");
+  BackgroundTextureFlipY:SetWidth(150);
+  BackgroundTextureFlipY:SetValue(LayoutConfig.BackgroundTextureFlipY);
+  BackgroundTextureFlipY:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BackgroundTextureFlipY = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  BackgroundGroup:AddChild(BackgroundTextureFlipY);
+  
+  BackgroundGroup:AddSpace();
+  
   local BackgroundBorder = AceGUI:Create("LSM30_Border");
   BackgroundBorder:SetList(LSM:HashTable("border"));
   BackgroundBorder:SetLabel("Border");
@@ -209,6 +243,8 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
     ContainerInstance:Update("LAYOUT");
   end);
   BackgroundGroup:AddChild(BackgroundBorderColor);
+  
+  BackgroundGroup:AddSpace();
   
   local InactiveAlpha = AceGUI:Create("Slider");
   InactiveAlpha:SetWidth(200);

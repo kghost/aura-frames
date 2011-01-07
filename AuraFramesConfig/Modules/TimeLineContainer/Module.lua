@@ -3,6 +3,15 @@ local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
 local Module = AuraFramesConfig:NewModule("TimeLineContainer");
 
 -----------------------------------------------------------------
+-- Local Function round
+-----------------------------------------------------------------
+local function round(x)
+  
+  return math.floor(x + 0.5);
+
+end
+
+-----------------------------------------------------------------
 -- Function OnInitialize
 -----------------------------------------------------------------
 function Module:OnInitialize()
@@ -37,8 +46,8 @@ function Module:Update(ContainerId)
 
   if Container.Unlocked == true and Container.UnlockFrame then
   
-    Container.UnlockText:SetText("Container "..Config.Name);
-    Container.UnlockTextFrame:SetScale(1 / Config.Layout.Scale);
+    Container.UnlockFrame.Text:SetText("Container "..Config.Name);
+    Container.UnlockFrame.TextFrame:SetScale(1 / Config.Layout.Scale);
   
   end
 
@@ -61,23 +70,53 @@ function Module:UnlockContainer(ContainerId, Unlock)
     
     if not Container.UnlockFrame then
     
-      Container.UnlockFrame = CreateFrame("Frame", nil, Container.Frame);
-      Container.UnlockFrame:SetAllPoints(Container.Frame);
-      Container.UnlockFrame:EnableMouse(true);
-      Container.UnlockFrame:SetFrameStrata("TOOLTIP");
-      Container.UnlockFrame:SetScript("OnMouseDown", function(self) self:GetParent():StartMoving(); end);
-      Container.UnlockFrame:SetScript("OnMouseUp", function(self) self:GetParent():StopMovingOrSizing(); end);
+      local Frame = CreateFrame("Frame", nil);
+      Frame:SetAllPoints(Container.Frame);
+      Frame:EnableMouse(true);
+      Frame:SetFrameStrata("TOOLTIP");
+      Frame:SetScript("OnMouseDown", function(self) Container.Frame:StartMoving(); end);
+      Frame:SetScript("OnMouseUp", function(self) Container.Frame:StopMovingOrSizing(); end);
+      Frame:SetScript("OnUpdate", function()
       
-      Container.UnlockBackground = Container.UnlockFrame:CreateTexture();
-      Container.UnlockBackground:SetTexture(0.5, 0.8, 1.0, 0.8);
-      Container.UnlockBackground:SetAllPoints(Container.UnlockFrame);
+        if Container.Config.Layout.Style == "HORIZONTAL" then
+        
+          Container.Config.Layout.Length = round(Container.Frame:GetWidth());
+          Container.Config.Layout.Width = round(Container.Frame:GetHeight());
+        
+        else
+        
+          Container.Config.Layout.Length = round(Container.Frame:GetHeight());
+          Container.Config.Layout.Width = round(Container.Frame:GetWidth());
+        
+        end
+        
+        Container:Update("LAYOUT");
       
-      Container.UnlockTextFrame = CreateFrame("Frame", nil, Container.UnlockFrame);
-      Container.UnlockTextFrame:SetAllPoints(Container.UnlockFrame);
+      end);
       
-      Container.UnlockText = Container.UnlockTextFrame:CreateFontString();
-      Container.UnlockText:SetFontObject(ChatFontNormal);
-      Container.UnlockText:SetPoint("CENTER", Container.UnlockTextFrame, "CENTER");
+      Container.UnlockFrame = Frame;
+      
+      Frame.Background = Frame:CreateTexture();
+      Frame.Background:SetTexture(0.5, 0.8, 1.0, 0.8);
+      Frame.Background:SetAllPoints(Frame);
+      
+      Frame.TextFrame = CreateFrame("Frame", nil, Frame);
+      Frame.TextFrame:SetAllPoints(Frame);
+      
+      Frame.Text = Frame.TextFrame:CreateFontString();
+      Frame.Text:SetFontObject(ChatFontNormal);
+      Frame.Text:SetPoint("CENTER", Frame.TextFrame, "CENTER");
+      
+      Frame.ResizeFrame = CreateFrame("Frame", nil, Frame);
+      Frame.ResizeFrame:SetPoint("BOTTOMRIGHT", Frame, "BOTTOMRIGHT", 0, 0);
+      Frame.ResizeFrame:SetWidth(16);
+      Frame.ResizeFrame:SetHeight(16);
+      Frame.ResizeFrame:SetScript("OnMouseDown", function(self) Container.Frame:StartSizing(); end);
+      Frame.ResizeFrame:SetScript("OnMouseUp", function(self) Container.Frame:StopMovingOrSizing(); end);
+      
+      Frame.ResizeIcon = Frame.ResizeFrame:CreateTexture(nil, "OVERLAY");
+      Frame.ResizeIcon:SetTexture("Interface\\CHATFRAME\\UI-ChatIM-SizeGrabber-Down");
+      Frame.ResizeIcon:SetAllPoints(Frame.ResizeFrame);
       
     end
     
@@ -95,6 +134,20 @@ function Module:UnlockContainer(ContainerId, Unlock)
     if type(Container.Config.Location.RelativeTo) == "table" then
       Container.Config.Location.RelativeTo = Container.Config.Location.RelativeTo:GetID();
     end
+    
+    if Container.Config.Layout.Style == "HORIZONTAL" then
+    
+      Container.Config.Layout.Length = round(Container.Frame:GetWidth());
+      Container.Config.Layout.Width = round(Container.Frame:GetHeight());
+    
+    else
+    
+      Container.Config.Layout.Length = round(Container.Frame:GetHeight());
+      Container.Config.Layout.Width = round(Container.Frame:GetWidth());
+    
+    end
+    
+    Container:Update("LAYOUT");
     
     Container.UnlockFrame:Hide();
   

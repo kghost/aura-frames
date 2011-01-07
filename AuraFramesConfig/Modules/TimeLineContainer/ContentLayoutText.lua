@@ -120,7 +120,7 @@ function Module:ContentLayoutText(Content, ContainerId)
   end);
   TextGroup:AddChild(TextColor);
   
-  Content:AddSpace();
+  TextGroup:AddSpace();
   
   local TextLabels = AceGUI:Create("AuraFramesEditBox");
   TextLabels:SetLabel("Time labels to show");
@@ -145,7 +145,18 @@ function Module:ContentLayoutText(Content, ContainerId)
     
     ContainerInstance:Update("LAYOUT");
   end);
-  Content:AddChild(TextLabels);
+  TextGroup:AddChild(TextLabels);
+  
+  local TextOffset = AceGUI:Create("Slider");
+  TextOffset:SetValue(LayoutConfig.TextOffset);
+  TextOffset:SetLabel("Text offset");
+  TextOffset:SetSliderValues(-100, 100, 1);
+  TextOffset:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.TextOffset = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  TextGroup:AddChild(TextOffset);
+
   
   Content:AddSpace(2);
   Content:AddHeader("Duration");

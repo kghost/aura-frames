@@ -18,9 +18,15 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   
   Content:AddHeader("Size");
   Content:AddSpace();
+  
+  local SizeGroup = AceGUI:Create("SimpleGroup");
+  SizeGroup:SetLayout("Flow");
+  SizeGroup:SetRelativeWidth(1);
+  AuraFramesConfig:EnhanceContainer(SizeGroup);
+  Content:AddChild(SizeGroup);
  
   local Scale = AceGUI:Create("Slider");
-  Scale:SetWidth(500);
+  Scale:SetWidth(250);
   Scale:SetValue(LayoutConfig.Scale);
   Scale:SetLabel("The scale of the container");
   Scale:SetSliderValues(0.5, 3, 0.01);
@@ -30,31 +36,74 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
     ContainerInstance:Update("LAYOUT");
     Module:Update(ContainerId);
   end);
-  Content:AddChild(Scale);
-  Content:AddText("The scale will effect the whole container, including aura's and text.", GameFontHighlightSmall);
+  SizeGroup:AddChild(Scale);
   
-  Content:AddSpace(2);
+  local ButtonScale = AceGUI:Create("Slider");
+  ButtonScale:SetWidth(250);
+  ButtonScale:SetValue(LayoutConfig.ButtonScale);
+  ButtonScale:SetLabel("The scale of the buttons");
+  ButtonScale:SetSliderValues(0.5, 3, 0.01);
+  ButtonScale:SetIsPercent(true);
+  ButtonScale:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.ButtonScale = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
+  end);
+  SizeGroup:AddChild(ButtonScale);
   
-  local SizeGroup = AceGUI:Create("SimpleGroup");
-  SizeGroup:SetLayout("Flow");
-  SizeGroup:SetRelativeWidth(1);
-  AuraFramesConfig:EnhanceContainer(SizeGroup);
-  Content:AddChild(SizeGroup);
+  SizeGroup:AddText("The scale will effect the whole container, including aura's and text.", GameFontHighlightSmall, 250);
+  SizeGroup:AddText("The scale will effect only buttons and the button text.", GameFontHighlightSmall, 250);
   
-  local Size = AceGUI:Create("Slider");
-  Size:SetWidth(250);
-  Size:SetValue(LayoutConfig.Size);
-  Size:SetLabel("Size of the timeline");
-  Size:SetSliderValues(50, 1000, 10);
-  Size:SetCallback("OnValueChanged", function(_, _, Value)
-    LayoutConfig.Size = Value;
+  SizeGroup:AddSpace(2);
+  
+  local Length = AceGUI:Create("Slider");
+  Length:SetWidth(250);
+  Length:SetValue(LayoutConfig.Length);
+  Length:SetLabel("Length of the timeline");
+  Length:SetSliderValues(50, 2000, 1);
+  Length:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.Length = Value;
     ContainerInstance:Update("LAYOUT");
   end);
-  SizeGroup:AddChild(Size);
+  SizeGroup:AddChild(Length);
+  
+  local Width = AceGUI:Create("Slider");
+  Width:SetWidth(250);
+  Width:SetValue(LayoutConfig.Width);
+  Width:SetLabel("Width of the timeline");
+  Width:SetSliderValues(5, 200, 1);
+  Width:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.Width = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  SizeGroup:AddChild(Width);
 
-  SizeGroup:AddText(" ", nil, 250);
-
-  SizeGroup:AddText("The width of the bars including the aura icon.", GameFontHighlightSmall, 250);
+  SizeGroup:AddText("The lenght of the timeline bar", GameFontHighlightSmall, 250);
+  SizeGroup:AddText("The width of the timeline bar", GameFontHighlightSmall, 250);
+  
+  SizeGroup:AddSpace(2);
+  
+  local ButtonOffset = AceGUI:Create("Slider");
+  ButtonOffset:SetWidth(250);
+  ButtonOffset:SetValue(LayoutConfig.ButtonOffset);
+  ButtonOffset:SetLabel("Button offset");
+  ButtonOffset:SetSliderValues(-100, 100, 1);
+  ButtonOffset:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.ButtonOffset = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  SizeGroup:AddChild(ButtonOffset);
+  
+  local ButtonIndent = AceGUI:Create("CheckBox");
+  ButtonIndent:SetLabel("Keep buttons inside the timeline");
+  ButtonIndent:SetWidth(250);
+  ButtonIndent:SetValue(LayoutConfig.ButtonIndent);
+  ButtonIndent:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.ButtonIndent = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  SizeGroup:AddChild(ButtonIndent);
+  
   
   Content:AddSpace();
 
