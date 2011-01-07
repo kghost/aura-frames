@@ -16,6 +16,7 @@ Export.lua
 Import.lua
 
 ContentGeneral.lua
+ContentGeneralSettings.lua
 ContentContainers.lua
 ContentContainer.lua
 ContentSources.lua

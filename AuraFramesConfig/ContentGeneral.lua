@@ -10,24 +10,8 @@ function AuraFramesConfig:ContentGeneral()
 
   self.Content:SetLayout("List");
   
-  self.Content:AddText("General Settings\n", GameFontNormalLarge);
+  self.Content:AddText("General\n", GameFontNormalLarge);
 
-  self.Content:AddHeader("Blizzard Buff Frames");
-
-  self.Content:AddText("Disable and hide the default frames that are used by Blizzard to display buff/debuff aura's. When you enable the Blizzard frames again you need to reload/relog to show them!\n");
-
-  local HideBlizzard = AceGUI:Create("CheckBox");
-  HideBlizzard:SetLabel("Hide Blizzard aura frames");
-  HideBlizzard:SetValue(AuraFrames.db.profile.HideBlizzardAuraFrames);
-  HideBlizzard:SetCallback("OnValueChanged", function(_, _, Value)
-    AuraFrames.db.profile.HideBlizzardAuraFrames = Value;
-    if Value == true then
-      AuraFrames:CheckBlizzardAuraFrames();
-    end
-  end);
-  self.Content:AddChild(HideBlizzard);
-
-  self.Content:AddSpace();
   self.Content:AddHeader("Version Information");
   
   local VersionGroup = AceGUI:Create("SimpleGroup");

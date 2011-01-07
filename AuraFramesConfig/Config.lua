@@ -210,6 +210,13 @@ function AuraFramesConfig:RefreshTree()
       value = "General",
       text = "General",
       execute = function() AuraFramesConfig:ContentGeneral(); end,
+      children = {
+        {
+          value = "Settings",
+          text = "Settings",
+          execute = function() AuraFramesConfig:ContentGeneralSettings(); end,
+        },
+      },
     },
     {
       value = "Containers",

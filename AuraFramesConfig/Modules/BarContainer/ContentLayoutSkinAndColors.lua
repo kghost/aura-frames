@@ -191,46 +191,6 @@ local function BackgroundContent(Content, ContainerId)
   
   end
   
-  local ColorUseSame = AceGUI:Create("CheckBox");
-  ColorUseSame:SetWidth(300);
-  ColorUseSame:SetLabel("Use the same color for button as bar");
-  ColorUseSame:SetDescription("This will use the background color from the normal background.");
-  ColorUseSame:SetValue(LayoutConfig.ButtonBackgroundUseBar);
-  ColorUseSame:SetCallback("OnValueChanged", function(_, _, Value)
-    LayoutConfig.ButtonBackgroundUseBar = Value;
-    ContainerInstance:Update("LAYOUT");
-    BackgroundContent(Content, ContainerId)
-  end);
-  BackgroundGroup:AddChild(ColorUseSame);
-
-  if LayoutConfig.TextureBackgroundUseBarColor == true and LayoutConfig.ButtonBackgroundUseBar == true then
-  
-    local ButtonBackgroundOpacity = AceGUI:Create("Slider");
-    ButtonBackgroundOpacity:SetValue(LayoutConfig.ButtonBackgroundOpacity);
-    ButtonBackgroundOpacity:SetLabel("The opacity of the texture");
-    ButtonBackgroundOpacity:SetSliderValues(0, 1, 0.01);
-    ButtonBackgroundOpacity:SetIsPercent(true);
-    ButtonBackgroundOpacity:SetCallback("OnValueChanged", function(_, _, Value)
-      LayoutConfig.ButtonBackgroundOpacity = Value;
-      ContainerInstance:Update("LAYOUT");
-    end);
-    BackgroundGroup:AddChild(ButtonBackgroundOpacity);
-  
-  elseif LayoutConfig.ButtonBackgroundUseBar == false then
-
-    local ColorButtonBackground = AceGUI:Create("ColorPicker");
-    ColorButtonBackground:SetHasAlpha(true);
-    ColorButtonBackground:SetDisabled(LayoutConfig.ButtonBackgroundUseBar);
-    ColorButtonBackground:SetColor(unpack(LayoutConfig.ButtonBackgroundColor));
-    ColorButtonBackground:SetLabel("Button Background");
-    ColorButtonBackground:SetCallback("OnValueChanged", function(_, _, ...)
-      LayoutConfig.ButtonBackgroundColor = {...};
-      ContainerInstance:Update("LAYOUT");
-    end);
-    BackgroundGroup:AddChild(ColorButtonBackground);
-    
-  end
-  
   Content:AddSpace();
   
   Content:ResumeLayout();
@@ -292,6 +252,40 @@ function Module:ContentLayoutSkinAndColors(Content, ContainerId)
     ContainerInstance:Update("LAYOUT");
   end);
   BarGroup:AddChild(BarTextureMove);
+  
+  local BarTextureRotate = AceGUI:Create("CheckBox");
+  BarTextureRotate:SetLabel("Rotate bar texture");
+  --BarTextureRotate:SetDescription("");
+  BarTextureRotate:SetValue(LayoutConfig.BarTextureRotate);
+  BarTextureRotate:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarTextureRotate = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  BarGroup:AddChild(BarTextureRotate);
+  
+  local BarTextureFlipX = AceGUI:Create("CheckBox");
+  BarTextureFlipX:SetLabel("Flip horizontal");
+  --BarTextureFlipX:SetDescription("");
+  BarTextureFlipX:SetWidth(150);
+  BarTextureFlipX:SetValue(LayoutConfig.BarTextureFlipX);
+  BarTextureFlipX:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarTextureFlipX = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  BarGroup:AddChild(BarTextureFlipX);
+  
+  local BarTextureFlipY = AceGUI:Create("CheckBox");
+  BarTextureFlipY:SetLabel("Flip vertical");
+  --BarTextureFlipY:SetDescription("");
+  BarTextureFlipY:SetWidth(150);
+  BarTextureFlipY:SetValue(LayoutConfig.BarTextureFlipY);
+  BarTextureFlipY:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarTextureFlipY = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  BarGroup:AddChild(BarTextureFlipY);
+  
+  BarGroup:AddSpace();
   
   local BarBorder = AceGUI:Create("LSM30_Border");
   BarBorder:SetList(LSM:HashTable("border"));
