@@ -357,7 +357,7 @@ function Module:DBM_Scan()
       
       end
       
-      db[Id].Old = nil;
+      db[Id].Old = false;
       
     end
 

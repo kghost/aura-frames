@@ -257,7 +257,7 @@ function AuraFrames.OrderPrototype:Build()
   end
 
   local Code = "return function(Object1, Object2) local Value1, Value2; "..tconcat(Rules, " ").." return Object1.Name > Object2.Name; end;";
-
+af:Print(Code);
   local Function, ErrorMessage = loadstring(Code);
   
   if Function then
@@ -344,9 +344,8 @@ function AuraFrames.OrderPrototype:Add(Item)
     
       if self.Compare(Item, self[i]) == true then
         tinsert(self, i, Item);
-        self.NotifyFunc(Item, i);
         
-        for j = i + 1, #self do
+        for j = i, #self do
           self.NotifyFunc(self[j], j);
         end
         
@@ -397,14 +396,15 @@ function AuraFrames.OrderPrototype:Update(Item)
     return;
   end
   
+
   -- The item need to be moved up in the list.
   if Index ~= 1 and self.Compare(Item, self[Index - 1]) == true then
   
     tremove(self, Index);
     
-    for i = Index - 1, 2, -1 do
+    for i = 1, Index - 1 do
     
-      if self.Compare(Item, self[i - 1]) == true then
+      if self.Compare(Item, self[i]) == true then
       
         tinsert(self, i, Item);
         
@@ -418,12 +418,6 @@ function AuraFrames.OrderPrototype:Update(Item)
     
     end
     
-    tinsert(self, 1, Item);
-    
-    for i = 1, Index do
-      self.NotifyFunc(self[i], i);
-    end
-    
     return;
 
   end
@@ -435,11 +429,11 @@ function AuraFrames.OrderPrototype:Update(Item)
     
     for i = Index + 1, #self do
     
-      if self.Compare(self[i], Item) == false then
+      if self.Compare(Item, self[i]) == true then
       
         tinsert(self, i, Item);
         
-        for j = i, #self do
+        for j = Index, #self do
           self.NotifyFunc(self[j], j);
         end
         
@@ -451,7 +445,9 @@ function AuraFrames.OrderPrototype:Update(Item)
     
     tinsert(self, Item);
     
-    self.NotifyFunc(Item, #self);
+    for j = Index, #self do
+      self.NotifyFunc(self[j], j);
+    end
     
     return;
     

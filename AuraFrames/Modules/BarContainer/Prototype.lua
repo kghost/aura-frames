@@ -939,6 +939,8 @@ function Prototype:AuraChanged(Aura)
   
   -- Start popup animation.
   Bar.PopupTime = 0.0;
+  
+  BarOnUpdate(self, Bar, 0.0);
 
 end
 
