@@ -4,7 +4,12 @@
   <Script file="Module.lua" />
   <Script file="Prototype.lua" />
 
-  <Frame name="AuraFramesTimeLineContainerTemplate" parent="UIParent" virtual="true" movable="true">
+  <Frame name="AuraFramesTimeLineContainerTemplate" parent="UIParent" virtual="true" movable="true" resizable="true">
+    <Layers>
+      <Layer level="BACKGROUND">
+        <Texture name="$parentTexture" />
+      </Layer>
+    </Layers>
   </Frame>
 
   <Button name="AuraFramesTimeLineTemplate" virtual="true" hidden="true">

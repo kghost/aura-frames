@@ -25,15 +25,15 @@ local ContainerButtonPoolSize = 5;
 -- Counters for each butten type.
 local ButtonCounter = 0;
 
--- Direction = Style = {Direction = {AnchorPoint, X Direction, Y Direction, Space}}
+-- Direction = Style = {Direction = {AnchorPoint, X Direction, Y Direction, Button Offset X, Button Offset Y}}
 local DirectionMapping = {
   HORIZONTAL = {
-    HIGH  = {"RIGHT" , -1,  0, Module.ButtonSizeX / 2},
-    LOW   = {"LEFT"  ,  1,  0, Module.ButtonSizeX / 2},
+    HIGH  = {"RIGHT" , -1,  0, 0, 1},
+    LOW   = {"LEFT"  ,  1,  0, 0, 1},
   },
   VERTICAL = {
-    HIGH  = {"TOP"   ,  0, -1, Module.ButtonSizeY / 2},
-    LOW   = {"BOTTOM",  0,  1, Module.ButtonSizeY / 2},
+    HIGH  = {"TOP"   ,  0, -1, 1, 0},
+    LOW   = {"BOTTOM",  0,  1, 1, 0},
   },
 };
 
@@ -146,6 +146,14 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
     
     end
     
+    Button:Show();
+    
+  else
+  
+    -- Hide aura's without an ExpirationTime.
+    Button:Hide();
+    return;
+  
   end
   
   if Button.PopupTime ~= nil and Config.Warnings.Changing.Popup == true then
@@ -161,14 +169,14 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
     if Button.PopupTime > Config.Warnings.Changing.PopupTime then
     
       Button.PopupTime = nil;
-      Button:SetScale(1.0);
+      Button:SetScale(Container.ButtonScale);
       Button:SetFrameLevel(PopupFrameLevelNormal);
     
     else
     
       local Scale = 1 + (((math_sin(-PI_2 + ((Button.PopupTime / Config.Warnings.Changing.PopupTime) * PI2)) + 1) / 2) * (Config.Warnings.Changing.PopupScale - 1));
       
-      Button:SetScale(Scale);
+      Button:SetScale(Container.ButtonScale * Scale);
     
     end
   
@@ -179,7 +187,7 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
     -- Part is going from 0 to 1.
     local Part = (0.3 - TimeLeft) * (1 / 0.3);
   
-    Button:SetScale(1 + (Part * 2));
+    Button:SetScale(Container.ButtonScale * (1 + (Part * 2)));
     Button.Icon:SetAlpha(1 - Part);
     
   end  
@@ -191,9 +199,9 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
   local Offset;
   
   if Button.Aura.ExpirationTime == 0 or Config.Layout.MaxTime < TimeLeft then
-    Offset = Container.Direction[4];
+    Offset = Container.ButtonIndent / Scale;
   else
-    Offset = (((Container.StepPerSecond * (Config.Layout.MaxTime - TimeLeft)) * CalcPos(TimeLeft, Config.Layout.MaxTime, Config.Layout.TimeCompression)) + Container.Direction[4]) / Scale;
+    Offset = (((Container.StepPerSecond * (Config.Layout.MaxTime - TimeLeft)) * CalcPos(TimeLeft, Config.Layout.MaxTime, Config.Layout.TimeCompression)) + Container.ButtonIndent) / Scale;
   end
   
   -- Set the position.
@@ -201,8 +209,8 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
     "CENTER",
     Container.Frame,
     Container.Direction[1],
-    Container.Direction[2] * Offset,
-    Container.Direction[3] * Offset
+    (Container.Direction[2] * Offset) + (Config.Layout.ButtonOffset * Container.Direction[4] / Scale),
+    (Container.Direction[3] * Offset) + (Config.Layout.ButtonOffset * Container.Direction[5] / Scale)
   );
 
 end
@@ -398,6 +406,8 @@ function Prototype:UpdateButton(Button)
     
   end
   
+  Button:SetScale(self.ButtonScale);
+  
   self:UpdateButtonDisplay(Button);
 
 end
@@ -418,37 +428,64 @@ function Prototype:Update(...)
 
   if Changed == "ALL" or Changed == "LAYOUT" then
 
-    if self.Config.Layout.Style == "HORIZONTAL" then
-    
-      self.Frame:SetWidth(self.Config.Layout.Size);
-      self.Frame:SetHeight(Module.ButtonSizeY);
-    
-    else
-    
-      self.Frame:SetWidth(Module.ButtonSizeX);
-      self.Frame:SetHeight(self.Config.Layout.Size);
-    
-    end
-
     self.Frame:SetScale(self.Config.Layout.Scale);
     
     if self.Unlocked ~= true then
+    
+      if self.Config.Layout.Style == "HORIZONTAL" then
+      
+        self.Frame:SetWidth(self.Config.Layout.Length);
+        self.Frame:SetHeight(self.Config.Layout.Width);
+      
+      else
+      
+        self.Frame:SetWidth(self.Config.Layout.Width);
+        self.Frame:SetHeight(self.Config.Layout.Length);
+      
+      end
     
       self.Frame:ClearAllPoints();
       self.Frame:SetPoint(self.Config.Location.FramePoint, self.Config.Location.RelativeTo, self.Config.Location.RelativePoint, self.Config.Location.OffsetX, self.Config.Location.OffsetY);
     
     end
     
+    self.FrameTexture:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BackgroundTexture));
+    self.FrameTexture:SetPoint("TOPLEFT", self.Frame, "TOPLEFT", self.Config.Layout.BackgroundTextureInsets, -self.Config.Layout.BackgroundTextureInsets);
+    self.FrameTexture:SetPoint("BOTTOMRIGHT", self.Frame, "BOTTOMRIGHT", -self.Config.Layout.BackgroundTextureInsets, self.Config.Layout.BackgroundTextureInsets);
+    self.FrameTexture:SetVertexColor(unpack(self.Config.Layout.BackgroundTextureColor));
+    
+    local ULx, ULy, LLx, LLy, URx, URy, LRx, LRy = 0, 0, 0, 1, 1, 0, 1, 1;
+    
+    if self.Config.Layout.BackgroundTextureFlipX == true then
+    
+      ULy, LLy = LLy, ULy; -- Flip upper left to lower left.
+      URy, LRy = LRy, URy; -- Flip upper right to lower right.
+    
+    end
+    
+    if self.Config.Layout.BackgroundTextureFlipY == true then
+    
+      ULx, URx = URx, ULx; -- Flip upper left to upper right.
+      LLx, LRx = LRx, LLx; -- Flip lower left to lower right.
+    
+    end
+    
+    if self.Config.Layout.BackgroundTextureRotate == true then
+    
+      -- We rotate 90 degrees to the right.
+      
+      ULx, ULy, URx, URy, LRx, LRy, LLx, LLy = LLx, LLy, ULx, ULy, URx, URy, LRx, LRy;
+      
+    end
+    
+    self.FrameTexture:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
+    
     self.Frame:SetBackdrop({
-      bgFile = LSM:Fetch("statusbar", self.Config.Layout.BackgroundTexture), 
       edgeFile = LSM:Fetch("border", self.Config.Layout.BackgroundBorder), 
-      tile = false,
       edgeSize = self.Config.Layout.BackgroundBorderSize, 
-      insets = {left = self.Config.Layout.BackgroundTextureInsets, right = self.Config.Layout.BackgroundTextureInsets, top = self.Config.Layout.BackgroundTextureInsets, bottom = self.Config.Layout.BackgroundTextureInsets}
     });
-    self.Frame:SetBackdropColor(unpack(self.Config.Layout.BackgroundTextureColor));
     self.Frame:SetBackdropBorderColor(unpack(self.Config.Layout.BackgroundBorderColor));
-  
+    
     self.TooltipOptions = {
       ShowPrefix = self.Config.Layout.TooltipShowPrefix,
       ShowCaster = self.Config.Layout.TooltipShowCaster,
@@ -484,7 +521,10 @@ function Prototype:Update(...)
     );
     
     self.Direction = DirectionMapping[self.Config.Layout.Style][self.Config.Layout.Direction];
-    self.StepPerSecond = ((self.Config.Layout.Size - (self.Direction[4] * 2)) / self.Config.Layout.MaxTime);
+    self.ButtonIndent = self.Config.Layout.ButtonIndent == true and (36 * self.Config.Layout.ButtonScale) / 2 or 0;
+    self.StepPerSecond = ((self.Config.Layout.Length - (self.ButtonIndent * 2)) / self.Config.Layout.MaxTime);
+    
+    self.ButtonScale = self.Config.Layout.ButtonScale;
     
     for _, Button in pairs(self.Buttons) do
       self:UpdateButton(Button);
@@ -505,15 +545,15 @@ function Prototype:Update(...)
       
       for Index, Time in ipairs(self.Config.Layout.TextLabels) do
 
-        if self.Config.Layout.Size >= Time and Time >= 0 then
+        if self.Config.Layout.MaxTime >= Time and Time >= 0 then
 
           local Label = _G[FrameId.."_Label"..Index] or self.Frame:CreateFontString(FrameId.."_Label"..Index, "ARTWORK");
           
           Label:ClearAllPoints();
           
-          local Offset = self.Direction[4] + (((self.Config.Layout.MaxTime - Time) * self.StepPerSecond) * CalcPos(Time, self.Config.Layout.MaxTime, self.Config.Layout.TimeCompression));
+          local Offset = self.ButtonIndent + (((self.Config.Layout.MaxTime - Time) * self.StepPerSecond) * CalcPos(Time, self.Config.Layout.MaxTime, self.Config.Layout.TimeCompression));
           
-          Label:SetPoint("CENTER", self.Frame, self.Direction[1], Offset * self.Direction[2], Offset * self.Direction[3]);
+          Label:SetPoint("CENTER", self.Frame, self.Direction[1], (Offset * self.Direction[2]) + (self.Config.Layout.TextOffset * self.Direction[4]), (Offset * self.Direction[3]) + (self.Config.Layout.TextOffset * self.Direction[5]));
           
           Label:SetFontObject(self.TextFontObject);
           Label:SetFormattedText(AuraFrames:FormatTimeLeft(self.Config.Layout.TextLayout, Time, false));
@@ -640,8 +680,6 @@ function Prototype:AuraNew(Aura)
 
   end
   
-  Button:Show();
-
 end
 
 -----------------------------------------------------------------
@@ -666,7 +704,7 @@ function Prototype:AuraOld(Aura)
   
   -- The warning system can have changed the alpha and scale. Set it back.
   Button.Icon:SetAlpha(1.0);
-  Button:SetScale(1.0);
+  Button:SetScale(self.ButtonScale);
   
   -- Reset popup animation trigger and restore the frame level.
   Button.PopupTime = nil;

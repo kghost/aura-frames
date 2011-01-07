@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 209;
+AuraFrames.DatabaseVersion = 210;
 
 
 --[[
@@ -52,6 +52,9 @@ AuraFrames.DatabaseVersion = 209;
   Version 209:
     ShowSpellId renamed to ShowAuraId
    
+  Version 209:
+    Added to TimeLine: Length/Width, ButtonOffset, ButtonIndent, ButtonScale, TextOffset and BackgroundTextureFlipX/BackgroundTextureFlipY/BackgroundTextureRotate
+    
 ]]--
 
 
@@ -423,6 +426,28 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
     
        Container.Layout.TooltipShowAuraId = Container.Layout.TooltipShowSpellId;
        Container.Layout.TooltipShowSpellId = nil;
+    
+    end
+  
+  end
+  
+  if OldVersion < 210 then
+  
+    if Container.Type == "TimeLineContainer" then
+    
+      Container.Layout.ButtonOffset = 0;
+      Container.Layout.ButtonScale = 1.0;
+      Container.Layout.ButtonIndent = true;
+      
+      Container.Layout.TextOffset = 0;
+      
+      Container.Layout.BackgroundTextureFlipX = false;
+      Container.Layout.BackgroundTextureFlipY = false;
+      Container.Layout.BackgroundTextureRotate = false;
+      
+      Container.Layout.Length = Container.Layout.Size;
+      Container.Layout.Width = 36;
+      Container.Layout.Size = nil;
     
     end
   

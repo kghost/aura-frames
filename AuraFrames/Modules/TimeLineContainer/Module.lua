@@ -85,12 +85,17 @@ function Module:GetDatabaseDefaults()
     Layout = {
     
       Scale = 1.0,
-      Size = 400,
+      Length = 400,
+      Width = 36,
       Style = "HORIZONTAL",
       Direction = "HIGH",
       MaxTime = 30,
       TimeCompression = 0.3,
-
+      
+      ButtonOffset = 0,
+      ButtonScale = 1.0,
+      ButtonIndent = true,
+      
       ShowDuration = true,
       DurationFont = "Friz Quadrata TT",
       DurationOutline = "OUTLINE",
@@ -107,7 +112,7 @@ function Module:GetDatabaseDefaults()
       CountMonochrome = false,
       CountSize = 10,
       CountPosX = 10,
-      CountPosY = -6,
+      CountPosY = 7.5,
       CountColor = {1, 1, 1, 1},
 
       ShowText = true,
@@ -119,6 +124,7 @@ function Module:GetDatabaseDefaults()
       TextPos = 0,
       TextColor = {1, 1, 1, 1},
       TextLabels = {1, 5, 10, 15, 20, 30},
+      TextOffset = 0,
       
       Clickable = false,
       ShowTooltip = true,
@@ -130,6 +136,9 @@ function Module:GetDatabaseDefaults()
       BackgroundTexture = "Blizzard",
       BackgroundTextureColor = {0, 0.32, 0.82, 0.8},
       BackgroundTextureInsets = 2,
+      BackgroundTextureFlipX = false,
+      BackgroundTextureFlipY = false,
+      BackgroundTextureRotate = false,
       
       BackgroundBorder = "Blizzard Tooltip",
       BackgroundBorderColor = {0.05, 0.3, 0.8, 0.8},
@@ -200,6 +209,8 @@ function Module:New(Config)
   else
     Container.Frame = CreateFrame("Frame", FrameId, UIParent, "AuraFramesTimeLineContainerTemplate");
   end
+  
+  Container.FrameTexture = _G[FrameId.."Texture"];
   
   Container.Frame:Show();
 
