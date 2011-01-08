@@ -55,7 +55,7 @@ local PoolSize = 5;
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
 
-  if not self.BossModBarsVisibility then
+  if self.BossModBarsVisibility == nil then
     self.BossModBarsVisibility = true;
   end
 
@@ -289,6 +289,7 @@ function Module:GetBossModBarsVisibility()
   return self.BossModBarsVisibility or true;
 
 end
+
 
 -----------------------------------------------------------------
 -- Function DBM_Scan
