@@ -84,7 +84,7 @@ function AuraFramesConfig:ContentGeneral()
   
   self.Content:AddHeader("Credits");
 
-  self.Content:AddText("This addon is developed and mainted by |cff9382C9Nexiuz|r (|cff0070DDBeautiuz|r) @ Bloodhoof EU.\n\nThe two most important addons that helped me and inspired me are SatrinaBuffFrame and LibBuffet.\n\nSpecial thanks goes to |cff9382C9Ripsomeone|r @ Bloodhoof EU for testing and helping me giving the addon his current form.");
+  self.Content:AddText("This addon is developed and mainted by |cff0070DDBeautiuz|r (|cff9382C9Nexiuz|r) @ Bloodhoof EU.\n\nThe two most important addons that helped me and inspired me are SatrinaBuffFrame and LibBuffet.\n\nSpecial thanks goes to |cff9382C9Ripsomeone|r @ Bloodhoof EU for testing and helping me giving the addon his current form.");
 
   self.Content:AddSpace();
 
