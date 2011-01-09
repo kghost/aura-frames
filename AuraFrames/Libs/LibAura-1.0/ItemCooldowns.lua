@@ -64,6 +64,9 @@ function Module:ActivateSource(Unit, Type)
   LibAura:RegisterEvent("BAG_UPDATE_COOLDOWN", self, self.CooldownUpdate);
   LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.Update);
   
+  LibAura:RegisterEvent("BAG_UPDATE", self, self.UpdateDb);
+  LibAura:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", self, self.UpdateDb);
+  
 end
 
 
@@ -79,6 +82,9 @@ function Module:DeactivateSource(Unit, Type)
   LibAura:UnregisterEvent("BAG_UPDATE_COOLDOWN", self, self.CooldownUpdate);
   LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.Update);
 
+  LibAura:UnregisterEvent("BAG_UPDATE", self, self.UpdateDb);
+  LibAura:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED", self, self.UpdateDb);
+  
 end
 
 
@@ -150,27 +156,27 @@ end
 -----------------------------------------------------------------
 function Module:UpdateDbItem(ItemId)
 
-  if self.db[ItemId] then
-    return;
-  end
+  if not self.db[ItemId] then
   
-  self.db[ItemId] = {
-    Type = "ITEMCOOLDOWN",
-    Count = 0,
-    Classification = "None",
-    Unit = "player",
-    CasterUnit = "player",
-    CasterName = UnitName("player"),
-    IsStealable = false,
-    IsCancelable = false,
-    IsDispellable = false,
-    Active = false,
-    Index = ItemId,
-    Id = "playerITEMCOOLDOWN"..ItemId,
-    SpellId = 0,
-    ItemId = ItemId,
-    Active = false,
-  };
+    self.db[ItemId] = {
+      Type = "ITEMCOOLDOWN",
+      Count = 0,
+      Classification = "None",
+      Unit = "player",
+      CasterUnit = "player",
+      CasterName = UnitName("player"),
+      IsStealable = false,
+      IsCancelable = false,
+      IsDispellable = false,
+      Active = false,
+      Index = ItemId,
+      Id = "playerITEMCOOLDOWN"..ItemId,
+      SpellId = 0,
+      ItemId = ItemId,
+      Active = false,
+    };
+  
+  end
   
   local _; -- Keep _ in the local namespace.
   
