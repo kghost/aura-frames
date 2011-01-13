@@ -57,7 +57,7 @@ local CooldownFrame = CreateFrame("Frame");
 CooldownFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 CooldownFrame:SetScript("OnEvent", function(self, event)
 
-  -- When we are in a loadding screen, all cooldown
+  -- When we are in a loading screen, all cooldown
   -- animations will be created and started but due
   -- a bug in wow the animations will not be showned.
   -- The first 10 seconds after the PLAYER_ENTERING_WORLD

@@ -312,9 +312,9 @@ function Module:DBM_Scan()
       _G[Bar.frame:GetName().."Bar"]:Hide();
     end
   
-    local Name, Icon = _G[Bar.frame:GetName().."BarName"]:GetText(), _G[Bar.frame:GetName().."BarIcon1"]:GetTexture();
+    local Name, Icon = _G[Bar.frame:GetName().."BarName"]:GetText(), _G[Bar.frame:GetName().."BarIcon1"]:IsShown() == 1 and _G[Bar.frame:GetName().."BarIcon1"]:GetTexture() or nil;
     
-    if not Bar.dummy and Name and Icon then
+    if not Bar.dummy and Name then
     
       local Id = Name..Icon;
     
@@ -336,7 +336,7 @@ function Module:DBM_Scan()
         };
         
         db[Id].Name = Name;
-        db[Id].Icon = Icon;
+        db[Id].Icon = Icon or "INTERFACE\\ICONS\\TEMP"; -- DBM icon or default wow icon.
         db[Id].Duration = Bar.totalTime;
         db[Id].ExpirationTime = CurrentTime + Bar.timer;
         db[Id].Id = "bossALERT_DBM"..Id;
@@ -435,7 +435,7 @@ function Module:DXE_NewBar(Id, Text, TotalTime, Icon)
   };
   
   Aura.Name = Text;
-  Aura.Icon = Icon;
+  Aura.Icon = Icon or "INTERFACE\\ICONS\\TEMP";
   Aura.Duration = TotalTime;
   Aura.ExpirationTime = GetTime() + TotalTime;
   Aura.Id = "bossALERT_DXE"..tostring(Aura);
