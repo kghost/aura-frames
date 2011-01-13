@@ -316,6 +316,8 @@ function Module:DBM_Scan()
     
     if not Bar.dummy and Name then
     
+      Icon = Icon or "INTERFACE\\ICONS\\TEMP";
+    
       local Id = Name..Icon;
     
       if not db[Id] then
@@ -336,7 +338,7 @@ function Module:DBM_Scan()
         };
         
         db[Id].Name = Name;
-        db[Id].Icon = Icon or "INTERFACE\\ICONS\\TEMP"; -- DBM icon or default wow icon.
+        db[Id].Icon = Icon;
         db[Id].Duration = Bar.totalTime;
         db[Id].ExpirationTime = CurrentTime + Bar.timer;
         db[Id].Id = "bossALERT_DBM"..Id;
