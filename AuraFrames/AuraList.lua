@@ -258,6 +258,8 @@ function AuraFrames:NewAuraList(Container, FilterConfig, OrderConfig)
   if OrderConfig then
     AuraList.Order = self:NewOrder(OrderConfig, function(Aura, Index) Container:AuraAnchor(Aura, Index); end);
   end
+  
+  AuraList:ResyncSources();
 
   return AuraList;
 
