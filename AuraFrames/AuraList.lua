@@ -259,7 +259,7 @@ function AuraFrames:NewAuraList(Container, FilterConfig, OrderConfig)
     AuraList.Order = self:NewOrder(OrderConfig, function(Aura, Index) Container:AuraAnchor(Aura, Index); end);
   end
   
-  AuraList:ResyncSources();
+  self.NotStatic = self.Filter.NotStatic or false;
 
   return AuraList;
 
