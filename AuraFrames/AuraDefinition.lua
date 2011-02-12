@@ -14,7 +14,7 @@ The following types are supported atm:
   SpellId
   
 By default every attribute is defined as static unless there
-is NotStatic = true is defined. If the filter contains one or
+is Dynamic = true is defined. If the filter contains one or
 more attributes that are not static then the filter will be
 checked every x time. (This is implemented in the AuraList
 layer).
@@ -106,7 +106,7 @@ AuraFrames.AuraDefinition = {
     Code = "((Object.ExpirationTime == 0 and 0) or (Object.ExpirationTime - GetTime()))",
     Order = true,
     Filter = true,
-    NotStatic = true,
+    Dynamic = true,
     Weight = 3,
   },
   ExpirationTime = {

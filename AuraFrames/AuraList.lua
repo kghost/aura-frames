@@ -63,9 +63,9 @@ function AuraFrames.AuraListPrototype:ResyncSources()
     self.Order:Reset();
   end
   
-  self.NotStatic = self.Filter.NotStatic or false;
+  self.Dynamic = self.Filter.Dynamic or false;
   
-  if self.NotStatic == true then
+  if self.Dynamic == true then
     
     self.CheckingFrame:Show();
     
@@ -117,7 +117,7 @@ function AuraFrames.AuraListPrototype:AuraNew(Aura)
 
   if self.Filter.Test(Aura) == false then
   
-    if self.NotStatic == true then
+    if self.Dynamic == true then
       self.Auras[Aura] = false;
     end
   
@@ -154,7 +154,7 @@ function AuraFrames.AuraListPrototype:AuraChanged(Aura)
       self.Order:Update(Aura);
     end
     
-  elseif self.Auras[Aura] == false and self.NotStatic ~= true then
+  elseif self.Auras[Aura] == false and self.Dynamic ~= true then
 
     -- Remove the aura if he didn't pass the filter and we are not
     -- checking realtime.
@@ -232,7 +232,7 @@ function AuraFrames:NewAuraList(Container, FilterConfig, OrderConfig)
   
   AuraList.Container = Container;
   
-  AuraList.NotStatic = false;
+  AuraList.Dynamic = false;
   
   AuraList.CheckingFrame = CreateFrame("Frame");
   AuraList.CheckingFrame.LastScan = 0;
@@ -259,7 +259,13 @@ function AuraFrames:NewAuraList(Container, FilterConfig, OrderConfig)
     AuraList.Order = self:NewOrder(OrderConfig, function(Aura, Index) Container:AuraAnchor(Aura, Index); end);
   end
   
-  AuraList.NotStatic = AuraList.Filter.NotStatic or false;
+  AuraList.Dynamic = AuraList.Filter.Dynamic or false;
+  
+  if AuraList.Dynamic == true then
+    
+    AuraList.CheckingFrame:Show();
+    
+  end
 
   return AuraList;
 

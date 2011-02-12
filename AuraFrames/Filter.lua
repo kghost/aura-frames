@@ -252,7 +252,7 @@ end
 -----------------------------------------------------------------
 function AuraFrames.FilterPrototype:Build()
 
-  self.NotStatic = false;
+  self.Dynamic = false;
 
   if not self.Config.Expert or self.Config.Expert == false then
   
@@ -288,7 +288,7 @@ function AuraFrames.FilterPrototype:Build()
         if AuraFrames.AuraDefinition[Value.Subject] ~= nil and not (Value.Disabled and Value.Disabled == true) and Value.Operator then
         
           -- Update static flag.
-          self.NotStatic = self.NotStatic or AuraFrames.AuraDefinition[Value.Subject].NotStatic or false;
+          self.Dynamic = self.Dynamic or AuraFrames.AuraDefinition[Value.Subject].Dynamic or false;
         
           -- Build and insert rule.
           tinsert(Rules, BuildExpresion(AuraFrames.AuraDefinition[Value.Subject].Type, Value.Operator, Value.Subject, Value.Args or {}));
