@@ -11,4 +11,9 @@ AuraFrames.Version = {
   
 };
 
+if AuraFrames.Version.String == "@".."project-version".."@" then
 
+  AuraFrames.Version.String = "SVN Repository";
+  AuraFrames.Version.Revision = "SVN Repository";
+
+end
