@@ -33,7 +33,7 @@ local function CreateListWindow()
   ListContainer:SetLayout("Flow");
   ListWindow:AddChild(ListContainer);
   
-  local ButtonDone = AceGUI:Create("AuraFramesButton");
+  local ButtonDone = AceGUI:Create("Button");
   ButtonDone:SetText("Close List Editor");
   ButtonDone:SetRelativeWidth(1);
   ButtonDone:SetCallback("OnClick", function()
@@ -96,7 +96,7 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
 
   elseif Input == "Number" or Input == "ItemId" then
   
-    Value = AceGUI:Create("AuraFramesEditBox");
+    Value = AceGUI:Create("EditBox");
     Value:DisableButton(true);
     Value:SetText("");
     Value:SetWidth(210);
@@ -118,7 +118,7 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
   
   elseif Input == "SpellId" then
   
-    Value = AceGUI:Create("AuraFramesEditBox");
+    Value = AceGUI:Create("EditBox");
     Value:DisableButton(true);
     Value:SetText("");
     Value:SetWidth(210);
@@ -140,7 +140,7 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
   
   elseif Input == "String" or Input == "ItemName" then
   
-    Value = AceGUI:Create("AuraFramesEditBox");
+    Value = AceGUI:Create("EditBox");
     Value:DisableButton(true);
     Value:SetText("");
     Value:SetWidth(210);
@@ -194,7 +194,7 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
 
   if Value then
   
-    local ButtonAdd = AceGUI:Create("AuraFramesButton");
+    local ButtonAdd = AceGUI:Create("Button");
     ButtonAdd:SetText("Add");
     ButtonAdd:SetWidth(100);
     ButtonAdd:SetCallback("OnClick", function()

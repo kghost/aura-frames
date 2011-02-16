@@ -122,7 +122,7 @@ function Module:ContentLayoutText(Content, ContainerId)
   
   TextGroup:AddSpace();
   
-  local TextLabels = AceGUI:Create("AuraFramesEditBox");
+  local TextLabels = AceGUI:Create("EditBox");
   TextLabels:SetLabel("Time labels to show");
   TextLabels:SetText(table.concat(LayoutConfig.TextLabels, ", "));
   TextLabels:SetCallback("OnEnterPressed", function(_, _, Text)

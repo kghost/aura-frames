@@ -47,7 +47,7 @@ function AuraFramesConfig:ContentGeneral()
   
   SupportGroup:AddText("Forum: ", nil, 60);
 
-  local ForumTextBox = AceGUI:Create("AuraFramesEditBox");
+  local ForumTextBox = AceGUI:Create("EditBox");
   ForumTextBox:SetWidth(450);
   ForumTextBox:SetText("http://forums.curseforge.com/showthread.php?t=1886");
   ForumTextBox:DisableButton(true);
@@ -64,7 +64,7 @@ function AuraFramesConfig:ContentGeneral()
   SupportGroup:AddText("");
   SupportGroup:AddText("Tickets:", nil, 60);
   
-  local TicketsTextBox = AceGUI:Create("AuraFramesEditBox");
+  local TicketsTextBox = AceGUI:Create("EditBox");
   TicketsTextBox:SetWidth(450);
   TicketsTextBox:SetText("http://wow.curseforge.com/addons/aura-frames/tickets/");
   TicketsTextBox:DisableButton(true);

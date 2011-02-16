@@ -199,7 +199,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
             
           else
           
-            local Value = AceGUI:Create("AuraFramesEditBox");
+            local Value = AceGUI:Create("EditBox");
             Value:DisableButton(true);
             Value:SetText(Rule.Args[ValueType] or "");
             Value:SetLabel("Value");
@@ -216,7 +216,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
         
       elseif (ValueType == "Number" or ValueType == "SpellId" or ValueType == "ItemId") and (Operator == "First" or Operator == "Last") then
       
-        local Value = AceGUI:Create("AuraFramesEditBox");
+        local Value = AceGUI:Create("EditBox");
         Value:DisableButton(true);
         if Rule.Args[ValueType] then
           Value:SetText(tostring(Rule.Args[ValueType]));
@@ -253,7 +253,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
         
       elseif (Operator == "ListAsc" or Operator == "ListDesc") then
       
-        local Value = AceGUI:Create("AuraFramesButton");
+        local Value = AceGUI:Create("Button");
         Value:SetText("Edit list");
         Value:SetWidth(150);
         Value:SetCallback("OnClick", function()
@@ -342,7 +342,7 @@ function AuraFramesConfig:ContentOrderRefresh(Content, ContainerId)
   
     CreateRules(Content, Content, ContainerId, OrderConfig.Rules);
   
-    local ButtonNewRule = AceGUI:Create("AuraFramesButton");
+    local ButtonNewRule = AceGUI:Create("Button");
     ButtonNewRule:SetText("New Rule");
     ButtonNewRule:SetCallback("OnClick", function()
       if not OrderConfig.Rules then

@@ -59,7 +59,7 @@ function AuraFramesConfig:ContentProfilesRefresh(Content)
   Content:AddText("Reset the current profile back to its default values, in case your configuration is broken, or you simply want to start over.\n");
   
   Content:AddText("\nCurrent Profile: "..NORMAL_FONT_COLOR_CODE..db:GetCurrentProfile()..FONT_COLOR_CODE_CLOSE.."\n");
-  local ButtonReset = AceGUI:Create("AuraFramesButton");
+  local ButtonReset = AceGUI:Create("Button");
   ButtonReset:SetText("Reset Profile");
   ButtonReset:SetCallback("OnClick", function()
     db:ResetProfile();
@@ -74,7 +74,7 @@ function AuraFramesConfig:ContentProfilesRefresh(Content)
   Group:SetLayout("Flow");
   Content:AddChild(Group);
   
-  local EditBoxNew = AceGUI:Create("AuraFramesEditBox");
+  local EditBoxNew = AceGUI:Create("EditBox");
   EditBoxNew:SetLabel("New");
   EditBoxNew:SetText("");
   EditBoxNew:SetCallback("OnEnterPressed", function(_, _, Value)

@@ -26,9 +26,6 @@ ContentProfiles.lua
 ContentButtonFacade.lua
 
 AceGUIContainer-AuraFramesWindow.lua
-AceGUIWidget-AuraFramesEditBox.lua
-AceGUIWidget-AuraFramesButton.lua
-
 AceGUI-3.0-Spell-EditBox-Fix.lua
 
 Modules.xml
