@@ -15,7 +15,7 @@ local _G = _G;
 -- GLOBALS: UIParent
 
 -- Module settings
-Module.MaxBars = 40;
+Module.MaxBars = 50;
 Module.BarHeight = 36;
 
 -- List that contains the function prototypes for container objects.
