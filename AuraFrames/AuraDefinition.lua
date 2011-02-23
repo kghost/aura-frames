@@ -173,9 +173,9 @@ AuraFrames.AuraDefinition = {
     Filter = true,
     Weight = 1,
   },
-  CastedByMe = {
+  CastByMe = {
     Type = "Boolean",
-    Name = "Casted by me",
+    Name = "Cast by me",
     Code = "(Object.CasterUnit == \"player\")",
     Order = true,
     Filter = true,
@@ -188,33 +188,33 @@ AuraFrames.AuraDefinition = {
     Filter = false,
     Weight = 1,
   },
-  CastedByParty = {
+  CastByParty = {
     Type = "Boolean",
-    Name = "Casted by party",
+    Name = "Cast by party",
     Code = "(Object.CasterUnit and UnitInParty(Object.CasterUnit) == 1)",
     Order = true,
     Filter = true,
     Weight = 3,
   },
-  CastedByRaid = {
+  CastByRaid = {
     Type = "Boolean",
-    Name = "Casted by raid",
+    Name = "Cast by raid",
     Code = "(Object.CasterUnit and UnitInRaid(Object.CasterUnit) ~= nil)",
     Order = true,
     Filter = true,
     Weight = 3,
   },
-  CastedByBgRaid = {
+  CastByBgRaid = {
     Type = "Boolean",
-    Name = "Casted by bg raid",
+    Name = "Cast by bg raid",
     Code = "(Object.CasterUnit and UnitInBattleground(Object.CasterUnit) ~= nil)",
     Order = true,
     Filter = true,
     Weight = 3,
   },
-  CastedByPlayer = {
+  CastByPlayer = {
     Type = "Boolean",
-    Name = "Casted by a player",
+    Name = "Cast by a player",
     Code = "(Object.CasterUnit and UnitIsPlayer(Object.CasterUnit) == 1)",
     Order = true,
     Filter = true,
@@ -228,9 +228,9 @@ AuraFrames.AuraDefinition = {
     Filter = true,
     Weight = 3,
   },
-  CastedByHostile = {
+  CastByHostile = {
     Type = "Boolean",
-    Name = "Casted by hostile",
+    Name = "Cast by hostile",
     Code = "(Object.CasterUnit and UnitIsEnemy(\"player\", Object.CasterUnit) == 1)",
     Order = true,
     Filter = true,
@@ -244,9 +244,9 @@ AuraFrames.AuraDefinition = {
     Filter = true,
     Weight = 3,
   },
-  CastedByFriendly = {
+  CastByFriendly = {
     Type = "Boolean",
-    Name = "Casted by friendly",
+    Name = "Cast by friendly",
     Code = "(Object.CasterUnit and UnitIsFriend(\"player\", Object.CasterUnit) == 1)",
     Order = true,
     Filter = true,

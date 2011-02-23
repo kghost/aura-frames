@@ -50,36 +50,6 @@ local PI_2 = PI / 2;
 local PopupFrameLevel = 9;
 local PopupFrameLevelNormal = 4;
 
------------------------------------------------------------------
--- Local Function CalcPos
------------------------------------------------------------------
-local function CalcPos(TimeLeft, MaxTime, Compression)
-
-  -- We make here the calculations for nice time lines.
-  -- This function will always return between 0 and 1.
-  -- So that the caller can do CalcPos() * width for
-  -- example.
-  
-  -- Few ways of making nice time lines, we can use power
-  -- of or we can use a sinus or straith (always return 1).
-
-
-  local Pos = math_pow(MaxTime - TimeLeft, Compression) / math_pow(MaxTime, Compression);
-
-  return Pos > 1 and 1 or Pos;
-  
-
---[[
-  return 1;
-]]--
-
---[[
-  local Part = ((MaxTime - TimeLeft) / MaxTime);
-
-  return math_sin(Part * PI_2);
-]]--
-end
-
 
 -----------------------------------------------------------------
 -- Local Function ButtonOnUpdate
@@ -201,7 +171,7 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
   if Button.Aura.ExpirationTime == 0 or Config.Layout.MaxTime < TimeLeft then
     Offset = Container.ButtonIndent / Scale;
   else
-    Offset = (((Container.StepPerSecond * (Config.Layout.MaxTime - TimeLeft)) * CalcPos(TimeLeft, Config.Layout.MaxTime, Config.Layout.TimeCompression)) + Container.ButtonIndent) / Scale;
+    Offset = (((Container.StepPerSecond * (Config.Layout.MaxTime - TimeLeft)) * Container:CalcPos(TimeLeft)) + Container.ButtonIndent) / Scale;
   end
   
   -- Set the position.
@@ -282,6 +252,29 @@ function Prototype:ReleasePool()
   
   end
   
+end
+
+-----------------------------------------------------------------
+-- Function CalcPos
+-----------------------------------------------------------------
+function Prototype:CalcPos(TimeLeft)
+
+  -- We make here the calculations for nice time lines.
+  -- This function will always return between 0 and 1.
+  -- So that the caller can do CalcPos() * width for
+  -- example.
+
+  if self.Config.Layout.TimeFlow == "POW" then
+
+    local Pos = math_pow(self.Config.Layout.MaxTime - TimeLeft, self.Config.Layout.TimeCompression) / math_pow(self.Config.Layout.MaxTime, self.Config.Layout.TimeCompression);
+
+    return Pos > 1 and 1 or Pos;
+  
+  end
+
+  -- No compression
+  return 1;
+
 end
 
 
@@ -559,7 +552,7 @@ function Prototype:Update(...)
           
           Label:ClearAllPoints();
           
-          local Offset = self.ButtonIndent + (((self.Config.Layout.MaxTime - Time) * self.StepPerSecond) * CalcPos(Time, self.Config.Layout.MaxTime, self.Config.Layout.TimeCompression));
+          local Offset = self.ButtonIndent + (((self.Config.Layout.MaxTime - Time) * self.StepPerSecond) * self:CalcPos(Time));
           
           Label:SetPoint("CENTER", self.Frame, self.Direction[1], (Offset * self.Direction[2]) + (self.Config.Layout.TextOffset * self.Direction[4]), (Offset * self.Direction[3]) + (self.Config.Layout.TextOffset * self.Direction[5]));
           

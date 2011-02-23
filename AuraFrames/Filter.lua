@@ -13,28 +13,28 @@ AuraFrames.FilterPrototype = {};
 
 -- List of all the predefined filters. Used by the expresion builder and the configuration.
 AuraFrames.FilterPredefined = {
-  CastedByMe = {
+  CastByMe = {
     Groups = {
       {
-        {Subject = "CastedByMe", Operator = "Equal", Args = {Boolean = "true"}},
+        {Subject = "CastByMe", Operator = "Equal", Args = {Boolean = "true"}},
       },
     },
   },
-  NotCastedByMe = {
+  NotCastByMe = {
     Groups = {
       {
-        {Subject = "CastedByMe", Operator = "Equal", Args = {Boolean = "false"}},
+        {Subject = "CastByMe", Operator = "Equal", Args = {Boolean = "false"}},
       },
     },
   },
-  CastedBySameClass = {
+  CastBySameClass = {
     Groups = {
       {
         {Subject = "CasterClass", Operator = "Equal", Args = {String = select(2, UnitClass("player"))}},
       },
     },
   },
-  HarmfulOnFriendlyAndHelpfulOnHostile = {
+  DebuffOnHelpAndBuffOnHarm = {
     Groups = {
       {
         {Subject = "TargetIsFriendly", Operator = "Equal", Args = {Boolean = "true"}},

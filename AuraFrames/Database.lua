@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 210;
+AuraFrames.DatabaseVersion = 213;
 
 
 --[[
@@ -57,6 +57,12 @@ AuraFrames.DatabaseVersion = 210;
   
   Version 211:
     Removed from the BarContainer the button background options, added BarTextureFlipX/BarTextureFlipY/BarTextureRotate
+  
+  Version 212:
+    Added TimeFlow to the timeline container
+    
+  Version 213:
+    Fixed a typo (casted => cast)
     
 ]]--
 
@@ -471,6 +477,63 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
       
     end
   
+  end
+  
+  if OldVersion < 212 then
+  
+    if Container.Type == "TimeLineContainer" then
+    
+      Container.Layout.TimeFlow = "POW";
+      
+    end
+  
+  end
+  
+  if OldVersion < 213 then
+  
+    local PredefinedList = {
+      CastedByMe = "CastByMe",
+      NotCastedByMe = "NotCastByMe",
+      CastedBySameClass = "CastBySameClass",
+      HarmfulOnFriendlyAndHelpfulOnHostile = "DebuffOnHelpAndBuffOnHarm",
+    };
+  
+    for Name, Value in pairs(Container.Filter.Predefined or {}) do
+    
+      if PredefinedList[Name] then
+      
+        if Value == true then
+          Container.Filter.Predefined[PredefinedList[Name]] = true;
+        end
+        
+        Container.Filter.Predefined[Name] = nil;
+      
+      end
+    
+    end
+    
+    local SubjectList = {
+      CastedByMe = "CastByMe",
+      CastedByParty = "CastByParty",
+      CastedByRaid = "CastByRaid",
+      CastedByBgRaid = "CastByBgRaid",
+      CastedByPlayer = "CastByPlayer",
+      CastedByHostile = "CastByHostile",
+      CastedByFriendly = "CastByFriendly",
+    };
+  
+    for _, Group in ipairs(Container.Filter.Groups or {}) do
+    
+      for _, Rule in ipairs(Group) do
+      
+        if SubjectList[Rule.Subject] then
+          Rule.Subject = SubjectList[Rule.Subject];
+        end
+      
+      end
+    
+    end
+
   end
   
 end

@@ -90,6 +90,7 @@ function Module:GetDatabaseDefaults()
       Style = "HORIZONTAL",
       Direction = "HIGH",
       MaxTime = 30,
+      TimeFlow = "POW",
       TimeCompression = 0.3,
       
       ButtonOffset = 0,

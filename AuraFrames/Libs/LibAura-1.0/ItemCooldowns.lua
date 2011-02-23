@@ -37,16 +37,42 @@ local UnitName, GetItemInfo, GetTime, GetItemCooldown = UnitName, GetItemInfo, G
 -- List them here for Mikk's FindGlobals script
 -- GLOBALS: NUM_BAG_SLOTS
 
--- Internal db used for storing auras, spellbooks and spell history.
+-- Internal db used for storing auras, spellbooks and item history.
 Module.db = Module.db or {};
+Module.History = Module.History or {};
+Module.SpellToItemId = Module.SpellToItemId or {};
 
+-- Number of items to keep in the history list.
+local ItemMaxHistory = 5;
 
 -- The minimum duration of a item cooldown
 local ItemMinimumCooldown = 2;
 
+-- The max difference between cooldowns for grouping.
+local GroupDurationRange = 0.1;
+
 -- Update cooldowns throttle.
 local UpdateCooldownsLastScan = 0;
 local UpdateCooldownsScanThrottle = 0.2;
+
+local MtAura = {
+  Type = "ITEMCOOLDOWN",
+  Count = 0,
+  Classification = "None",
+  Unit = "player",
+  CasterUnit = "player",
+  CasterName = UnitName("player"),
+  Duration = 0,
+  ExpirationTime = 0,
+  IsStealable = false,
+  IsCancelable = false,
+  IsDispellable = false,
+  Active = false,
+  SpellId = 0,
+};
+
+local CooldownsNew = {};
+local CooldownsGroup = {};
 
 -----------------------------------------------------------------
 -- Function ActivateSource
@@ -54,6 +80,7 @@ local UpdateCooldownsScanThrottle = 0.2;
 function Module:ActivateSource(Unit, Type)
   
   self.db = {};
+  self.SpellToItemId = {};
   
   -- Fill db.
   self:UpdateDb();
@@ -67,6 +94,9 @@ function Module:ActivateSource(Unit, Type)
   LibAura:RegisterEvent("BAG_UPDATE", self, self.UpdateDb);
   LibAura:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", self, self.UpdateDb);
   
+  LibAura:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", self, self.SpellCasted);
+  LibAura:RegisterEvent("UNIT_SPELLCAST_FAILED", self, self.SpellCastFailed);
+  
 end
 
 
@@ -78,12 +108,18 @@ function Module:DeactivateSource(Unit, Type)
   for _, Aura in pairs(self.db) do
     LibAura:FireAuraOld(Aura);
   end
+  
+  wipe(self.db);
+  wipe(self.SpellToItemId);
 
   LibAura:UnregisterEvent("BAG_UPDATE_COOLDOWN", self, self.CooldownUpdate);
   LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.Update);
 
   LibAura:UnregisterEvent("BAG_UPDATE", self, self.UpdateDb);
   LibAura:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED", self, self.UpdateDb);
+  
+  LibAura:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED", self, self.SpellCasted);
+  LibAura:UnregisterEvent("UNIT_SPELLCAST_FAILED", self, self.SpellCastFailed);
   
 end
 
@@ -99,7 +135,7 @@ function Module:GetAuras(Unit, Type)
   
   for _, Aura in pairs(self.db) do
   
-    if Aura.Active == true then
+    if Aura.Active == true and Aura.RefItemId == 0 then
       tinsert(Auras, Aura);
     end
   
@@ -159,28 +195,25 @@ function Module:UpdateDbItem(ItemId)
   if not self.db[ItemId] then
   
     self.db[ItemId] = {
-      Type = "ITEMCOOLDOWN",
-      Count = 0,
-      Classification = "None",
-      Unit = "player",
-      CasterUnit = "player",
-      CasterName = UnitName("player"),
-      IsStealable = false,
-      IsCancelable = false,
-      IsDispellable = false,
-      Active = false,
       Index = ItemId,
       Id = "playerITEMCOOLDOWN"..ItemId,
-      SpellId = 0,
       ItemId = ItemId,
-      Active = false,
+      RefItemId = 0,
     };
+    
+    setmetatable(self.db[ItemId], {__index = MtAura});
   
   end
   
   local _; -- Keep _ in the local namespace.
   
   self.db[ItemId].Name, _, _, _, _, _, _, _, _, self.db[ItemId].Icon = GetItemInfo(ItemId);
+  
+  local Spell, Rank = GetItemSpell(ItemId);
+  
+  if Spell then
+    self.SpellToItemId[Spell..(Rank or "")] = ItemId;
+  end
   
 end
 
@@ -190,44 +223,133 @@ end
 function Module:CooldownUpdate()
 
   local CurrentTime = GetTime();
+  wipe(CooldownsNew);
 
   for ItemId, Aura in pairs(self.db) do
   
     local Start, Duration, Active = GetItemCooldown(ItemId);
     
-    if Active == 1 and Start > 0 then
+    if Aura.Active == true then
     
       local UnderMin = Start + Duration < CurrentTime + 1.5;
       
-      if UnderMin == false then
+      if (Active ~= 1 or Duration == 0) or (UnderMin == true and Aura.ExpirationTime < CurrentTime) then
+      
+        -- if the cooldown it not active or when we have lesser then
+        -- "UnderMin" left and we are passed the last ExpirationTime
+        -- then deactive it.
+      
+        if Aura.RefItemId == 0 then
+          LibAura:FireAuraOld(Aura);
+        end
+        
+        Aura.RefItemId = 0;
+        Aura.Active = false;
+      
+      elseif UnderMin == false then
       
         -- We update only the cooldown when a minimum of "UnderMin"
-        -- is still left. This to prevent the gcd to bump the item cd.
+        -- is still left. This to prevent the gcd to bump the spell cd.
       
-        Aura.Duration = Duration;
+        local OldExpirationTime = Aura.ExpirationTime;
         Aura.ExpirationTime = Start + Duration;
-      
-      end
-    
-      if Duration > ItemMinimumCooldown then
-    
-        if Aura.Active == false then
         
-          Aura.Active = true;
-          LibAura:FireAuraNew(Aura);
-        
+        if abs(Aura.ExpirationTime - OldExpirationTime) > 0.1 then
+          LibAura:FireAuraChanged(Aura);
         end
       
       end
     
-    elseif Aura.Active == true then
+    else
     
-      Aura.Active = false;
-      LibAura:FireAuraOld(Aura);
+      if Active == 1 and Start > 0 and Duration > ItemMinimumCooldown then
+      
+        Aura.Duration = Duration;
+        Aura.ExpirationTime = Start + Duration;
+        Aura.Active = true;
+        
+        tinsert(CooldownsNew, ItemId);
+        
+      end
     
     end
   
   end
+
+  if #CooldownsNew == 0 then
+    return;
+  end
+
+  for _, ItemId in ipairs(CooldownsNew) do
+  
+    local Aura, HistoryIndex = self.db[ItemId], ItemMaxHistory + 1;
+    
+    -- Check if the new cooldown is located in the history.
+    for Index, HistoryItemId in ipairs(self.History) do
+      
+      if HistoryItemId == ItemId then
+        HistoryIndex = Index;
+        break;
+      end
+    
+    end
+    
+    local GroupMatch = false;
+    
+    for _, Group in ipairs(CooldownsGroup) do
+      
+      if abs(Group.Duration - Aura.Duration) < GroupDurationRange then -- Accept a small difference
+      
+        GroupMatch = true;
+      
+        tinsert(Group.ItemIds, ItemId);
+        
+        if Group.PrimaryIndex > HistoryIndex then
+          Group.PrimaryIndex = HistoryIndex;
+          Group.Primary = ItemId;
+        end
+        
+        break;
+        
+      end
+    
+    end
+    
+    if GroupMatch == false then
+    
+      tinsert(CooldownsGroup, {
+        Duration = Aura.Duration,
+        ItemIds = {ItemId},
+        Primary = ItemId,
+        PrimaryIndex = HistoryIndex,
+      });
+      
+    end
+
+  end
+  
+  for _, Group in ipairs(CooldownsGroup) do
+  
+    for _, ItemId in ipairs(Group.ItemIds) do
+    
+      local Aura = self.db[ItemId];
+      
+      if ItemId == Group.Primary then
+      
+        LibAura:FireAuraNew(Aura);
+      
+      else
+      
+        Aura.RefItemId = Group.Primary;
+      
+      end
+    
+    end
+  
+  end
+  
+  -- Cleanup CooldownsGroup for next usage.
+  wipe(CooldownsGroup);
 
 end
 
@@ -255,12 +377,71 @@ function Module:Update(Elapsed)
   
     if Aura.Active == true and Aura.ExpirationTime < CurrentTime then
     
+      if Aura.RefItemId == 0 then
+        LibAura:FireAuraOld(Aura);
+      end
+      
+      Aura.RefItemId = 0;
       Aura.Active = false;
-      LibAura:FireAuraOld(Aura);
     
     end
   
   end
 
+end
+
+-----------------------------------------------------------------
+-- Function SpellCasted
+-----------------------------------------------------------------
+function Module:SpellCasted(Unit, Spell, Rank, _, SpellId)
+
+  if Unit ~= "player" or not Spell then
+    return;
+  end
+
+  local ItemId = self.SpellToItemId[Spell..(Rank or "")];
+
+  if not ItemId then
+    return;
+  end
+
+  tinsert(self.History, 1, ItemId);
+  
+  if #self.History > ItemMaxHistory then
+    tremove(self.History);
+  end
+
+end
+
+
+-----------------------------------------------------------------
+-- Function SpellCastFailed
+-----------------------------------------------------------------
+function Module:SpellCastFailed(Unit, Spell, Rank, _, SpellId)
+
+  if Unit ~= "player" or not Spell then
+    return;
+  end
+
+  local ItemId = self.SpellToItemId[Spell..(Rank or "")];
+
+  if not ItemId then
+    return;
+  end
+  
+  if self.db[ItemId].Active == true then
+  
+    if self.db[ItemId].RefItemId ~= 0 then
+    
+      LibAura:FireAuraChanged(self.db[self.db[ItemId].RefItemId]);
+    
+    else
+  
+      LibAura:FireAuraChanged(self.db[ItemId]);
+    
+    end
+  
+  end
+  
 end
 
