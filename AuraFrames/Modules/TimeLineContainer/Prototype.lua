@@ -544,26 +544,82 @@ function Prototype:Update(...)
     
       local FrameId = self.Frame:GetName();
       
-      for Index, Time in ipairs(self.Config.Layout.TextLabels) do
-
-        if self.Config.Layout.MaxTime >= Time and Time >= 0 then
-
-          local Label = _G[FrameId.."_Label"..Index] or self.Frame:CreateFontString(FrameId.."_Label"..Index, "ARTWORK");
-          
-          Label:ClearAllPoints();
-          
-          local Offset = self.ButtonIndent + (((self.Config.Layout.MaxTime - Time) * self.StepPerSecond) * self:CalcPos(Time));
-          
-          Label:SetPoint("CENTER", self.Frame, self.Direction[1], (Offset * self.Direction[2]) + (self.Config.Layout.TextOffset * self.Direction[4]), (Offset * self.Direction[3]) + (self.Config.Layout.TextOffset * self.Direction[5]));
-          
-          Label:SetFontObject(self.TextFontObject);
-          Label:SetFormattedText(AuraFrames:FormatTimeLeft(self.Config.Layout.TextLayout, Time, false));
-          Label:Show();
-          
-          tinsert(self.TextLabels, Label);
+      if self.Config.Layout.TextLabelsAuto == true then
         
+        wipe(self.Config.Layout.TextLabels);
+        
+        local Time, Index = 1, 1;
+        local Offset, Width;
+      
+        while Time <= self.Config.Layout.MaxTime do
+          
+          local NewOffset = self.ButtonIndent + (((self.Config.Layout.MaxTime - Time) * self.StepPerSecond) * self:CalcPos(Time));
+          
+          if not Offset or Offset - Width - self.Config.Layout.TextLabelAutoSpace > NewOffset then
+          
+            local Label = _G[FrameId.."_Label"..Index] or self.Frame:CreateFontString(FrameId.."_Label"..Index, "ARTWORK");
+            
+            Label:ClearAllPoints();
+            
+            Offset = NewOffset;
+            
+            Label:SetPoint("CENTER", self.Frame, self.Direction[1], (Offset * self.Direction[2]) + (self.Config.Layout.TextOffset * self.Direction[4]), (Offset * self.Direction[3]) + (self.Config.Layout.TextOffset * self.Direction[5]));
+            
+            Label:SetFontObject(self.TextFontObject);
+            Label:SetFormattedText(AuraFrames:FormatTimeLeft(self.Config.Layout.TextLayout, Time, false));
+            Label:Show();
+          
+            Width = self.Config.Layout.Style == "HORIZONTAL" and Label:GetStringWidth() or Label:GetStringHeight() ;
+            tinsert(self.TextLabels, Label);
+
+            tinsert(self.Config.Layout.TextLabels, Time);
+
+            Index = Index + 1;
+          
+          end
+          
+          if Time == 1 then
+            Time = 5;
+          elseif Time < 30 then
+            Time = Time + 5;
+          elseif Time < 120 then
+            Time = Time + 10;
+          elseif Time < 300 then
+            Time = Time + 30;
+          elseif Time < 600 then -- 10 min
+            Time = Time + 60;
+          elseif Time < 1200 then -- 20 min
+            Time = Time + 120;
+          else
+            Time = Time + 300;
+          end
+          
         end
-        
+      
+      else
+      
+        for Index, Time in ipairs(self.Config.Layout.TextLabels) do
+
+          if self.Config.Layout.MaxTime >= Time and Time >= 0 then
+
+            local Label = _G[FrameId.."_Label"..Index] or self.Frame:CreateFontString(FrameId.."_Label"..Index, "ARTWORK");
+            
+            Label:ClearAllPoints();
+            
+            local Offset = self.ButtonIndent + (((self.Config.Layout.MaxTime - Time) * self.StepPerSecond) * self:CalcPos(Time));
+            
+            Label:SetPoint("CENTER", self.Frame, self.Direction[1], (Offset * self.Direction[2]) + (self.Config.Layout.TextOffset * self.Direction[4]), (Offset * self.Direction[3]) + (self.Config.Layout.TextOffset * self.Direction[5]));
+            
+            Label:SetFontObject(self.TextFontObject);
+            Label:SetFormattedText(AuraFrames:FormatTimeLeft(self.Config.Layout.TextLayout, Time, false));
+            Label:Show();
+            
+            tinsert(self.TextLabels, Label);
+          
+          end
+          
+        end
+      
       end
     
     end

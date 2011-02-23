@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 213;
+AuraFrames.DatabaseVersion = 214;
 
 
 --[[
@@ -63,6 +63,9 @@ AuraFrames.DatabaseVersion = 213;
     
   Version 213:
     Fixed a typo (casted => cast)
+  
+  Version 214:
+    Implemented auto text labels for TimeLine
     
 ]]--
 
@@ -534,6 +537,17 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
     
     end
 
+  end
+  
+  if OldVersion < 214 then
+  
+    if Container.Type == "TimeLineContainer" then
+    
+      Container.Layout.TextLabelsAuto = false;
+      Container.Layout.TextLabelAutoSpace = 10;
+      
+    end
+  
   end
   
 end

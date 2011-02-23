@@ -124,7 +124,9 @@ function Module:GetDatabaseDefaults()
       TextSize = 10,
       TextPos = 0,
       TextColor = {1, 1, 1, 1},
-      TextLabels = {1, 5, 10, 15, 20, 30},
+      TextLabels = {},
+      TextLabelsAuto = true,
+      TextLabelAutoSpace = 10,
       TextOffset = 0,
       
       Clickable = false,
