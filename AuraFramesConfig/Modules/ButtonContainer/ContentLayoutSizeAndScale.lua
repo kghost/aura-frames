@@ -45,7 +45,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   HorizontalSize:SetWidth(250);
   HorizontalSize:SetValue(LayoutConfig.HorizontalSize);
   HorizontalSize:SetLabel("Horizontal Size");
-  HorizontalSize:SetSliderValues(1, 20, 1);
+  HorizontalSize:SetSliderValues(1, 50, 1);
   HorizontalSize:SetIsPercent(false);
   HorizontalSize:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.HorizontalSize = Value;
@@ -58,7 +58,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   VerticalSize:SetWidth(250);
   VerticalSize:SetValue(LayoutConfig.VerticalSize);
   VerticalSize:SetLabel("Vertical Size");
-  VerticalSize:SetSliderValues(1, 20, 1);
+  VerticalSize:SetSliderValues(1, 50, 1);
   VerticalSize:SetIsPercent(false);
   VerticalSize:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.VerticalSize = Value;

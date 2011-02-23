@@ -45,7 +45,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   NumberOfBars:SetWidth(250);
   NumberOfBars:SetValue(LayoutConfig.NumberOfBars);
   NumberOfBars:SetLabel("Number of bars");
-  NumberOfBars:SetSliderValues(1, 40, 1);
+  NumberOfBars:SetSliderValues(1, 50, 1);
   NumberOfBars:SetIsPercent(false);
   NumberOfBars:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.NumberOfBars = Value;
