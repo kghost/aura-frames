@@ -19,11 +19,11 @@ function Module:ContentLayoutText(Content, ContainerId)
 
   Content:AddText("Text\n", GameFontNormalLarge);
 
-  Content:AddHeader("Text");
+  Content:AddHeader("Time");
   
   local ShowText = AceGUI:Create("CheckBox");
-  ShowText:SetLabel("Show Text");
-  ShowText:SetDescription("Show the time left on an aura.");
+  ShowText:SetLabel("Show Time Labels");
+  ShowText:SetDescription("Show time labels on the timeline bar");
   ShowText:SetRelativeWidth(1);
   ShowText:SetValue(LayoutConfig.ShowText);
   ShowText:SetCallback("OnValueChanged", function(_, _, Value)
@@ -122,40 +122,73 @@ function Module:ContentLayoutText(Content, ContainerId)
   
   TextGroup:AddSpace();
   
-  local TextLabels = AceGUI:Create("EditBox");
-  TextLabels:SetLabel("Time labels to show");
-  TextLabels:SetText(table.concat(LayoutConfig.TextLabels, ", "));
-  TextLabels:SetCallback("OnEnterPressed", function(_, _, Text)
-
-    wipe(LayoutConfig.TextLabels);
-    
-    for _, Value in ipairs({string.split(",", Text)}) do
-      
-      local Time = tonumber(string.trim(Value));
-      
-      if Value ~= nil then
-        table.insert(LayoutConfig.TextLabels, Time);
-      end
-      
-    end
-    
-    sort(LayoutConfig.TextLabels);
-    
-    TextLabels:SetText(table.concat(LayoutConfig.TextLabels, ", "));
-    
-    ContainerInstance:Update("LAYOUT");
-  end);
-  TextGroup:AddChild(TextLabels);
-  
   local TextOffset = AceGUI:Create("Slider");
   TextOffset:SetValue(LayoutConfig.TextOffset);
   TextOffset:SetLabel("Text offset");
+  TextOffset:SetDisabled(not LayoutConfig.ShowText);
   TextOffset:SetSliderValues(-100, 100, 1);
   TextOffset:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.TextOffset = Value;
     ContainerInstance:Update("LAYOUT");
   end);
   TextGroup:AddChild(TextOffset);
+
+  TextGroup:AddSpace();
+  
+  local AutoLabels = AceGUI:Create("CheckBox");
+  AutoLabels:SetLabel("Auto Labels");
+  AutoLabels:SetDisabled(not LayoutConfig.ShowText);
+  AutoLabels:SetDescription("Create dynamic labels");
+  AutoLabels:SetValue(LayoutConfig.TextLabelsAuto);
+  AutoLabels:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.TextLabelsAuto = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:ContentLayoutText(Content, ContainerId);
+  end);
+  TextGroup:AddChild(AutoLabels);
+
+  if LayoutConfig.TextLabelsAuto == false then
+
+    local TextLabels = AceGUI:Create("EditBox");
+    TextLabels:SetLabel("Time labels to show");
+    TextLabels:SetDisabled(not LayoutConfig.ShowText);
+    TextLabels:SetText(table.concat(LayoutConfig.TextLabels, ", "));
+    TextLabels:SetCallback("OnEnterPressed", function(_, _, Text)
+
+      wipe(LayoutConfig.TextLabels);
+      
+      for _, Value in ipairs({string.split(",", Text)}) do
+        
+        local Time = tonumber(string.trim(Value));
+        
+        if Value ~= nil then
+          table.insert(LayoutConfig.TextLabels, Time);
+        end
+        
+      end
+      
+      sort(LayoutConfig.TextLabels);
+      
+      TextLabels:SetText(table.concat(LayoutConfig.TextLabels, ", "));
+      
+      ContainerInstance:Update("LAYOUT");
+    end);
+    TextGroup:AddChild(TextLabels);
+  
+  else
+  
+    local TextLabelAutoSpace = AceGUI:Create("Slider");
+    TextLabelAutoSpace:SetValue(LayoutConfig.TextLabelAutoSpace);
+    TextLabelAutoSpace:SetLabel("Minimum space between labels");
+    TextLabelAutoSpace:SetDisabled(not LayoutConfig.ShowText);
+    TextLabelAutoSpace:SetSliderValues(0, 200, 5);
+    TextLabelAutoSpace:SetCallback("OnValueChanged", function(_, _, Value)
+      LayoutConfig.TextLabelAutoSpace = Value;
+      ContainerInstance:Update("LAYOUT");
+    end);
+    TextGroup:AddChild(TextLabelAutoSpace);
+
+  end
 
   
   Content:AddSpace(2);
