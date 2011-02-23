@@ -38,7 +38,7 @@ local DirectionMapping = {
 };
 
 -- How fast a button will get updated.
-local ButtonUpdatePeriod = 0.05;
+local ButtonUpdatePeriod = 0.01; -- Max 100 times a second.
 
 -- Pre calculate pi * 2 (used for flashing buttons).
 local PI2 = PI + PI;
