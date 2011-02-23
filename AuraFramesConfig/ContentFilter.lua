@@ -7,22 +7,22 @@ local IconDisabled = "Interface\\SpellShadow\\Spell-Shadow-Unacceptable";
 local IconDelete   = "Interface\\RAIDFRAME\\ReadyCheck-NotReady"
 
 local FilterPredefinedConfig = {
-  CastedByMe = {
-    Name = "Casted by me",
-    Description = "Aura's that you have casted by you.",
+  CastByMe = {
+    Name = "Cast by me",
+    Description = "Aura's that you have cast.",
     Order = 1,
   },
-  NotCastedByMe = {
-    Name = "Not casted by me",
-    Description = "Aura's that you have been not casted by you.",
+  NotCastByMe = {
+    Name = "Not cast by me",
+    Description = "Aura's that you didn't cast",
     Order = 2,
   },
-  CastedBySameClass = {
-    Name = "Casted by someone of the same class",
-    Description = "Aura's that are casted by the class "..format("|cff%02x%02x%02x%s|r", RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].r * 255, RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].g * 255, RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].b * 255, select(1, UnitClass("player"))),
+  CastBySameClass = {
+    Name = "Cast by someone of the same class",
+    Description = "Aura's that are cast by the class "..format("|cff%02x%02x%02x%s|r", RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].r * 255, RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].g * 255, RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].b * 255, select(1, UnitClass("player"))),
     Order = 3,
   },
-  HarmfulOnFriendlyAndHelpfulOnHostile = {
+  DebuffOnHelpAndBuffOnHarm = {
     Name = "Buffs on |cfff36a6ahostile|r and debuffs on |cff6af36afriendly|r targets",
     Order = 4,
   },

@@ -5,7 +5,7 @@ if not GetSpellName then
 
   function GetSpellName(SpellId, Info)
     
-    return GetSpellInfo(SpellId, Info);
+    return GetSpellBookItemName(SpellId, Info);
     
   end
 

@@ -125,7 +125,7 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   MaxTime:SetDisabled(LayoutConfig.BarUseAuraTime);
   MaxTime:SetWidth(200);
   MaxTime:SetValue(LayoutConfig.MaxTime);
-  MaxTime:SetLabel("Start time");
+  MaxTime:SetLabel("Maximune time");
   MaxTime:SetSliderValues(5, 3600, 1);
   MaxTime:SetIsPercent(false);
   MaxTime:SetCallback("OnValueChanged", function(_, _, Value)
@@ -133,12 +133,47 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
     ContainerInstance:Update("LAYOUT");
   end);
   SettingsGroup:AddChild(MaxTime);
+  
   SettingsGroup:AddText(" ", nil, 200);
   
   SettingsGroup:AddText("The number of seconds the timeline will contain.", GameFontHighlightSmall, 200);
   SettingsGroup:AddText(" ", nil, 200);
   
-    SettingsGroup:AddSpace();
+  SettingsGroup:AddSpace();
+
+  local DropdownTimeFlow = AceGUI:Create("Dropdown");
+  DropdownTimeFlow:SetWidth(200);
+  DropdownTimeFlow:SetList({
+    NONE = "No compression",
+    POW  = "Compression using pow",
+  });
+  DropdownTimeFlow:SetLabel("Time flow");
+  DropdownTimeFlow:SetValue(LayoutConfig.TimeFlow);
+  DropdownTimeFlow:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.TimeFlow = Value;
+    ContainerInstance:Update("ALL");
+    Module:ContentLayoutGeneral(Content, ContainerId);
+  end);
+  SettingsGroup:AddChild(DropdownTimeFlow);
+  
+  if LayoutConfig.TimeFlow ~= "NONE" then
+  
+    local TimeCompression = AceGUI:Create("Slider");
+    TimeCompression:SetDisabled(false);
+    TimeCompression:SetWidth(200);
+    TimeCompression:SetValue(LayoutConfig.TimeCompression);
+    TimeCompression:SetLabel("Time Compression");
+    TimeCompression:SetSliderValues(0.01, 1, 0.01);
+    TimeCompression:SetIsPercent(false);
+    TimeCompression:SetCallback("OnValueChanged", function(_, _, Value)
+      LayoutConfig.TimeCompression = Value;
+      ContainerInstance:Update("ALL");
+    end);
+    SettingsGroup:AddChild(TimeCompression);
+    
+  end
+  
+  SettingsGroup:AddSpace();
   
   local DropdownStyle = AceGUI:Create("Dropdown");
   DropdownStyle:SetWidth(200);
