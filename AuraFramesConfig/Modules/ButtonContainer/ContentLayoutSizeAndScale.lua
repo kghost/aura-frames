@@ -83,7 +83,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   HorizontalSpace:SetWidth(250);
   HorizontalSpace:SetValue(LayoutConfig.SpaceX);
   HorizontalSpace:SetLabel("Horizontal Space");
-  HorizontalSpace:SetSliderValues(0, 50, 0.1);
+  HorizontalSpace:SetSliderValues(-50, 50, 0.1);
   HorizontalSpace:SetIsPercent(false);
   HorizontalSpace:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.SpaceX = Value;
@@ -95,7 +95,7 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   VerticalSpace:SetWidth(250);
   VerticalSpace:SetValue(LayoutConfig.SpaceY);
   VerticalSpace:SetLabel("Vertical Space");
-  VerticalSpace:SetSliderValues(0, 50, 0.1);
+  VerticalSpace:SetSliderValues(-50, 50, 0.1);
   VerticalSpace:SetIsPercent(false);
   VerticalSpace:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.SpaceY = Value;
