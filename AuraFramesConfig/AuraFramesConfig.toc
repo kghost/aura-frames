@@ -22,11 +22,13 @@ ContentContainer.lua
 ContentSources.lua
 ContentOrder.lua
 ContentFilter.lua
+ContentFilterBuilder.lua
 ContentProfiles.lua
 ContentButtonFacade.lua
 ContentColor.lua
 
 AceGUIContainer-AuraFramesWindow.lua
 AceGUI-3.0-Spell-EditBox-Fix.lua
+AceGUIWidget-MultiSelect.lua
 
 Modules.xml
