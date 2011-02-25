@@ -193,7 +193,7 @@ function Module:New(Config)
   Container.Id = Config.Id;
   Container.Config = Config;
   
-  Container.AuraList = AuraFrames:NewAuraList(Container, Config.Filter, Config.Order);
+  Container.AuraList = AuraFrames:NewAuraList(Container, Config.Filter.Groups, Config.Order);
   
   Container.TooltipOptions = {};
   

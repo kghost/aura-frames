@@ -11,42 +11,6 @@ local tolower, toupper = string.lower, string.upper;
 
 AuraFrames.FilterPrototype = {};
 
--- List of all the predefined filters. Used by the expresion builder and the configuration.
-AuraFrames.FilterPredefined = {
-  CastByMe = {
-    Groups = {
-      {
-        {Subject = "CastByMe", Operator = "Equal", Args = {Boolean = "true"}},
-      },
-    },
-  },
-  NotCastByMe = {
-    Groups = {
-      {
-        {Subject = "CastByMe", Operator = "Equal", Args = {Boolean = "false"}},
-      },
-    },
-  },
-  CastBySameClass = {
-    Groups = {
-      {
-        {Subject = "CasterClass", Operator = "Equal", Args = {String = select(2, UnitClass("player"))}},
-      },
-    },
-  },
-  DebuffOnHelpAndBuffOnHarm = {
-    Groups = {
-      {
-        {Subject = "TargetIsFriendly", Operator = "Equal", Args = {Boolean = "true"}},
-        {Subject = "Type", Operator = "Equal", Args = {String = "HARMFUL"}},
-      },
-      {
-        {Subject = "TargetIsHostile", Operator = "Equal", Args = {Boolean = "true"}},
-        {Subject = "Type", Operator = "Equal", Args = {String = "HELPFUL"}},
-      },
-    },
-  },
-};
 
 -- Internal list for converting operator keys to lua code.
 local FilterOperatorMappings = {
@@ -59,6 +23,7 @@ local FilterOperatorMappings = {
   InList          = "==",
   NotInList       = "~=",
 };
+
 
 -- List of all the operators per value type. Used by the expresion builder and the configuration.
 AuraFrames.FilterTypeOperators = {
@@ -208,8 +173,8 @@ function AuraFrames:NewFilter(Config, NotifyFunc)
   
   Filter.Config = Config;
   
-  if not Config.Groups then
-    Config.Groups = {};
+  if not Config then
+    Config = {};
   end
   
   Filter:Build();
@@ -241,30 +206,9 @@ function AuraFrames.FilterPrototype:Build()
 
   self.Dynamic = false;
 
-  if not self.Config.Expert or self.Config.Expert == false then
-  
-    self.Config.Groups = {};
-    
-    for Key, Value in pairs(self.Config.Predefined or {}) do
-    
-      if Value == true and AuraFrames.FilterPredefined[Key] then
-      
-        for _, Group in pairs(AuraFrames.FilterPredefined[Key].Groups) do
-        
-          tinsert(self.Config.Groups, Group);
-        
-        end
-      
-      end
-      
-    end
-  
-  end
-
-
   local Groups = {};
 
-  for _, Group in ipairs(self.Config.Groups) do
+  for _, Group in ipairs(self.Config) do
   
     if not (Group.Disabled and Group.Disabled == true) then
   

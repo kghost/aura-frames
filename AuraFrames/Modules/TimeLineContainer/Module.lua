@@ -220,7 +220,7 @@ function Module:New(Config)
   Container.Id = Config.Id;
   Container.Config = Config;  
   
-  Container.AuraList = AuraFrames:NewAuraList(Container, Config.Filter, nil);
+  Container.AuraList = AuraFrames:NewAuraList(Container, Config.Filter.Groups, nil);
   
   Container.TooltipOptions = {};
   
