@@ -10,22 +10,61 @@ local FilterPredefinedConfig = {
   CastByMe = {
     Name = "Cast by me",
     Description = "Aura's that you have cast.",
+    Groups = {
+      {
+        {Subject = "CastByMe", Operator = "Equal", Args = {Boolean = "true"}},
+      },
+    },
     Order = 1,
   },
   NotCastByMe = {
     Name = "Not cast by me",
     Description = "Aura's that you didn't cast",
+    Groups = {
+      {
+        {Subject = "CastByMe", Operator = "Equal", Args = {Boolean = "false"}},
+      },
+    },
     Order = 2,
   },
   CastBySameClass = {
     Name = "Cast by someone of the same class",
     Description = "Aura's that are cast by the class "..format("|cff%02x%02x%02x%s|r", RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].r * 255, RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].g * 255, RAID_CLASS_COLORS[select(2, UnitClass("player")) or "NONE"].b * 255, select(1, UnitClass("player"))),
+    Groups = {
+      {
+        {Subject = "CasterClass", Operator = "Equal", Args = {String = select(2, UnitClass("player"))}},
+      },
+    },
     Order = 3,
   },
   DebuffOnHelpAndBuffOnHarm = {
     Name = "Buffs on |cfff36a6ahostile|r and debuffs on |cff6af36afriendly|r targets",
+    Groups = {
+      {
+        {Subject = "TargetIsFriendly", Operator = "Equal", Args = {Boolean = "true"}},
+        {Subject = "Type", Operator = "Equal", Args = {String = "HARMFUL"}},
+      },
+      {
+        {Subject = "TargetIsHostile", Operator = "Equal", Args = {Boolean = "true"}},
+        {Subject = "Type", Operator = "Equal", Args = {String = "HELPFUL"}},
+      },
+    },
     Order = 4,
   },
+};
+
+
+
+-- List of all the operators with there description. Used by the configuration.
+local FilterOperatorDescriptions = {
+  Equal           = "Equal",
+  NotEqual        = "Not Equal",
+  Greater         = "Greater",
+  GreaterOrEqual  = "Greater or Equal",
+  Lesser          = "Lesser",
+  LesserOrEqual   = "Lesser or Equal",
+  InList          = "In list",
+  NotInList       = "Not in list",
 };
 
 
@@ -116,7 +155,7 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
       local Operators = {};
     
       for _, Key in pairs(AuraFrames.FilterTypeOperators[AuraFrames.AuraDefinition[Rule.Subject].Type]) do
-        Operators[Key] = AuraFrames.FilterOperatorDescriptions[Key];
+        Operators[Key] = FilterOperatorDescriptions[Key];
       end
     
       local Operator = AceGUI:Create("Dropdown");
