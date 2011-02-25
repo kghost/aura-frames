@@ -432,51 +432,7 @@ function Prototype:UpdateBarDisplay(Bar)
   
   Bar.Text:SetText(tconcat(Text, " "));
   
-  local Color;
-  
-  if Aura.Type == "HARMFUL" then
-  
-    Color = self.Config.Colors.Debuff[Aura.Classification];
-
-  elseif Aura.Type == "HELPFUL" then
-
-    Color = self.Config.Colors["Buff"];
-
-  elseif Aura.Type == "WEAPON" then
-
-    Color = self.Config.Colors["Weapon"];
-
-  else
-
-    Color = self.Config.Colors["Other"];
-
-  end
-  
-  if LBF then
-    LBF:SetNormalVertexColor(Bar.Button, unpack(Color));
-  end
-  
-  Bar.Button.Border:SetVertexColor(unpack(Color));
-  Bar.Bar.Texture:SetVertexColor(unpack(Color));
-  Bar.Bar:SetBackdropBorderColor(min(Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), Color[4]);
-  
-  if self.Config.Layout.ShowSpark and self.Config.Layout.SparkUseBarColor then
-  
-    Bar.Bar.Spark:SetVertexColor(unpack(Color));
-  
-  end
-  
-  if self.Config.Layout.TextureBackgroundUseBarColor then
-  
-    Bar.Bar.Background.Texture:SetVertexColor(Color[1], Color[2], Color[3], self.Config.Layout.TextureBackgroundOpacity);
-    Bar.Bar.Background:SetBackdropBorderColor(min(Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.TextureBackgroundOpacity);
-  
-  else
-  
-    Bar.Bar.Background.Texture:SetVertexColor(unpack(self.Config.Layout.TextureBackgroundColor));
-    Bar.Bar.Background:SetBackdropBorderColor(min(self.Config.Layout.TextureBackgroundColor[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.TextureBackgroundColor[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.TextureBackgroundColor[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.TextureBackgroundColor[4]);
-  
-  end
+  self:AuraEvent(Aura, "ColorChanged");
   
   if self.Config.Layout.Icon ~= "NONE" then
   
@@ -748,6 +704,46 @@ function Prototype:Update(...)
       self.ExpireFlashTime = nil;
     end
     
+  end
+
+end
+
+
+-----------------------------------------------------------------
+-- Function AuraEvent
+-----------------------------------------------------------------
+function Prototype:AuraEvent(Aura, Event, ...)
+
+  local Bar = self.Bars[Aura];
+
+  if Event == "ColorChanged" then
+  
+    if LBF then
+      LBF:SetNormalVertexColor(Bar.Button, unpack(Aura.Color));
+    end
+    
+    Bar.Button.Border:SetVertexColor(unpack(Aura.Color));
+    Bar.Bar.Texture:SetVertexColor(unpack(Aura.Color));
+    Bar.Bar:SetBackdropBorderColor(min(Aura.Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Aura.Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Aura.Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), Aura.Color[4]);
+    
+    if self.Config.Layout.ShowSpark and self.Config.Layout.SparkUseBarColor then
+    
+      Bar.Bar.Spark:SetVertexColor(unpack(Aura.Color));
+    
+    end
+    
+    if self.Config.Layout.TextureBackgroundUseBarColor then
+    
+      Bar.Bar.Background.Texture:SetVertexColor(Aura.Color[1], Aura.Color[2], Aura.Color[3], self.Config.Layout.TextureBackgroundOpacity);
+      Bar.Bar.Background:SetBackdropBorderColor(min(Aura.Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Aura.Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Aura.Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.TextureBackgroundOpacity);
+    
+    else
+    
+      Bar.Bar.Background.Texture:SetVertexColor(unpack(self.Config.Layout.TextureBackgroundColor));
+      Bar.Bar.Background:SetBackdropBorderColor(min(self.Config.Layout.TextureBackgroundColor[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.TextureBackgroundColor[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(self.Config.Layout.TextureBackgroundColor[3] * self.Config.Layout.BarBorderColorAdjust, 1), self.Config.Layout.TextureBackgroundColor[4]);
+    
+    end
+  
   end
 
 end

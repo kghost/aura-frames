@@ -127,18 +127,7 @@ function Module:GetDatabaseDefaults()
       },
       
     },
-    Colors = {
-      Debuff = {
-        None        = {0.8, 0.0, 0.0, 1.0},
-        Magic       = {0.2, 0.6, 1.0, 1.0},
-        Curse       = {0.6, 0.0, 1.0, 1.0},
-        Disease     = {0.6, 0.4, 0.0, 1.0},
-        Poison      = {0.0, 0.6, 0.0, 1.0},
-      },
-      Buff          = {1.0, 1.0, 1.0, 1.0},
-      Weapon        = {1.0, 1.0, 1.0, 1.0},
-      Other         = {1.0, 1.0, 1.0, 1.0},
-    },
+    Colors = AuraFrames:GetDatabaseDefaultColors(),
     Warnings = {
       New = {
         Flash = false,
@@ -156,8 +145,8 @@ function Module:GetDatabaseDefaults()
         PopupScale = 3.0,
       },
     },
-    Order = AuraFrames:GetDatabaseDefaultsOrder(),
-    Filter = AuraFrames:GetDatabaseDefaultsFilter(),
+    Order = AuraFrames:GetDatabaseDefaultOrder(),
+    Filter = AuraFrames:GetDatabaseDefaultFilter(),
   };
   
   return DatabaseDefaults;
@@ -189,7 +178,7 @@ function Module:New(Config)
   Container.Id = Config.Id;
   Container.Config = Config;
   
-  Container.AuraList = AuraFrames:NewAuraList(Container, Config.Filter.Groups, Config.Order);
+  Container.AuraList = AuraFrames:NewAuraList(Container, Config.Filter.Groups, Config.Order, Config.Colors);
   
   Container.TooltipOptions = {};
   

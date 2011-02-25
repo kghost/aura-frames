@@ -79,7 +79,7 @@ CooldownFrame:SetScript("OnEvent", function(self, event)
     
     for _, Container in pairs(Module.Containers) do
     
-      for _, Button in pairs(Container.Buttons) do
+      for _, Button in pairs(Container.Buttons or {}) do
       
         if Button.Cooldown:IsShown() == 1 then
         
@@ -298,36 +298,8 @@ function Prototype:UpdateButtonDisplay(Button)
     
   end
   
-  if Button.Border ~= nil then
+  self:AuraEvent(Aura, "ColorChanged");
   
-    local Color;
-    
-    if Aura.Type == "HARMFUL" then
-    
-      Color = self.Config.Colors.Debuff[Aura.Classification];
-
-    elseif Aura.Type == "HELPFUL" then
-
-      Color = self.Config.Colors["Buff"];
-
-    elseif Aura.Type == "WEAPON" then
-
-      Color = self.Config.Colors["Weapon"];
-
-    else
-
-      Color = self.Config.Colors["Other"];
-
-    end
-    
-    if LBF then
-      LBF:SetNormalVertexColor(Button, unpack(Color));
-    end
-    
-    Button.Border:SetVertexColor(unpack(Color));
-  
-  end
-
   if self.Config.Layout.ShowCooldown == true and Aura.ExpirationTime > 0 then
     
     local CurrentTime = GetTime();
@@ -495,6 +467,26 @@ function Prototype:Update(...)
     
   end
   
+end
+
+
+-----------------------------------------------------------------
+-- Function AuraEvent
+-----------------------------------------------------------------
+function Prototype:AuraEvent(Aura, Event, ...)
+
+  local Button = self.Buttons[Aura];
+
+  if Event == "ColorChanged" and Button.Border ~= nil then
+
+    if LBF then
+      LBF:SetNormalVertexColor(Button, unpack(Aura.Color));
+    end
+    
+    Button.Border:SetVertexColor(unpack(Aura.Color));
+  
+  end
+
 end
 
 

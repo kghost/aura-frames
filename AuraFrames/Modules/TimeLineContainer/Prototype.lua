@@ -311,36 +311,8 @@ function Prototype:UpdateButtonDisplay(Button)
     
   end
   
-  if Button.Border ~= nil then
+  self:AuraEvent(Aura, "ColorChanged");
   
-    local Color;
-    
-    if Aura.Type == "HARMFUL" then
-    
-      Color = self.Config.Colors.Debuff[Aura.Classification];
-
-    elseif Aura.Type == "HELPFUL" then
-
-      Color = self.Config.Colors["Buff"];
-
-    elseif Aura.Type == "WEAPON" then
-
-      Color = self.Config.Colors["Weapon"];
-
-    else
-
-      Color = self.Config.Colors["Other"];
-
-    end
-    
-    if LBF then
-      LBF:SetNormalVertexColor(Button, unpack(Color));
-    end
-    
-    Button.Border:SetVertexColor(unpack(Color));
-  
-  end
-
   ButtonOnUpdate(self, Button, 0.0);
 
 end
@@ -649,6 +621,27 @@ function Prototype:Update(...)
   end
 
 end
+
+
+-----------------------------------------------------------------
+-- Function AuraEvent
+-----------------------------------------------------------------
+function Prototype:AuraEvent(Aura, Event, ...)
+
+  local Button = self.Buttons[Aura];
+
+  if Event == "ColorChanged" and Button.Border ~= nil then
+
+    if LBF then
+      LBF:SetNormalVertexColor(Button, unpack(Aura.Color));
+    end
+    
+    Button.Border:SetVertexColor(unpack(Aura.Color));
+  
+  end
+
+end
+
 
 -----------------------------------------------------------------
 -- Function AuraNew

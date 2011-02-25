@@ -164,51 +164,14 @@ end
 
 
 -----------------------------------------------------------------
--- Function NewFilter
+-- Function BuildStatement
 -----------------------------------------------------------------
-function AuraFrames:NewFilter(Config, NotifyFunc)
+function AuraFrames:BuildFilterStatement(Config, Default)
 
-  local Filter = {};
-  setmetatable(Filter, { __index = AuraFrames.FilterPrototype});
-  
-  Filter.Config = Config;
-  
-  if not Config then
-    Config = {};
-  end
-  
-  Filter:Build();
-  
-  Filter.NotifyFunc = NotifyFunc;
-  
-  return Filter;
-
-end
-
-
------------------------------------------------------------------
--- Function GetDatabaseDefaultsFilter
------------------------------------------------------------------
-function AuraFrames:GetDatabaseDefaultsFilter()
-
-  return {
-    Expert = false,
-    Groups = {},
-  };
-
-end
-
-
------------------------------------------------------------------
--- Function Build
------------------------------------------------------------------
-function AuraFrames.FilterPrototype:Build()
-
-  self.Dynamic = false;
-
+  local Dynamic = false;
   local Groups = {};
 
-  for _, Group in ipairs(self.Config) do
+  for _, Group in ipairs(Config) do
   
     if not (Group.Disabled and Group.Disabled == true) then
   
@@ -219,7 +182,7 @@ function AuraFrames.FilterPrototype:Build()
         if AuraFrames.AuraDefinition[Value.Subject] ~= nil and not (Value.Disabled and Value.Disabled == true) and Value.Operator then
         
           -- Update static flag.
-          self.Dynamic = self.Dynamic or AuraFrames.AuraDefinition[Value.Subject].Dynamic or false;
+          Dynamic = Dynamic or AuraFrames.AuraDefinition[Value.Subject].Dynamic or false;
         
           -- Build and insert rule.
           tinsert(Rules, BuildExpresion(AuraFrames.AuraDefinition[Value.Subject].Type, Value.Operator, Value.Subject, Value.Args or {}));
@@ -239,10 +202,58 @@ function AuraFrames.FilterPrototype:Build()
   local Code;
   
   if #Groups == 0 then
-    Code = "return function(Object) return true; end;";
+    Code = Default and "(true)" or "(false)";
   else
-    Code = "return function(Object) return ("..tconcat(Groups, " or ").."); end;";
+    Code = "("..tconcat(Groups, " or ")..")";
   end
+  
+  return Code, Dynamic;
+
+end
+
+
+-----------------------------------------------------------------
+-- Function NewFilter
+-----------------------------------------------------------------
+function AuraFrames:NewFilter(Config, NotifyFunc)
+
+  local Filter = {};
+  setmetatable(Filter, { __index = AuraFrames.FilterPrototype});
+  
+  Filter.Config = Config or {};
+  
+  Filter:Build();
+  
+  Filter.NotifyFunc = NotifyFunc;
+  
+  return Filter;
+
+end
+
+
+-----------------------------------------------------------------
+-- Function GetDatabaseDefaultFilter
+-----------------------------------------------------------------
+function AuraFrames:GetDatabaseDefaultFilter()
+
+  return {
+    Expert = false,
+    Groups = {},
+  };
+
+end
+
+
+-----------------------------------------------------------------
+-- Function Build
+-----------------------------------------------------------------
+function AuraFrames.FilterPrototype:Build()
+
+  local Code;
+  
+  Code, self.Dynamic = AuraFrames:BuildFilterStatement(self.Config, true);
+  
+  Code = "return function(Object) return "..Code.."; end;";
   
   local Function, ErrorMessage = loadstring(Code);
   

@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 214;
+AuraFrames.DatabaseVersion = 215;
 
 
 --[[
@@ -66,6 +66,9 @@ AuraFrames.DatabaseVersion = 214;
   
   Version 214:
     Implemented auto text labels for TimeLine
+    
+  Version 215:
+    Implemented dynamic colors
     
 ]]--
 
@@ -547,6 +550,87 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
       Container.Layout.TextLabelAutoSpace = 10;
       
     end
+  
+  end
+
+  if OldVersion < 215 then
+    
+    local OldColors = Container.Colors;
+    
+    Container.Colors = {
+      Expert = false,
+      DefaultColor = OldColors.Other,
+      Rules = {
+        {
+          Name = "Unknown Debuff Type",
+          Color = OldColors.Debuff.None,
+          Groups = {
+            {
+              {Args = {String = "HARMFUL"}, Subject = "Type", Operator = "Equal"},
+              {Args = {String = "None"}, Subject = "Classification", Operator = "Equal"},
+            },
+          },
+        },
+        {
+          Name = "Debuff Type Magic",
+          Color = OldColors.Debuff.Magic,
+          Groups = {
+            {
+              {Args = {String = "HARMFUL"}, Subject = "Type", Operator = "Equal"},
+              {Args = {String = "Magic"}, Subject = "Classification", Operator = "Equal"},
+            },
+          },
+        },
+        {
+          Name = "Debuff Type Curse",
+          Color = OldColors.Debuff.Curse,
+          Groups = {
+            {
+              {Args = {String = "HARMFUL"}, Subject = "Type", Operator = "Equal"},
+              {Args = {String = "Curse"}, Subject = "Classification", Operator = "Equal"},
+            },
+          },
+        },
+        {
+          Name = "Debuff Type Disease",
+          Color = OldColors.Debuff.Disease,
+          Groups = {
+            {
+              {Args = {String = "HARMFUL"}, Subject = "Type", Operator = "Equal"},
+              {Args = {String = "Disease"}, Subject = "Classification", Operator = "Equal"},
+            },
+          },
+        },
+        {
+          Name = "Debuff Type Poison",
+          Color = OldColors.Debuff.Poison,
+          Groups = {
+            {
+              {Args = {String = "HARMFUL"}, Subject = "Type", Operator = "Equal"},
+              {Args = {String = "Poison"}, Subject = "Classification", Operator = "Equal"},
+            },
+          },
+        },
+        {
+          Name = "Buff",
+          Color = OldColors.Buff,
+          Groups = {
+            {
+              {Args = {String = "HELPFUL"}, Subject = "Type", Operator = "Equal"},
+            },
+          },
+        },
+        {
+          Name = "Weapon",
+          Color = OldColors.Weapon,
+          Groups = {
+            {
+              {Args = {String = "WEAPON"}, Subject = "Type", Operator = "Equal"},
+            },
+          },
+        },
+      },
+    };
   
   end
   

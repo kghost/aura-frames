@@ -22,7 +22,7 @@ local CreateFrame = CreateFrame;
 
 AuraFrames.AuraListPrototype = {};
 
-local AuraListCheckingThrottle = 0.3;
+local AuraListCheckingThrottle = 0.2;
 
 -----------------------------------------------------------------
 -- Function AddSource
@@ -63,9 +63,7 @@ function AuraFrames.AuraListPrototype:ResyncSources()
     self.Order:Reset();
   end
   
-  self.Dynamic = self.Filter.Dynamic or false;
-  
-  if self.Dynamic == true then
+  if self.Filter.Dynamic or self.Colors.Dynamic then
     
     self.CheckingFrame:Show();
     
@@ -76,6 +74,36 @@ function AuraFrames.AuraListPrototype:ResyncSources()
   end
 
   LibAura:ObjectSync(self, nil, nil);
+
+end
+
+
+-----------------------------------------------------------------
+-- Function ResyncColors
+-----------------------------------------------------------------
+function AuraFrames.AuraListPrototype:ResyncColors()
+  
+  for Aura, Status in pairs(self.Auras) do
+  
+    if Status then
+
+      Aura.Color = self.Colors.Test(Aura);
+      
+      self.Container:AuraEvent(Aura, "ColorChanged");
+      
+    end
+
+  end
+
+  if self.Filter.Dynamic or self.Colors.Dynamic then
+    
+    self.CheckingFrame:Show();
+    
+  else
+    
+    self.CheckingFrame:Hide();
+    
+  end
 
 end
 
@@ -117,7 +145,7 @@ function AuraFrames.AuraListPrototype:AuraNew(Aura)
 
   if self.Filter.Test(Aura) == false then
   
-    if self.Dynamic == true then
+    if self.Filter.Dynamic == true then
       self.Auras[Aura] = false;
     end
   
@@ -125,6 +153,8 @@ function AuraFrames.AuraListPrototype:AuraNew(Aura)
   end
 
   self.Auras[Aura] = true;
+  
+  Aura.Color = self.Colors.Test(Aura);
 
   self.Container:AuraNew(Aura);
   
@@ -146,6 +176,8 @@ function AuraFrames.AuraListPrototype:AuraChanged(Aura)
   
   if self:AuraCheck(Aura) == false then
   
+    Aura.Color = self.Colors.Test(Aura);
+  
     -- No aura changes, just fire a AuraChanged.
   
     self.Container:AuraChanged(Aura);
@@ -154,7 +186,7 @@ function AuraFrames.AuraListPrototype:AuraChanged(Aura)
       self.Order:Update(Aura);
     end
     
-  elseif self.Auras[Aura] == false and self.Dynamic ~= true then
+  elseif self.Auras[Aura] == false and self.Filter.Dynamic ~= true then
 
     -- Remove the aura if he didn't pass the filter and we are not
     -- checking realtime.
@@ -191,31 +223,49 @@ end
 -----------------------------------------------------------------
 function AuraFrames.AuraListPrototype:AuraCheck(Aura)
 
-  if self.Filter.Test(Aura) == self.Auras[Aura] then
-    return false;
-  end
-  
-  self.Auras[Aura] = not self.Auras[Aura];
-  
-  if self.Auras[Aura] == false then
-    
-    self.Container:AuraOld(Aura);
+  if self.Filter.Dynamic and self.Filter.Test(Aura) ~= self.Auras[Aura] then
 
-    if self.Order then
-      self.Order:Remove(Aura);
-    end
-  
-  else
-  
-    self.Container:AuraNew(Aura);
+    self.Auras[Aura] = not self.Auras[Aura];
     
-    if self.Order then
-      self.Order:Add(Aura);
+    if self.Auras[Aura] == false then
+      
+      self.Container:AuraOld(Aura);
+
+      if self.Order then
+        self.Order:Remove(Aura);
+      end
+      
+      return;
+    
+    else
+    
+      Aura.Color = self.Colors.Test(Aura);
+    
+      self.Container:AuraNew(Aura);
+      
+      if self.Order then
+        self.Order:Add(Aura);
+      end
+      
+      return;
+    
     end
   
   end
   
-  return true;
+  if self.Auras[Aura] and self.Colors.Dynamic then
+  
+    local Color = self.Colors.Test(Aura);
+    
+    if Aura.Color[1] ~= Color[1] or Aura.Color[2] ~= Color[2] or Aura.Color[3] ~= Color[3] or Aura.Color[4] ~= Color[4] then
+      
+      Aura.Color = Color;
+      self.Container:AuraEvent(Aura, "ColorChanged");
+      
+    end
+  
+  end
+  
 
 end
 
@@ -223,7 +273,7 @@ end
 -----------------------------------------------------------------
 -- Function NewAuraList
 -----------------------------------------------------------------
-function AuraFrames:NewAuraList(Container, FilterConfig, OrderConfig)
+function AuraFrames:NewAuraList(Container, FilterConfig, OrderConfig, ColorsConfig)
 
   local AuraList = {};
   setmetatable(AuraList, { __index = self.AuraListPrototype});
@@ -231,8 +281,6 @@ function AuraFrames:NewAuraList(Container, FilterConfig, OrderConfig)
   AuraList.Auras = {};
   
   AuraList.Container = Container;
-  
-  AuraList.Dynamic = false;
   
   AuraList.CheckingFrame = CreateFrame("Frame");
   AuraList.CheckingFrame.LastScan = 0;
@@ -259,9 +307,9 @@ function AuraFrames:NewAuraList(Container, FilterConfig, OrderConfig)
     AuraList.Order = self:NewOrder(OrderConfig, function(Aura, Index) Container:AuraAnchor(Aura, Index); end);
   end
   
-  AuraList.Dynamic = AuraList.Filter.Dynamic or false;
+  AuraList.Colors = self:NewColors(ColorsConfig, function() AuraList:ResyncColors() end);
   
-  if AuraList.Dynamic == true then
+  if AuraList.Filter.Dynamic or AuraList.Colors.Dynamic then
     
     AuraList.CheckingFrame:Show();
     
