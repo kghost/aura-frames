@@ -48,7 +48,6 @@ AuraFrames.FilterPredefined = {
   },
 };
 
-
 -- Internal list for converting operator keys to lua code.
 local FilterOperatorMappings = {
   Equal           = "==",
@@ -59,18 +58,6 @@ local FilterOperatorMappings = {
   LesserOrEqual   = "<=",
   InList          = "==",
   NotInList       = "~=",
-};
-
--- List of all the operators with there description. Used by the configuration.
-AuraFrames.FilterOperatorDescriptions = {
-  Equal           = "Equal",
-  NotEqual        = "Not Equal",
-  Greater         = "Greater",
-  GreaterOrEqual  = "Greater or Equal",
-  Lesser          = "Lesser",
-  LesserOrEqual   = "Lesser or Equal",
-  InList          = "In list",
-  NotInList       = "Not in list",
 };
 
 -- List of all the operators per value type. Used by the expresion builder and the configuration.

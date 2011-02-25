@@ -445,6 +445,18 @@ end
 
 
 -----------------------------------------------------------------
+-- Function FireEvent
+-----------------------------------------------------------------
+function LibAura:FireEvent(Aura, Event, ...)
+
+  for _, Object in ipairs(self.db[Aura.Unit][Aura.Type].Objects) do
+    Object:Event(Aura, Event, ...);
+  end
+
+end
+
+
+-----------------------------------------------------------------
 -- EventFrame
 -----------------------------------------------------------------
 LibAura.EventFrame = LibAura.EventFrame or CreateFrame("Frame");
