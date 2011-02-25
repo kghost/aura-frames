@@ -75,7 +75,7 @@ function AuraFramesConfig:ContentColors(Content, ContainerId)
     Content:AddChild(OptionGroup);
     
     local ColorReset = AceGUI:Create("Button");
-    ColorReset:SetText("Reset Border Colors");
+    ColorReset:SetText("Reset Colors");
     ColorReset:SetCallback("OnClick", function()
       AuraFrames.db.profile.Containers[ContainerId].Colors = AuraFrames:GetDatabaseDefaultColors();
       AuraFramesConfig:ContentColors(Content, ContainerId);
@@ -366,6 +366,13 @@ function AuraFramesConfig:ContentColors(Content, ContainerId)
 
       end);
       OptionGroup:AddChild(ExpertMode);
+      
+      Content:AddSpace(2);
+    
+      local Description = AceGUI:Create("Label");
+      Description:SetText("The first rule from the top that match will be used for coloring.");
+      Description:SetRelativeWidth(1);
+      Content:AddChild(Description);
     
     end
     
