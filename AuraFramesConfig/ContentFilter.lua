@@ -52,9 +52,9 @@ local FilterPredefinedConfig = {
 
 
 -----------------------------------------------------------------
--- Local Function ApplyChange
+-- Local Function ApplyChanges
 -----------------------------------------------------------------
-local function ApplyChange(ContainerId)
+local function ApplyChanges(ContainerId)
 
   local ContainerInstance = AuraFrames.Containers[ContainerId];
 
@@ -89,7 +89,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
     Content:AddChild(ContentFilterBuilder);
     AuraFramesConfig:EnhanceContainer(ContentFilterBuilder);
     
-    AuraFramesConfig:ContentFilterBuilderRefresh(ContentFilterBuilder, FilterConfig.Groups, function() ApplyChange(ContainerId); end);
+    AuraFramesConfig:ContentFilterBuilderRefresh(ContentFilterBuilder, FilterConfig.Groups, function() ApplyChanges(ContainerId); end);
     
     Content:AddSpace();
     
@@ -123,7 +123,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
           if Result == true then
             FilterConfig.Expert = false;
             FilterConfig.Groups = {};
-            ApplyChange(ContainerId);
+            ApplyChanges(ContainerId);
           else
             CheckBoxExpert:SetValue(true);
           end
@@ -133,7 +133,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
       else
         FilterConfig.Expert = false;
         FilterConfig.Groups = {};
-        ApplyChange(ContainerId);
+        ApplyChanges(ContainerId);
         AuraFramesConfig:ContentFilterRefresh(Content, ContainerId);
         AuraFramesConfig:Show();
       end
@@ -147,7 +147,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
   
     local List = {};
   
-    for Key, Definition in pairs(AuraFrames.FilterPredefined) do
+    for Key, Definition in pairs(FilterPredefinedConfig) do
 
       local CheckBoxPredefined = AceGUI:Create("CheckBox");
       CheckBoxPredefined.Order = FilterPredefinedConfig[Key].Order
@@ -184,7 +184,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
           
         end
         
-        ApplyChange(ContainerId);
+        ApplyChanges(ContainerId);
 
       end);
       
@@ -214,7 +214,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
         FilterConfig.Groups = {{{}}};
       end
       AuraFramesConfig:ContentFilterRefresh(Content, ContainerId);
-      ApplyChange(ContainerId);
+      ApplyChanges(ContainerId);
     end);
     Content:AddChild(CheckBoxExpert);
   
@@ -237,6 +237,8 @@ function AuraFramesConfig:ContentFilter(ContainerId)
   Content:SetLayout("List");
   self:EnhanceContainer(Content);
   self.Content:AddChild(Content);
+  
+  self.ScrollFrame = Content;
   
   self:ContentFilterRefresh(Content, ContainerId);
 

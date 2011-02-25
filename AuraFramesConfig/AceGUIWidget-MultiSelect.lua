@@ -101,6 +101,8 @@ do
 		label:SetHeight(18)
 		label:SetPoint("TOPLEFT", self.labelframe, "TOPLEFT", 0, -(getn(self.labels) * 18))
 		label:SetPoint("TOPRIGHT", self.labelframe, "TOPRIGHT", 0, -(getn(self.labels) * 18))
+		label.str = str;
+		label.index = getn(self.labels) + 1;
 		self.labels[getn(self.labels) + 1] = label
 		self.labelframe:SetHeight(getn(self.labels) * 18)
 		
@@ -155,6 +157,10 @@ do
 			end
 		end
 		return nil
+	end
+	
+	local function GetItemByIndex(self, index)  -- find an object based on the text parameter
+		return self.labels[index];
 	end
 	
 	local function GetText(self, value)  -- get the text of a label object
@@ -290,6 +296,7 @@ do
 		self.SetMultiSelect = SetMultiSelect
 		self.SetItemList = SetItemList
 		self.GetItem = GetItem
+		self.GetItemByIndex = GetItemByIndex
 		self.RemoveItem = RemoveItem
 		self.GetText = GetText
 		self.SetText = SetText

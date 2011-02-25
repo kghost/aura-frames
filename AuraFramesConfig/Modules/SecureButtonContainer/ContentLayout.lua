@@ -56,6 +56,7 @@ function Module:ContentLayout(ContainerId)
   self.Layout:SetLayout("List");
   AuraFramesConfig:EnhanceContainer(self.Layout);
   Tab:AddChild(self.Layout);
+  AuraFramesConfig.ScrollFrame = self.Layout;
   
   -- Select last tab otherwise if first tab.
   Tab:SelectTab(SelectedTabs[ContainerId] or "General");

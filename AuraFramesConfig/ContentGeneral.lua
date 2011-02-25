@@ -55,8 +55,9 @@ function AuraFramesConfig:ContentGeneral()
     ForumTextBox:SetText("http://forums.curseforge.com/showthread.php?t=1886");
     ForumTextBox.editbox:HighlightText(0, ForumTextBox.editbox:GetNumLetters());
   end);
-  ForumTextBox.editbox:HookScript("OnMouseUp", function()
+  ForumTextBox:SetCallback("OnEnter", function()
     ForumTextBox.editbox:HighlightText(0, ForumTextBox.editbox:GetNumLetters());
+    ForumTextBox:SetFocus();
   end);
   SupportGroup:AddChild(ForumTextBox);
   
@@ -72,13 +73,14 @@ function AuraFramesConfig:ContentGeneral()
     TicketsTextBox:SetText("http://wow.curseforge.com/addons/aura-frames/tickets/");
     TicketsTextBox.editbox:HighlightText(0, TicketsTextBox.editbox:GetNumLetters());
   end);
-  TicketsTextBox.editbox:HookScript("OnMouseUp", function()
+  TicketsTextBox:SetCallback("OnEnter", function()
     TicketsTextBox.editbox:HighlightText(0, TicketsTextBox.editbox:GetNumLetters());
+    TicketsTextBox:SetFocus();
   end);
   SupportGroup:AddChild(TicketsTextBox);
   
   SupportGroup:AddText(" ", nil, 65);
-  SupportGroup:AddText("Click on an URL to select it and press then CTRL+C to copy the text to the clipboard.", GameFontHighlightSmall, 450);
+  SupportGroup:AddText("Mouse over an URL to select it and press then CTRL+C to copy the text to the clipboard.", GameFontHighlightSmall, 450);
 
   self.Content:AddSpace(2);
   
@@ -87,6 +89,5 @@ function AuraFramesConfig:ContentGeneral()
   self.Content:AddText("This addon is developed and mainted by |cff0070DDBeautiuz|r (|cff9382C9Nexiuz|r) @ Bloodhoof EU.\n\nThe two most important addons that helped me and inspired me are SatrinaBuffFrame and LibBuffet.\n\nSpecial thanks goes to |cff9382C9Ripsomeone|r @ Bloodhoof EU for testing and helping me giving the addon his current form.");
 
   self.Content:AddSpace();
-
 
 end

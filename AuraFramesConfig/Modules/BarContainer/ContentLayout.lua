@@ -27,8 +27,12 @@ function Module:ContentLayout(ContainerId)
       text = "Text",
     },
     {
-      value = "SkinAndColors",
-      text = "Skin and Colors",
+      value = "Skin",
+      text = "Skin",
+    },
+    {
+      value = "Colors",
+      text = "Colors",
     },
   });
   Tab:SetCallback("OnGroupSelected", function(_, _, Value)
@@ -56,6 +60,7 @@ function Module:ContentLayout(ContainerId)
   self.Layout:SetLayout("List");
   AuraFramesConfig:EnhanceContainer(self.Layout);
   Tab:AddChild(self.Layout);
+  AuraFramesConfig.ScrollFrame = self.Layout;
   
   -- Select last tab otherwise if first tab.
   Tab:SelectTab(SelectedTabs[ContainerId] or "General");

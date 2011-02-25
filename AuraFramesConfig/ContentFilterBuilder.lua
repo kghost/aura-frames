@@ -339,5 +339,7 @@ function AuraFramesConfig:ContentFilterBuilderRefresh(Content, Config, NotifyFun
   
   Content:ResumeLayout();
   Content:DoLayout();
+  
+  AuraFramesConfig.ScrollFrame:DoLayout();
 
 end
