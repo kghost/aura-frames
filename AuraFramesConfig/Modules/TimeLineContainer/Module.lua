@@ -74,8 +74,26 @@ function Module:UnlockContainer(ContainerId, Unlock)
       Frame:SetAllPoints(Container.Frame);
       Frame:EnableMouse(true);
       Frame:SetFrameStrata("TOOLTIP");
-      Frame:SetScript("OnMouseDown", function(self) Container.Frame:StartMoving(); end);
-      Frame:SetScript("OnMouseUp", function(self) Container.Frame:StopMovingOrSizing(); end);
+      
+      Frame:SetScript("OnMouseDown", function(self, Button)
+
+        if Button == "LeftButton" then
+          Container.Frame:StartMoving();
+        end
+
+      end);
+      
+      Frame:SetScript("OnMouseUp", function(self, Button)
+
+        if Button == "LeftButton" then
+          Container.Frame:StopMovingOrSizing();
+        elseif Button == "RightButton" then
+          AuraFramesConfig:UnlockContainers(false);
+          AuraFramesConfig:SelectByPath("Containers", ContainerId);
+        end
+
+      end);
+      
       Frame:SetScript("OnUpdate", function()
       
         if Container.Config.Layout.Style == "HORIZONTAL" then
