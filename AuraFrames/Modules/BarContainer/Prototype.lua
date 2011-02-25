@@ -223,11 +223,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
         TexStart, TexEnd = 1 - TexEnd, 1 - TexStart;
       end
       
-      --Bar.Bar.Texture:SetTexCoord(Left, Right, 0, 1);
-      
     else
-      
-      --Bar.Bar.Texture:SetTexCoord(0, 1, 0, 1);
       
       if Container.Config.Layout.BarDirection == "LEFTGROW" or Container.Config.Layout.BarDirection == "RIGHTGROW" then
       
@@ -284,8 +280,6 @@ local function BarOnUpdate(Container, Bar, Elapsed)
   
   else
   
-    --Bar.Bar.Texture:SetTexCoord(0, 1, 0, 1);
-    
     if Container.Config.Layout.BarDirection == "LEFTGROW" or Container.Config.Layout.BarDirection == "RIGHTGROW" then
     
       Bar.Bar:SetWidth(Container.BarWidth);
@@ -500,6 +494,7 @@ function Prototype:UpdateBar(Bar)
   local Adjust = PositionMappings[self.Config.Layout.Icon][self.Config.Layout.TextPosition];
   Bar.Text:SetPoint(self.Config.Layout.TextPosition, Bar, self.Config.Layout.TextPosition, Adjust[1], Adjust[2]);
   Bar.Text:SetWidth(self.Config.Layout.BarWidth - ((self.Config.Layout.Icon == "NONE" and Module.BarHeight or 0) + (self.Config.Layout.ShowDuration and 60 or 0) + 20));
+  Bar.Text:SetJustifyH(self.Config.Layout.TextPosition);
   
   Adjust = PositionMappings[self.Config.Layout.Icon][self.Config.Layout.DurationPosition];
   Bar.Duration:SetPoint(self.Config.Layout.DurationPosition, Bar, self.Config.Layout.DurationPosition, Adjust[1], Adjust[2]);
