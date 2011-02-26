@@ -51,8 +51,6 @@ Mouseover unit:
   are checking the mouseover unit when we got a UNIT_AURA for mouseover every 0.2 seconds
   until the mouseover until is nil. When the mouseover unit is nil, we trigger an old event
   for all auras we had for the mouseover.
-  
-  UPDATE, we get a CURSOR_UPDATE event when leaving a mouse over object!
 
 ]]--
 
@@ -88,7 +86,7 @@ Module.EventsToMonitor = {
   vehicletarget = {"UNIT_AURA", "UNIT_ENTERED_VEHICLE", "UNIT_TARGET"},
   target        = {"UNIT_AURA", "PLAYER_TARGET_CHANGED"},
   targettarget  = {"UNIT_AURA", "PLAYER_TARGET_CHANGED", "UNIT_TARGET"},
-  mouseover     = {"UNIT_AURA", "UPDATE_MOUSEOVER_UNIT", "CURSOR_UPDATE"}
+  mouseover     = {"UNIT_AURA", "UPDATE_MOUSEOVER_UNIT", "LIBAURA_UPDATE"}
 };
 
 for i = 1, 4 do
@@ -247,8 +245,10 @@ function Module:UPDATE_MOUSEOVER_UNIT()
   Module:ScanUnit("mouseover");
 end
 
-function Module:CURSOR_UPDATE()
-  Module:ScanUnit("mouseover");
+function Module:LIBAURA_UPDATE()
+  if self.db["mouseover"] then
+    Module:ScanUnit("mouseover");
+  end
 end
 
 function Module:PLAYER_ENTERING_WORLD()
