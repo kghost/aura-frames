@@ -174,24 +174,47 @@ function AuraFrames.AuraListPrototype:AuraChanged(Aura)
     return;
   end
   
-  if self:AuraCheck(Aura) == false then
+  if self.Auras[Aura] ~= self.Filter.Test(Aura) then
+  
+    self.Auras[Aura] = not self.Auras[Aura];
+    
+    if self.Auras[Aura] == true then
+    
+      Aura.Color = self.Colors.Test(Aura);
+      self.Container:AuraNew(Aura);
+      
+      if self.Order then
+        self.Order:Add(Aura);
+      end
+      
+      return;
+    
+    else
+    
+      if self.Order then
+        self.Order:Remove(Aura);
+      end
+    
+      self.Order:Remove(Aura);
+      
+      if self.Filter.Dynamic ~= true then
+        self.Auras[Aura] = nil;
+      end 
+      
+      return;
+    
+    end
+    
+  end
+  
+  if self.Auras[Aura] == true then
   
     Aura.Color = self.Colors.Test(Aura);
-  
-    -- No aura changes, just fire a AuraChanged.
-  
     self.Container:AuraChanged(Aura);
-
+    
     if self.Order then
       self.Order:Update(Aura);
     end
-    
-  elseif self.Auras[Aura] == false and self.Filter.Dynamic ~= true then
-
-    -- Remove the aura if he didn't pass the filter and we are not
-    -- checking realtime.
-
-    self.Auras[Aura] = nil;
   
   end
 
