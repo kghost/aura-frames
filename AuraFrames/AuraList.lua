@@ -195,11 +195,11 @@ function AuraFrames.AuraListPrototype:AuraChanged(Aura)
         self.Order:Remove(Aura);
       end
     
-      self.Order:Remove(Aura);
+      self.Container:AuraOld(Aura);
       
       if self.Filter.Dynamic ~= true then
         self.Auras[Aura] = nil;
-      end 
+      end
       
       return;
     
@@ -246,17 +246,17 @@ end
 -----------------------------------------------------------------
 function AuraFrames.AuraListPrototype:AuraCheck(Aura)
 
-  if self.Filter.Dynamic and self.Filter.Test(Aura) ~= self.Auras[Aura] then
+  if self.Filter.Dynamic and self.Auras[Aura] ~= self.Filter.Test(Aura) then
 
     self.Auras[Aura] = not self.Auras[Aura];
     
     if self.Auras[Aura] == false then
       
-      self.Container:AuraOld(Aura);
-
       if self.Order then
         self.Order:Remove(Aura);
       end
+
+      self.Container:AuraOld(Aura);
       
       return;
     
