@@ -122,7 +122,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
         AuraFrames:Confirm("Are you sure you want to turn off expert mode? You will lose your custom filters!", function(Result)
           if Result == true then
             FilterConfig.Expert = false;
-            FilterConfig.Groups = {};
+            wipe(FilterConfig.Groups);
             ApplyChanges(ContainerId);
           else
             CheckBoxExpert:SetValue(true);
@@ -132,7 +132,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
         end);
       else
         FilterConfig.Expert = false;
-        FilterConfig.Groups = {};
+        wipe(FilterConfig.Groups);
         ApplyChanges(ContainerId);
         AuraFramesConfig:ContentFilterRefresh(Content, ContainerId);
         AuraFramesConfig:Show();
@@ -168,7 +168,7 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
           end
         end
         
-        FilterConfig.Groups = {};
+        wipe(FilterConfig.Groups);
         
         for Key, Value in pairs(FilterConfig.Predefined or {}) do
         
@@ -211,7 +211,8 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
       FilterConfig.Expert = true;
       FilterConfig.Predefined = nil;
       if not FilterConfig.Groups or #FilterConfig.Groups == 0 then
-        FilterConfig.Groups = {{{}}};
+        wipe(FilterConfig.Groups);
+        tinsert(FilterConfig.Groups, {{}});
       end
       AuraFramesConfig:ContentFilterRefresh(Content, ContainerId);
       ApplyChanges(ContainerId);
