@@ -74,6 +74,8 @@ local MtAura = {
 local CooldownsNew = {};
 local CooldownsGroup = {};
 
+local DoUpdateDb, DoCooldownUpdate = false, false;
+
 -----------------------------------------------------------------
 -- Function ActivateSource
 -----------------------------------------------------------------
@@ -88,11 +90,11 @@ function Module:ActivateSource(Unit, Type)
   -- First scan.
   self:CooldownUpdate();
   
-  LibAura:RegisterEvent("BAG_UPDATE_COOLDOWN", self, self.CooldownUpdate);
+  LibAura:RegisterEvent("BAG_UPDATE_COOLDOWN", self, self.QueueCooldownUpdate);
   LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.Update);
   
-  LibAura:RegisterEvent("BAG_UPDATE", self, self.UpdateDb);
-  LibAura:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", self, self.UpdateDb);
+  LibAura:RegisterEvent("BAG_UPDATE", self, self.QueueUpdateDb);
+  LibAura:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", self, self.QueueUpdateDb);
   
   LibAura:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", self, self.SpellCasted);
   LibAura:RegisterEvent("UNIT_SPELLCAST_FAILED", self, self.SpellCastFailed);
@@ -112,11 +114,11 @@ function Module:DeactivateSource(Unit, Type)
   wipe(self.db);
   wipe(self.SpellToItemId);
 
-  LibAura:UnregisterEvent("BAG_UPDATE_COOLDOWN", self, self.CooldownUpdate);
+  LibAura:UnregisterEvent("BAG_UPDATE_COOLDOWN", self, self.QueueCooldownUpdate);
   LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.Update);
 
-  LibAura:UnregisterEvent("BAG_UPDATE", self, self.UpdateDb);
-  LibAura:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED", self, self.UpdateDb);
+  LibAura:UnregisterEvent("BAG_UPDATE", self, self.QueueUpdateDb);
+  LibAura:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED", self, self.QueueUpdateDb);
   
   LibAura:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED", self, self.SpellCasted);
   LibAura:UnregisterEvent("UNIT_SPELLCAST_FAILED", self, self.SpellCastFailed);
@@ -142,6 +144,26 @@ function Module:GetAuras(Unit, Type)
   end
   
   return Auras;
+
+end
+
+
+-----------------------------------------------------------------
+-- Function QueueUpdateDb
+-----------------------------------------------------------------
+function Module:QueueUpdateDb()
+
+  DoUpdateDb = true;
+
+end
+
+
+-----------------------------------------------------------------
+-- Function QueueCooldownUpdate
+-----------------------------------------------------------------
+function Module:QueueCooldownUpdate()
+
+  DoCooldownUpdate = true;
 
 end
 
@@ -182,7 +204,6 @@ function Module:UpdateDb()
     end
   
   end
-  
 
 end
 
@@ -358,6 +379,17 @@ end
 -- Function Update
 -----------------------------------------------------------------
 function Module:Update(Elapsed)
+
+  if DoUpdateDb == true then
+    self:UpdateDb();
+    DoUpdateDb = false;
+    DoCooldownUpdate = true;
+  end
+  
+  if DoCooldownUpdate == true then
+    self:CooldownUpdate();
+    DoCooldownUpdate = false;
+  end
 
   UpdateCooldownsLastScan = UpdateCooldownsLastScan + Elapsed;
   
