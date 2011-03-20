@@ -85,7 +85,7 @@ function AuraFrames.AuraListPrototype:ResyncColors()
   
   for Aura, Status in pairs(self.Auras) do
   
-    if Status then
+    if Status == true then
 
       Aura.Color = self.Colors.Test(Aura);
       
@@ -113,6 +113,10 @@ end
 -----------------------------------------------------------------
 function AuraFrames.AuraListPrototype:AnchorAllAuras()
 
+  if not self.Order then
+    return;
+  end
+
   for Index, Aura in ipairs(self.Order) do
 
     self.Container:AuraAnchor(Aura, Index)  
@@ -138,28 +142,46 @@ end
 -----------------------------------------------------------------
 function AuraFrames.AuraListPrototype:AuraNew(Aura)
 
-  -- Don't process duplicated aura's.
-  if self.Auras[Aura] then
-    return;
-  end
+  local OldStatus = self.Auras[Aura];
 
   if self.Filter.Test(Aura) == false then
   
     if self.Filter.Dynamic == true then
+    
       self.Auras[Aura] = false;
+      
+    else
+    
+      self.Auras[Aura] = nil;
+      
+    end
+  
+    if OldStatus == true then
+    
+      if self.Order then
+        self.Order:Remove(Aura);
+      end
+    
+      self.Container:AuraOld(Aura);
+      
     end
   
     return;
+    
   end
 
   self.Auras[Aura] = true;
   
   Aura.Color = self.Colors.Test(Aura);
 
-  self.Container:AuraNew(Aura);
+  if OldStatus ~= true then
   
-  if self.Order then
-    self.Order:Add(Aura);
+    self.Container:AuraNew(Aura);
+  
+    if self.Order then
+      self.Order:Add(Aura);
+    end
+  
   end
 
 end
@@ -170,13 +192,11 @@ end
 -----------------------------------------------------------------
 function AuraFrames.AuraListPrototype:AuraChanged(Aura)
 
-  if not self.Auras[Aura] then
-    return;
-  end
+  local Status = self.Auras[Aura] or false;
+
+  if Status ~= self.Filter.Test(Aura) then
   
-  if self.Auras[Aura] ~= self.Filter.Test(Aura) then
-  
-    self.Auras[Aura] = not self.Auras[Aura];
+    self.Auras[Aura] = not Status;
     
     if self.Auras[Aura] == true then
     
@@ -187,8 +207,6 @@ function AuraFrames.AuraListPrototype:AuraChanged(Aura)
         self.Order:Add(Aura);
       end
       
-      return;
-    
     else
     
       if self.Order then
@@ -201,13 +219,13 @@ function AuraFrames.AuraListPrototype:AuraChanged(Aura)
         self.Auras[Aura] = nil;
       end
       
-      return;
-    
     end
+    
+    return;
     
   end
   
-  if self.Auras[Aura] == true then
+  if Status == true then
   
     Aura.Color = self.Colors.Test(Aura);
     self.Container:AuraChanged(Aura);
@@ -226,14 +244,14 @@ end
 -----------------------------------------------------------------
 function AuraFrames.AuraListPrototype:AuraOld(Aura)
 
-  if not self.Auras[Aura] then
-    return;
-  end
+  if self.Auras[Aura] == true then
 
-  self.Container:AuraOld(Aura);
+    self.Container:AuraOld(Aura);
 
-  if self.Order then
-    self.Order:Remove(Aura);
+    if self.Order then
+      self.Order:Remove(Aura);
+    end
+  
   end
 
   self.Auras[Aura] = nil;
@@ -289,7 +307,6 @@ function AuraFrames.AuraListPrototype:AuraCheck(Aura)
   
   end
   
-
 end
 
 
