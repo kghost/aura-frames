@@ -63,7 +63,7 @@ function AuraFrames.AuraListPrototype:ResyncSources()
     self.Order:Reset();
   end
   
-  if self.Filter.Dynamic or self.Colors.Dynamic then
+  if self.Filter.Dynamic == true or self.Colors.Dynamic == true then
     
     self.CheckingFrame:Show();
     
@@ -95,7 +95,7 @@ function AuraFrames.AuraListPrototype:ResyncColors()
 
   end
 
-  if self.Filter.Dynamic or self.Colors.Dynamic then
+  if self.Filter.Dynamic == true or self.Colors.Dynamic == true then
     
     self.CheckingFrame:Show();
     
@@ -142,7 +142,7 @@ end
 -----------------------------------------------------------------
 function AuraFrames.AuraListPrototype:AuraNew(Aura)
 
-  local OldStatus = self.Auras[Aura];
+  local Status = self.Auras[Aura];
 
   if self.Filter.Test(Aura) == false then
   
@@ -156,7 +156,7 @@ function AuraFrames.AuraListPrototype:AuraNew(Aura)
       
     end
   
-    if OldStatus == true then
+    if Status == true then
     
       if self.Order then
         self.Order:Remove(Aura);
@@ -174,7 +174,7 @@ function AuraFrames.AuraListPrototype:AuraNew(Aura)
   
   Aura.Color = self.Colors.Test(Aura);
 
-  if OldStatus ~= true then
+  if Status ~= true then
   
     self.Container:AuraNew(Aura);
   
@@ -264,9 +264,11 @@ end
 -----------------------------------------------------------------
 function AuraFrames.AuraListPrototype:AuraCheck(Aura)
 
-  if self.Filter.Dynamic and self.Auras[Aura] ~= self.Filter.Test(Aura) then
+  local Status = self.Auras[Aura] or false;
 
-    self.Auras[Aura] = not self.Auras[Aura];
+  if self.Filter.Dynamic == true and Status ~= self.Filter.Test(Aura) then
+
+    self.Auras[Aura] = not Status;
     
     if self.Auras[Aura] == false then
       
@@ -294,7 +296,7 @@ function AuraFrames.AuraListPrototype:AuraCheck(Aura)
   
   end
   
-  if self.Auras[Aura] and self.Colors.Dynamic then
+  if Status == true and self.Colors.Dynamic == true then
   
     local Color = self.Colors.Test(Aura);
     
@@ -349,7 +351,7 @@ function AuraFrames:NewAuraList(Container, FilterConfig, OrderConfig, ColorsConf
   
   AuraList.Colors = self:NewColors(ColorsConfig, function() AuraList:ResyncColors() end);
   
-  if AuraList.Filter.Dynamic or AuraList.Colors.Dynamic then
+  if AuraList.Filter.Dynamic == true or AuraList.Colors.Dynamic == true then
     
     AuraList.CheckingFrame:Show();
     
