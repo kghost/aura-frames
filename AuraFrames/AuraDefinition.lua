@@ -185,7 +185,7 @@ AuraFrames.AuraDefinition = {
     Type = "Boolean",
     Name = "Is stealable",
     Order = false,
-    Filter = false,
+    Filter = true,
     Weight = 1,
   },
   CastByParty = {
