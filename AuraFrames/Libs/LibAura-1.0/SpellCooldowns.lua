@@ -308,7 +308,7 @@ function Module:ScanAllSpellCooldowns()
           local OldExpirationTime = Aura.ExpirationTime;
           Aura.ExpirationTime = Start + Duration;
           
-          if abs(Aura.ExpirationTime - OldExpirationTime) > 0.1 then
+          if Aura.RefSpellId == 0 and abs(Aura.ExpirationTime - OldExpirationTime) > 0.1 then
             LibAura:FireAuraChanged(Aura);
           end
         
