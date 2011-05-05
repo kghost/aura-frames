@@ -201,10 +201,8 @@ function Module:GetAuras(Unit, Type)
 
   local Auras = {};
   
-  for _, Aura in pairs(self.db.DBM) do
-  
+  for _, Aura in pairs(self.db.DBM or {}) do
     tinsert(Auras, Aura);
-  
   end
   
   return Auras;
