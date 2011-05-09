@@ -42,6 +42,8 @@ function Module:ContentLayoutText(Content, ContainerId)
     ABBREV        = "10m",
     SEPCOL        = "10:15",
     SEPDOT        = "10.15",
+    SEPCOLEXT     = "10:15.9",
+    SEPDOTEXT     = "10.15.9",
     NONE          = "615",
   });
   TextLayout:SetLabel("Time layout");
