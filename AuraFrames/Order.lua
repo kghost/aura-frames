@@ -20,14 +20,14 @@ AuraFrames.OrderPredefined = {
   },
   NoTimeTimeLeftDesc = {
     Rules = {
-      {Subject = "ExpirationTime", Operator = "First", Args = {Number = 0}},
+      {Subject = "ExpirationTime", Operator = "First", Args = {Float = 0}},
       {Subject = "ExpirationTime", Operator = "NumberDesc", Args = {}},
     },
   },
   TypeNoTimeTimeDesc = {
     Rules = {
       {Subject = "Type", Operator = "ListAsc", Args = {List = {"HELPFUL", "WEAPON", "HARMFUL"}}},
-      {Subject = "ExpirationTime", Operator = "First", Args = {Number = 0}},
+      {Subject = "ExpirationTime", Operator = "First", Args = {Float = 0}},
       {Subject = "ExpirationTime", Operator = "NumberDesc", Args = {}},
     },
   },
@@ -72,6 +72,12 @@ AuraFrames.OrderTypeOperators = {
     "Last",
   },
   Number = {
+    "First",
+    "Last",
+    "NumberAsc",
+    "NumberDesc",
+  },
+  Float = {
     "First",
     "Last",
     "NumberAsc",
@@ -188,7 +194,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
     
     end
     
-  elseif Type == "Number" or Type == "SpellId" or Type == "ItemId" then
+  elseif Type == "Number" or Type == "Float" or Type == "SpellId" or Type == "ItemId" then
     
     if (Operator == "First" or Operator == "Last") and Args[Type] then
     

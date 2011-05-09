@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 216;
+AuraFrames.DatabaseVersion = 217;
 
 
 --[[
@@ -72,6 +72,9 @@ AuraFrames.DatabaseVersion = 216;
   
   Version 216:
     Added MiniBar to button container
+    
+  Version 217:
+    Variable type Float is now used for time for filtering
     
 ]]--
 
@@ -653,6 +656,65 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
       
     end
   
+  end
+  
+  if OldVersion < 217 then
+  
+    local TimeDefinitions = {
+      Duration = true,
+      Remaining = true,
+      ExpirationTime = true,
+    };
+  
+    if Container.Filter then
+      for _, Group in ipairs(Container.Filter.Groups or {}) do
+      
+        for _, Rule in ipairs(Group) do
+        
+          if TimeDefinitions[Rule.Subject] and Rule.Args.Number then
+            Rule.Args.Float = Rule.Args.Number;
+            Rule.Args.Number = nil;
+          end
+        
+        end
+      
+      end
+    end
+    
+    if Container.Order then
+      for _, Group in ipairs(Container.Order.Groups or {}) do
+      
+        for _, Rule in ipairs(Group) do
+        
+          if TimeDefinitions[Rule.Subject] and Rule.Args.Number then
+            Rule.Args.Float = Rule.Args.Number;
+            Rule.Args.Number = nil;
+          end
+        
+        end
+      
+      end
+    end
+    
+    if Container.Colors then
+      for _, ColorRule in ipairs(Container.Colors.Rules or {}) do
+      
+        for _, Group in ipairs(ColorRule.Groups or {}) do
+      
+          for _, Rule in ipairs(Group) do
+          
+            if TimeDefinitions[Rule.Subject] and Rule.Args.Number then
+              Rule.Args.Float = Rule.Args.Number;
+              Rule.Args.Number = nil;
+            end
+          
+          end
+          
+        end
+      
+      end
+    end
+
   end
   
 end

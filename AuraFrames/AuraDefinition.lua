@@ -9,6 +9,7 @@ The following types are supported atm:
 
   String
   Number
+  Float (Number with fraction)
   Boolean
   SpellName
   SpellId
@@ -94,14 +95,14 @@ AuraFrames.AuraDefinition = {
     Weight = 2,
   },
   Duration = {
-    Type = "Number",
+    Type = "Float",
     Name = "Original duration",
     Order = true,
     Filter = true,
     Weight = 1,
   },
   Remaining = {
-    Type = "Number",
+    Type = "Float",
     Name = "Time remaining",
     Code = "((Object.ExpirationTime == 0 and 0) or (Object.ExpirationTime - GetTime()))",
     Order = true,
@@ -110,7 +111,7 @@ AuraFrames.AuraDefinition = {
     Weight = 3,
   },
   ExpirationTime = {
-    Type = "Number",
+    Type = "Float",
     Name = "Expiration time",
     Order = true,
     Filter = true,

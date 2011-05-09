@@ -50,6 +50,10 @@ function AuraFrames:BuildValue(RequestedType, Value)
     
     elseif RequestedType == "Number" or RequestedType == "SpellId" or RequestedType == "ItemId" then
     
+      return abs(tonumber(Value));
+
+    elseif RequestedType == "Float" then
+    
       return tonumber(Value);
     
     elseif RequestedType == "Boolean" then
