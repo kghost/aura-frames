@@ -27,6 +27,10 @@ function Module:ContentLayout(ContainerId)
       text = "Duration and Count",
     },
     {
+      value = "MiniBar",
+      text = "Mini Bar",
+    },
+    {
       value = "Skin",
       text = "Skin",
     },

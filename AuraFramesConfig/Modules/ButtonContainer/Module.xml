@@ -11,5 +11,6 @@
   <Script file="ContentLayoutDurationAndCount.lua" />
   <Script file="ContentLayoutSkin.lua" />
   <Script file="ContentLayoutColors.lua" />
+  <Script file="ContentLayoutMiniBar.lua" />
   
 </Ui>
