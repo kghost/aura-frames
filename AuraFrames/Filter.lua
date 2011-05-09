@@ -220,7 +220,7 @@ function AuraFrames:NewFilter(Config, NotifyFunc)
   local Filter = {};
   setmetatable(Filter, { __index = AuraFrames.FilterPrototype});
   
-  Filter.Config = Config or {};
+  Filter.Config = Config;
   
   Filter:Build();
   

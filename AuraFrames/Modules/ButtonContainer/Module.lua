@@ -123,6 +123,16 @@ function Module:GetDatabaseDefaults()
       CooldownReverse = false,
       CooldownDisableOmniCC = true,
       
+      MiniBarEnabled = false,
+      MiniBarStyle = "HORIZONTAL",
+      MiniBarDirection = "HIGHSHRINK",
+      MiniBarTexture = "Blizzard",
+      MiniBarColor = {1.0, 1.0, 1.0, 1.0},
+      MiniBarLength = 36,
+      MiniBarWidth = 8,
+      MiniBarOffsetX = 0,
+      MiniBarOffsetY = -25,
+      
       ButtonFacade = {
         Gloss = 0.8,
         SkinId = "Aura Frames",

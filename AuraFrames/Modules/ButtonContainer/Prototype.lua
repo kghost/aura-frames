@@ -37,6 +37,34 @@ local DirectionMapping = {
   UPRIGHT   = {"BOTTOMLEFT",  "H",  1,  1},
 };
 
+local MiniBarDirectionMapping = {
+  HIGHGROW      = 0,
+  LOWGROW       = 0,
+  MIDDLEGROW    = 0,
+  HIGHSHRINK    = 1,
+  LOWSHRINK     = 1,
+  MIDDLESHRINK  = 1
+};
+
+local MiniBarPointMappings = {
+  HORIZONTAL = {
+    HIGHGROW     = {"LEFT",   -1,  0},
+    LOWGROW      = {"RIGHT",   1,  0},
+    MIDDLEGROW   = {"CENTER",  0,  0},
+    HIGHSHRINK   = {"LEFT",   -1,  0},
+    LOWSHRINK    = {"RIGHT",   1,  0},
+    MIDDLESHRINK = {"CENTER",  0,  0}
+  },
+  VERTICAL = {
+    HIGHGROW     = {"TOP",    0,  1},
+    LOWGROW      = {"BOTTOM", 0, -1},
+    MIDDLEGROW   = {"CENTER", 0,  0},
+    HIGHSHRINK   = {"TOP",    0,  1},
+    LOWSHRINK    = {"BOTTOM", 0, -1},
+    MIDDLESHRINK = {"CENTER", 0,  0}
+  }
+};
+
 -- How fast a button will get updated.
 local ButtonUpdatePeriod = 0.05;
 
@@ -118,7 +146,7 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
       
       if Button.TimeLeftSeconds ~= TimeLeftSeconds then
     
-        Button.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft, true));
+        Button.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft, false));
         Button.TimeLeftSeconds = TimeLeftSeconds;
       
       end
@@ -163,6 +191,47 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
     
     end
     
+    if Config.Layout.MiniBarEnabled == true and Button.Aura.Duration ~= 0 then
+    
+      if not Button.MiniBar:IsShown() then
+        Button.MiniBar:Show();
+      end
+      
+      local Length = Config.Layout.MiniBarLength * max(min(TimeLeft / Button.Aura.Duration, 1), 0);
+      
+      if MiniBarDirectionMapping[Config.Layout.MiniBarDirection] ~= 1 then
+        Length = Config.Layout.MiniBarLength - Length;
+      end
+    
+      if Length < 1 then
+      
+        Button.MiniBar:Hide();
+      
+      elseif Config.Layout.MiniBarStyle == "HORIZONTAL" then
+      
+        Button.MiniBar:SetWidth(Length);
+      
+      else
+      
+        Button.MiniBar:SetHeight(Length);
+      
+      end
+      
+    else
+    
+      if Button.MiniBar:IsShown() then
+        Button.MiniBar:Hide();
+      end
+    
+    end
+    
+  
+  else
+  
+    if Config.Layout.MiniBarEnabled == true and Button.MiniBar:IsShown() then
+      Button.MiniBar:Hide();
+    end
+  
   end
   
   if Button.PopupTime ~= nil and Config.Warnings.Changing.Popup == true then
@@ -341,14 +410,14 @@ function Prototype:UpdateButton(Button)
   
   end
 
-  if self.Config.Layout.ShowCount then
+  if self.Config.Layout.ShowCount == true then
   
     Button.Count:ClearAllPoints();
     Button.Count:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.CountPosX, self.Config.Layout.CountPosY);
     
   end
   
-  if self.Config.Layout.ShowTooltip then
+  if self.Config.Layout.ShowTooltip == true then
   
     Button:SetScript("OnEnter", function(Button) AuraFrames:ShowTooltip(Button.Aura, Button, Container.TooltipOptions); end);
     Button:SetScript("OnLeave", function() AuraFrames:HideTooltip(); end);
@@ -360,7 +429,7 @@ function Prototype:UpdateButton(Button)
   
   end
   
-  if self.Config.Layout.Clickable then
+  if self.Config.Layout.Clickable == true then
     
     Button:EnableMouse(true);
     Button:RegisterForClicks("RightButtonUp");
@@ -379,6 +448,47 @@ function Prototype:UpdateButton(Button)
   Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
   Button.Cooldown:SetReverse(self.Config.Layout.CooldownReverse);
   Button.Cooldown.noCooldownCount = self.Config.Layout.CooldownDisableOmniCC;
+  
+  if self.Config.Layout.MiniBarEnabled == true then
+  
+    
+
+    local ULx, ULy, LLx, LLy, URx, URy, LRx, LRy = 0, 0, 0, 1, 1, 0, 1, 1;
+
+    Button.MiniBar:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.MiniBarTexture));
+    
+    if self.Config.Layout.MiniBarStyle == "HORIZONTAL" then
+    
+      Button.MiniBar:SetWidth(self.Config.Layout.MiniBarLength);
+      Button.MiniBar:SetHeight(self.Config.Layout.MiniBarWidth);
+    
+    else -- VERTICAL
+    
+      ULx, ULy, URx, URy, LRx, LRy, LLx, LLy = LLx, LLy, ULx, ULy, URx, URy, LRx, LRy;
+    
+      Button.MiniBar:SetWidth(self.Config.Layout.MiniBarWidth);
+      Button.MiniBar:SetHeight(self.Config.Layout.MiniBarLength);
+    
+    end
+    
+    Button.MiniBar:ClearAllPoints();
+    
+    local Point = MiniBarPointMappings[self.Config.Layout.MiniBarStyle][self.Config.Layout.MiniBarDirection];
+    
+    Button.MiniBar:SetPoint(Point[1], Button, "CENTER", self.Config.Layout.MiniBarOffsetX + (Point[2] * (self.Config.Layout.MiniBarLength / 2)), self.Config.Layout.MiniBarOffsetY + (Point[3] * (self.Config.Layout.MiniBarLength / 2)));
+    
+    Button.MiniBar:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
+    
+    Button.MiniBar:SetVertexColor(unpack(self.Config.Layout.MiniBarColor));
+    
+    Button.MiniBar:Show();
+
+  else
+
+    Button.MiniBar:Hide();
+
+  end
+
   
   self:UpdateButtonDisplay(Button);
 
@@ -519,6 +629,7 @@ function Prototype:AuraNew(Aura)
       Button.Count = _G[ButtonId.."Count"];
       Button.Border = _G[ButtonId.."Border"];
       Button.Cooldown = _G[ButtonId.."Cooldown"];
+      Button.MiniBar = _G[ButtonId.."MiniBar"];
     
     else
     

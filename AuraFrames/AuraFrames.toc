@@ -1,8 +1,8 @@
 ## Interface: 40000
 ## Title: Aura Frames
 ## Notes: Managing your aura frames
-## Author: Alex <Nexiuz> Elderson
-## Version: 1.0
+## Author: Alex <Beautiuz> Elderson
+## Version: 1.2
 ## SavedVariables: AuraFramesDB
 ## OptionalDeps: Ace3, ButtonFacade
 
@@ -27,6 +27,6 @@ SharedMedia.lua
 FormatTime.lua
 FontObject.lua
 ButtonFacade\Skins.lua
-
+Button.lua
 
 Modules.xml

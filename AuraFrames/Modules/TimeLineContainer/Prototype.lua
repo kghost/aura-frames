@@ -71,7 +71,7 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
       
       if Button.TimeLeftSeconds ~= TimeLeftSeconds then
     
-        Button.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft, true));
+        Button.Duration:SetFormattedText(AuraFrames:FormatTimeLeft(Config.Layout.DurationLayout, TimeLeft, false));
         Button.TimeLeftSeconds = TimeLeftSeconds;
       
       end

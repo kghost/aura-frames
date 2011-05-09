@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 215;
+AuraFrames.DatabaseVersion = 216;
 
 
 --[[
@@ -69,6 +69,9 @@ AuraFrames.DatabaseVersion = 215;
     
   Version 215:
     Implemented dynamic colors
+  
+  Version 216:
+    Added MiniBar to button container
     
 ]]--
 
@@ -631,6 +634,24 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
         },
       },
     };
+  
+  end
+  
+  if OldVersion < 216 then
+  
+    if Container.Type == "ButtonContainer" then
+    
+      Container.Layout.MiniBarEnabled = false;
+      Container.Layout.MiniBarStyle = "HORIZONTAL";
+      Container.Layout.MiniBarDirection = "HIGHSHRINK";
+      Container.Layout.MiniBarTexture = "Blizzard";
+      Container.Layout.MiniBarColor = {1.0, 1.0, 1.0, 1.0};
+      Container.Layout.MiniBarLength = 36;
+      Container.Layout.MiniBarWidth = 8;
+      Container.Layout.MiniBarOffsetX = 0;
+      Container.Layout.MiniBarOffsetY = -25;
+      
+    end
   
   end
   
