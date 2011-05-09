@@ -115,6 +115,24 @@ local function ListEditorRefresh(List, Input, Add, Delete, Order)
       end
     end);
     ListContainer:AddChild(Value);
+    
+  elseif Input == "Float" then
+  
+    Value = AceGUI:Create("EditBox");
+    Value:DisableButton(true);
+    Value:SetText("");
+    Value:SetWidth(210);
+    Value:SetLabel("Value");
+    Value:SetCallback("OnTextChanged", function(_, _, Text)
+      ListValue = tonumber(Text);
+    end);
+    Value:SetCallback("OnEnterPressed", function(_, _, Text)
+      if ListValue ~= "" then
+        tinsert(List, ListValue);
+        ListEditorRefresh(List, Input, Add, Delete, Order);
+      end
+    end);
+    ListContainer:AddChild(Value);
   
   elseif Input == "SpellId" then
   

@@ -207,6 +207,24 @@ local function CreateRules(Content, ContentRules, Config, NotifyFunc, Rules)
         end);
         Container:AddChild(Value);
         
+      elseif (ValueType == "Float") and (Operator == "Equal" or Operator == "NotEqual" or Operator == "Greater" or Operator == "GreaterOrEqual" or Operator == "Lesser" or Operator == "LesserOrEqual") then
+      
+        local Value = AceGUI:Create("EditBox");
+        Value:DisableButton(true);
+        if Rule.Args[ValueType] then
+          Value:SetText(tostring(Rule.Args[ValueType]));
+        end
+        Value:SetLabel("Value");
+        Value:SetWidth(150);
+        Value:SetCallback("OnTextChanged", function(_, _, Text)
+        
+          Rule.Args[ValueType] = tonumber(Text);
+        
+          NotifyFunc();
+          
+        end);
+        Container:AddChild(Value);
+        
       elseif ValueType == "Boolean" and (Operator == "Equal" or Operator == "NotEqual") then
       
         local Value = AceGUI:Create("Dropdown");

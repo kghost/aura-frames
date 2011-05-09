@@ -236,6 +236,24 @@ local function CreateRules(Content, ContentRules, ContainerId, Rules)
         end);
         Container:AddChild(Value);
         
+      elseif (ValueType == "Float") and (Operator == "First" or Operator == "Last") then
+      
+        local Value = AceGUI:Create("EditBox");
+        Value:DisableButton(true);
+        if Rule.Args[ValueType] then
+          Value:SetText(tostring(Rule.Args[ValueType]));
+        end
+        Value:SetLabel("Value");
+        Value:SetWidth(150);
+        Value:SetCallback("OnTextChanged", function(_, _, Text)
+        
+          Rule.Args[ValueType] = tonumber(Text);
+          
+          ApplyChange(ContainerId);
+          
+        end);
+        Container:AddChild(Value);
+        
       elseif ValueType == "Boolean" and (Operator == "First" or Operator == "Last") then
       
         local Value = AceGUI:Create("Dropdown");
