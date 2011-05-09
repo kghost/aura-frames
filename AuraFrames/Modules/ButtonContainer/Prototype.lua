@@ -356,7 +356,7 @@ function Prototype:UpdateButtonDisplay(Button)
   
   end
 
-  if Button.Count ~= nil and self.Config.Layout.ShowCount and Aura.Count > 0 then
+  if Button.Count ~= nil and self.Config.Layout.ShowCount and Aura.Count > 1 then
   
     Button.Count:SetText(Aura.Count);
     Button.Count:Show();
@@ -754,7 +754,7 @@ function Prototype:AuraChanged(Aura)
   
   local Button = self.Buttons[Aura];
   
-  if Button.Count and self.Config.Layout.ShowCount and Aura.Count > 0 then
+  if Button.Count and self.Config.Layout.ShowCount and Aura.Count > 1 then
   
     Button.Count:SetText(Aura.Count);
     Button.Count:Show();

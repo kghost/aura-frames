@@ -418,7 +418,7 @@ function Prototype:UpdateBarDisplay(Bar)
     tinsert(Text, Aura.Name);
   end
 
-  if self.Config.Layout.ShowCount and Aura.Count > 0 then
+  if self.Config.Layout.ShowCount and Aura.Count > 1 then
   
     tinsert(Text, "["..Aura.Count.."]");
   
@@ -933,7 +933,7 @@ function Prototype:AuraChanged(Aura)
     tinsert(Text, Aura.Name);
   end
 
-  if self.Config.Layout.ShowCount and Aura.Count > 0 then
+  if self.Config.Layout.ShowCount and Aura.Count > 1 then
   
     tinsert(Text, "["..Aura.Count.."]");
   
