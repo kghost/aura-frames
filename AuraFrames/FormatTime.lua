@@ -11,6 +11,8 @@ local math_sin, math_cos, math_floor, math_ceil = math.sin, math.cos, math.floor
     ABBREVSPACE
     SEPCOL
     SEPDOT
+    SEPCOLEXT
+    SEPDOTEXT
     NONE
 
 ]]--
@@ -39,6 +41,17 @@ local Lookup = {
     Days    = "%d.%.2d.%.2d.%.2d",
     Hours   = "%d.%.2d.%.2d",
     Minutes = "%d.%.2d",
+  },
+  
+  SEPCOLEXT = {
+    Days    = "%d:%.2d:%.2d:%.2d.%.1d",
+    Hours   = "%d:%.2d:%.2d.%.1d",
+    Minutes = "%d:%.2d.%.1d",
+  },
+  SEPDOTEXT = {
+    Days    = "%d.%.2d.%.2d.%.2d.%.1d",
+    Hours   = "%d.%.2d.%.2d.%.1d",
+    Minutes = "%d.%.2d.%.1d",
   },
   
 };
@@ -89,10 +102,26 @@ function AuraFrames:FormatTimeLeft(Format, TimeLeft, HideZero)
     elseif Hours ~= 0 then
       return Lookup[Format].Hours, Hours, Minutes, Seconds;
     else
-      if HideZero == true and Minutes+Seconds < 1 then
+      if HideZero == true and Minutes + Seconds < 1 then
         return "";
       else
         return Lookup[Format].Minutes, Minutes, Seconds;
+      end
+    end
+  
+  elseif Format == "SEPCOLEXT" or Format == "SEPDOTEXT" then
+  
+    local Days, Hours, Minutes, Seconds, Ext = math_floor(TimeLeft / 86400), math_floor((TimeLeft % 86400) / 3600), math_floor((TimeLeft % 3600) / 60), TimeLeft % 60, (TimeLeft % 1) * 10;
+    
+    if Days ~= 0 then
+      return Lookup[Format].Days, Days, Hours, Minutes, Seconds, Ext;
+    elseif Hours ~= 0 then
+      return Lookup[Format].Hours, Hours, Minutes, Seconds, Ext;
+    else
+      if HideZero == true and Minutes + Seconds + Ext < 1 then
+        return "";
+      else
+        return Lookup[Format].Minutes, Minutes, Seconds, Ext;
       end
     end
   

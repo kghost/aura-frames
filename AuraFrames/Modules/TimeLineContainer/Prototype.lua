@@ -67,7 +67,7 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
       -- We don't have to update the duration every frame. We round up
       -- the seconds and compare if it's different from the last update.
     
-      local TimeLeftSeconds = math_ceil(TimeLeft + 0.5);
+      local TimeLeftSeconds = math_ceil((TimeLeft + 0.5) * 10);
       
       if Button.TimeLeftSeconds ~= TimeLeftSeconds then
     

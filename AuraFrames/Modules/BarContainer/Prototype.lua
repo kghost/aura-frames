@@ -176,7 +176,7 @@ local function BarOnUpdate(Container, Bar, Elapsed)
     
     if Container.Config.Layout.ShowDuration == true then
     
-      local TimeLeftSeconds = math_ceil(TimeLeft);
+      local TimeLeftSeconds = math_ceil((TimeLeft + 0.5) * 10);
       
       if Bar.TimeLeftSeconds ~= TimeLeftSeconds then
     
