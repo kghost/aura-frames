@@ -69,6 +69,23 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
 
   SizeGroup:AddText("The width of the bars including the aura icon.", GameFontHighlightSmall, 250);
   
+  Content:AddSpace(2);
+ 
+  local BarHeight = AceGUI:Create("Slider");
+  BarHeight:SetWidth(500);
+  BarHeight:SetValue(LayoutConfig.BarHeight);
+  BarHeight:SetLabel("The height of the bar");
+  BarHeight:SetSliderValues(10, 100, 1);
+  BarHeight:SetIsPercent(false);
+  BarHeight:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.BarHeight = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
+  end);
+  Content:AddChild(BarHeight);
+  
+  Content:AddText("The height of the bar (default size is 36).", GameFontHighlightSmall);
+  
   Content:AddSpace();
   Content:AddHeader("Spacing");
   

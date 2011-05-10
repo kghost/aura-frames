@@ -104,6 +104,23 @@ function Module:ContentLayoutSizeAndScale(Content, ContainerId)
   end);
   SizeGroup:AddChild(ButtonIndent);
   
+  Content:AddSpace(2);
+  Content:AddText("The size of the buttons (default size is 36).");
+  Content:AddSpace();
+ 
+  local ButtonSize = AceGUI:Create("Slider");
+  ButtonSize:SetWidth(500);
+  ButtonSize:SetValue(LayoutConfig.ButtonSizeX);
+  ButtonSize:SetLabel("The size of the buttons");
+  ButtonSize:SetSliderValues(10, 100, 1);
+  ButtonSize:SetIsPercent(false);
+  ButtonSize:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.ButtonSizeX = Value;
+    LayoutConfig.ButtonSizeY = Value;
+    ContainerInstance:Update("LAYOUT");
+    Module:Update(ContainerId);
+  end);
+  Content:AddChild(ButtonSize);
   
   Content:AddSpace();
 
