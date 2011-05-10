@@ -9,20 +9,12 @@
   <Frame name="AuraFramesBarTemplate" virtual="true">
     <Frames>
       <Button name="$parentButton">
-        <Size x="36" y="36"/>
         <Layers>
           <Layer level="BORDER">
-            <Texture name="$parentIcon">
-              <Size>
-                <AbsDimension x="36" y="36"/>
-              </Size>
-            </Texture>
+            <Texture name="$parentIcon" />
           </Layer>
           <Layer level="OVERLAY">
             <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">
-              <Size>
-                <AbsDimension x="36" y="36"/>
-              </Size>
               <Anchors>
                 <Anchor point="CENTER"/>
               </Anchors>
@@ -32,7 +24,6 @@
         </Layers>
         <Frames>
           <Cooldown name="$parentCooldown" level="BORDER" hidden="true">
-            <Size x="36" y="36"/>
             <Anchors>
               <Anchor point="CENTER" />
             </Anchors>
@@ -52,11 +43,7 @@
             <Texture name="$parentTexture" />
           </Layer>
           <Layer level="ARTWORK">
-            <Texture name="$parentSpark" file="Interface\CastingBar\UI-CastingBar-Spark" alphaMode="ADD">
-              <Size>
-                <AbsDimension x="36" y="100"/>
-              </Size>
-            </Texture>
+            <Texture name="$parentSpark" file="Interface\CastingBar\UI-CastingBar-Spark" alphaMode="ADD" />
           </Layer>
         </Layers>
       </Frame>

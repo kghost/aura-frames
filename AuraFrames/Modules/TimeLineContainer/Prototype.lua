@@ -494,10 +494,19 @@ function Prototype:Update(...)
     );
     
     self.Direction = DirectionMapping[self.Config.Layout.Style][self.Config.Layout.Direction];
-    self.ButtonIndent = self.Config.Layout.ButtonIndent == true and (36 * self.Config.Layout.ButtonScale) / 2 or 0;
+    self.ButtonIndent = self.Config.Layout.ButtonIndent == true and ((self.Config.Layout.Style == "HORIZONTAL" and self.Config.Layout.ButtonSizeX or self.Config.Layout.ButtonSizeY) * self.Config.Layout.ButtonScale) / 2 or 0;
     self.StepPerSecond = ((self.Config.Layout.Length - (self.ButtonIndent * 2)) / self.Config.Layout.MaxTime);
     
     self.ButtonScale = self.Config.Layout.ButtonScale;
+
+    for _, Button in pairs(self.Buttons) do
+    
+      Button:SetWidth(self.Config.Layout.ButtonSizeX);
+      Button:SetHeight(self.Config.Layout.ButtonSizeY);
+      
+    end
+    
+    self.LBFGroup:ReSkin();
     
     for _, Button in pairs(self.Buttons) do
       self:UpdateButton(Button);

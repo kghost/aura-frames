@@ -402,7 +402,7 @@ function Prototype:UpdateButton(Button)
   -- can be changed between aura's.
 
   local Container, Aura = self, Button.Aura;
-
+  
   if Button.Duration ~= nil and self.Config.Layout.ShowDuration == true then
     
     Button.Duration:ClearAllPoints();
@@ -451,8 +451,6 @@ function Prototype:UpdateButton(Button)
   
   if self.Config.Layout.MiniBarEnabled == true then
   
-    
-
     local ULx, ULy, LLx, LLy, URx, URy, LRx, LRy = 0, 0, 0, 1, 1, 0, 1, 1;
 
     Button.MiniBar:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.MiniBarTexture));
@@ -488,7 +486,6 @@ function Prototype:UpdateButton(Button)
     Button.MiniBar:Hide();
 
   end
-
   
   self:UpdateButtonDisplay(Button);
 
@@ -509,8 +506,8 @@ function Prototype:Update(...)
 
   if Changed == "ALL" or Changed == "LAYOUT" then
 
-    self.Frame:SetWidth((self.Config.Layout.HorizontalSize * Module.ButtonSizeX) + ((self.Config.Layout.HorizontalSize - 1) * self.Config.Layout.SpaceX));
-    self.Frame:SetHeight((self.Config.Layout.VerticalSize * Module.ButtonSizeY) + ((self.Config.Layout.VerticalSize - 1) * self.Config.Layout.SpaceY));
+    self.Frame:SetWidth((self.Config.Layout.HorizontalSize * self.Config.Layout.ButtonSizeX) + ((self.Config.Layout.HorizontalSize - 1) * self.Config.Layout.SpaceX));
+    self.Frame:SetHeight((self.Config.Layout.VerticalSize * self.Config.Layout.ButtonSizeY) + ((self.Config.Layout.VerticalSize - 1) * self.Config.Layout.SpaceY));
     
     self.Frame:SetScale(self.Config.Layout.Scale);
     
@@ -550,6 +547,15 @@ function Prototype:Update(...)
     self.Direction = DirectionMapping[self.Config.Layout.Direction];
     
     for _, Button in pairs(self.Buttons) do
+    
+      Button:SetWidth(self.Config.Layout.ButtonSizeX);
+      Button:SetHeight(self.Config.Layout.ButtonSizeY);
+      
+    end
+    
+    self.LBFGroup:ReSkin();
+    
+    for _, Button in pairs(self.Buttons) do
       self:UpdateButton(Button);
     end
     
@@ -560,7 +566,7 @@ function Prototype:Update(...)
     self:ReleasePool();
     
   end
-
+  
   if Changed == "ALL" or Changed == "WARNINGS" then
 
     if self.Config.Warnings.New.Flash == true then
@@ -807,8 +813,8 @@ function Prototype:AuraAnchor(Aura, Index)
     "CENTER",
     self.Frame,
     self.Direction[1],
-    (self.Direction[3] * ((x * (Module.ButtonSizeX + (x and self.Config.Layout.SpaceX))) + (Module.ButtonSizeX / 2))) / Scale,
-    (self.Direction[4] * ((y * (Module.ButtonSizeY + (y and self.Config.Layout.SpaceY))) + (Module.ButtonSizeY / 2))) / Scale
+    (self.Direction[3] * ((x * (self.Config.Layout.ButtonSizeX + (x and self.Config.Layout.SpaceX))) + (self.Config.Layout.ButtonSizeX / 2))) / Scale,
+    (self.Direction[4] * ((y * (self.Config.Layout.ButtonSizeY + (y and self.Config.Layout.SpaceY))) + (self.Config.Layout.ButtonSizeY / 2))) / Scale
   );
 
   -- Make sure the button is showned.

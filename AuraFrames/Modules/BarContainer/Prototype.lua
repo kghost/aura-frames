@@ -31,23 +31,7 @@ local DirectionMapping = {
   UP    = {"BOTTOMLEFT",  1},
 };
 
-local PositionMappings = {
-  NONE = {
-    LEFT = {5, 0},
-    RIGHT = {-5, 0},
-    CENTER = {0, 0},
-  },
-  LEFT = {
-    LEFT = {5 + Module.BarHeight, 0},
-    RIGHT = {-5, 0},
-    CENTER = {Module.BarHeight / 2, 0},
-  },
-  RIGHT = {
-    LEFT = {5, 0},
-    RIGHT = {-5 - Module.BarHeight, 0},
-    CENTER = {-(Module.BarHeight / 2), 0},
-  },
-};
+local PositionMappings;
 
 -- How fast a bar will get updated.
 local BarUpdatePeriod = 0.05;
@@ -468,7 +452,7 @@ function Prototype:UpdateBar(Bar)
   local Container, Aura = self, Bar.Aura;
   
   Bar:SetWidth(self.Config.Layout.BarWidth);
-  Bar:SetHeight(Module.BarHeight);
+  Bar:SetHeight(self.Config.Layout.BarHeight);
   
   Bar.Text:ClearAllPoints();
   Bar.Duration:ClearAllPoints();
@@ -493,30 +477,30 @@ function Prototype:UpdateBar(Bar)
   
   local Adjust = PositionMappings[self.Config.Layout.Icon][self.Config.Layout.TextPosition];
   Bar.Text:SetPoint(self.Config.Layout.TextPosition, Bar, self.Config.Layout.TextPosition, Adjust[1], Adjust[2]);
-  Bar.Text:SetWidth(self.Config.Layout.BarWidth - ((self.Config.Layout.Icon == "NONE" and Module.BarHeight or 0) + (self.Config.Layout.ShowDuration and 60 or 0) + 20));
+  Bar.Text:SetWidth(self.Config.Layout.BarWidth - ((self.Config.Layout.Icon == "NONE" and self.Config.Layout.BarHeight or 0) + (self.Config.Layout.ShowDuration and 60 or 0) + 20));
   Bar.Text:SetJustifyH(self.Config.Layout.TextPosition);
   
   Adjust = PositionMappings[self.Config.Layout.Icon][self.Config.Layout.DurationPosition];
   Bar.Duration:SetPoint(self.Config.Layout.DurationPosition, Bar, self.Config.Layout.DurationPosition, Adjust[1], Adjust[2]);
   
   Bar.Bar:ClearAllPoints();
-  Bar.Bar:SetHeight(Module.BarHeight);
+  Bar.Bar:SetHeight(self.Config.Layout.BarHeight);
   Bar.Bar.Background:ClearAllPoints();
-  Bar.Bar.Background:SetHeight(Module.BarHeight);
+  Bar.Bar.Background:SetHeight(self.Config.Layout.BarHeight);
   Bar.Bar.Spark:ClearAllPoints();
   
   if self.Config.Layout.BarDirection == "LEFTGROW" or self.Config.Layout.BarDirection == "LEFTSHRINK" then
   
-    Bar.Bar:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
-    Bar.Bar.Background:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
-    Bar.Bar.Background:SetPoint("BOTTOMRIGHT", Bar, "BOTTOMRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
+    Bar.Bar:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and self.Config.Layout.BarHeight or 0, 0);
+    Bar.Bar.Background:SetPoint("TOPLEFT", Bar, "TOPLEFT", self.Config.Layout.Icon == "LEFT" and self.Config.Layout.BarHeight or 0, 0);
+    Bar.Bar.Background:SetPoint("BOTTOMRIGHT", Bar, "BOTTOMRIGHT", self.Config.Layout.Icon == "RIGHT" and -self.Config.Layout.BarHeight or 0, 0);
     Bar.Bar.Spark:SetPoint("CENTER", Bar.Bar, "RIGHT", 0, -2);
     
   else
 
-    Bar.Bar:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
-    Bar.Bar.Background:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -Module.BarHeight or 0, 0);
-    Bar.Bar.Background:SetPoint("BOTTOMLEFT", Bar, "BOTTOMLEFT", self.Config.Layout.Icon == "LEFT" and Module.BarHeight or 0, 0);
+    Bar.Bar:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -self.Config.Layout.BarHeight or 0, 0);
+    Bar.Bar.Background:SetPoint("TOPRIGHT", Bar, "TOPRIGHT", self.Config.Layout.Icon == "RIGHT" and -self.Config.Layout.BarHeight or 0, 0);
+    Bar.Bar.Background:SetPoint("BOTTOMLEFT", Bar, "BOTTOMLEFT", self.Config.Layout.Icon == "LEFT" and self.Config.Layout.BarHeight or 0, 0);
     Bar.Bar.Spark:SetPoint("CENTER", Bar.Bar, "LEFT", 0, -2);
   
   end
@@ -623,12 +607,30 @@ end
 -----------------------------------------------------------------
 function Prototype:Update(...)
 
+  PositionMappings = {
+    NONE = {
+      LEFT = {5, 0},
+      RIGHT = {-5, 0},
+      CENTER = {0, 0},
+    },
+    LEFT = {
+      LEFT = {5 + self.Config.Layout.BarHeight, 0},
+      RIGHT = {-5, 0},
+      CENTER = {self.Config.Layout.BarHeight / 2, 0},
+    },
+    RIGHT = {
+      LEFT = {5, 0},
+      RIGHT = {-5 - self.Config.Layout.BarHeight, 0},
+      CENTER = {-(self.Config.Layout.BarHeight / 2), 0},
+    },
+  };
+
   local Changed = select(1, ...) or "ALL";
   
   if Changed == "ALL" or Changed == "LAYOUT" then
 
     self.Frame:SetWidth(self.Config.Layout.BarWidth);
-    self.Frame:SetHeight((self.Config.Layout.NumberOfBars * Module.BarHeight) + ((self.Config.Layout.NumberOfBars - 1) * self.Config.Layout.Space));
+    self.Frame:SetHeight((self.Config.Layout.NumberOfBars * self.Config.Layout.BarHeight) + ((self.Config.Layout.NumberOfBars - 1) * self.Config.Layout.Space));
     
     self.Frame:SetScale(self.Config.Layout.Scale);
     
@@ -652,7 +654,7 @@ function Prototype:Update(...)
       
     else
     
-      self.BarWidth = self.Config.Layout.BarWidth - Module.BarHeight;
+      self.BarWidth = self.Config.Layout.BarWidth - self.Config.Layout.BarHeight;
     
     end
     
@@ -672,6 +674,18 @@ function Prototype:Update(...)
     );
     
     self.Direction = DirectionMapping[self.Config.Layout.Direction];
+    
+    for _, Bar in pairs(self.Bars) do
+    
+      Bar.Button:SetWidth(self.Config.Layout.BarHeight);
+      Bar.Button:SetHeight(self.Config.Layout.BarHeight);
+      
+      Bar.Bar.Spark:SetWidth(self.Config.Layout.BarHeight);
+      Bar.Bar.Spark:SetHeight(self.Config.Layout.BarHeight * 2.5);
+      
+    end
+    
+    self.LBFGroup:ReSkin();
     
     for _, Bar in pairs(self.Bars) do
       self:UpdateBar(Bar);
@@ -976,7 +990,7 @@ function Prototype:AuraAnchor(Aura, Index)
     self.Frame,
     self.Direction[1],
     (Bar:GetWidth() / 2) / Scale,
-    ((self.Direction[2] * ((Index - 1) * (Module.BarHeight + self.Config.Layout.Space))) + ((Module.BarHeight / 2) * self.Direction[2])) / Scale
+    ((self.Direction[2] * ((Index - 1) * (self.Config.Layout.BarHeight + self.Config.Layout.Space))) + ((self.Config.Layout.BarHeight / 2) * self.Direction[2])) / Scale
   );
 
   Bar:Show();

@@ -8,9 +8,6 @@
   </Frame>
 
   <Button name="AuraFramesButtonTemplate" virtual="true" hidden="true">
-    <Size>
-      <AbsDimension x="36" y="36"/>
-    </Size>
     <Layers>
       <Layer level="BORDER">
         <Texture name="$parentIcon" />
@@ -19,9 +16,6 @@
         <FontString name="$parentCount" hidden="true" justifyH="RIGHT" />
         <FontString name="$parentDuration" hidden="true" />
         <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">
-          <Size>
-            <AbsDimension x="36" y="36"/>
-          </Size>
           <Anchors>
             <Anchor point="CENTER"/>
           </Anchors>
@@ -31,9 +25,6 @@
     </Layers>
     <Frames>
       <Cooldown name="$parentCooldown" level="BORDER" hidden="true">
-        <Size>
-          <AbsDimension x="36" y="36"/>
-        </Size>
         <Anchors>
           <Anchor point="CENTER" />
         </Anchors>

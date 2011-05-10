@@ -16,7 +16,6 @@ local _G = _G;
 
 -- Module settings
 Module.MaxBars = 50;
-Module.BarHeight = 36;
 
 -- List that contains the function prototypes for container objects.
 Module.Prototype = {};

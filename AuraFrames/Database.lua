@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 217;
+AuraFrames.DatabaseVersion = 218;
 
 
 --[[
@@ -75,6 +75,10 @@ AuraFrames.DatabaseVersion = 217;
     
   Version 217:
     Variable type Float is now used for time for filtering
+    
+  Version 218:
+    Buttons and bars have a seperate heights/width now that can be configured
+    
     
 ]]--
 
@@ -715,6 +719,30 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
       end
     end
 
+  end
+  
+  if OldVersion < 218 then
+  
+    if Container.Type == "ButtonContainer" then
+    
+      Container.Layout.ButtonSizeX = 36;
+      Container.Layout.ButtonSizeY = 36;
+      
+    end
+    
+    if Container.Type == "TimeLineContainer" then
+    
+      Container.Layout.ButtonSizeX = 36;
+      Container.Layout.ButtonSizeY = 36;
+      
+    end
+    
+    if Container.Type == "BarContainer" then
+    
+      Container.Layout.BarHeight = 36;
+      
+    end
+  
   end
   
 end

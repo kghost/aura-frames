@@ -14,10 +14,6 @@ local _G = _G;
 -- List them here for Mikk's FindGlobals script
 -- GLOBALS: UIParent
 
--- Module settings
-Module.ButtonSizeX = 36;
-Module.ButtonSizeY = 36;
-
 -- List that contains the function prototypes for container objects.
 Module.Prototype = {};
 
@@ -96,6 +92,8 @@ function Module:GetDatabaseDefaults()
       ButtonOffset = 0,
       ButtonScale = 1.0,
       ButtonIndent = true,
+      ButtonSizeX = 36,
+      ButtonSizeY = 36,
       
       ShowDuration = true,
       DurationFont = "Friz Quadrata TT",

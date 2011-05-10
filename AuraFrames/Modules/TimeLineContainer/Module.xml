@@ -13,9 +13,6 @@
   </Frame>
 
   <Button name="AuraFramesTimeLineTemplate" virtual="true" hidden="true">
-    <Size>
-      <AbsDimension x="36" y="36"/>
-    </Size>
     <Layers>
       <Layer level="BORDER">
         <Texture name="$parentIcon" />
@@ -26,9 +23,6 @@
       </Layer>
       <Layer level="OVERLAY">
         <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">
-          <Size>
-            <AbsDimension x="36" y="36"/>
-          </Size>
           <Anchors>
             <Anchor point="CENTER"/>
           </Anchors>
@@ -36,16 +30,6 @@
         </Texture>
       </Layer>
     </Layers>
-    <Frames>
-      <Cooldown name="$parentCooldown" level="BORDER" hidden="true">
-        <Size>
-          <AbsDimension x="36" y="36"/>
-        </Size>
-        <Anchors>
-          <Anchor point="CENTER" />
-        </Anchors>
-      </Cooldown>
-    </Frames>
   </Button>
 
 </Ui>
