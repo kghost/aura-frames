@@ -216,6 +216,11 @@ function AuraFramesConfig:RefreshTree()
           text = "Settings",
           execute = function() AuraFramesConfig:ContentGeneralSettings(); end,
         },
+        {
+          value = "Spell Cooldowns",
+          text = "SpellCooldowns",
+          execute = function() AuraFramesConfig:ContentSpellCooldowns(); end,
+        },
       },
     },
     {
