@@ -636,6 +636,7 @@ function Prototype:AuraNew(Aura)
       Button.Border = _G[ButtonId.."Border"];
       Button.Cooldown = _G[ButtonId.."Cooldown"];
       Button.MiniBar = _G[ButtonId.."MiniBar"];
+      
     
     else
     
@@ -656,6 +657,9 @@ function Prototype:AuraNew(Aura)
        end
       
     end);
+    
+    Button:SetWidth(self.Config.Layout.ButtonSizeX);
+    Button:SetHeight(self.Config.Layout.ButtonSizeY);
     
     if LBF then
       -- Don't skin the count text, we will take care of that.

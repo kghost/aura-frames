@@ -701,6 +701,9 @@ function Prototype:AuraNew(Aura)
       
     end);
     
+    Button:SetWidth(self.Config.Layout.ButtonSizeX);
+    Button:SetHeight(self.Config.Layout.ButtonSizeY);
+    
     if LBF then
       -- Don't skin the count text, we will take care of that.
       self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false});

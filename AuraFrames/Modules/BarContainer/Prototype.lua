@@ -813,6 +813,12 @@ function Prototype:AuraNew(Aura)
        end
       
     end);
+    
+    Bar.Button:SetWidth(self.Config.Layout.BarHeight);
+    Bar.Button:SetHeight(self.Config.Layout.BarHeight);
+    
+    Bar.Bar.Spark:SetWidth(self.Config.Layout.BarHeight);
+    Bar.Bar.Spark:SetHeight(self.Config.Layout.BarHeight * 2.5);
   
     if LBF then
       -- We Don't have count text.
