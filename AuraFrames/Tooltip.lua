@@ -41,7 +41,13 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
   
   elseif Aura.Type == "SPELLCOOLDOWN" or Aura.Type == "SPELLCOOLDOWNOLD" then
   
-    GameTooltip:SetSpellBookItem(Aura.Index, BOOKTYPE_SPELL);
+    local _, SpellId = GetSpellBookItemInfo(Aura.Index, BOOKTYPE_SPELL);
+    
+    if SpellId then
+      GameTooltip:SetSpellBookItem(Aura.Index, BOOKTYPE_SPELL);
+    else
+      GameTooltip:SetHyperlink("spell:"..Aura.SpellId);
+    end
   
   elseif Aura.Type == "ITEMCOOLDOWN" or Aura.Type == "ITEMCOOLDOWNOLD" then
   

@@ -90,6 +90,7 @@ local MtAura = {
   },
 };
 
+local AdditionalSpellCooldownList = {};
 local CooldownsNew = {};
 local CooldownsGroup = {};
 
@@ -174,6 +175,24 @@ end
 
 
 -----------------------------------------------------------------
+-- Function SetAdditionalSpellCooldownList
+-----------------------------------------------------------------
+function Module:SetAdditionalSpellCooldownList(AdditionalList)
+
+  wipe(AdditionalSpellCooldownList);
+  
+  for _, SpellId in pairs(AdditionalList) do
+    tinsert(AdditionalSpellCooldownList, SpellId);
+  end
+
+  for Unit, _ in pairs(self.db) do
+    self:UpdateSpellBook(Unit);
+  end
+
+end
+
+
+-----------------------------------------------------------------
 -- Function TriggerUpdateSpellBooks
 -----------------------------------------------------------------
 function Module:TriggerUpdateSpellBooks()
@@ -219,14 +238,32 @@ function Module:UpdateSpellBook(Unit)
     Aura.Old = true;
   end
 
-  local i = 1;
+  local i, j = 1, 0;
   
   while true do
+  
+    local _, SpellId;
 
-    local _, SpellId = GetSpellBookItemInfo(i, BookType[Unit]);
+    if j == 0 then
+      
+      _, SpellId = GetSpellBookItemInfo(i, BookType[Unit]);
 
-    if not SpellId then
-      break;
+      if not SpellId then
+        j = 1
+      end
+      
+    end
+    
+    if j ~= 0 then
+    
+      SpellId = AdditionalSpellCooldownList[j];
+      
+      if not SpellId then
+        break;
+      end
+      
+      j = j + 1;
+      
     end
 
     if not self.db[Unit][SpellId] then

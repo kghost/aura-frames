@@ -46,6 +46,8 @@ function AuraFrames:OnEnable()
   self:RegisterChatCommand("afver", "DumpVersion");
   
   self:RegisterBlizzardOptions();
+  
+  self:SetSpellCooldownList();
 
   self:CreateAllContainers();
 
@@ -177,5 +179,92 @@ function AuraFrames:Message(Message, Func, ButtonText)
   end
 
   StaticPopup_Show("AURAFRAMESCONFIG_MESSAGE_DIALOG");
+
+end
+
+
+-----------------------------------------------------------------
+-- Function Input
+-----------------------------------------------------------------
+function AuraFrames:Input(Message, EditBoxText, Func, ButtonText1, ButtonText2, FuncInputValidation)
+  
+  if not StaticPopupDialogs["AURAFRAMESCONFIG_INPUT_DIALOG"] then
+
+    StaticPopupDialogs["AURAFRAMESCONFIG_INPUT_DIALOG"] = {
+      timeout = 0,
+      whileDead = 1,
+      hideOnEscape = 1,
+      hasEditBox = 1,
+    };
+    
+  end
+  
+  local Popup = StaticPopupDialogs["AURAFRAMESCONFIG_INPUT_DIALOG"];
+  Popup.text = Message;
+
+  Popup.button1 = ButtonText1 or "Okay";
+  Popup.button2 = ButtonText2 or "Cancel";
+
+  if Func then
+    Popup.OnAccept = function(self)
+      Func(true, self.editBox:GetText());
+    end
+  else
+    Popup.OnAccept = nil;
+  end
+  
+  if Func then
+    Popup.OnCancel = function(self)
+      Func(false, self.editBox:GetText());
+    end
+  else
+    Popup.OnCancel = nil;
+  end
+  
+  Popup.OnShow = function(self)
+  
+    self.editBox:SetText(EditBoxText);
+
+    self.editBox:SetScript("OnEscapePressed", function()
+      StaticPopup_Hide("AURAFRAMESCONFIG_INPUT_DIALOG");
+      if Popup.OnCancel then
+        Popup.OnCancel(self);
+      end
+    end);
+    
+    self.editBox:SetScript("OnEnterPressed", function()
+      if FuncInputValidation and not FuncInputValidation(self.editBox, self.editBox:GetText()) then
+        return;
+      end
+      StaticPopup_Hide("AURAFRAMESCONFIG_INPUT_DIALOG");
+      if Popup.OnAccept then
+        Popup.OnAccept(self);
+      end
+    end);
+
+    if FuncInputValidation then
+      self.editBox:SetScript("OnTextChanged", function(self, UserInput)
+        if UserInput == false then
+          return;
+        end
+        if FuncInputValidation(self, self:GetText()) then
+          self:GetParent().button1:Enable();
+        else
+          self:GetParent().button1:Disable();
+        end
+      end);
+      if FuncInputValidation(self.editBox, "") then
+        self.button1:Enable();
+      else
+        self.button1:Disable();
+      end
+    else
+      self.editBox:SetScript("OnTextChanged", nil);
+      self.button1:Enable();
+    end
+
+  end
+
+  StaticPopup_Show("AURAFRAMESCONFIG_INPUT_DIALOG");
 
 end

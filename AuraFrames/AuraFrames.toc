@@ -28,5 +28,6 @@ FormatTime.lua
 FontObject.lua
 ButtonFacade\Skins.lua
 Button.lua
+SpellCooldowns.lua
 
 Modules.xml

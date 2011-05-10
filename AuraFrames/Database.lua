@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 218;
+AuraFrames.DatabaseVersion = 219;
 
 
 --[[
@@ -79,7 +79,10 @@ AuraFrames.DatabaseVersion = 218;
   Version 218:
     Buttons and bars have a seperate heights/width now that can be configured
     
-    
+  Version 219:
+    Added customer spell cooldown ids
+  
+  
 ]]--
 
 
@@ -291,7 +294,17 @@ function AuraFrames:DatabaseUpgrade()
   local OldVersion = self.db.profile.DbVersion;
   
   -- General upgrade code.
+  if not self.db.global.SpellCooldowns then
   
+    self.db.global.SpellCooldowns = {
+      PRIEST = {
+        88625,
+        88684,
+        88685,
+      },
+    };
+  
+  end
   
   -- Loop thru the containers and update the defaults.
   for _, Container in pairs(self.db.profile.Containers) do
