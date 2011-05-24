@@ -820,14 +820,14 @@ function Prototype:AuraNew(Aura)
     Bar.Bar.Spark:SetWidth(self.Config.Layout.BarHeight);
     Bar.Bar.Spark:SetHeight(self.Config.Layout.BarHeight * 2.5);
   
+    -- Set the font from this container.
+    Bar.Text:SetFontObject(self.FontObject);
+    Bar.Duration:SetFontObject(self.FontObject);
+    
     if LBF then
       -- We Don't have count text.
       self.LBFGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border, Count = false, Cooldown = Bar.Button.Cooldown});
     end
-  
-    -- Set the font from this container.
-    Bar.Text:SetFontObject(self.FontObject);
-    Bar.Duration:SetFontObject(self.FontObject);
     
     -- Set cooldown options
     Bar.Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
