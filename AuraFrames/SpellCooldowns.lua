@@ -7,6 +7,14 @@ local PlayerClass = select(2, UnitClass("player"));
 -----------------------------------------------------------------
 function AuraFrames:SetSpellCooldownList()
 
-  LibStub("LibAura-1.0"):GetModule("SpellCooldowns-1.0"):SetAdditionalSpellCooldownList(self.db.global.SpellCooldowns[PlayerClass] or {});
+  if not self.db.global.SpellCooldowns then
+    self.db.global.SpellCooldowns = {};
+  end
+  
+  if not self.db.global.SpellCooldowns[PlayerClass] then
+    self.db.global.SpellCooldowns[PlayerClass] = {};
+  end
+
+  LibStub("LibAura-1.0"):GetModule("SpellCooldowns-1.0"):SetAdditionalSpellCooldownList(self.db.global.SpellCooldowns[PlayerClass]);
 
 end
