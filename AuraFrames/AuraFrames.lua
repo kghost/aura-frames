@@ -48,6 +48,7 @@ function AuraFrames:OnEnable()
   self:RegisterBlizzardOptions();
   
   self:SetSpellCooldownList();
+  AuraFrames:SetSpellCooldownStore();
 
   self:CreateAllContainers();
 

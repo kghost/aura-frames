@@ -94,6 +94,13 @@ local AdditionalSpellCooldownList = {};
 local CooldownsNew = {};
 local CooldownsGroup = {};
 
+local LastFullSpellCooldownScan = 0;
+
+local ExternalStore;
+local ScanList;
+
+local PlayerClass = select(2, UnitClass("player"));
+
 -----------------------------------------------------------------
 -- Function ActivateSource
 -----------------------------------------------------------------
@@ -105,7 +112,7 @@ function Module:ActivateSource(Unit, Type)
     LibAura:RegisterEvent("PLAYER_ENTERING_WORLD", self, self.TriggerUpdateSpellBooks);
     LibAura:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", self, self.SpellCasted);
     LibAura:RegisterEvent("UNIT_SPELLCAST_FAILED", self, self.SpellCastFailed);
-    LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.ScanAllSpellCooldowns);
+    LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.ScanSpellCooldowns);
     LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.Update);
   
   end
@@ -117,6 +124,10 @@ function Module:ActivateSource(Unit, Type)
   -- Setup the db for the unit.
   self.db[Unit] = {};
   self.History[Unit] = {};
+  
+  if not ScanList[Unit] then
+    ScanList[Unit] = {};
+  end
   
   -- Fill unit spellbook.
   self:UpdateSpellBook(Unit);
@@ -144,7 +155,7 @@ function Module:DeactivateSource(Unit, Type)
     LibAura:UnregisterEvent("PLAYER_ENTERING_WORLD", self, self.TriggerUpdateSpellBooks);
     LibAura:UnregisterEvent("UNIT_SPELLCAST_SUCCEEDED", self, self.SpellCasted);
     LibAura:UnregisterEvent("UNIT_SPELLCAST_FAILED", self, self.SpellCastFailed);
-    LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.ScanAllSpellCooldowns);
+    LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.ScanSpellCooldowns);
     LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.Update);
 
   end
@@ -193,6 +204,21 @@ end
 
 
 -----------------------------------------------------------------
+-- Function SetSpellCooldownStore
+-----------------------------------------------------------------
+function Module:SetSpellCooldownStore(Store)
+
+  ExternalStore = Store;
+  
+  if not ExternalStore[PlayerClass] then
+    ExternalStore[PlayerClass] = {};
+  end
+  
+  ScanList = ExternalStore[PlayerClass];
+
+end
+
+-----------------------------------------------------------------
 -- Function TriggerUpdateSpellBooks
 -----------------------------------------------------------------
 function Module:TriggerUpdateSpellBooks()
@@ -222,6 +248,17 @@ function Module:Update(Elapsed)
     
     end
   
+  end
+  
+  if LastFullSpellCooldownScan > 2 then
+  
+    LastFullSpellCooldownScan = 0;
+    self:ScanAllSpellCooldowns();
+    
+  else
+  
+    LastFullSpellCooldownScan = LastFullSpellCooldownScan + Elapsed;
+    
   end
   
 end
@@ -304,6 +341,149 @@ function Module:UpdateSpellBook(Unit)
 
 end
 
+-----------------------------------------------------------------
+-- Function ScanSpellCooldowns
+-----------------------------------------------------------------
+function Module:ScanSpellCooldowns()
+
+  local CurrentTime = GetTime();
+  
+  for Unit, _ in pairs(self.db) do
+  
+    wipe(CooldownsNew);
+  
+    for SpellId, _ in pairs(ScanList[Unit]) do
+    
+      local Aura = self.db[Unit][SpellId];
+    
+      local Start, Duration, Active = GetSpellCooldown(SpellId);
+      
+      if Aura.Active == true then
+        
+        local UnderMin = Start + Duration < CurrentTime + 1.5;
+        
+        if (Active ~= 1 or Duration == 0) or (UnderMin == true and Aura.ExpirationTime < CurrentTime) then
+        
+          -- if the cooldown it not active or when we have lesser then
+          -- "UnderMin" left and we are passed the last ExpirationTime
+          -- then deactive it.
+        
+          if Aura.RefSpellId == 0 then
+            LibAura:FireAuraOld(Aura);
+          end
+          
+          Aura.RefSpellId = 0;
+          Aura.Active = false;
+        
+        elseif UnderMin == false then
+        
+          -- We update only the cooldown when a minimum of "UnderMin"
+          -- is still left. This to prevent the gcd to bump the spell cd.
+        
+          local OldExpirationTime = Aura.ExpirationTime;
+          Aura.ExpirationTime = Start + Duration;
+          
+          if Aura.RefSpellId == 0 and abs(Aura.ExpirationTime - OldExpirationTime) > 0.1 then
+            LibAura:FireAuraChanged(Aura);
+          end
+        
+        end
+      
+      else
+      
+        if Active == 1 and Start > 0 and Duration > SpellMinimumCooldown then
+        
+          Aura.Duration = Duration;
+          Aura.ExpirationTime = Start + Duration;
+          Aura.Active = true;
+          
+          tinsert(CooldownsNew, SpellId);
+          
+        end
+      
+      end
+    
+    end
+    
+    if #CooldownsNew == 0 then
+      return;
+    end
+    
+    for _, SpellId in ipairs(CooldownsNew) do
+    
+      local Aura, HistoryIndex = self.db[Unit][SpellId], SpellMaxHistory + 1;
+      
+      -- Check if the new cooldown is located in the history.
+      for Index, HistorySpellId in ipairs(self.History[Unit]) do
+        
+        if HistorySpellId == SpellId then
+          HistoryIndex = Index;
+          break;
+        end
+      
+      end
+      
+      local GroupMatch = false;
+      
+      for _, Group in ipairs(CooldownsGroup) do
+        
+        if abs(Group.Duration - Aura.Duration) < GroupDurationRange then -- Accept a small difference
+        
+          GroupMatch = true;
+        
+          tinsert(Group.SpellIds, SpellId);
+          
+          if Group.PrimaryIndex > HistoryIndex then
+            Group.PrimaryIndex = HistoryIndex;
+            Group.Primary = SpellId;
+          end
+          
+          break;
+          
+        end
+      
+      end
+      
+      if GroupMatch == false then
+      
+        tinsert(CooldownsGroup, {
+          Duration = Aura.Duration,
+          SpellIds = {SpellId},
+          Primary = SpellId,
+          PrimaryIndex = HistoryIndex,
+        });
+        
+      end
+
+    end
+    
+    for _, Group in ipairs(CooldownsGroup) do
+    
+      for _, SpellId in ipairs(Group.SpellIds) do
+      
+        local Aura = self.db[Unit][SpellId];
+        
+        if SpellId == Group.Primary then
+        
+          LibAura:FireAuraNew(Aura);
+        
+        else
+        
+          Aura.RefSpellId = Group.Primary;
+        
+        end
+      
+      end
+    
+    end
+    
+    -- Cleanup CooldownsGroup for next usage.
+    wipe(CooldownsGroup);
+
+  end
+  
+end
+
 
 -----------------------------------------------------------------
 -- Function ScanAllSpellCooldowns
@@ -354,6 +534,8 @@ function Module:ScanAllSpellCooldowns()
       else
       
         if Active == 1 and Start > 0 and Duration > SpellMinimumCooldown then
+        
+          ScanList[Unit][SpellId] = true;
         
           Aura.Duration = Duration;
           Aura.ExpirationTime = Start + Duration;

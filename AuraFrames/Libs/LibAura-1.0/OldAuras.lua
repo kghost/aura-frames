@@ -12,6 +12,8 @@
 --
 -----------------------------------------------------------------
 
+-- Support for old auras is currently disabled
+if true then return; end;
 
 local LibAura = LibStub("LibAura-1.0");
 

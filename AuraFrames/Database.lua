@@ -101,6 +101,15 @@ local DatabaseDefaults = {
     HideBlizzardAuraFrames = true,
     HideBossModsBars = false,
   },
+  global = {
+    SpellCooldowns = {
+      PRIEST = {
+        88625,
+        88684,
+        88685,
+      },
+    },
+  },
 };
 
 
