@@ -97,7 +97,7 @@ local CooldownsGroup = {};
 local LastFullSpellCooldownScan = 0;
 
 local ExternalStore;
-local ScanList;
+local ScanList = {};
 
 local PlayerClass = select(2, UnitClass("player"));
 
