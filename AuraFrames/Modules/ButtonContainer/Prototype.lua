@@ -553,7 +553,9 @@ function Prototype:Update(...)
       
     end
     
-    self.LBFGroup:ReSkin();
+    if LBF then
+      self.LBFGroup:ReSkin();
+    end
     
     for _, Button in pairs(self.Buttons) do
       self:UpdateButton(Button);

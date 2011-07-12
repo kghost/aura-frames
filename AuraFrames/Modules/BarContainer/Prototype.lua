@@ -685,7 +685,9 @@ function Prototype:Update(...)
       
     end
     
-    self.LBFGroup:ReSkin();
+    if LBF then
+      self.LBFGroup:ReSkin();
+    end
     
     for _, Bar in pairs(self.Bars) do
       self:UpdateBar(Bar);
