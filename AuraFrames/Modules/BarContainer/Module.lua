@@ -71,6 +71,7 @@ function Module:GetDatabaseDefaults()
       Direction = "DOWN",
       DynamicSize = false,
       Icon = "LEFT",
+      BarHeight = 36,
 
       ShowDuration = true,
       DurationLayout = "ABBREVSPACE",

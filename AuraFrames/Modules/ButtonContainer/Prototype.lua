@@ -668,8 +668,15 @@ function Prototype:AuraNew(Aura)
     Button.Count:SetFontObject(self.CountFontObject);
     
     if LBF then
+    
       -- Don't skin the count text, we will take care of that.
       self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false, Cooldown = Button.Cooldown});
+    
+    else
+    
+      Button.Border:SetAllPoints(Button);
+      Button.Cooldown:SetAllPoints(Button);
+    
     end
     
   end

@@ -827,8 +827,15 @@ function Prototype:AuraNew(Aura)
     Bar.Duration:SetFontObject(self.FontObject);
     
     if LBF then
+    
       -- We Don't have count text.
       self.LBFGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border, Count = false, Cooldown = Bar.Button.Cooldown});
+    
+    else
+    
+      Bar.Button.Border:SetAllPoints(Bar.Button);
+      Bar.Button.Cooldown:SetAllPoints(Bar.Button);
+    
     end
     
     -- Set cooldown options

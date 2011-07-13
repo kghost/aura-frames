@@ -15,19 +15,12 @@
           </Layer>
           <Layer level="OVERLAY">
             <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">
-              <Anchors>
-                <Anchor point="CENTER"/>
-              </Anchors>
               <TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>
             </Texture>
           </Layer>
         </Layers>
         <Frames>
-          <Cooldown name="$parentCooldown" level="BORDER" hidden="true">
-            <Anchors>
-              <Anchor point="CENTER" />
-            </Anchors>
-          </Cooldown>
+          <Cooldown name="$parentCooldown" level="BORDER" hidden="true" />
         </Frames>
       </Button>
       <Frame level="BACKGROUND" frameStrata="BACKGROUND" name="$parentBarBackground">
