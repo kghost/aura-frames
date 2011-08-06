@@ -279,7 +279,6 @@ function Module:ScanWeapon(Slot, HasEnchant, ExpirationTime, Charges)
     
       -- Sync time
       Aura.ExpirationTime = ExpirationTime;
-      Aura.Duration = ExpirationTime - GetTime();
       
       Aura.Count = Charges;
       
@@ -289,7 +288,6 @@ function Module:ScanWeapon(Slot, HasEnchant, ExpirationTime, Charges)
     
       -- Sync time
       Aura.ExpirationTime = ExpirationTime;
-      Aura.Duration = ExpirationTime - GetTime();
     
     end
     
