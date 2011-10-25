@@ -30,10 +30,12 @@ function Module:ContentLayout(ContainerId)
       value = "MiniBar",
       text = "Mini Bar",
     },
+--[[
     {
       value = "Skin",
       text = "Skin",
     },
+]]--
     {
       value = "Colors",
       text = "Colors",

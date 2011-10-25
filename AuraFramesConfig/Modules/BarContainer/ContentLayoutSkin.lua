@@ -2,7 +2,7 @@ local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
 local Module = AuraFramesConfig:GetModule("BarContainer");
 local AceGUI = LibStub("AceGUI-3.0");
-local LBF = LibStub("LibButtonFacade", true);
+--local LBF = LibStub("LibButtonFacade", true);
 local LSM = LibStub("LibSharedMedia-3.0");
 
 
@@ -259,8 +259,9 @@ function Module:ContentLayoutSkin(Content, ContainerId)
   end);
   SparkGroup:AddChild(SparkColor);
 
-  
   Content:AddSpace();
+
+--[[
 
   Content:AddHeader("ButtonFacade");
   
@@ -282,6 +283,8 @@ function Module:ContentLayoutSkin(Content, ContainerId)
   end
   
   Content:AddSpace();
+  
+]]--
   
   Content:AddHeader("Background Texture and Colors");
   

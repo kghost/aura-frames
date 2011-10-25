@@ -2,7 +2,7 @@ local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
 local Module = AuraFramesConfig:GetModule("TimeLineContainer");
 local AceGUI = LibStub("AceGUI-3.0");
-local LBF = LibStub("LibButtonFacade", true);
+--local LBF = LibStub("LibButtonFacade", true);
 local LSM = LibStub("LibSharedMedia-3.0");
 
 
@@ -145,6 +145,8 @@ function Module:ContentLayoutSkin(Content, ContainerId)
   
   Content:AddSpace();
 
+--[[
+
   Content:AddHeader("ButtonFacade");
   
   if not LBF then
@@ -165,5 +167,7 @@ function Module:ContentLayoutSkin(Content, ContainerId)
   end
   
   Content:AddSpace();
+
+]]--
 
 end
