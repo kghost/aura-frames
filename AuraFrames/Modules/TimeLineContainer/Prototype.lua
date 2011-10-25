@@ -1,6 +1,6 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:GetModule("TimeLineContainer");
-local LBF = LibStub("LibButtonFacade", true);
+local MSQ = LibStub("Masque", true);
 local LSM = LibStub("LibSharedMedia-3.0");
 
 -- Import most used functions into the local namespace.
@@ -223,8 +223,8 @@ function Prototype:Delete()
   -- Release the container pool into the general pool.
   self:ReleasePool();
 
-  if self.LBFGroup then
-    self.LBFGroup:Delete(true);
+  if self.MSQGroup then
+    self.MSQGroup:Delete(true);
   end
 
 end
@@ -240,8 +240,8 @@ function Prototype:ReleasePool()
   
     local Button = tremove(self.ButtonPool);
     
-    if LBF then
-      self.LBFGroup:RemoveButton(Button, true);
+    if MSQ then
+      self.MSQGroup:RemoveButton(Button, true);
     end
   
     Button:ClearAllPoints();
@@ -506,8 +506,8 @@ function Prototype:Update(...)
       
     end
     
-    if LBF then
-      self.LBFGroup:ReSkin();
+    if MSQ then
+      self.MSQGroup:ReSkin();
     end
     
     for _, Button in pairs(self.Buttons) do
@@ -643,8 +643,8 @@ function Prototype:AuraEvent(Aura, Event, ...)
 
   if Event == "ColorChanged" and Button.Border ~= nil then
 
-    if LBF then
-      LBF:SetNormalVertexColor(Button, unpack(Aura.Color));
+    if MSQ then
+      --MSQ:SetNormalVertexColor(Button, unpack(Aura.Color));
     end
     
     Button.Border:SetVertexColor(unpack(Aura.Color));
@@ -710,10 +710,10 @@ function Prototype:AuraNew(Aura)
     Button.Duration:SetFontObject(self.DurationFontObject);
     Button.Count:SetFontObject(self.CountFontObject);
     
-    if LBF then
+    if MSQ then
     
       -- Don't skin the count text, we will take care of that.
-      self.LBFGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false});
+      self.MSQGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false});
       
     else
     
@@ -785,8 +785,8 @@ function Prototype:AuraOld(Aura)
   
     -- General pool.
   
-    if LBF then
-      self.LBFGroup:RemoveButton(Button, true);
+    if MSQ then
+      self.MSQGroup:RemoveButton(Button, true);
     end
 
     Button:ClearAllPoints();

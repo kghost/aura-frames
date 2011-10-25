@@ -1,6 +1,6 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:GetModule("BarContainer");
-local LBF = LibStub("LibButtonFacade", true);
+local MSQ = LibStub("Masque", true);
 local LSM = LibStub("LibSharedMedia-3.0");
 
 -- Import most used functions into the local namespace.
@@ -347,8 +347,8 @@ function Prototype:Delete()
   -- Release the container pool into the general pool.
   self:ReleasePool();
 
-  if self.LBFGroup then
-    self.LBFGroup:Delete(true);
+  if self.MSQGroup then
+    self.MSQGroup:Delete(true);
   end
 
 
@@ -364,8 +364,8 @@ function Prototype:ReleasePool()
   
     local Bar = tremove(self.BarPool);
   
-    if LBF then
-      self.LBFGroup:RemoveButton(Bar.Button, true);
+    if MSQ then
+      self.MSQGroup:RemoveButton(Bar.Button, true);
     end
     
     Bar:ClearAllPoints();
@@ -685,8 +685,8 @@ function Prototype:Update(...)
       
     end
     
-    if LBF then
-      self.LBFGroup:ReSkin();
+    if MSQ then
+      self.MSQGroup:ReSkin();
     end
     
     for _, Bar in pairs(self.Bars) do
@@ -729,8 +729,8 @@ function Prototype:AuraEvent(Aura, Event, ...)
 
   if Event == "ColorChanged" then
   
-    if LBF then
-      LBF:SetNormalVertexColor(Bar.Button, unpack(Aura.Color));
+    if MSQ then
+      --MSQ:SetNormalVertexColor(Bar.Button, unpack(Aura.Color));
     end
     
     Bar.Button.Border:SetVertexColor(unpack(Aura.Color));
@@ -826,10 +826,10 @@ function Prototype:AuraNew(Aura)
     Bar.Text:SetFontObject(self.FontObject);
     Bar.Duration:SetFontObject(self.FontObject);
     
-    if LBF then
+    if MSQ then
     
       -- We Don't have count text.
-      self.LBFGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border, Count = false, Cooldown = Bar.Button.Cooldown});
+      self.MSQGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border, Count = false, Cooldown = Bar.Button.Cooldown});
     
     else
     
@@ -923,8 +923,8 @@ function Prototype:AuraOld(Aura)
   
     -- General pool.
   
-    if LBF then
-      self.LBFGroup:RemoveButton(Bar.Button, true);
+    if MSQ then
+      self.MSQGroup:RemoveButton(Bar.Button, true);
     end
   
     Bar:ClearAllPoints();

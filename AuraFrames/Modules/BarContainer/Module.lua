@@ -1,5 +1,6 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:NewContainerModule("BarContainer");
+local MSQ = LibStub("Masque", true);
 
 -- Import most used functions into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
@@ -186,7 +187,8 @@ function Module:New(Config)
   
   Container.BarPool = {};
   
-  Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
+  --Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
+  Container.MSQGroup = MSQ and MSQ:Group("AuraFrames", Config.Id) or null;
   
   Container.FontObject = _G[FrameId.."_Font"] or CreateFont(FrameId.."_Font");
   

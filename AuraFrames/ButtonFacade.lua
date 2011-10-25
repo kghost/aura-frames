@@ -1,3 +1,5 @@
+if 1 then return; end -- No buttonfacade anymore!
+
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local LBF = LibStub("LibButtonFacade", true);
 

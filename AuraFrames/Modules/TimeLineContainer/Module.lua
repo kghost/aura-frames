@@ -1,5 +1,6 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local Module = AuraFrames:NewContainerModule("TimeLineContainer");
+local MSQ = LibStub("Masque", true);
 
 -- Import most used functions into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
@@ -215,7 +216,8 @@ function Module:New(Config)
   
   Container.ButtonPool = {};
   
-  Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
+  --Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
+  Container.MSQGroup = MSQ and MSQ:Group("AuraFrames", Config.Id) or null;
   
   Container.DurationFontObject = _G[FrameId.."_DurationFont"] or CreateFont(FrameId.."_DurationFont");
   Container.CountFontObject = _G[FrameId.."_CountFont"] or CreateFont(FrameId.."_CountFont");
