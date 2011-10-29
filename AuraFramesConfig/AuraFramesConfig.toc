@@ -25,7 +25,6 @@ ContentOrder.lua
 ContentFilter.lua
 ContentFilterBuilder.lua
 ContentProfiles.lua
-ContentButtonFacade.lua
 ContentColors.lua
 
 AceGUIContainer-AuraFramesWindow.lua
