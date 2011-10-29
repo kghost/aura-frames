@@ -128,7 +128,7 @@ end
 function Module:ActivateSource(Unit, Type)
   
   LibAura:RegisterEvent("PLAYER_TOTEM_UPDATE", self, self.Update);
-  LibAura:RegisterEvent("SPELLS_CHANGED", self, self.Update);
+  LibAura:RegisterEvent("SPELLS_CHANGED", self, self.UpdateTotemSpells);
   
   self:UpdateTotemSpells();
   
@@ -151,7 +151,7 @@ function Module:DeactivateSource(Unit, Type)
   end
   
   LibAura:UnregisterEvent("PLAYER_TOTEM_UPDATE", self, self.Update);
-  LibAura:UnregisterEvent("SPELLS_CHANGED", self, self.Update);
+  LibAura:UnregisterEvent("SPELLS_CHANGED", self, self.UpdateTotemSpells);
 
 end
 
