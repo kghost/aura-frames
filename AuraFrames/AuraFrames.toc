@@ -22,11 +22,10 @@ AuraList.lua
 Filter.lua
 Order.lua
 Colors.lua
-ButtonFacade.lua
 SharedMedia.lua
 FormatTime.lua
 FontObject.lua
-ButtonFacade\Skins.lua
+Masque\Skins.lua
 Button.lua
 SpellCooldowns.lua
 
