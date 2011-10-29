@@ -713,7 +713,7 @@ function Prototype:AuraNew(Aura)
     if MSQ then
     
       -- Don't skin the count text, we will take care of that.
-      self.MSQGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false});
+      self.MSQGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false, Duration = false});
       
     else
     

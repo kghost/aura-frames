@@ -829,7 +829,7 @@ function Prototype:AuraNew(Aura)
     if MSQ then
     
       -- We Don't have count text.
-      self.MSQGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border, Count = false, Cooldown = Bar.Button.Cooldown});
+      self.MSQGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border, Count = false, Duration = false, Cooldown = Bar.Button.Cooldown});
     
     else
     
