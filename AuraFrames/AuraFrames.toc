@@ -4,7 +4,7 @@
 ## Author: Alex <Beautiuz> Elderson
 ## Version: 1.2.4
 ## SavedVariables: AuraFramesDB
-## OptionalDeps: Ace3, ButtonFacade
+## OptionalDeps: Ace3, Masque
 
 Embeds.xml
 
