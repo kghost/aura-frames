@@ -82,6 +82,8 @@ AuraFrames.DatabaseVersion = 219;
   Version 219:
     Added customer spell cooldown ids
   
+  Version 220:
+    Remove ButtonFacade config
   
 ]]--
 
@@ -763,6 +765,14 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
     
       Container.Layout.BarHeight = 36;
       
+    end
+  
+  end
+  
+  if OldVersion < 220 then
+  
+    if Container.ButtonFacade then
+      Container.ButtonFacade = nil;
     end
   
   end

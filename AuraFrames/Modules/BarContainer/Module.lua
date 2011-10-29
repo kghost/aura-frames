@@ -120,13 +120,6 @@ function Module:GetDatabaseDefaults()
       CooldownReverse = false,
       CooldownDisableOmniCC = true,
       
-      ButtonFacade = {
-        Gloss = 0.8,
-        SkinId = "Aura Frames",
-        Backdrop = false,
-        Colors = {},
-      },
-      
     },
     Colors = AuraFrames:GetDatabaseDefaultColors(),
     Warnings = {
@@ -187,7 +180,6 @@ function Module:New(Config)
   
   Container.BarPool = {};
   
-  --Container.LBFGroup = AuraFrames:CreateButtonFacadeGroup(Config.Id);
   Container.MSQGroup = MSQ and MSQ:Group("AuraFrames", Config.Id) or null;
   
   Container.FontObject = _G[FrameId.."_Font"] or CreateFont(FrameId.."_Font");

@@ -10,7 +10,7 @@ MSQ:AddSkin("Aura Frames", {
   Backdrop = {
     Width = 42,
     Height = 42,
-    Texture = [[Interface\AddOns\AuraFrames\ButtonFacade\Textures\Backdrop]],
+    Texture = [[Interface\AddOns\AuraFrames\Masque\Textures\Backdrop]],
   },
   Icon = {
     Width = 36,
@@ -20,7 +20,7 @@ MSQ:AddSkin("Aura Frames", {
     Width = 42,
     Height = 42,
     Color = {1, 0, 0, 0.3},
-    Texture = [[Interface\AddOns\AuraFrames\ButtonFacade\Textures\Overlay]],
+    Texture = [[Interface\AddOns\AuraFrames\Masque\Textures\Overlay]],
   },
   Cooldown = {
     Width = 36,
@@ -30,14 +30,14 @@ MSQ:AddSkin("Aura Frames", {
     Width = 42,
     Height = 42,
     Color = {0, 0, 0, 0.5},
-    Texture = [[Interface\AddOns\AuraFrames\ButtonFacade\Textures\Overlay]],
+    Texture = [[Interface\AddOns\AuraFrames\Masque\Textures\Overlay]],
   },
   Normal = {
     Width = 42,
     Height = 42,
     Static = true,
     Color = {0.3, 0.3, 0.3, 1},
-    Texture = [[Interface\AddOns\AuraFrames\ButtonFacade\Textures\Normal]],
+    Texture = [[Interface\AddOns\AuraFrames\Masque\Textures\Normal]],
   },
   Disabled = {
     Hide = true,
@@ -47,18 +47,18 @@ MSQ:AddSkin("Aura Frames", {
     Height = 42,
     BlendMode = "ADD",
     Color = {0, 0.8, 1, 0.5},
-    Texture = [[Interface\AddOns\AuraFrames\ButtonFacade\Textures\Border]],
+    Texture = [[Interface\AddOns\AuraFrames\Masque\Textures\Border]],
   },
   Border = {
     Width = 42,
     Height = 42,
     BlendMode = "ADD",
-    Texture = [[Interface\AddOns\AuraFrames\ButtonFacade\Textures\Border]],
+    Texture = [[Interface\AddOns\AuraFrames\Masque\Textures\Border]],
   },
   Gloss = {
     Width = 42,
     Height = 42,
-    Texture = [[Interface\AddOns\AuraFrames\ButtonFacade\Textures\Gloss]],
+    Texture = [[Interface\AddOns\AuraFrames\Masque\Textures\Gloss]],
   },
   AutoCastable = {
     Width = 64,
@@ -72,7 +72,7 @@ MSQ:AddSkin("Aura Frames", {
     Height = 42,
     BlendMode = "ADD",
     Color = {1, 1, 1, 0.3},
-    Texture = [[Interface\AddOns\AuraFrames\ButtonFacade\Textures\Highlight]],
+    Texture = [[Interface\AddOns\AuraFrames\Masque\Textures\Highlight]],
   },
   Name = {
     Width = 42,

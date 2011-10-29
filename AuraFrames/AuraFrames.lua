@@ -1,3 +1,6 @@
+print("Aura Frames loaded");
+
+
 local AuraFrames = LibStub("AceAddon-3.0"):NewAddon("AuraFrames", "AceConsole-3.0");
 
 -- Import used global references into the local namespace.
