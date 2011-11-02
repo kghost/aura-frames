@@ -31,8 +31,6 @@ local DirectionMapping = {
   UP    = {"BOTTOMLEFT",  1},
 };
 
-local PositionMappings;
-
 -- How fast a bar will get updated.
 local BarUpdatePeriod = 0.05;
 
@@ -475,12 +473,12 @@ function Prototype:UpdateBar(Bar)
 
   end
   
-  local Adjust = PositionMappings[self.Config.Layout.Icon][self.Config.Layout.TextPosition];
+  local Adjust = self.PositionMappings[self.Config.Layout.Icon][self.Config.Layout.TextPosition];
   Bar.Text:SetPoint(self.Config.Layout.TextPosition, Bar, self.Config.Layout.TextPosition, Adjust[1], Adjust[2]);
   Bar.Text:SetWidth(self.Config.Layout.BarWidth - ((self.Config.Layout.Icon == "NONE" and self.Config.Layout.BarHeight or 0) + (self.Config.Layout.ShowDuration and 60 or 0) + 20));
   Bar.Text:SetJustifyH(self.Config.Layout.TextPosition);
   
-  Adjust = PositionMappings[self.Config.Layout.Icon][self.Config.Layout.DurationPosition];
+  Adjust = self.PositionMappings[self.Config.Layout.Icon][self.Config.Layout.DurationPosition];
   Bar.Duration:SetPoint(self.Config.Layout.DurationPosition, Bar, self.Config.Layout.DurationPosition, Adjust[1], Adjust[2]);
   
   Bar.Bar:ClearAllPoints();
@@ -607,7 +605,7 @@ end
 -----------------------------------------------------------------
 function Prototype:Update(...)
 
-  PositionMappings = {
+  self.PositionMappings = {
     NONE = {
       LEFT = {5, 0},
       RIGHT = {-5, 0},
