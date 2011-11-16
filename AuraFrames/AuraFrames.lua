@@ -88,10 +88,13 @@ function AuraFrames:CheckBlizzardAuraFrames()
 
   -- Hide the default Blizz buff frame
   BuffFrame:Hide();
+  BuffFrame.Show = function() end;
   TemporaryEnchantFrame:Hide();
+  TemporaryEnchantFrame.Show = function() end;
   ConsolidatedBuffs:Hide();
+  ConsolidatedBuffs.Show = function() end;
 
-  -- The default buff frame is still working,lets destroy
+  -- The default buff frame is still working, lets destroy
   -- it so it doesnt eat any cpu cycles anymore
   
   -- Disable the events to the default buff frame
