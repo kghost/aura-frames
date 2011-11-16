@@ -409,10 +409,6 @@ function Module:ScanSpellCooldowns()
     
     end
     
-    if #CooldownsNew == 0 then
-      return;
-    end
-    
     for _, SpellId in ipairs(CooldownsNew) do
     
       local Aura, HistoryIndex = self.db[Unit][SpellId], SpellMaxHistory + 1;
@@ -551,10 +547,6 @@ function Module:ScanAllSpellCooldowns()
       
       end
     
-    end
-    
-    if #CooldownsNew == 0 then
-      return;
     end
     
     for _, SpellId in ipairs(CooldownsNew) do
