@@ -205,6 +205,10 @@ function Module:InternalCooldowns_Proc(_, ItemId, SpellId, Start, Duration)
   Aura.ExpirationTime = Start + Duration;
   Aura.Duration = Duration;
   
+  if Start then
+    Aura.CreationTime = Start;
+  end
+  
   Aura.Id = "playerINTERNALCOOLDOWNITEM"..ItemId..Aura.ExpirationTime;
   
   LibAura:FireAuraNew(Aura);
@@ -243,6 +247,10 @@ function Module:InternalCooldowns_TalentProc(_, SpellId, Start, Duration)
   Aura.Name, _, Aura.Icon, _, _, _, _, _, _ = GetSpellInfo(SpellId);
   Aura.ExpirationTime = Start + Duration;
   Aura.Duration = Duration;
+  
+  if Start then
+    Aura.CreationTime = Start;
+  end
   
   Aura.Id = "playerINTERNALCOOLDOWNTALENT"..SpellId..Aura.ExpirationTime;
   

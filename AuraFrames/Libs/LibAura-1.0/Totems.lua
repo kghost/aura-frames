@@ -248,6 +248,10 @@ function Module:Update()
           Aura.Icon = self.TotemSpells[i][Aura.SpellId].Icon;
           Aura.Active = true;
           
+          if StartTime then
+            Aura.CreationTime = StartTime;
+          end
+          
           LibAura:FireAuraNew(Aura);
           
         end

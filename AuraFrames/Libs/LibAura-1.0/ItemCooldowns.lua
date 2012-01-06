@@ -289,6 +289,10 @@ function Module:CooldownUpdate()
         Aura.ExpirationTime = Start + Duration;
         Aura.Active = true;
         
+        if Start then
+          Aura.CreationTime = Start;
+        end
+        
         tinsert(CooldownsNew, ItemId);
         
       end

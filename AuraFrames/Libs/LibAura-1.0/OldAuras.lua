@@ -204,8 +204,9 @@ function Module:AuraOld(Aura)
   end
   
   NewAura.Type = Aura.Type.."OLD";
-  NewAura.Id = NewAura.Unit..NewAura.Type..NewAura.Name..GetTime();
-  NewAura.ExpirationTime = GetTime() + TimeToLive;
+  NewAura.CreationTime = GetTime();
+  NewAura.Id = NewAura.Unit..NewAura.Type..NewAura.Name..NewAura.CreationTime;
+  NewAura.ExpirationTime = NewAura.CreationTime + TimeToLive;
   
   tinsert(self.db[NewAura.Unit][NewAura.Type], NewAura);
 

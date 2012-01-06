@@ -536,6 +536,10 @@ function Module:ScanUnitAuras(Unit, Type)
         Aura.Id = Id;
         Aura.Scanned = true;
         
+        if Duration and ExpirationTime then
+          Aura.CreationTime = ExpirationTime - Duration;
+        end
+        
         tinsert(Auras, Aura);
         
         LibAura:FireAuraNew(Aura);

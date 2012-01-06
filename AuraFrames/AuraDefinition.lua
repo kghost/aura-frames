@@ -267,6 +267,13 @@ AuraFrames.AuraDefinition = {
     Filter = true,
     Weight = 1,
   },
+  DetectionTime = {
+    Type = "Float",
+    Name = "Detection time",
+    Order = true,
+    Filter = true,
+    Weight = 1,
+  },
 };
 
 

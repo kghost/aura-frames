@@ -399,6 +399,10 @@ function Module:ScanSpellCooldowns()
             Aura.ExpirationTime = Start + Duration;
             Aura.Active = true;
             
+            if Start then
+              Aura.CreationTime = Start;
+            end
+            
             tinsert(CooldownsNew, SpellId);
             
           end
@@ -540,6 +544,10 @@ function Module:ScanAllSpellCooldowns()
           Aura.Duration = Duration;
           Aura.ExpirationTime = Start + Duration;
           Aura.Active = true;
+          
+          if Start then
+            Aura.CreationTime = Start;
+          end
           
           tinsert(CooldownsNew, SpellId);
           

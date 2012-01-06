@@ -341,6 +341,10 @@ function Module:DBM_Scan()
         db[Id].ExpirationTime = CurrentTime + Bar.timer;
         db[Id].Id = "bossALERT_DBM"..Id;
         
+        if Bar.totalTime and Bar.timer then
+          db[Id].CreationTime = CurrentTime + Bar.timer - Bar.totalTime;
+        end
+        
         LibAura:FireAuraNew(db[Id]);
       
       else
@@ -440,6 +444,10 @@ function Module:DXE_NewBar(Id, Text, TotalTime, Icon)
   Aura.ExpirationTime = GetTime() + TotalTime;
   Aura.Id = "bossALERT_DXE"..tostring(Aura);
 
+  if TotalTime then
+    Aura.CreationTime = GetTime() - TotalTime;
+  end
+  
   tinsert(self.db.DXE, Aura);
   
   LibAura:FireAuraNew(Aura);
