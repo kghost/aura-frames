@@ -253,14 +253,14 @@ AuraFrames.AuraDefinition = {
     Filter = true,
     Weight = 3,
   },
-  CreatedTime = {
+  CreationTime = {
     Type = "Float",
     Name = "Creation time",
     Order = true,
     Filter = true,
     Weight = 1,
   },
-  ChangedTime = {
+  ChangingTime = {
     Type = "Float",
     Name = "Changing time",
     Order = true,

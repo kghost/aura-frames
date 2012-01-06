@@ -415,11 +415,11 @@ function LibAura:FireAuraNew(Aura)
 
   Aura.DetectionTime = GetTime();
   
-  if not Aura.CreationTime then
+  if not Aura.CreationTime or Aura.CreationTime == 0 then
     Aura.CreationTime = Aura.DetectionTime;
   end
 
-  Aura.ChangedTime = Aura.CreationTime;
+  Aura.ChangingTime = Aura.CreationTime;
 
   for _, Object in ipairs(self.db[Aura.Unit][Aura.Type].Objects) do
     Object:AuraNew(Aura);
@@ -447,7 +447,7 @@ end
 -----------------------------------------------------------------
 function LibAura:FireAuraChanged(Aura)
 
-  Aura.ChangedTime = GetTime();
+  Aura.ChangingTime = GetTime();
 
   for _, Object in ipairs(self.db[Aura.Unit][Aura.Type].Objects) do
     Object:AuraChanged(Aura);
