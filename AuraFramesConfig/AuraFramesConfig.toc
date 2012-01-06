@@ -1,4 +1,4 @@
-## Interface: 40200
+## Interface: 40300
 ## Title: Aura Frames Options (Load on Demand)
 ## Notes: Options for AuraFrames
 ## Author: Alex <Beautiuz> Elderson
