@@ -413,6 +413,9 @@ end
 -----------------------------------------------------------------
 function LibAura:FireAuraNew(Aura)
 
+  Aura.CreatedTime = GetTime();
+  Aura.ChangedTime = Aura.CreatedTime;
+
   for _, Object in ipairs(self.db[Aura.Unit][Aura.Type].Objects) do
     Object:AuraNew(Aura);
   end
@@ -436,6 +439,8 @@ end
 -- Function FireAuraChanged
 -----------------------------------------------------------------
 function LibAura:FireAuraChanged(Aura)
+
+  Aura.ChangedTime = GetTime();
 
   for _, Object in ipairs(self.db[Aura.Unit][Aura.Type].Objects) do
     Object:AuraChanged(Aura);
