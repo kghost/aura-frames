@@ -193,6 +193,7 @@ end
 -----------------------------------------------------------------
 function Module:UNIT_AURA(Unit)
   Module:ScanUnitChanges(Unit);
+  af:Print(Unit);
 end
 
 function Module:PARTY_MEMBERS_CHANGED()

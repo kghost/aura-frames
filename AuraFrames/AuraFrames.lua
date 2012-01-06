@@ -88,25 +88,29 @@ function AuraFrames:CheckBlizzardAuraFrames()
 
   -- Hide the default Blizz buff frame
   BuffFrame:Hide();
-  BuffFrame.Show = function() end;
   TemporaryEnchantFrame:Hide();
-  TemporaryEnchantFrame.Show = function() end;
   ConsolidatedBuffs:Hide();
-  ConsolidatedBuffs.Show = function() end;
+  
+  -- Hook the onShow script so we can hide it again.
+  BuffFrame:HookScript("OnShow", AuraFrames.BlizzardFrameOnShow);
+  TemporaryEnchantFrame:HookScript("OnShow", AuraFrames.BlizzardFrameOnShow);
+  ConsolidatedBuffs:HookScript("OnShow", AuraFrames.BlizzardFrameOnShow);
+  
+end
 
-  -- The default buff frame is still working, lets destroy
-  -- it so it doesnt eat any cpu cycles anymore
+
+-----------------------------------------------------------------
+-- Function BlizzardFrameOnShow
+-----------------------------------------------------------------
+function AuraFrames.BlizzardFrameOnShow(Frame)
+  -- No self!
   
-  -- Disable the events to the default buff frame
-  BuffFrame:UnregisterAllEvents(); 
-  TemporaryEnchantFrame:UnregisterAllEvents();
-  ConsolidatedBuffs:UnregisterAllEvents();
+  if AuraFrames.db.profile.HideBlizzardAuraFrames ~= true then
+    return;
+  end
   
-  -- Remove the OnUpdate call (shouldn't be called anyway because the frame is hidden, but just to make sure)
-  BuffFrame:SetScript("OnUpdate", nil); 
-  TemporaryEnchantFrame:SetScript("OnUpdate", nil);
-  ConsolidatedBuffs:SetScript("OnUpdate", nil);
-  
+  Frame:Hide();
+
 end
 
 
