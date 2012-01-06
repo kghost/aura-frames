@@ -52,6 +52,11 @@ Mouseover unit:
   until the mouseover until is nil. When the mouseover unit is nil, we trigger an old event
   for all auras we had for the mouseover.
 
+*Target Units:
+
+  This is similar to Mouseover, UNIT_AURA doesn't fire for *Target units. Instead we scan the
+  *Target units ever 0.2 seconds.
+
 ]]--
 
 
@@ -78,31 +83,32 @@ local UnitAura, UnitName = UnitAura, UnitName;
 -----------------------------------------------------------------
 Module.EventsToMonitor = {
   focus         = {"UNIT_AURA", "PLAYER_FOCUS_CHANGED"},
-  focustarget   = {"UNIT_AURA", "PLAYER_FOCUS_CHANGED", "UNIT_TARGET"},
+  focustarget   = {"UNIT_AURA", "PLAYER_FOCUS_CHANGED", "UNIT_TARGET", "LIBAURA_UPDATE"},
   player        = {"UNIT_AURA"},
   pet           = {"UNIT_AURA", "UNIT_PET"},
-  pettarget     = {"UNIT_AURA", "UNIT_PET", "UNIT_TARGET"},
+  pettarget     = {"UNIT_AURA", "UNIT_PET", "UNIT_TARGET", "LIBAURA_UPDATE"},
   vehicle       = {"UNIT_AURA", "UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE"},
-  vehicletarget = {"UNIT_AURA", "UNIT_ENTERED_VEHICLE", "UNIT_TARGET"},
+  vehicletarget = {"UNIT_AURA", "UNIT_ENTERED_VEHICLE", "UNIT_TARGET", "LIBAURA_UPDATE"},
   target        = {"UNIT_AURA", "PLAYER_TARGET_CHANGED"},
-  targettarget  = {"UNIT_AURA", "PLAYER_TARGET_CHANGED", "UNIT_TARGET"},
+  targettarget  = {"UNIT_AURA", "PLAYER_TARGET_CHANGED", "UNIT_TARGET", "LIBAURA_UPDATE"},
   mouseover     = {"UNIT_AURA", "UPDATE_MOUSEOVER_UNIT", "LIBAURA_UPDATE"}
 };
 
 for i = 1, 4 do
   Module.EventsToMonitor["party"..i]           = {"UNIT_AURA", "PARTY_MEMBERS_CHANGED"};
-  Module.EventsToMonitor["party"..i.."target"] = {"UNIT_AURA", "UNIT_TARGET", "PARTY_MEMBERS_CHANGED"};
+  Module.EventsToMonitor["party"..i.."target"] = {"UNIT_AURA", "UNIT_TARGET", "PARTY_MEMBERS_CHANGED", "LIBAURA_UPDATE"};
   Module.EventsToMonitor["partypet"..i]        = {"UNIT_AURA", "UNIT_PET", "PARTY_MEMBERS_CHANGED"};
   Module.EventsToMonitor["arena"..i]           = {"UNIT_AURA", "ARENA_OPPONENT_UPDATE"};
-  Module.EventsToMonitor["arena"..i.."target"] = {"UNIT_AURA", "ARENA_OPPONENT_UPDATE", "UNIT_TARGET"};
+  Module.EventsToMonitor["arena"..i.."target"] = {"UNIT_AURA", "ARENA_OPPONENT_UPDATE", "UNIT_TARGET", "LIBAURA_UPDATE"};
 end
 
 for i = 1, 40 do
   Module.EventsToMonitor["raid"..i]            = {"UNIT_AURA", "RAID_ROSTER_UPDATE"};
-  Module.EventsToMonitor["raid"..i.."target"]  = {"UNIT_AURA", "RAID_ROSTER_UPDATE"};
+  Module.EventsToMonitor["raid"..i.."target"]  = {"UNIT_AURA", "RAID_ROSTER_UPDATE", "LIBAURA_UPDATE"};
   Module.EventsToMonitor["raidpet"..i]         = {"UNIT_AURA", "UNIT_PET", "RAID_ROSTER_UPDATE"};
 end
 
+local ScanOnLibUpdate = {};
 
 local AuraPool =  {};
 
@@ -140,6 +146,10 @@ function Module:ActivateSource(Unit, Type)
       self:RegisterEvent(Event, Event);
     end
     
+    if tContains(Module.EventsToMonitor[Unit], "LIBAURA_UPDATE") then
+      ScanOnLibUpdate[Unit] = true;
+    end
+    
   elseif not self.db[Unit][Type] then
 
     self.db[Unit][Type] = {};
@@ -169,6 +179,8 @@ function Module:DeactivateSource(Unit, Type)
       self:UnregisterEvent(Event, Event);
     end
     
+    ScanOnLibUpdate[Unit] = nil;
+    
   end
   
   if next(self.db) == nil then
@@ -193,7 +205,6 @@ end
 -----------------------------------------------------------------
 function Module:UNIT_AURA(Unit)
   Module:ScanUnitChanges(Unit);
-  af:Print(Unit);
 end
 
 function Module:PARTY_MEMBERS_CHANGED()
@@ -247,8 +258,8 @@ function Module:UPDATE_MOUSEOVER_UNIT()
 end
 
 function Module:LIBAURA_UPDATE()
-  if self.db["mouseover"] then
-    Module:ScanUnit("mouseover");
+  for Unit, _ in pairs(ScanOnLibUpdate) do
+    Module:ScanUnit(Unit);
   end
 end
 
