@@ -192,6 +192,7 @@ function Module:New(Config)
     Container.Frame = _G[FrameId];
   else
     Container.Frame = CreateFrame("Frame", FrameId, UIParent, "AuraFramesTimeLineContainerTemplate");
+    Container.Frame:SetClampedToScreen(true);
   end
   
   Container.FrameTexture = _G[FrameId.."Texture"];

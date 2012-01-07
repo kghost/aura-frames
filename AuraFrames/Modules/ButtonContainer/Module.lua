@@ -177,6 +177,7 @@ function Module:New(Config)
     Container.Frame = _G[FrameId];
   else
     Container.Frame = CreateFrame("Frame", FrameId, UIParent, "AuraFramesButtonContainerTemplate");
+    Container.Frame:SetClampedToScreen(true);
   end
   
   Container.Frame:Show();
