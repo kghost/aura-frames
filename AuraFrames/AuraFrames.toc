@@ -28,5 +28,6 @@ FontObject.lua
 Masque\Skins.lua
 Button.lua
 SpellCooldowns.lua
+Border.lua
 
 Modules.xml

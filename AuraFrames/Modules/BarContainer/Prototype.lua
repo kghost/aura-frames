@@ -520,12 +520,9 @@ function Prototype:UpdateBar(Bar)
   end
   
   Bar.Bar.Texture:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BarTexture));
-  
-  Bar.Bar:SetBackdrop({
-    edgeFile = LSM:Fetch("border", self.Config.Layout.BarBorder), 
-    edgeSize = self.Config.Layout.BarBorderSize, 
-  });
-  
+
+  AuraFrames:SetBorder(Bar.Bar, LSM:Fetch("border", self.Config.Layout.BarBorder), self.Config.Layout.BarBorderSize);
+
   Bar.Bar.Texture:SetPoint("TOPLEFT", Bar.Bar, "TOPLEFT", self.Config.Layout.BarTextureInsets, -self.Config.Layout.BarTextureInsets);
   Bar.Bar.Texture:SetPoint("BOTTOMRIGHT", Bar.Bar, "BOTTOMRIGHT", -self.Config.Layout.BarTextureInsets, self.Config.Layout.BarTextureInsets);
   
@@ -727,13 +724,9 @@ function Prototype:AuraEvent(Aura, Event, ...)
 
   if Event == "ColorChanged" then
   
-    if MSQ then
-      --MSQ:SetNormalVertexColor(Bar.Button, unpack(Aura.Color));
-    end
-    
     Bar.Button.Border:SetVertexColor(unpack(Aura.Color));
     Bar.Bar.Texture:SetVertexColor(unpack(Aura.Color));
-    Bar.Bar:SetBackdropBorderColor(min(Aura.Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Aura.Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Aura.Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), Aura.Color[4]);
+    AuraFrames:SetBorderColor(Bar.Bar, min(Aura.Color[1] * self.Config.Layout.BarBorderColorAdjust, 1), min(Aura.Color[2] * self.Config.Layout.BarBorderColorAdjust, 1), min(Aura.Color[3] * self.Config.Layout.BarBorderColorAdjust, 1), Aura.Color[4]);
     
     if self.Config.Layout.ShowSpark and self.Config.Layout.SparkUseBarColor then
     
