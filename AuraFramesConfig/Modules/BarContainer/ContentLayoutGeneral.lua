@@ -12,8 +12,6 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   local LayoutConfig = AuraFrames.db.profile.Containers[ContainerId].Layout;
   local ContainerInstance = AuraFrames.Containers[ContainerId];
 
-  Content:ReleaseChildren();
-  
   Content:SetLayout("List");
 
   Content:AddText("General\n", GameFontNormalLarge);
@@ -28,7 +26,11 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   Clickable:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.Clickable = Value;
     ContainerInstance:Update("LAYOUT");
+    Content:PauseLayout();
+    Content:ReleaseChildren();
     Module:ContentLayoutGeneral(Content, ContainerId);
+    Content:ResumeLayout();
+    Content:DoLayout();
   end);
   Content:AddChild(Clickable);
 
@@ -50,7 +52,11 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
     ShowTooltip:SetCallback("OnValueChanged", function(_, _, Value)
       LayoutConfig.ShowTooltip = Value;
       ContainerInstance:Update("LAYOUT");
+      Content:PauseLayout();
+      Content:ReleaseChildren();
       Module:ContentLayoutGeneral(Content, ContainerId);
+      Content:ResumeLayout();
+      Content:DoLayout();
     end);
     Content:AddChild(ShowTooltip);
     
@@ -142,7 +148,11 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   BarUseAuraTime:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.BarUseAuraTime = Value;
     ContainerInstance:Update("LAYOUT");
+    Content:PauseLayout();
+    Content:ReleaseChildren();
     Module:ContentLayoutGeneral(Content, ContainerId);
+    Content:ResumeLayout();
+    Content:DoLayout();
   end);
   SettingsGroup:AddChild(BarUseAuraTime);
   
@@ -184,6 +194,19 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   
   SettingsGroup:AddText("Where new bars will be placed.", GameFontHighlightSmall, 200);
   SettingsGroup:AddText("If a bar texture need to shrink or grow.", GameFontHighlightSmall, 200);
+  
+  SettingsGroup:AddSpace();
+  
+  local BarInverseOnNoTime = AceGUI:Create("CheckBox");
+  BarInverseOnNoTime:SetWidth(400);
+  BarInverseOnNoTime:SetLabel("Inverse bar on no time");
+  BarInverseOnNoTime:SetDescription("If an aura don't have an expiration time, then inverse the bar.");
+  BarInverseOnNoTime:SetValue(LayoutConfig.InverseOnNoTime);
+  BarInverseOnNoTime:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.InverseOnNoTime = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  SettingsGroup:AddChild(BarInverseOnNoTime);
   
   Content:AddSpace();
 

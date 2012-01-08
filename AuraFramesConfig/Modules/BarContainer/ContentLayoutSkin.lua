@@ -211,11 +211,15 @@ function Module:ContentLayoutSkin(Content, ContainerId)
 
   Content:AddHeader("Spark");
   
+  local SparkUseBarColor, SparkColor, HideSparkOnNoTime;
   
-  local SparkUseBarColor, SparkColor;
-  
+  local SparkGroup = AceGUI:Create("SimpleGroup");
+  SparkGroup:SetRelativeWidth(1);
+  SparkGroup:SetLayout("Flow");
+  Content:AddChild(SparkGroup);
+
   local ShowSpark = AceGUI:Create("CheckBox");
-  ShowSpark:SetRelativeWidth(1);
+  ShowSpark:SetWidth(250);
   ShowSpark:SetLabel("Enable Spark");
   ShowSpark:SetDescription("Show a spark at the moving side of the bar.");
   ShowSpark:SetValue(LayoutConfig.ShowSpark);
@@ -223,18 +227,26 @@ function Module:ContentLayoutSkin(Content, ContainerId)
     LayoutConfig.ShowSpark = Value;
     ContainerInstance:Update("LAYOUT");
     
+    HideSparkOnNoTime:SetDisabled(not LayoutConfig.ShowSpark);
     SparkUseBarColor:SetDisabled(not LayoutConfig.ShowSpark);
     SparkColor:SetDisabled(not LayoutConfig.ShowSpark or LayoutConfig.SparkUseBarColor);
     
   end);
-  Content:AddChild(ShowSpark);
+  SparkGroup:AddChild(ShowSpark);
   
-  local SparkGroup = AceGUI:Create("SimpleGroup");
-  SparkGroup:SetRelativeWidth(1);
-  SparkGroup:SetLayout("Flow");
-  Content:AddChild(SparkGroup);
+  HideSparkOnNoTime = AceGUI:Create("CheckBox");
+  HideSparkOnNoTime:SetWidth(270);
+  HideSparkOnNoTime:SetLabel("Hide Spark on no time");
+  HideSparkOnNoTime:SetDescription("Hide the spark when the aura don't have an expiration time.");
+  HideSparkOnNoTime:SetValue(LayoutConfig.HideSparkOnNoTime);
+  HideSparkOnNoTime:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.HideSparkOnNoTime = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  SparkGroup:AddChild(HideSparkOnNoTime);
   
   SparkUseBarColor = AceGUI:Create("CheckBox");
+  SparkUseBarColor:SetWidth(250);
   SparkUseBarColor:SetLabel("Use bar color");
   SparkUseBarColor:SetDisabled(not LayoutConfig.ShowSpark);
   SparkUseBarColor:SetDescription("Use the bar color for the spark.");
@@ -249,6 +261,7 @@ function Module:ContentLayoutSkin(Content, ContainerId)
   SparkGroup:AddChild(SparkUseBarColor);
 
   SparkColor = AceGUI:Create("ColorPicker");
+  SparkColor:SetWidth(250);
   SparkColor:SetHasAlpha(true);
   SparkColor:SetDisabled(not LayoutConfig.ShowSpark or LayoutConfig.SparkUseBarColor);
   SparkColor:SetColor(unpack(LayoutConfig.SparkColor));
