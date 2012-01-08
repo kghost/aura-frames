@@ -200,6 +200,11 @@ function Module:GetTree(ContainerId)
       execute = function() Module:ContentWarnings(ContainerId); end,
     },
     {
+      value = "Visibility",
+      text = "Visibility",
+      execute = function() AuraFramesConfig:ContentVisibility(ContainerId); end,
+    },
+    {
       value = "Filter",
       text = "Filter",
       execute = function() AuraFramesConfig:ContentFilter(ContainerId); end,

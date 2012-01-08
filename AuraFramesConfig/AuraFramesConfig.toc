@@ -26,6 +26,7 @@ ContentFilter.lua
 ContentFilterBuilder.lua
 ContentProfiles.lua
 ContentColors.lua
+ContentVisibility.lua
 
 AceGUIContainer-AuraFramesWindow.lua
 AceGUI-3.0-Spell-EditBox-Fix.lua
