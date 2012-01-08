@@ -138,6 +138,9 @@ function Module:UnlockContainer(ContainerId, Unlock)
       
     end
     
+    Container._VisibleDoNotHide = true;
+    AuraFrames:UpdateVisibility(Container);
+    
     Container.UnlockFrame:Show();
     
     self:Update(ContainerId);
@@ -168,6 +171,9 @@ function Module:UnlockContainer(ContainerId, Unlock)
     Container:Update("LAYOUT");
     
     Container.UnlockFrame:Hide();
+    
+    Container._VisibleDoNotHide = nil;
+    AuraFrames:UpdateVisibility(Container);
   
   end
   

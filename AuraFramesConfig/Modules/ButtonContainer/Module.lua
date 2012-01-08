@@ -61,7 +61,7 @@ function Module:UnlockContainer(ContainerId, Unlock)
     
     if not Container.UnlockFrame then
     
-      Container.UnlockFrame = CreateFrame("Frame", nil, Container.Frame);
+      Container.UnlockFrame = CreateFrame("Frame");
       Container.UnlockFrame:SetAllPoints(Container.Frame);
       Container.UnlockFrame:EnableMouse(true);
       Container.UnlockFrame:SetFrameStrata("TOOLTIP");
@@ -69,7 +69,7 @@ function Module:UnlockContainer(ContainerId, Unlock)
       Container.UnlockFrame:SetScript("OnMouseDown", function(self, Button)
 
         if Button == "LeftButton" then
-          self:GetParent():StartMoving();
+          Container.Frame:StartMoving();
         end
 
       end);
@@ -77,7 +77,7 @@ function Module:UnlockContainer(ContainerId, Unlock)
       Container.UnlockFrame:SetScript("OnMouseUp", function(self, Button)
 
         if Button == "LeftButton" then
-          self:GetParent():StopMovingOrSizing();
+          Container.Frame:StopMovingOrSizing();
         elseif Button == "RightButton" then
           AuraFramesConfig:UnlockContainers(false);
           AuraFramesConfig:SelectByPath("Containers", ContainerId);
@@ -98,6 +98,9 @@ function Module:UnlockContainer(ContainerId, Unlock)
       
     end
     
+    Container._VisibleDoNotHide = true;
+    AuraFrames:UpdateVisibility(Container);
+    
     Container.UnlockFrame:Show();
     
     self:Update(ContainerId);
@@ -114,6 +117,9 @@ function Module:UnlockContainer(ContainerId, Unlock)
     end
     
     Container.UnlockFrame:Hide();
+    
+    Container._VisibleDoNotHide = nil;
+    AuraFrames:UpdateVisibility(Container);
   
   end
   
