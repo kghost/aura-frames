@@ -264,11 +264,11 @@ local function BarOnUpdate(Container, Bar, Elapsed)
   
     if Container.Config.Layout.BarDirection == "LEFTGROW" or Container.Config.Layout.BarDirection == "RIGHTGROW" then
     
-      Bar.Bar:SetWidth(Container.BarWidth);
+      Bar.Bar:SetWidth(Container.Config.Layout.InverseOnNoTime == false and Container.BarWidth or 1);
     
     else
     
-      Bar.Bar:SetWidth(1);
+      Bar.Bar:SetWidth(Container.Config.Layout.InverseOnNoTime == false and 1 or Container.BarWidth);
     
     end
   
@@ -437,6 +437,12 @@ function Prototype:UpdateBarDisplay(Bar)
   -- 1 is the min.
   Bar.WidthPerSecond = (self.BarWidth - 1) / Bar.BarMaxTime;
   
+  if self.Config.Layout.ShowSpark == true and not (self.Config.Layout.HideSparkOnNoTime == true and Aura.ExpirationTime == 0) then
+    Bar.Bar.Spark:Show();
+  else
+    Bar.Bar.Spark:Hide();
+  end
+  
   BarOnUpdate(self, Bar, 0.0);
 
 end
@@ -503,19 +509,9 @@ function Prototype:UpdateBar(Bar)
   
   end
   
-  if self.Config.Layout.ShowSpark then
+  if self.Config.Layout.ShowSpark == true and self.Config.Layout.SparkUseBarColor ~= true then
   
-    Bar.Bar.Spark:Show();
-    
-    if not self.Config.Layout.SparkUseBarColor then
-    
-      Bar.Bar.Spark:SetVertexColor(unpack(self.Config.Layout.SparkColor));
-    
-    end
-  
-  else
-  
-    Bar.Bar.Spark:Hide();
+    Bar.Bar.Spark:SetVertexColor(unpack(self.Config.Layout.SparkColor));
   
   end
   

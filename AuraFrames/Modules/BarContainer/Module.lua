@@ -73,6 +73,7 @@ function Module:GetDatabaseDefaults()
       DynamicSize = false,
       Icon = "LEFT",
       BarHeight = 36,
+      InverseOnNoTime = true,
 
       ShowDuration = true,
       DurationLayout = "ABBREVSPACE",
@@ -112,6 +113,7 @@ function Module:GetDatabaseDefaults()
       BarBorderColorAdjust = 0.4,
       
       ShowSpark = true,
+      HideSparkOnNoTime = true,
       SparkUseBarColor = false,
       SparkColor = {1.0, 1.0, 1.0, 1.0},
 
