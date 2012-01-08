@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 219;
+AuraFrames.DatabaseVersion = 221;
 
 
 --[[
@@ -84,6 +84,9 @@ AuraFrames.DatabaseVersion = 219;
   
   Version 220:
     Remove ButtonFacade config
+  
+  Version 221:
+    Add Visibility options
   
 ]]--
 
@@ -773,6 +776,23 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
   
     if Container.ButtonFacade then
       Container.ButtonFacade = nil;
+    end
+  
+  end
+  
+  if OldVersion < 221 then
+  
+    if not Container.Visibility then
+      Container.Visibility = {
+        AlwaysVisible = true,
+        FadeIn = true,
+        FadeInTime = 0.5,
+        FadeOut = true,
+        FadeOutTime = 0.5,
+        OpacityVisible = 1,
+        OpacityNotVisible = 0,
+        VisibleWhen = {},
+      };
     end
   
   end

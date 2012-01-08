@@ -600,6 +600,6 @@ LibAura.EventFrame:SetScript("OnUpdate", function(Frame, Elapsed)
     
     Frame.TimeSinceLastUpdate = 0.0;
     
- end
+  end
   
 end);

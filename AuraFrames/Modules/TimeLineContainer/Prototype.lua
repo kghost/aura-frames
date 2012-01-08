@@ -608,10 +608,12 @@ function Prototype:Update(...)
     end
     
     if next(self.Buttons) == nil then
-      self.Frame:SetAlpha(self.Config.Layout.InactiveAlpha);
+      self._VisibleMultiplier = self.Config.Layout.InactiveAlpha;
     else
-      self.Frame:SetAlpha(1.0);
+      self._VisibleMultiplier = 1;
     end
+    
+    AuraFrames:UpdateVisibility(self);
     
   end
 
@@ -733,7 +735,8 @@ function Prototype:AuraNew(Aura)
   Button.Icon:SetTexture(Aura.Icon);
   
   if next(self.Buttons) == nil then
-    self.Frame:SetAlpha(1.0);
+    self._VisibleMultiplier = 1;
+    AuraFrames:UpdateVisibility(self);
   end
   
   self.Buttons[Aura] = Button;
@@ -805,7 +808,8 @@ function Prototype:AuraOld(Aura)
   end
   
   if next(self.Buttons) == nil then
-    self.Frame:SetAlpha(self.Config.Layout.InactiveAlpha);
+    self._VisibleMultiplier = self.Config.Layout.InactiveAlpha;
+    AuraFrames:UpdateVisibility(self);
   end
   
 end

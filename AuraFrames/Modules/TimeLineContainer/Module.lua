@@ -167,6 +167,16 @@ function Module:GetDatabaseDefaults()
         PopupScale = 3.0,
       },
     },
+    Visibility = {
+      AlwaysVisible = true,
+      FadeIn = true,
+      FadeInTime = 0.5,
+      FadeOut = true,
+      FadeOutTime = 0.5,
+      OpacityVisible = 1,
+      OpacityNotVisible = 0,
+      VisibleWhen = {},
+    },
     Filter = AuraFrames:GetDatabaseDefaultFilter(),
   };
   
@@ -223,6 +233,8 @@ function Module:New(Config)
   Container.Frame:SetScript("OnEvent", function() Container:Update(); end);
   Container.Frame:RegisterEvent("PLAYER_ENTERING_WORLD");
   Container.Frame:RegisterEvent("ZONE_CHANGED");
+  
+  AuraFrames:CheckVisibility(Container);
   
   return Container;
 
