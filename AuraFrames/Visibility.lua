@@ -110,7 +110,7 @@ function AuraFrames:UpdateVisibility(Container)
   
   end
   
-  if Opacity == 0 then
+  if Opacity == 0 and Container._VisibleDoNotHide ~= true then
     
     if Container.Frame:IsShown() then
       Container.Frame:Hide();
