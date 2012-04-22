@@ -100,7 +100,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
   
     if (Operator == "Equal" or Operator == "NotEqual") and Args[Type] then
       
-      return "string.lower("..SubjectCode..") "..FilterOperatorMappings[Operator].." "..tolower(AuraFrames:BuildValue("String", Args[Type]));
+      return "string.lower("..SubjectCode.." or \"\") "..FilterOperatorMappings[Operator].." "..tolower(AuraFrames:BuildValue("String", Args[Type]));
       
     elseif (Operator == "InList" or Operator == "NotInList") and Args.List then
     
@@ -116,7 +116,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
 
       end
     
-      return "tContains({"..List.."}, string.lower("..SubjectCode..")) "..FilterOperatorMappings[Operator].." 1";
+      return "tContains({"..List.."}, string.lower("..SubjectCode.." or \"\")) "..FilterOperatorMappings[Operator].." 1";
     
     else
     
