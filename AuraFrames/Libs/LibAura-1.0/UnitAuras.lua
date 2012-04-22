@@ -376,7 +376,7 @@ function Module:ScanUnitAurasChanges(Unit, Type)
         Aura.Duration = Duration or 0;
         Aura.ExpirationTime = ExpirationTime;
         Aura.CasterUnit = CasterUnit;
-        Aura.CasterName = CasterUnit and UnitName(CasterUnit);
+        Aura.CasterName = CasterUnit and UnitName(CasterUnit) or "";
         Aura.IsStealable = IsStealable == 1 and true or false;
         Aura.IsCancelable = false;
         Aura.IsDispellable = false;
@@ -528,7 +528,7 @@ function Module:ScanUnitAuras(Unit, Type)
         Aura.Duration = Duration or 0;
         Aura.ExpirationTime = ExpirationTime;
         Aura.CasterUnit = CasterUnit;
-        Aura.CasterName = CasterUnit and UnitName(CasterUnit);
+        Aura.CasterName = CasterUnit and UnitName(CasterUnit) or "";
         Aura.IsStealable = IsStealable == 1 and true or false;
         Aura.IsCancelable = false;
         Aura.IsDispellable = false;
