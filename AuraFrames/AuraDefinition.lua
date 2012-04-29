@@ -14,8 +14,8 @@ The following types are supported atm:
   SpellName
   SpellId
   
-By default every attribute is defined as static unless there
-is Dynamic = true is defined. If the filter contains one or
+By default every attribute is defined as static unless
+Dynamic = true is defined. If the filter contains one or
 more attributes that are not static then the filter will be
 checked every x time. (This is implemented in the AuraList
 layer).
@@ -220,6 +220,14 @@ AuraFrames.AuraDefinition = {
     Order = true,
     Filter = true,
     Weight = 3,
+  },
+  CastByUnknown = {
+    Type = "Boolean",
+    Name = "Cast by unknown",
+    Code = "(Object.CasterUnit == nil)",
+    Order = true,
+    Filter = true,
+    Weight = 1,
   },
   TargetIsHostile = {
     Type = "Boolean",
