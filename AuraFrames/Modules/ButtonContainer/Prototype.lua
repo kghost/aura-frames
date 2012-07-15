@@ -445,7 +445,9 @@ function Prototype:UpdateButton(Button)
   end
   
   -- Set cooldown options
-  Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
+  if Button.Cooldown.SetDrawEdge then
+    Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
+  end
   Button.Cooldown:SetReverse(self.Config.Layout.CooldownReverse);
   Button.Cooldown.noCooldownCount = self.Config.Layout.CooldownDisableOmniCC;
   

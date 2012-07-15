@@ -6,6 +6,9 @@
 ## SavedVariables: AuraFramesDB
 ## OptionalDeps: Ace3, ButtonFacade
 
+MoP.lua
+MoP.xml
+
 Embeds.xml
 
 AuraFrames.lua

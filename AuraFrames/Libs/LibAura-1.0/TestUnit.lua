@@ -51,7 +51,6 @@ function Module:Enable()
   self.TestData["HELPFUL"] = Module.TestData["HELPFUL"] or {};
   self.TestData["HARMFUL"] = Module.TestData["HARMFUL"] or {};
 
-  self.TestData["HELPFUL"][28176] = {"Magic", 1800, 0}; -- Fel Armor
   self.TestData["HELPFUL"][21562] = {"Magic", 1800, 0}; -- Power Word: Fortitude
   self.TestData["HELPFUL"][ 1706] = {"None", 15, 0}; -- Levitate
   self.TestData["HELPFUL"][65007] = {"None", 10, 5}; -- Eye of the Broodmother
@@ -61,7 +60,6 @@ function Module:Enable()
   self.TestData["HARMFUL"][69127] = {"None", 0, 0}; -- Chill of the Throne
   self.TestData["HARMFUL"][59879] = {"Disease", 15, 0}; -- Blood Plague
   self.TestData["HARMFUL"][ 1978] = {"Poison", 15, 0}; -- Serpent Sting
-  self.TestData["HARMFUL"][94009] = {"None", 15, 0}; -- Rend
   
   -- And no, no Module:Disabled. We even don't want to clean this up.
   

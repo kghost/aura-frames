@@ -584,7 +584,9 @@ function Prototype:UpdateBar(Bar)
   end
   
   -- Set cooldown options
-  Bar.Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
+  if Bar.Button.Cooldown.SetDrawEdge then
+	  Bar.Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
+  end
   Bar.Button.Cooldown:SetReverse(self.Config.Layout.CooldownReverse);
   Bar.Button.Cooldown.noCooldownCount = self.Config.Layout.CooldownDisableOmniCC;
   
@@ -826,7 +828,9 @@ function Prototype:AuraNew(Aura)
     end
     
     -- Set cooldown options
-    Bar.Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
+    if Bar.Button.Cooldown.SetDrawEdge then
+      Bar.Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
+    end
     Bar.Button.Cooldown:SetReverse(self.Config.Layout.CooldownReverse);
   
   end
