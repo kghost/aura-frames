@@ -130,7 +130,7 @@ function AuraFramesConfig:ContentProfilesRefresh(Content)
   Content:AddSpace();
   Content:AddHeader("Dual Spec");
   
-  if GetNumTalentGroups() == 1 then
+  if GetNumSpecGroups() == 1 then
   
     Content:AddText("\nNo dual spec found.");
   
