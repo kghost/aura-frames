@@ -189,7 +189,7 @@ local function ProcessStatusChanges(Event, Force)
   
   if Event == "ALL" or Event == "PARTY_MEMBERS_CHANGED" then
   
-    NumPartyMembers = NumPartyMembers ~= nil and NumPartyMembers or GetNumPartyMembers();
+    NumPartyMembers = NumPartyMembers ~= nil and NumPartyMembers or GetNumGroupMembers();
     InRaid = InRaid or UnitInRaid("player") ~= nil;
   
     StatusChanges.InParty = NumPartyMembers ~= 0 and InRaid == false;
