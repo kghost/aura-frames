@@ -7,6 +7,10 @@
 --  Description:
 --
 --
+--  Todo:
+--
+--    Fix the GetSpellBookItemInfo call (atm fixed with pcall).
+--
 -----------------------------------------------------------------
 
 
@@ -279,13 +283,15 @@ function Module:UpdateSpellBook(Unit)
   
   while true do
   
-    local _, SpellId;
+    local Check, SpellId, Result;
 
     if j == 0 then
       
-      _, SpellId = GetSpellBookItemInfo(i, BookType[Unit]);
+      Result, Check, SpellId = pcall(GetSpellBookItemInfo, i, BookType[Unit]);
 
-      if not SpellId then
+      if Check == "PETACTION" then
+        SpellId = nil
+      elseif not Result or not SpellId then
         j = 1
       end
       
@@ -303,7 +309,7 @@ function Module:UpdateSpellBook(Unit)
       
     end
 
-    if not self.db[Unit][SpellId] then
+    if SpellId and not self.db[Unit][SpellId] then
     
       self.db[Unit][SpellId] = {
         Id = Unit.."SPELLCOOLDOWN"..SpellId,
@@ -315,11 +321,15 @@ function Module:UpdateSpellBook(Unit)
       
     end
 
-    local Aura = self.db[Unit][SpellId];
+    if SpellId then
 
-    Aura.Index = i;
-    Aura.Name, _, Aura.Icon = GetSpellInfo(SpellId);
-    Aura.Old = nil;
+      local Aura = self.db[Unit][SpellId];
+
+      Aura.Index = i;
+      Aura.Name, _, Aura.Icon = GetSpellInfo(SpellId);
+      Aura.Old = nil;
+
+    end
     
     i = i + 1
     

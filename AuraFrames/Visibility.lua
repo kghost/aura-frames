@@ -149,7 +149,7 @@ local function ProcessStatusChanges(Event, Force)
   
   if Event == "ALL" or Event == "ACTIVE_TALENT_GROUP_CHANGED" then
   
-    local ActiveGroup = GetActiveTalentGroup(false, false);
+    local ActiveGroup = GetActiveSpecGroup(false, false);
   
     StatusChanges.PrimaryTalents = ActiveGroup == 1;
     StatusChanges.SecondaryTalents = ActiveGroup == 2;
@@ -172,7 +172,7 @@ local function ProcessStatusChanges(Event, Force)
 
   if Event == "ALL" or Event == "PARTY_MEMBERS_CHANGED" then
   
-    NumPartyMembers = NumPartyMembers ~= nil and NumPartyMembers or GetNumPartyMembers();
+    NumPartyMembers = NumPartyMembers ~= nil and NumPartyMembers or GetNumSubgroupMembers();
   
     StatusChanges.Solo = NumPartyMembers == 0;
   

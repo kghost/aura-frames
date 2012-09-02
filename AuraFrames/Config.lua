@@ -31,7 +31,7 @@ function AuraFrames:RegisterBlizzardOptions()
   Label:SetJustifyV("TOP");
   Label:SetText("Aura Frames");
 
-  local Button = CreateFrame("Button", "AuraFramesLaunchConfig", Panel, "UIPanelButtonTemplate2");
+  local Button = CreateFrame("Button", "AuraFramesLaunchConfig", Panel, "UIPanelButtonTemplate");
   Button:SetWidth(300);
   Button:SetHeight(24);
   Button:ClearAllPoints();
