@@ -26,7 +26,6 @@ SharedMedia.lua
 FormatTime.lua
 FontObject.lua
 Masque\Skins.lua
-Button.lua
 SpellCooldowns.lua
 Border.lua
 Visibility.lua
