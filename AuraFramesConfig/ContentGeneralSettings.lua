@@ -41,6 +41,22 @@ function AuraFramesConfig:ContentGeneralSettings()
     LibStub("LibAura-1.0"):GetModule("BossMods-1.0"):SetBossModBarsVisibility(not Value);
   end);
   self.Content:AddChild(HideBossModsBars);
+
+  self.Content:AddSpace(2);
   
+  self.Content:AddHeader("Pet Battles");
+
+  self.Content:AddText("Aura Frames can hide all aura containers automaticly upon entering pet battles. This will overrule the In Pet Battle option of the visibility options for containers.\n");
+
+  local HideInPetBattle = AceGUI:Create("CheckBox");
+  HideInPetBattle:SetLabel("Hide in pet battle");
+  HideInPetBattle:SetValue(AuraFrames.db.profile.HideInPetBattle);
+  HideInPetBattle:SetCallback("OnValueChanged", function(_, _, Value)
+    AuraFrames.db.profile.HideInPetBattle = Value;
+    for _, Container in pairs(AuraFrames.Containers) do
+      AuraFrames:CheckVisibility(Container);
+    end
+  end);
+  self.Content:AddChild(HideInPetBattle);
 
 end

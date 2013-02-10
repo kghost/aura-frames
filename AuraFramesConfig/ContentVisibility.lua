@@ -50,6 +50,13 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   
   Content:AddSpace();
 
+  if AuraFrames.db.profile.HideInPetBattle == true then
+
+    Content:AddText("The condition \"In Pet Battle\" is disabled because of the global setting that containers are always hiden in pet battles.\n");
+    Content:AddSpace();
+
+  end
+
   local GroupOpacity = AceGUI:Create("InlineGroup");
   GroupOpacity:SetTitle("Opacity");
   GroupOpacity:SetRelativeWidth(1);
@@ -96,7 +103,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   for _, Option in ipairs(SupportedVisibilityOptions) do
   
     local CheckBoxOption = AceGUI:Create("CheckBox");
-    CheckBoxOption:SetDisabled(VisibilityConfig.AlwaysVisible);
+    CheckBoxOption:SetDisabled(VisibilityConfig.AlwaysVisible or (Option[1] == "InPetBattle" and AuraFrames.db.profile.HideInPetBattle == true));
     CheckBoxOption:SetWidth(230);
     CheckBoxOption:SetLabel(Option[2]);
     CheckBoxOption:SetValue(VisibilityConfig.VisibleWhen[Option[1]] == true);
@@ -119,7 +126,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   for _, Option in ipairs(SupportedVisibilityOptions) do
   
     local CheckBoxOption = AceGUI:Create("CheckBox");
-    CheckBoxOption:SetDisabled(VisibilityConfig.AlwaysVisible);
+    CheckBoxOption:SetDisabled(VisibilityConfig.AlwaysVisible or (Option[1] == "InPetBattle" and AuraFrames.db.profile.HideInPetBattle == true));
     CheckBoxOption:SetWidth(230);
     CheckBoxOption:SetLabel(Option[2]);
     CheckBoxOption:SetValue(VisibilityConfig.VisibleWhenNot[Option[1]] == true);
