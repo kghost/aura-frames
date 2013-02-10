@@ -10,6 +10,6 @@
   <Script file="ContentLayoutSizeAndScale.lua" />
   <Script file="ContentLayoutText.lua" />
   <Script file="ContentLayoutSkin.lua" />
-  <Script file="ContentLayoutColors.lua" />
+  <Script file="ContentLayoutColorsAndBorder.lua" />
   
 </Ui>

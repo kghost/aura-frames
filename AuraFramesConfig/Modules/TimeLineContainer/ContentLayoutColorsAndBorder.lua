@@ -8,10 +8,10 @@ local LSM = LibStub("LibSharedMedia-3.0");
 -----------------------------------------------------------------
 -- Function ContentLayoutColors
 -----------------------------------------------------------------
-function Module:ContentLayoutColors(Content, ContainerId)
+function Module:ContentLayoutColorsAndBorder(Content, ContainerId)
 
-  local LayoutConfig = AuraFrames.db.profile.Containers[ContainerId].Layout;
   local ContainerInstance = AuraFrames.Containers[ContainerId];
+  local LayoutConfig = AuraFrames.db.profile.Containers[ContainerId].Layout;
 
   Content:SetLayout("List");
 
@@ -24,6 +24,23 @@ function Module:ContentLayoutColors(Content, ContainerId)
   
   AuraFramesConfig:ContentColors(ContentColors, ContainerId);
   
-  Content:AddSpace();
+  Content:AddSpace(3);
+
+  Content:AddText("Border\n", GameFontNormalLarge);
+  Content:AddText("The skin border is used for giving colors to auras.\n");
+
+  local ShowBorder = AceGUI:Create("Dropdown");
+  ShowBorder:SetList({
+    ALWAYS = "Always",
+    NEVER = "Never",
+    DEBUFF = "Only when it is a debuff",
+  });
+  ShowBorder:SetLabel("Show border");
+  ShowBorder:SetValue(LayoutConfig.ShowBorder);
+  ShowBorder:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.ShowBorder = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  Content:AddChild(ShowBorder);
 
 end

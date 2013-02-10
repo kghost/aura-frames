@@ -15,7 +15,7 @@ function AuraFramesConfig:ContentSpellCooldowns()
 
   self.Content:SetLayout("List");
   
-  self.Content:AddText("SpellCooldown Settings\n", GameFontNormalLarge);
+  self.Content:AddText("Spell Cooldown Settings\n", GameFontNormalLarge);
 
   self.Content:AddText("The spell book will be scanned and the found spells will be used for detecting spell cooldowns. But there are some exceptions where this is not working fully. For example holy priests have cooldowns that are not tracked in the spell book correctly. To work around this, add the spell id's manually to the list below to track then.\n\nThe list is grouped by class and is used over all the characters.");
 

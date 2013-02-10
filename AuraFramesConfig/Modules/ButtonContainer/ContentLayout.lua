@@ -37,8 +37,8 @@ function Module:ContentLayout(ContainerId)
     },
 ]]--
     {
-      value = "Colors",
-      text = "Colors",
+      value = "ColorsAndBorder",
+      text = "Colors & Border",
     },
   });
   Tab:SetCallback("OnGroupSelected", function(_, _, Value)
