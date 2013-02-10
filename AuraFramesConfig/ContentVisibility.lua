@@ -20,6 +20,9 @@ local SupportedVisibilityOptions = {
   {"InPetBattle", "In Pet Battle"},
 };
 
+local IconNotSet = "Interface\\Addons\\AuraFramesConfig\\Icons\\Checkbox";
+local IconEnabled  = "Interface\\Addons\\AuraFramesConfig\\Icons\\Checkbox-Enabled";
+local IconDisabled = "Interface\\Addons\\AuraFramesConfig\\Icons\\Checkbox-Disabled";
 
 -----------------------------------------------------------------
 -- Function ContentVisibilityRefresh
@@ -49,13 +52,6 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   Content:AddChild(CheckBoxAlwaysVisible);
   
   Content:AddSpace();
-
-  if AuraFrames.db.profile.HideInPetBattle == true then
-
-    Content:AddText("The condition \"In Pet Battle\" is disabled because of the global setting that containers are always hiden in pet battles.\n");
-    Content:AddSpace();
-
-  end
 
   local GroupOpacity = AceGUI:Create("InlineGroup");
   GroupOpacity:SetTitle("Opacity");
@@ -93,53 +89,81 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   GroupOpacity:AddText("\nNote: If the opacity is 0% then the container will be hidden and the mouse will not have any effect (no tooltips).", nil, 500);
   
   Content:AddSpace();
-  
-  local GroupVisibleWhen = AceGUI:Create("InlineGroup");
-  GroupVisibleWhen:SetTitle("Visible When (one of the following conditions is met)");
-  GroupVisibleWhen:SetRelativeWidth(1);
-  GroupVisibleWhen:SetLayout("Flow");
-  Content:AddChild(GroupVisibleWhen);
+
+  local GroupVisibility = AceGUI:Create("InlineGroup");
+  GroupVisibility:SetTitle("Visibility");
+  GroupVisibility:SetRelativeWidth(1);
+  GroupVisibility:SetLayout("Flow");
+  Content:AddChild(GroupVisibility);
   
   for _, Option in ipairs(SupportedVisibilityOptions) do
   
-    local CheckBoxOption = AceGUI:Create("CheckBox");
-    CheckBoxOption:SetDisabled(VisibilityConfig.AlwaysVisible or (Option[1] == "InPetBattle" and AuraFrames.db.profile.HideInPetBattle == true));
-    CheckBoxOption:SetWidth(230);
-    CheckBoxOption:SetLabel(Option[2]);
-    CheckBoxOption:SetValue(VisibilityConfig.VisibleWhen[Option[1]] == true);
-    CheckBoxOption:SetCallback("OnValueChanged", function(_, _, Value)
-      VisibilityConfig.VisibleWhen[Option[1]] = Value == true and true or nil;
+    local Status = AceGUI:Create("InteractiveLabel");
+    Status:SetDisabled(VisibilityConfig.AlwaysVisible or (Option[1] == "InPetBattle" and AuraFrames.db.profile.HideInPetBattle == true));
+    if VisibilityConfig.VisibleWhen[Option[1]] == true then
+      Status:SetImage(IconEnabled);
+    elseif VisibilityConfig.VisibleWhenNot[Option[1]] == true then
+      Status:SetImage(IconDisabled);
+    else
+      Status:SetImage(IconNotSet);
+    end
+    Status:SetImageSize(24, 24);
+    Status:SetWidth(230);
+    Status:SetText(Option[2]);
+    Status:SetHighlight("Interface\\PaperDollInfoFrame\\UI-Character-Tab-Highlight");
+    Status:SetHighlightTexCoord(0, 1, 0.23, 0.77);
+    Status:SetCallback("OnClick", function()
+      if VisibilityConfig.VisibleWhen[Option[1]] == true then
+        VisibilityConfig.VisibleWhen[Option[1]] = nil;
+        VisibilityConfig.VisibleWhenNot[Option[1]] = true
+        Status:SetImage(IconDisabled);
+      elseif VisibilityConfig.VisibleWhenNot[Option[1]] == true then
+        VisibilityConfig.VisibleWhen[Option[1]] = nil;
+        VisibilityConfig.VisibleWhenNot[Option[1]] = nil
+        Status:SetImage(IconNotSet);
+      else
+        VisibilityConfig.VisibleWhen[Option[1]] = true;
+        VisibilityConfig.VisibleWhenNot[Option[1]] = nil
+        Status:SetImage(IconEnabled);
+      end
       AuraFrames:CheckVisibility(ContainerInstance);
     end);
-    GroupVisibleWhen:AddChild(CheckBoxOption);
-  
+    GroupVisibility:AddChild(Status);
+
   end
   
   Content:AddSpace();
 
-  local GroupVisibleWhenNot = AceGUI:Create("InlineGroup");
-  GroupVisibleWhenNot:SetTitle("Visible When Not (one of the following conditions is met)");
-  GroupVisibleWhenNot:SetRelativeWidth(1);
-  GroupVisibleWhenNot:SetLayout("Flow");
-  Content:AddChild(GroupVisibleWhenNot);
-  
-  for _, Option in ipairs(SupportedVisibilityOptions) do
-  
-    local CheckBoxOption = AceGUI:Create("CheckBox");
-    CheckBoxOption:SetDisabled(VisibilityConfig.AlwaysVisible or (Option[1] == "InPetBattle" and AuraFrames.db.profile.HideInPetBattle == true));
-    CheckBoxOption:SetWidth(230);
-    CheckBoxOption:SetLabel(Option[2]);
-    CheckBoxOption:SetValue(VisibilityConfig.VisibleWhenNot[Option[1]] == true);
-    CheckBoxOption:SetCallback("OnValueChanged", function(_, _, Value)
-      VisibilityConfig.VisibleWhenNot[Option[1]] = Value == true and true or nil;
-      AuraFrames:CheckVisibility(ContainerInstance);
-    end);
-    GroupVisibleWhenNot:AddChild(CheckBoxOption);
-  
-  end
-  
+  local ExplainNotSet = AceGUI:Create("InteractiveLabel");
+  ExplainNotSet:SetImage(IconNotSet);
+  ExplainNotSet:SetImageSize(24, 24);
+  ExplainNotSet:SetWidth(400);
+  ExplainNotSet:SetText("Ignore the condition");
+  Content:AddChild(ExplainNotSet);
+
+  local ExplainEnabled = AceGUI:Create("InteractiveLabel");
+  ExplainEnabled:SetImage(IconEnabled);
+  ExplainEnabled:SetImageSize(24, 24);
+  ExplainEnabled:SetWidth(400);
+  ExplainEnabled:SetText("One or more of these conditions must be met");
+  Content:AddChild(ExplainEnabled);
+
+  local ExplainDisabled = AceGUI:Create("InteractiveLabel");
+  ExplainDisabled:SetImage(IconDisabled);
+  ExplainDisabled:SetImageSize(24, 24);
+  ExplainDisabled:SetWidth(400);
+  ExplainDisabled:SetText("None of these conditions must be met");
+  Content:AddChild(ExplainDisabled);
+
   Content:AddSpace();
-  
+
+  if AuraFrames.db.profile.HideInPetBattle == true then
+
+    Content:AddText("The condition \"In Pet Battle\" is disabled because of the global setting that containers are always hiden in pet battles.\n");
+    Content:AddSpace();
+
+  end
+
   local GroupFade = AceGUI:Create("InlineGroup");
   GroupFade:SetTitle("Fading");
   GroupFade:SetRelativeWidth(1);
