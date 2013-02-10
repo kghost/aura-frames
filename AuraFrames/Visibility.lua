@@ -36,10 +36,14 @@ UpdateFrame:Hide();
 -----------------------------------------------------------------
 function AuraFrames:CheckVisibility(Container)
 
-  if Container.Config.Visibility.AlwaysVisible == false then
+  local Visible = false;
+
+  if AuraFrames.db.profile.HideInPetBattle == true and Status["InPetBattle"] == true then
+
+    Visible = false;
+
+  elseif Container.Config.Visibility.AlwaysVisible == false then
   
-    local Visible = false;
-    
     for Key, _ in pairs(Container.Config.Visibility.VisibleWhen) do
     
       if Status[Key] == true then
@@ -62,23 +66,23 @@ function AuraFrames:CheckVisibility(Container)
     
     end
   
-    if Container._Visible ~= Visible then
-    
-      if Container._Visible ~= nil then
-        Container._VisibleTransitionStart = GetTime();
-        UpdateFrame:Show();
-      end
-    
-      Container._Visible = Visible;
-    
-    end
-  
   else
   
-    Container._Visible = true;
+    Visible = true;
   
   end
   
+  if Container._Visible ~= Visible then
+  
+    if Container._Visible ~= nil then
+      Container._VisibleTransitionStart = GetTime();
+      UpdateFrame:Show();
+    end
+  
+    Container._Visible = Visible;
+  
+  end
+
   self:UpdateVisibility(Container)
 
 end

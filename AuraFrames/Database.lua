@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 223;
+AuraFrames.DatabaseVersion = 224;
 
 
 --[[
@@ -93,7 +93,10 @@ AuraFrames.DatabaseVersion = 223;
   
   Version 223:
     Add VisibleWhenNot
-  
+
+  Version 223:
+    Add global setting HideInPetBattle
+
 ]]--
 
 
@@ -314,7 +317,7 @@ function AuraFrames:DatabaseUpgrade()
   local OldVersion = self.db.profile.DbVersion;
   
   -- General upgrade code.
-  if not self.db.global.SpellCooldowns then
+  if self.db.global.SpellCooldowns == nil then
   
     self.db.global.SpellCooldowns = {
       PRIEST = {
@@ -324,6 +327,10 @@ function AuraFrames:DatabaseUpgrade()
       },
     };
   
+  end
+
+  if self.db.profile.HideInPetBattle == nil then
+    self.db.profile.HideInPetBattle = false;
   end
   
   -- Loop thru the containers and update the defaults.
