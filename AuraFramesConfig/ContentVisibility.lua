@@ -17,6 +17,7 @@ local SupportedVisibilityOptions = {
   {"InBattleground", "In Battleground"},
   {"InArena", "In Arena"},
   {"FocusEqualsTarget", "Focus equals Target"},
+  {"InPetBattle", "In Pet Battle"},
 };
 
 
@@ -87,7 +88,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   Content:AddSpace();
   
   local GroupVisibleWhen = AceGUI:Create("InlineGroup");
-  GroupVisibleWhen:SetTitle("Visible When");
+  GroupVisibleWhen:SetTitle("Visible When (one of the following conditions is met)");
   GroupVisibleWhen:SetRelativeWidth(1);
   GroupVisibleWhen:SetLayout("Flow");
   Content:AddChild(GroupVisibleWhen);
@@ -104,6 +105,29 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
       AuraFrames:CheckVisibility(ContainerInstance);
     end);
     GroupVisibleWhen:AddChild(CheckBoxOption);
+  
+  end
+  
+  Content:AddSpace();
+
+  local GroupVisibleWhenNot = AceGUI:Create("InlineGroup");
+  GroupVisibleWhenNot:SetTitle("Visible When Not (one of the following conditions is met)");
+  GroupVisibleWhenNot:SetRelativeWidth(1);
+  GroupVisibleWhenNot:SetLayout("Flow");
+  Content:AddChild(GroupVisibleWhenNot);
+  
+  for _, Option in ipairs(SupportedVisibilityOptions) do
+  
+    local CheckBoxOption = AceGUI:Create("CheckBox");
+    CheckBoxOption:SetDisabled(VisibilityConfig.AlwaysVisible);
+    CheckBoxOption:SetWidth(230);
+    CheckBoxOption:SetLabel(Option[2]);
+    CheckBoxOption:SetValue(VisibilityConfig.VisibleWhenNot[Option[1]] == true);
+    CheckBoxOption:SetCallback("OnValueChanged", function(_, _, Value)
+      VisibilityConfig.VisibleWhenNot[Option[1]] = Value == true and true or nil;
+      AuraFrames:CheckVisibility(ContainerInstance);
+    end);
+    GroupVisibleWhenNot:AddChild(CheckBoxOption);
   
   end
   
