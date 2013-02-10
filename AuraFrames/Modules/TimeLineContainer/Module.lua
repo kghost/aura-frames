@@ -176,6 +176,7 @@ function Module:GetDatabaseDefaults()
       OpacityVisible = 1,
       OpacityNotVisible = 0,
       VisibleWhen = {},
+      VisibleWhenNot = {},
     },
     Filter = AuraFrames:GetDatabaseDefaultFilter(),
   };

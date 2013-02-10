@@ -19,6 +19,7 @@ local Status = {
   InBattleground = false,
   InArena = false,
   FocusEqualsTarget = false,
+  InPetBattle = false,
 };
 
 
@@ -44,6 +45,17 @@ function AuraFrames:CheckVisibility(Container)
       if Status[Key] == true then
         
         Visible = true;
+        break;
+      
+      end
+    
+    end
+    
+    for Key, _ in pairs(Container.Config.Visibility.VisibleWhenNot) do
+    
+      if Status[Key] == true then
+        
+        Visible = false;
         break;
       
       end
@@ -225,6 +237,12 @@ local function ProcessStatusChanges(Event, Force)
     StatusChanges.FocusEqualsTarget = UnitIsUnit("focus", "target") == 1;
   
   end
+
+  if Event == "ALL" or Event == "PET_BATTLE_OPENING_START" or Event == "PET_BATTLE_OPENING_DONE" or Event == "PET_BATTLE_CLOSE" then
+  
+    StatusChanges.InPetBattle = C_PetBattles.IsInBattle() == true;
+  
+  end
   
   local Changed = false;
   
@@ -305,3 +323,6 @@ EventFrame:RegisterEvent("UNIT_EXITED_VEHICLE");
 EventFrame:RegisterEvent("PARTY_MEMBERS_CHANGED");
 EventFrame:RegisterEvent("PLAYER_FOCUS_CHANGED");
 EventFrame:RegisterEvent("PLAYER_TARGET_CHANGED");
+EventFrame:RegisterEvent("PET_BATTLE_OPENING_START");
+EventFrame:RegisterEvent("PET_BATTLE_OPENING_DONE");
+EventFrame:RegisterEvent("PET_BATTLE_CLOSE");

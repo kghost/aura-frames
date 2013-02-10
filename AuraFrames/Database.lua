@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 222;
+AuraFrames.DatabaseVersion = 223;
 
 
 --[[
@@ -90,6 +90,9 @@ AuraFrames.DatabaseVersion = 222;
     
   Version 222:
     Add inverse bar option
+  
+  Version 223:
+    Add VisibleWhenNot
   
 ]]--
 
@@ -807,6 +810,16 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
       Container.Layout.InverseOnNoTime = false;
       Container.Layout.HideSparkOnNoTime = true;
       
+    end
+  
+  end
+
+  if OldVersion < 223 then
+
+    if Container.Visibility then
+
+      Container.Visibility.VisibleWhenNot = {};
+
     end
   
   end

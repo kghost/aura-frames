@@ -150,6 +150,7 @@ function Module:GetDatabaseDefaults()
       OpacityVisible = 1,
       OpacityNotVisible = 0,
       VisibleWhen = {},
+      VisibleWhenNot = {},
     },
     Order = AuraFrames:GetDatabaseDefaultOrder(),
     Filter = AuraFrames:GetDatabaseDefaultFilter(),
