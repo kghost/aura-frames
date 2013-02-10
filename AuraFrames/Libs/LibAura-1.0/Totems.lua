@@ -23,18 +23,13 @@ if not Module then return; end -- No upgrade needed.
 
 -- Import used global references into the local namespace.
 local pairs, ipairs, tinsert = pairs, ipairs, tinsert;
-local UnitName, GetMultiCastTotemSpells, GetSpellInfo, GetTotemInfo = UnitName, GetMultiCastTotemSpells, GetSpellInfo, GetTotemInfo;
-
+local UnitName, GetSpellInfo, GetTotemInfo, GetSpellBookItemInfo = UnitName, GetSpellInfo, GetTotemInfo, GetSpellBookItemInfo;
 
 -- Make sure that we dont have old unit/types if we upgrade.
 LibAura:UnregisterModuleSource(Module, nil, nil);
 
 -- Register the test unit/types.
 LibAura:RegisterModuleSource(Module, "player", "TOTEM");
-
--- Cache of all posible totems separated by totem type. The totems are
--- indexed by SpellId.
-Module.TotemSpells = {{}, {}, {}, {}};
 
 
 -----------------------------------------------------------------
@@ -128,10 +123,6 @@ end
 function Module:ActivateSource(Unit, Type)
   
   LibAura:RegisterEvent("PLAYER_TOTEM_UPDATE", self, self.Update);
-  LibAura:RegisterEvent("SPELLS_CHANGED", self, self.UpdateTotemSpells);
-  
-  self:UpdateTotemSpells();
-  
   self:Update();
   
 end
@@ -151,7 +142,6 @@ function Module:DeactivateSource(Unit, Type)
   end
   
   LibAura:UnregisterEvent("PLAYER_TOTEM_UPDATE", self, self.Update);
-  LibAura:UnregisterEvent("SPELLS_CHANGED", self, self.UpdateTotemSpells);
 
 end
 
@@ -176,46 +166,6 @@ end
 
 
 -----------------------------------------------------------------
--- Function UpdateTotemSpells
------------------------------------------------------------------
-function Module:UpdateTotemSpells()
-
-  for i = 1, 4 do
-  
-    local Spells = {GetMultiCastTotemSpells(i)};
-    
-    for _, SpellId in ipairs(Spells) do
-      
-      local Name, _, Icon = GetSpellInfo(SpellId);
-      
-      self.TotemSpells[i][SpellId] = {Name = Name, Match = "^" .. Name, Icon = Icon};
-      
-    end
-    
-  end
-
-end
-
------------------------------------------------------------------
--- Function GetTotemId
------------------------------------------------------------------
-function Module:GetTotemId(Name, Slot)
-
-  for SpellId, Info in pairs(self.TotemSpells[Slot]) do
-  
-    if Name:match(Info.Match) then
-    
-      return SpellId;
-    
-    end
-  
-  end
-  
-  return nil;
-
-end
-
------------------------------------------------------------------
 -- Function Update
 -----------------------------------------------------------------
 function Module:Update()
@@ -224,7 +174,7 @@ function Module:Update()
   
     local Aura = self.db[i];
   
-    local _, TotemName, StartTime, Duration = GetTotemInfo(i);
+    local _, TotemName, StartTime, Duration, Icon = GetTotemInfo(i);
     
     if TotemName and TotemName ~= "" then
     
@@ -236,16 +186,16 @@ function Module:Update()
           Aura.Active = false;
         end
         
-        local SpellId = self:GetTotemId(TotemName, i);
+        local _, SpellId = GetSpellBookItemInfo(TotemName);
         
         if SpellId then
         
           Aura.TotemName = TotemName;
           Aura.ExpirationTime = StartTime + Duration;
           Aura.Duration = Duration;
-          Aura.SpellId = self:GetTotemId(TotemName, i);
-          Aura.Name = self.TotemSpells[i][Aura.SpellId].Name;
-          Aura.Icon = self.TotemSpells[i][Aura.SpellId].Icon;
+          Aura.SpellId = SpellId;
+          Aura.Name = TotemName;
+          Aura.Icon = Icon;
           Aura.Active = true;
           
           if StartTime then

@@ -172,7 +172,8 @@ function AuraFrames:CancelAura(Aura)
 
   if Aura.Type == "TOTEM" then
 
-    DestroyTotem(Aura.Index);
+    -- DestroyTotem is a protected function now.
+    --DestroyTotem(Aura.Index);
   
  end
 

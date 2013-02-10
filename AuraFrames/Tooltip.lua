@@ -61,7 +61,7 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
   
     --GameTooltip:SetTalent(Aura.SpellId);
   
-  elseif Aura.Type == "TOTEM" or Aura.Type == "TOTEMOLD" then
+  elseif (Aura.Type == "TOTEM" or Aura.Type == "TOTEMOLD") and Aura.SpellId then
   
     GameTooltip:SetHyperlink("spell:"..Aura.SpellId);
   
