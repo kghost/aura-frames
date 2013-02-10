@@ -89,6 +89,7 @@ function Module:GetDatabaseDefaults()
       MaxTime = 30,
       TimeFlow = "POW",
       TimeCompression = 0.3,
+      ShowBorder = "ALWAYS",
       
       ButtonOffset = 0,
       ButtonScale = 1.0,

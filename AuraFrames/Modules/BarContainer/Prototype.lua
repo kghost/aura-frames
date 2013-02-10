@@ -442,6 +442,16 @@ function Prototype:UpdateBarDisplay(Bar)
   else
     Bar.Bar.Spark:Hide();
   end
+
+  if self.Config.Layout.ShowBorder == "DEBUFF" then
+
+    if Aura.Type == "HARMFUL" then
+      Bar.Button.Border:Show();
+    else
+      Bar.Button.Border:Hide();
+    end
+
+  end
   
   BarOnUpdate(self, Bar, 0.0);
 
@@ -585,10 +595,20 @@ function Prototype:UpdateBar(Bar)
   
   -- Set cooldown options
   if Bar.Button.Cooldown.SetDrawEdge then
-	  Bar.Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
+    Bar.Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
   end
   Bar.Button.Cooldown:SetReverse(self.Config.Layout.CooldownReverse);
   Bar.Button.Cooldown.noCooldownCount = self.Config.Layout.CooldownDisableOmniCC;
+
+  if self.Config.Layout.ShowBorder == "ALWAYS" then
+
+    Bar.Button.Border:Show();
+
+  elseif self.Config.Layout.ShowBorder == "NEVER" then
+
+    Bar.Button.Border:Hide();
+
+  end
   
   self:UpdateBarDisplay(Bar);
 

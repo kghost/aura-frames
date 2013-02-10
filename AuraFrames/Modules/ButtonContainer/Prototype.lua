@@ -386,7 +386,17 @@ function Prototype:UpdateButtonDisplay(Button)
     Button.Cooldown:Hide();
   
   end
-  
+
+  if self.Config.Layout.ShowBorder == "DEBUFF" then
+
+    if Aura.Type == "HARMFUL" then
+      Button.Border:Show();
+    else
+      Button.Border:Hide();
+    end
+
+  end
+
   ButtonOnUpdate(self, Button, 0.0);
 
 end
@@ -486,6 +496,16 @@ function Prototype:UpdateButton(Button)
   else
 
     Button.MiniBar:Hide();
+
+  end
+
+  if self.Config.Layout.ShowBorder == "ALWAYS" then
+
+    Button.Border:Show();
+
+  elseif self.Config.Layout.ShowBorder == "NEVER" then
+
+    Button.Border:Hide();
 
   end
   

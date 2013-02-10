@@ -312,6 +312,16 @@ function Prototype:UpdateButtonDisplay(Button)
   end
   
   self:AuraEvent(Aura, "ColorChanged");
+
+  if self.Config.Layout.ShowBorder == "DEBUFF" then
+
+    if Aura.Type == "HARMFUL" then
+      Button.Border:Show();
+    else
+      Button.Border:Hide();
+    end
+
+  end
   
   ButtonOnUpdate(self, Button, 0.0);
 
@@ -372,6 +382,16 @@ function Prototype:UpdateButton(Button)
   end
   
   Button:SetScale(self.ButtonScale);
+
+  if self.Config.Layout.ShowBorder == "ALWAYS" then
+
+    Button.Border:Show();
+
+  elseif self.Config.Layout.ShowBorder == "NEVER" then
+
+    Button.Border:Hide();
+
+  end
   
   self:UpdateButtonDisplay(Button);
 

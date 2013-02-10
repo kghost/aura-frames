@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 224;
+AuraFrames.DatabaseVersion = 225;
 
 
 --[[
@@ -96,6 +96,9 @@ AuraFrames.DatabaseVersion = 224;
 
   Version 223:
     Add global setting HideInPetBattle
+
+  Version 224:
+    Add show border to containers
 
 ]]--
 
@@ -826,6 +829,16 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
     if Container.Visibility then
 
       Container.Visibility.VisibleWhenNot = {};
+
+    end
+  
+  end
+
+  if OldVersion < 225 then
+
+    if Container.Layout then
+
+      Container.Layout.ShowBorder = "ALWAYS";
 
     end
   

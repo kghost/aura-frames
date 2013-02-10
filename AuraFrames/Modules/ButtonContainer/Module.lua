@@ -90,6 +90,7 @@ function Module:GetDatabaseDefaults()
       DynamicSize = false,
       ButtonSizeX = 36,
       ButtonSizeY = 36,
+      ShowBorder = "ALWAYS",
 
       ShowDuration = true,
       DurationFont = "Friz Quadrata TT",

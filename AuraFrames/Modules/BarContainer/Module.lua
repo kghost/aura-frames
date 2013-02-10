@@ -74,6 +74,7 @@ function Module:GetDatabaseDefaults()
       Icon = "LEFT",
       BarHeight = 36,
       InverseOnNoTime = true,
+      ShowBorder = "ALWAYS",
 
       ShowDuration = true,
       DurationLayout = "ABBREVSPACE",
