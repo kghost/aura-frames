@@ -135,6 +135,7 @@ function Module:GetDatabaseDefaults()
       TooltipShowCaster = true,
       TooltipShowAuraId = false,
       TooltipShowClassification = false,
+      TooltipShowUnitName = false,
 
       BackgroundTexture = "Blizzard",
       BackgroundTextureColor = {0, 0.32, 0.82, 0.8},

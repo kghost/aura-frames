@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 225;
+AuraFrames.DatabaseVersion = 226;
 
 
 --[[
@@ -86,19 +86,22 @@ AuraFrames.DatabaseVersion = 225;
     Remove ButtonFacade config
   
   Version 221:
-    Add Visibility options
+    Added Visibility options
     
   Version 222:
-    Add inverse bar option
+    Added inverse bar option
   
   Version 223:
-    Add VisibleWhenNot
+    Added VisibleWhenNot
 
   Version 223:
-    Add global setting HideInPetBattle
+    Added global setting HideInPetBattle
 
   Version 224:
-    Add show border to containers
+    Added show border to containers
+
+  Version 226:
+    Added TooltipShowUnitName
 
 ]]--
 
@@ -839,6 +842,16 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
     if Container.Layout then
 
       Container.Layout.ShowBorder = "ALWAYS";
+
+    end
+  
+  end
+
+  if OldVersion < 226 then
+
+    if Container.Layout then
+
+      Container.Layout.TooltipShowUnitName = false;
 
     end
   

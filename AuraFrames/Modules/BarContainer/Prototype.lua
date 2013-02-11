@@ -656,6 +656,7 @@ function Prototype:Update(...)
     
     self.TooltipOptions = {
       ShowPrefix = self.Config.Layout.TooltipShowPrefix,
+      ShowUnit = self.Config.Layout.TooltipShowUnitName,
       ShowCaster = self.Config.Layout.TooltipShowCaster,
       ShowAuraId = self.Config.Layout.TooltipShowAuraId,
       ShowClassification = self.Config.Layout.TooltipShowClassification,
@@ -840,6 +841,16 @@ function Prototype:AuraNew(Aura)
       -- We Don't have count text.
       self.MSQGroup:AddButton(Bar.Button, {Icon = Bar.Button.Icon, Border = Bar.Button.Border, Count = false, Duration = false, Cooldown = Bar.Button.Cooldown});
     
+      local BlendMode = Bar.Button.Border:GetBlendMode();
+      if BlendMode ~= "ADD" and BlendMode ~= "MOD" then
+
+        if not Container.ComplainedAboutBlendMode then
+          af:Print("The Masque skin used for container \""..Container.Config.Name.."\" is using a wrong type of blendmode for the border. Please contact the skin author and request him to use \"ADD\" or \"MOD\" as blendmode for the border. Because of this, buttons can show up black.");
+          Container.ComplainedAboutBlendMode = true;
+        end
+
+      end
+
     else
     
       Bar.Button.Border:SetAllPoints(Bar.Button);

@@ -542,6 +542,7 @@ function Prototype:Update(...)
   
     self.TooltipOptions = {
       ShowPrefix = self.Config.Layout.TooltipShowPrefix,
+      ShowUnit = self.Config.Layout.TooltipShowUnitName,
       ShowCaster = self.Config.Layout.TooltipShowCaster,
       ShowAuraId = self.Config.Layout.TooltipShowAuraId,
       ShowClassification = self.Config.Layout.TooltipShowClassification,
@@ -618,10 +619,6 @@ function Prototype:AuraEvent(Aura, Event, ...)
   local Button = self.Buttons[Aura];
 
   if Event == "ColorChanged" and Button.Border ~= nil then
-
-    if MSQ then
---      MSQ:SetNormalVertexColor(Button, unpack(Aura.Color));
-    end
     
     Button.Border:SetVertexColor(unpack(Aura.Color));
   
@@ -693,6 +690,16 @@ function Prototype:AuraNew(Aura)
     
       -- Don't skin the count text, we will take care of that.
       self.MSQGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false, Duration = false, Cooldown = Button.Cooldown});
+      
+      local BlendMode = Button.Border:GetBlendMode();
+      if BlendMode ~= "ADD" and BlendMode ~= "MOD" then
+
+        if not Container.ComplainedAboutBlendMode then
+          af:Print("The Masque skin used for container \""..Container.Config.Name.."\" is using a wrong type of blendmode for the border. Please contact the skin author and request him to use \"ADD\" or \"MOD\" as blendmode for the border. Because of this, buttons can show up black.");
+          Container.ComplainedAboutBlendMode = true;
+        end
+
+      end
     
     else
     
@@ -711,6 +718,7 @@ function Prototype:AuraNew(Aura)
   
   Button.Aura = Aura;
   Button.Icon:SetTexture(Aura.Icon);
+
   
   self.Buttons[Aura] = Button;
   

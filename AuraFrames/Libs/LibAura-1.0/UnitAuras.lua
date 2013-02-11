@@ -49,7 +49,7 @@ Mouseover unit:
   The mouseover unit is different from all other units in that we do not receive an UNIT_AURA
   event when the mouse leaves a unit. To support mouseover just like all the other units we
   are checking the mouseover unit when we got a UNIT_AURA for mouseover every 0.2 seconds
-  until the mouseover until is nil. When the mouseover unit is nil, we trigger an old event
+  until the mouseover unit is nil. When the mouseover unit is nil, we trigger an old event
   for all auras we had for the mouseover.
 
 *Target Units:
@@ -98,6 +98,11 @@ for i = 1, 4 do
   Module.EventsToMonitor["party"..i]           = {"UNIT_AURA", "PARTY_MEMBERS_CHANGED"};
   Module.EventsToMonitor["party"..i.."target"] = {"UNIT_AURA", "UNIT_TARGET", "PARTY_MEMBERS_CHANGED", "LIBAURA_UPDATE"};
   Module.EventsToMonitor["partypet"..i]        = {"UNIT_AURA", "UNIT_PET", "PARTY_MEMBERS_CHANGED"};
+  Module.EventsToMonitor["boss"..i]            = {"UNIT_AURA", "INSTANCE_ENCOUNTER_ENGAGE_UNIT"};
+  Module.EventsToMonitor["boss"..i.."target"]  = {"UNIT_AURA", "INSTANCE_ENCOUNTER_ENGAGE_UNIT", "LIBAURA_UPDATE"};
+end
+
+for i = 1, 5 do
   Module.EventsToMonitor["arena"..i]           = {"UNIT_AURA", "ARENA_OPPONENT_UPDATE"};
   Module.EventsToMonitor["arena"..i.."target"] = {"UNIT_AURA", "ARENA_OPPONENT_UPDATE", "UNIT_TARGET", "LIBAURA_UPDATE"};
 end
@@ -115,7 +120,7 @@ local AuraPool =  {};
 -- Make sure that we dont have old unit/types if we upgrade.
 LibAura:UnregisterModuleSource(Module, nil, nil);
 
--- Register the test unit/types.
+-- Register the unit/types.
 for Unit, _ in pairs(Module.EventsToMonitor) do
 
   LibAura:RegisterModuleSource(Module, Unit, "HELPFUL");
@@ -129,6 +134,41 @@ Module.db = Module.db or {};
 
 
 -----------------------------------------------------------------
+-- UnitTranslations
+-----------------------------------------------------------------
+Module.UnitTranslations = {
+  focus         = "focus",
+  focustarget   = "focustarget",
+  player        = "player",
+  pet           = "pet",
+  pettarget     = "pettarget",
+  vehicle       = "vehicle",
+  vehicletarget = "vehicletarget",
+  target        = "target",
+  targettarget  = "targettarget",
+  mouseover     = "mouseover",
+};
+
+for i = 1, 4 do
+  Module.UnitTranslations["party"..i]           = "party";
+  Module.UnitTranslations["party"..i.."target"] = "partytarget";
+  Module.UnitTranslations["partypet"..i]        = "partypet";
+  Module.UnitTranslations["boss"..i]            = "boss";
+  Module.UnitTranslations["boss"..i.."target"]  = "bosstarget";
+end
+
+for i = 0, 5 do
+  Module.UnitTranslations["arena"..i]           = "arena";
+  Module.UnitTranslations["arena"..i.."target"] = "arenatarget";
+end
+
+for i = 1, 40 do
+  Module.UnitTranslations["raid"..i]            = "raid";
+  Module.UnitTranslations["raid"..i.."target"]  = "raidtarget";
+  Module.UnitTranslations["raidpet"..i]         = "raidpet";
+end
+
+-----------------------------------------------------------------
 -- Function ActivateSource
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
@@ -137,7 +177,25 @@ function Module:ActivateSource(Unit, Type)
     self:RegisterEvent("PLAYER_ENTERING_WORLD", "ScanAllUnits");
     self:RegisterEvent("ZONE_CHANGED", "ScanAllUnits");
   end
+
+  for Key, Value in pairs(Module.UnitTranslations) do
   
+    if Unit == Value then
+      self:ProcessActivateSource(Key, Type);
+    end
+
+  end
+
+  self:ScanUnit(Unit);
+
+end
+
+
+-----------------------------------------------------------------
+-- Function ProcessActivateSource
+-----------------------------------------------------------------
+function Module:ProcessActivateSource(Unit, Type)
+
   if not self.db[Unit] then
   
     self.db[Unit] = {[Type] = {}};
@@ -156,15 +214,35 @@ function Module:ActivateSource(Unit, Type)
 
   end
 
-  self:ScanUnit(Unit);
-
 end
+
 
 -----------------------------------------------------------------
 -- Function DeactivateSource
 -----------------------------------------------------------------
 function Module:DeactivateSource(Unit, Type)
+
+  for Key, Value in pairs(Module.UnitTranslations) do
   
+    if Unit == Value then
+      self:ProcessDeactivateSource(Key, Type);
+    end
+
+  end
+  
+  if next(self.db) == nil then
+    self:UnregisterEvent("PLAYER_ENTERING_WORLD", "ScanAllUnits");
+    self:UnregisterEvent("ZONE_CHANGED", "ScanAllUnits");
+  end
+
+end
+
+
+-----------------------------------------------------------------
+-- Function ProcessDeactivateSource
+-----------------------------------------------------------------
+function Module:ProcessDeactivateSource(Unit, Type)
+
   for _, Aura in ipairs(self.db[Unit][Type]) do
     LibAura:FireAuraOld(Aura);
   end
@@ -182,13 +260,9 @@ function Module:DeactivateSource(Unit, Type)
     ScanOnLibUpdate[Unit] = nil;
     
   end
-  
-  if next(self.db) == nil then
-    self:UnregisterEvent("PLAYER_ENTERING_WORLD", "ScanAllUnits");
-    self:UnregisterEvent("ZONE_CHANGED", "ScanAllUnits");
-  end
 
 end
+
 
 -----------------------------------------------------------------
 -- Function GetAuras
@@ -368,7 +442,8 @@ function Module:ScanUnitAurasChanges(Unit, Type)
         
         Aura.Type = Type;
         Aura.Index = i;
-        Aura.Unit = Unit;
+        Aura.Unit = Module.UnitTranslations[Unit] or Unit;
+        Aura.RealUnit = Unit;
         Aura.Name = Name;
         Aura.Icon = Icon;
         Aura.Count = Count;
@@ -520,7 +595,8 @@ function Module:ScanUnitAuras(Unit, Type)
         
         Aura.Type = Type;
         Aura.Index = i;
-        Aura.Unit = Unit;
+        Aura.Unit = Module.UnitTranslations[Unit] or Unit;
+        Aura.RealUnit = Unit;
         Aura.Name = Name;
         Aura.Icon = Icon;
         Aura.Count = Count;

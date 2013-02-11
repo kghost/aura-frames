@@ -74,16 +74,12 @@ function AuraFrames:CheckVisibility(Container)
   
   if Container._Visible ~= Visible then
   
-    if Container._Visible ~= nil then
-      Container._VisibleTransitionStart = GetTime();
-      UpdateFrame:Show();
-    end
-  
     Container._Visible = Visible;
+    Container._VisibleTransitionStart = GetTime();
+    UpdateFrame:Show();
   
   end
 
-  self:UpdateVisibility(Container)
 
 end
 
@@ -92,10 +88,6 @@ end
 -- Function UpdateVisibility
 -----------------------------------------------------------------
 function AuraFrames:UpdateVisibility(Container)
-
-  if Container._Visible == nil then
-    self:CheckVisibility(Container);
-  end
 
   local Opacity = Container._Visible == true and Container.Config.Visibility.OpacityVisible or Container.Config.Visibility.OpacityNotVisible;
   
@@ -115,17 +107,19 @@ function AuraFrames:UpdateVisibility(Container)
     
     end
     
-    if not x or x > 1 then
+    if x >= 1 then
       x = 1;
       Container._VisibleTransitionStart = nil;
-    elseif x < 0 then
+    elseif x <= 0 then
       x = 0;
     end
     
     Opacity = OpacityFrom + ((Opacity - OpacityFrom) * x);
   
   end
-  
+
+  Container.Frame:SetAlpha(Opacity * (Container._VisibleMultiplier or 1));
+
   if Opacity == 0 and Container._VisibleDoNotHide ~= true then
     
     if Container.Frame:IsShown() then
@@ -133,8 +127,6 @@ function AuraFrames:UpdateVisibility(Container)
     end
   
   else
-  
-    Container.Frame:SetAlpha(Opacity * (Container._VisibleMultiplier or 1));
     
     if not Container.Frame:IsShown() then
       Container.Frame:Show();

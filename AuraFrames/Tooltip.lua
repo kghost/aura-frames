@@ -22,7 +22,7 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
 
   GameTooltip:SetOwner(Frame, "ANCHOR_BOTTOMLEFT");
   
-  if Aura.Unit == "boss" and Aura.Type == "ALERT" then
+  if Aura.Unit == "bossmod" and Aura.Type == "ALERT" then
   
     GameTooltip:AddLine("Boss Mod Alert!");
     GameTooltip:AddLine("")
@@ -37,7 +37,7 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
 
   elseif Aura.Type == "WEAPON" then
   
-    GameTooltip:SetInventoryItem(Aura.Unit, Aura.Index);
+    GameTooltip:SetInventoryItem(Aura.RealUnit or Aura.Unit, Aura.Index);
   
   elseif Aura.Type == "SPELLCOOLDOWN" or Aura.Type == "SPELLCOOLDOWNOLD" then
   
@@ -55,7 +55,7 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
   
   elseif Aura.Type == "INTERNALCOOLDOWNITEM" or Aura.Type == "INTERNALCOOLDOWNITEMOLD" then
   
-    GameTooltip:SetInventoryItem(Aura.Unit, Aura.Index);
+    GameTooltip:SetInventoryItem(Aura.RealUnit or Aura.Unit, Aura.Index);
   
   elseif Aura.Type == "INTERNALCOOLDOWNTALENT" or Aura.Type == "INTERNALCOOLDOWNTALENTOLD" then
   
@@ -67,7 +67,7 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
   
   elseif Aura.Type == "HARMFUL" or Aura.Type == "HELPFUL" then
   
-    GameTooltip:SetUnitAura(Aura.Unit, Aura.Index, Aura.Type);
+    GameTooltip:SetUnitAura(Aura.RealUnit or Aura.Unit, Aura.Index, Aura.Type);
   
   elseif Aura.Type == "HARMFULOLD" or Aura.Type == "HELPFULOLD" then
   
@@ -75,8 +75,16 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
   
   end
   
-  if Options.ShowCaster == true or Options.ShowAuraId == true or Options.ShowClassification then
+  if Options.ShowUnit == true or Options.ShowCaster == true or Options.ShowAuraId == true or Options.ShowClassification then
     GameTooltip:AddLine(" ")
+  end
+
+  if Options.ShowUnit == true then
+
+    local Name = ((Aura.RealUnit or Aura.Unit) and UnitName(Aura.RealUnit or Aura.Unit)) or (Aura.Unit == "test" and "Test") or "Unknown";
+    local Color = RAID_CLASS_COLORS[(Aura.RealUnit or Aura.Unit) and select(2, UnitClass(Aura.RealUnit or Aura.Unit)) or "NONE"] or {r = 1.0, g = 1.0, b = 1.0};
+    GameTooltip:AddLine(format("%s|cff%02x%02x%02x%s|r", Options.ShowPrefix and "Unit: " or "", Color.r * 255, Color.g * 255, Color.b * 255, Name));
+    
   end
   
   if Options.ShowCaster == true and Aura.CasterUnit then

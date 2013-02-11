@@ -24,7 +24,7 @@ if not Module then return; end -- No upgrade needed.
 LibAura:UnregisterModuleSource(Module, nil, nil);
 
 -- Register the unit/types.
-LibAura:RegisterModuleSource(Module, "boss", "ALERT");
+LibAura:RegisterModuleSource(Module, "bossmod", "ALERT");
 
 
 -- Import used global references into the local namespace.
@@ -324,7 +324,7 @@ function Module:DBM_Scan()
           Type = "ALERT",
           Count = 0,
           Classification = "None",
-          Unit = "boss",
+          Unit = "bossmod",
           CasterUnit = "player",
           CasterName = UnitName("player"),
           IsStealable = false,
@@ -339,7 +339,7 @@ function Module:DBM_Scan()
         db[Id].Icon = Icon;
         db[Id].Duration = Bar.totalTime;
         db[Id].ExpirationTime = CurrentTime + Bar.timer;
-        db[Id].Id = "bossALERT_DBM"..Id;
+        db[Id].Id = "bossmodALERT_DBM"..Id;
         
         if Bar.totalTime and Bar.timer then
           db[Id].CreationTime = CurrentTime + Bar.timer - Bar.totalTime;
@@ -426,7 +426,7 @@ function Module:DXE_NewBar(Id, Text, TotalTime, Icon)
     Type = "ALERT",
     Count = 0,
     Classification = "None",
-    Unit = "boss",
+    Unit = "bossmod",
     CasterUnit = "player",
     CasterName = UnitName("player"),
     IsStealable = false,
@@ -442,7 +442,7 @@ function Module:DXE_NewBar(Id, Text, TotalTime, Icon)
   Aura.Icon = Icon or "INTERFACE\\ICONS\\TEMP";
   Aura.Duration = TotalTime;
   Aura.ExpirationTime = GetTime() + TotalTime;
-  Aura.Id = "bossALERT_DXE"..tostring(Aura);
+  Aura.Id = "bossmodALERT_DXE"..tostring(Aura);
 
   if TotalTime then
     Aura.CreationTime = GetTime() - TotalTime;

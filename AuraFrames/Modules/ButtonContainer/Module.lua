@@ -117,6 +117,7 @@ function Module:GetDatabaseDefaults()
       TooltipShowCaster = true,
       TooltipShowAuraId = false,
       TooltipShowClassification = false,
+      TooltipShowUnitName = false,
 
       ShowCooldown = false,
       CooldownDrawEdge = true,
