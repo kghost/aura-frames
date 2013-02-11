@@ -58,6 +58,7 @@ function Module:ContentLayoutText(Content, ContainerId)
   local TextGroup = AceGUI:Create("SimpleGroup");
   TextGroup:SetLayout("Flow");
   TextGroup:SetRelativeWidth(1);
+  AuraFramesConfig:EnhanceContainer(TextGroup);
   Content:AddChild(TextGroup);
   
   local TextFont = AceGUI:Create("LSM30_Font");
