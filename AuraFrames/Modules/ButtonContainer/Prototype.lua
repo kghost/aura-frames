@@ -429,13 +429,13 @@ function Prototype:UpdateButton(Button)
   
   if self.Config.Layout.ShowTooltip == true then
   
-    Button:SetScript("OnEnter", function(Button) AuraFrames:ShowTooltip(Button.Aura, Button, Container.TooltipOptions); end);
-    Button:SetScript("OnLeave", function() AuraFrames:HideTooltip(); end);
+    Button:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Button.Aura, Button, Container.TooltipOptions); self:CheckVisibility(true); end);
+    Button:SetScript("OnLeave", function() AuraFrames:HideTooltip(); self:CheckVisibility(false); end);
   
   else
   
-    Button:SetScript("OnEnter", nil);
-    Button:SetScript("OnLeave", nil);
+    Button:SetScript("OnEnter", function() self:CheckVisibility(true); end);
+    Button:SetScript("OnLeave", function() self:CheckVisibility(false); end);
   
   end
   
@@ -817,6 +817,18 @@ function Prototype:AuraChanged(Aura)
   -- Start popup animation.
   Button.PopupTime = 0.0;
   
+end
+
+
+-----------------------------------------------------------------
+-- Function CheckVisibility
+-----------------------------------------------------------------
+function Prototype:CheckVisibility(IsMouseOver)
+
+  if self.Config.Visibility.VisibleWhen.OnMouseOver or self.Config.Visibility.VisibleWhenNot.OnMouseOver then
+    AuraFrames:CheckVisibility(self, IsMouseOver);
+  end
+
 end
 
 

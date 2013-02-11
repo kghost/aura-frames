@@ -234,6 +234,8 @@ function Module:New(Config)
   Container:Update();
 
   Container.Frame:SetScript("OnEvent", function() Container:Update(); end);
+  Container.Frame:SetScript("OnEnter", function() Container:CheckVisibility(true); end);
+  Container.Frame:SetScript("OnLeave", function() Container:CheckVisibility(false); end);
   Container.Frame:RegisterEvent("PLAYER_ENTERING_WORLD");
   Container.Frame:RegisterEvent("ZONE_CHANGED");
   

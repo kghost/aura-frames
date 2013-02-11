@@ -1,6 +1,8 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local LibAura = LibStub("LibAura-1.0");
 
+local FadeOutDelay = 0.5;
+
 -----------------------------------------------------------------
 -- Local status table
 -----------------------------------------------------------------
@@ -20,6 +22,7 @@ local Status = {
   InArena = false,
   FocusEqualsTarget = false,
   InPetBattle = false,
+  OnMouseOver = false,
 };
 
 
@@ -34,7 +37,9 @@ UpdateFrame:Hide();
 -----------------------------------------------------------------
 -- Function CheckVisibility
 -----------------------------------------------------------------
-function AuraFrames:CheckVisibility(Container)
+function AuraFrames:CheckVisibility(Container, IsMouseOver, SkipDelay)
+
+  Status.OnMouseOver = IsMouseOver or false;
 
   local Visible = false;
 
@@ -75,11 +80,36 @@ function AuraFrames:CheckVisibility(Container)
   if Container._Visible ~= Visible then
   
     Container._Visible = Visible;
-    Container._VisibleTransitionStart = GetTime();
+    
+    local x, y;
+
+    y = (1 / (Container.Config.Visibility.OpacityVisible - Container.Config.Visibility.OpacityNotVisible)) * (Container.Frame:GetAlpha() - Container.Config.Visibility.OpacityNotVisible);
+
+    if Container._Visible == true and Container.Config.Visibility.FadeIn == true then
+    
+      x = GetTime() - (Container.Config.Visibility.FadeInTime * y);
+    
+    elseif Container._Visible == false then
+    
+      if Container.Config.Visibility.OpacityVisible - Container.Frame:GetAlpha() < 0.005 and SkipDelay ~= true then
+
+        x = GetTime() + FadeOutDelay;
+
+      elseif Container.Config.Visibility.FadeOut == true then
+
+        x = GetTime() - (Container.Config.Visibility.FadeOutTime - (Container.Config.Visibility.FadeOutTime * y));
+
+      end
+    
+    end
+    
+    Container._VisibleTransitionStart = x;
+
     UpdateFrame:Show();
   
   end
 
+  self:UpdateVisibility(Container);
 
 end
 
@@ -95,32 +125,34 @@ function AuraFrames:UpdateVisibility(Container)
   
     local OpacityFrom = Container._Visible == true and Container.Config.Visibility.OpacityNotVisible or Container.Config.Visibility.OpacityVisible;
   
-    local x;
+    local x, y;
+
+    x = GetTime() - Container._VisibleTransitionStart;
   
     if Container._Visible == true and Container.Config.Visibility.FadeIn == true then
     
-      x = (GetTime() - Container._VisibleTransitionStart) / Container.Config.Visibility.FadeInTime;
+      y = x / Container.Config.Visibility.FadeInTime;
     
     elseif Container._Visible == false and Container.Config.Visibility.FadeOut == true then
     
-      x = (GetTime() - Container._VisibleTransitionStart) / Container.Config.Visibility.FadeOutTime;
+      y = x / Container.Config.Visibility.FadeOutTime;
     
     end
     
-    if x >= 1 then
-      x = 1;
+    if y >= 1 then
+      y = 1;
       Container._VisibleTransitionStart = nil;
-    elseif x <= 0 then
-      x = 0;
+    elseif y <= 0 then
+      y = 0;
     end
     
-    Opacity = OpacityFrom + ((Opacity - OpacityFrom) * x);
+    Opacity = OpacityFrom + ((Opacity - OpacityFrom) * y);
   
   end
 
   Container.Frame:SetAlpha(Opacity * (Container._VisibleMultiplier or 1));
 
-  if Opacity == 0 and Container._VisibleDoNotHide ~= true then
+  if Opacity == 0 and Container._VisibleDoNotHide ~= true and Container.Config.Visibility.VisibleWhen.OnMouseOver ~= true then
     
     if Container.Frame:IsShown() then
       Container.Frame:Hide();

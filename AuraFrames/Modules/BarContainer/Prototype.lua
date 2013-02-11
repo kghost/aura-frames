@@ -554,19 +554,19 @@ function Prototype:UpdateBar(Bar)
   
   if self.Config.Layout.ShowTooltip then
   
-    Bar:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); end);
-    Bar:SetScript("OnLeave", function() AuraFrames:HideTooltip(); end);
+    Bar:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); self:CheckVisibility(true); end);
+    Bar:SetScript("OnLeave", function() AuraFrames:HideTooltip(); self:CheckVisibility(false); end);
   
-    Bar.Button:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); end);
-    Bar.Button:SetScript("OnLeave", function() AuraFrames:HideTooltip(); end);
+    Bar.Button:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); self:CheckVisibility(true); end);
+    Bar.Button:SetScript("OnLeave", function() AuraFrames:HideTooltip(); self:CheckVisibility(false); end);
   
   else
   
-    Bar:SetScript("OnEnter", nil);
-    Bar:SetScript("OnLeave", nil);
-
-    Bar.Button:SetScript("OnEnter", nil);
-    Bar.Button:SetScript("OnLeave", nil);
+    Bar:SetScript("OnEnter", function() self:CheckVisibility(true); end);
+    Bar:SetScript("OnLeave", function() self:CheckVisibility(false); end);
+  
+    Bar.Button:SetScript("OnEnter", function() self:CheckVisibility(true); end);
+    Bar.Button:SetScript("OnLeave", function() self:CheckVisibility(false); end);
   
   end
   
@@ -712,7 +712,7 @@ function Prototype:Update(...)
 
     -- We have bars in the container pool that doesn't match the settings anymore. Release them into the general pool.
     self:ReleasePool();
-    
+
   end
   
   if Changed == "ALL" or Changed == "WARNINGS" then
@@ -996,6 +996,18 @@ function Prototype:AuraChanged(Aura)
   Bar.PopupTime = 0.0;
   
   BarOnUpdate(self, Bar, 0.0);
+
+end
+
+
+-----------------------------------------------------------------
+-- Function CheckVisibility
+-----------------------------------------------------------------
+function Prototype:CheckVisibility(IsMouseOver)
+
+  if self.Config.Visibility.VisibleWhen.OnMouseOver or self.Config.Visibility.VisibleWhenNot.OnMouseOver then
+    AuraFrames:CheckVisibility(self, IsMouseOver);
+  end
 
 end
 
