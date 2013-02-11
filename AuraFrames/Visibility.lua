@@ -152,7 +152,7 @@ function AuraFrames:UpdateVisibility(Container)
 
   Container.Frame:SetAlpha(Opacity * (Container._VisibleMultiplier or 1));
 
-  if Opacity == 0 and Container._VisibleDoNotHide ~= true and Container.Config.Visibility.VisibleWhen.OnMouseOver ~= true then
+  if Opacity == 0 and Container._VisibleDoNotHide ~= true and Container.Config.Visibility.VisibleWhen.OnMouseOver ~= true and Container.Config.Visibility.VisibleWhenNot.OnMouseOver ~= true then
     
     if Container.Frame:IsShown() then
       Container.Frame:Hide();
