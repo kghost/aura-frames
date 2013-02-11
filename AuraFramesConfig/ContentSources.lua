@@ -358,7 +358,7 @@ local AllSources = {
       },
       {
         Name = "Boss Mods",
-        Unit = "boss",
+        Unit = "bossmod",
         Type = "ALERT",
       },
     }
