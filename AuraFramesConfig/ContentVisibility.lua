@@ -31,6 +31,7 @@ local IconDisabled = "Interface\\Addons\\AuraFramesConfig\\Icons\\Checkbox-Disab
 function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
 
   local VisibilityConfig = AuraFrames.db.profile.Containers[ContainerId].Visibility;
+  local LayoutConfig = AuraFrames.db.profile.Containers[ContainerId].Layout;
   local ContainerInstance = AuraFrames.Containers[ContainerId];
 
 
@@ -100,7 +101,15 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   for _, Option in ipairs(SupportedVisibilityOptions) do
   
     local Status = AceGUI:Create("InteractiveLabel");
-    Status:SetDisabled(VisibilityConfig.AlwaysVisible or (Option[1] == "InPetBattle" and AuraFrames.db.profile.HideInPetBattle == true));
+
+    if VisibilityConfig.AlwaysVisible then
+      Status:SetDisabled(true);
+    elseif Option[1] == "InPetBattle" and AuraFrames.db.profile.HideInPetBattle == true then
+      Status:SetDisabled(true);
+    elseif Option[1] == "OnMouseOver" and LayoutConfig.Clickable ~= true then
+      Status:SetDisabled(true);
+    end
+
     if VisibilityConfig.VisibleWhen[Option[1]] == true then
       Status:SetImage(IconEnabled);
     elseif VisibilityConfig.VisibleWhenNot[Option[1]] == true then
@@ -160,9 +169,18 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
 
   if AuraFrames.db.profile.HideInPetBattle == true then
 
-    Content:AddText("The condition \"In Pet Battle\" is disabled because of the global setting that containers are always hiden in pet battles.\n");
-    Content:AddSpace();
+    Content:AddText("Note: The condition \"In Pet Battle\" is disabled because of the global setting that containers are always hiden in pet battles.\n");
 
+  end
+
+  if LayoutConfig.Clickable ~= true then
+
+    Content:AddText("Note: The condition \"On Mouse Over\" is disabled because receive mouse events is disabled for this container. Enable receive mouse events before using the condition \"On Mouse Over\".\n");
+
+  end
+
+  if AuraFrames.db.profile.HideInPetBattle == true or LayoutConfig.Clickable ~= true then
+    Content:AddSpace();
   end
 
   local GroupFade = AceGUI:Create("InlineGroup");

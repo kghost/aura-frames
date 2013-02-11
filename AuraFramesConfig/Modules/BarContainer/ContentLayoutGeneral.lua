@@ -10,6 +10,7 @@ local AceGUI = LibStub("AceGUI-3.0");
 function Module:ContentLayoutGeneral(Content, ContainerId)
 
   local LayoutConfig = AuraFrames.db.profile.Containers[ContainerId].Layout;
+  local VisibilityConfig = AuraFrames.db.profile.Containers[ContainerId].Visibility;
   local ContainerInstance = AuraFrames.Containers[ContainerId];
 
   Content:SetLayout("List");
@@ -17,14 +18,19 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   Content:AddText("General\n", GameFontNormalLarge);
 
   Content:AddHeader("Mouse");
+
+  local VisibilityDependency = VisibilityConfig.AlwaysVisible == false and (VisibilityConfig.VisibleWhen.OnMouseOver or VisibilityConfig.VisibleWhenNot.OnMouseOver or false);
   
   local Clickable = AceGUI:Create("CheckBox");
   Clickable:SetLabel("Container receive mouse events");
   Clickable:SetDescription("When the container receive mouse events, you can not click thru it. Receiving mouse events is needed for tooltip, canceling aura's when right clicking them and changing visibility on mouse over.");
   Clickable:SetRelativeWidth(1);
+  Clickable:SetDisabled(VisibilityDependency);
   Clickable:SetValue(LayoutConfig.Clickable);
   Clickable:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.Clickable = Value;
+    VisibilityConfig.VisibleWhen.OnMouseOver = nil;
+    VisibilityConfig.VisibleWhenNot.OnMouseOver = nil;
     ContainerInstance:Update("LAYOUT");
     Content:PauseLayout();
     Content:ReleaseChildren();
@@ -33,6 +39,12 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
     Content:DoLayout();
   end);
   Content:AddChild(Clickable);
+
+  if VisibilityDependency then
+
+    Content:AddText("Receive mouse events can not be disabled because the container visibility is depending on the mouse over events. Remove the container visibility dependency before disabling the mouse events.");
+
+  end
 
   Content:AddSpace();
 
