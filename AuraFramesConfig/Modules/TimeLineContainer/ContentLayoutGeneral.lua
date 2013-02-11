@@ -109,6 +109,18 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
     end);
     ContentTooltip:AddChild(TooltipShowClassification);
   
+    local TooltipShowUnitName = AceGUI:Create("CheckBox");
+    TooltipShowUnitName:SetDisabled(not LayoutConfig.ShowTooltip);
+    TooltipShowUnitName:SetWidth(260);
+    TooltipShowUnitName:SetLabel("Show Unit Name");
+    TooltipShowUnitName:SetDescription("Show the name of the unit who got the aura.");
+    TooltipShowUnitName:SetValue(LayoutConfig.TooltipShowUnitName);
+    TooltipShowUnitName:SetCallback("OnValueChanged", function(_, _, Value)
+      LayoutConfig.TooltipShowUnitName = Value;
+      ContainerInstance:Update("LAYOUT");
+    end);
+    ContentTooltip:AddChild(TooltipShowUnitName);
+
   end
   
   Content:AddSpace();

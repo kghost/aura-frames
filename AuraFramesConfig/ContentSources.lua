@@ -201,6 +201,132 @@ local AllSources = {
     Space = true,
   },
   {
+    Space = true,
+  },
+  {
+    Group = true,
+    Title = "|cff6af36aGroups buffs|r |cffffffff(warning, this can be slowdown the game!)|r",
+    Width = 175,
+    Childeren = {
+      {
+        Name = "Party Members",
+        Unit = "party",
+        Type = "HELPFUL",
+      },
+      {
+        Name = "Party Targets",
+        Unit = "partytarget",
+        Type = "HELPFUL",
+      },
+      {
+        Name = "Party Pets",
+        Unit = "partypet",
+        Type = "HELPFUL",
+      },
+      {
+        Name = "Bosses",
+        Unit = "boss",
+        Type = "HELPFUL",
+      },
+      {
+        Name = "Boss Targets",
+        Unit = "bosstarget",
+        Type = "HELPFUL",
+      },
+      {
+        Name = "Arenateam Members",
+        Unit = "arena",
+        Type = "HELPFUL",
+      },
+      {
+        Name = "Arenateam Targets",
+        Unit = "arenatargets",
+        Type = "HELPFUL",
+      },
+      {
+        Name = "Raid Members",
+        Unit = "raid",
+        Type = "HELPFUL",
+      },
+      {
+        Name = "Raid Targets",
+        Unit = "raidtarget",
+        Type = "HELPFUL",
+      },
+      {
+        Name = "Raid Pets",
+        Unit = "raidpet",
+        Type = "HELPFUL",
+      },
+    }
+  },
+  {
+    Space = true,
+  },
+  {
+    Group = true,
+    Title = "|cfff36a6aGroups debuffs|r |cffffffff(warning, this can be slowdown the game!)|r",
+    Width = 175,
+    Childeren = {
+      {
+        Name = "Party Members",
+        Unit = "party",
+        Type = "HARMFUL",
+      },
+      {
+        Name = "Party Targets",
+        Unit = "partytarget",
+        Type = "HARMFUL",
+      },
+      {
+        Name = "Party Pets",
+        Unit = "partypet",
+        Type = "HARMFUL",
+      },
+      {
+        Name = "Bosses",
+        Unit = "boss",
+        Type = "HARMFUL",
+      },
+      {
+        Name = "Boss Targets",
+        Unit = "bosstarget",
+        Type = "HARMFUL",
+      },
+      {
+        Name = "Arenateam Members",
+        Unit = "arena",
+        Type = "HARMFUL",
+      },
+      {
+        Name = "Arenateam Targets",
+        Unit = "arenatargets",
+        Type = "HARMFUL",
+      },
+      {
+        Name = "Raid Members",
+        Unit = "raid",
+        Type = "HARMFUL",
+      },
+      {
+        Name = "Raid Targets",
+        Unit = "raidtarget",
+        Type = "HARMFUL",
+      },
+      {
+        Name = "Raid Pets",
+        Unit = "raidpet",
+        Type = "HARMFUL",
+      },
+    }
+  },
+  {
+    Space = true,
+  },
+  {
+    Space = true,
+  },
+  {
     Group = true,
     Title = "|cffffffffMiscellaneous|r",
     Width = 262,
@@ -336,15 +462,20 @@ function AuraFramesConfig:ContentSourcesRefresh(Content, ContainerId)
   
     BuildOptions(Content, ContainerId, AllSources);
   
+    Content:AddSpace();
+    Content:AddHeader("Expert mode");
+    Content:AddText("There are way more sources available, but those are lesser commen and aren't used a lot. Enable the expert mode to see all posible sources.\n");
+
   else
   
     BuildOptions(Content, ContainerId, SimpleSources);
+
+    Content:AddSpace();
+    Content:AddHeader("Expert mode");
+    Content:AddText("Disabling the export mode will turn off the sources that are not available in simple mode.\n");
   
   end
   
-  Content:AddSpace();
-  Content:AddHeader("Expert mode");
-  Content:AddText("There are way more sources available, but those are lesser commen and aren't used a lot. Enable the expert mode to see all posible sources.\n");
   
   local CheckBoxExpertMode = AceGUI:Create("CheckBox");
   CheckBoxExpertMode:SetRelativeWidth(1);
