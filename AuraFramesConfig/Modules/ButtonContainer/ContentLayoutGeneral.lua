@@ -22,7 +22,7 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   
   local Clickable = AceGUI:Create("CheckBox");
   Clickable:SetLabel("Container receive mouse events");
-  Clickable:SetDescription("When the container receive mouse events, you can not click thru it. Receiving mouse events is needed for tooltip and canceling aura's when right clicking them.");
+  Clickable:SetDescription("When the container receive mouse events, you can not click thru it. Receiving mouse events is needed for tooltip, canceling aura's when right clicking them and changing visibility on mouse over.");
   Clickable:SetRelativeWidth(1);
   Clickable:SetValue(LayoutConfig.Clickable);
   Clickable:SetCallback("OnValueChanged", function(_, _, Value)

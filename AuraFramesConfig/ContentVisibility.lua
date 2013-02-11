@@ -18,6 +18,7 @@ local SupportedVisibilityOptions = {
   {"InArena", "In Arena"},
   {"FocusEqualsTarget", "Focus equals Target"},
   {"InPetBattle", "In Pet Battle"},
+  {"OnMouseOver", "On Mouse Over"},
 };
 
 local IconNotSet = "Interface\\Addons\\AuraFramesConfig\\Icons\\Checkbox";
@@ -46,7 +47,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   CheckBoxAlwaysVisible:SetValue(VisibilityConfig.AlwaysVisible);
   CheckBoxAlwaysVisible:SetCallback("OnValueChanged", function(_, _, Value)
     VisibilityConfig.AlwaysVisible = Value;
-    AuraFrames:CheckVisibility(ContainerInstance);
+    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
     AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId);
   end);
   Content:AddChild(CheckBoxAlwaysVisible);
@@ -68,7 +69,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   SliderOpacityVisible:SetValue(VisibilityConfig.OpacityVisible);
   SliderOpacityVisible:SetCallback("OnValueChanged", function(_, _, Value)
     VisibilityConfig.OpacityVisible = Value;
-    AuraFrames:CheckVisibility(ContainerInstance);
+    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
   end);
   GroupOpacity:AddChild(SliderOpacityVisible);
   
@@ -81,7 +82,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   SliderOpacityNotVisible:SetValue(VisibilityConfig.OpacityNotVisible);
   SliderOpacityNotVisible:SetCallback("OnValueChanged", function(_, _, Value)
     VisibilityConfig.OpacityNotVisible = Value;
-    AuraFrames:CheckVisibility(ContainerInstance);
+    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
   end);
   GroupOpacity:AddChild(SliderOpacityNotVisible);
   
@@ -126,7 +127,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
         VisibilityConfig.VisibleWhenNot[Option[1]] = nil
         Status:SetImage(IconEnabled);
       end
-      AuraFrames:CheckVisibility(ContainerInstance);
+      AuraFrames:CheckVisibility(ContainerInstance, nil, true);
     end);
     GroupVisibility:AddChild(Status);
 
@@ -177,7 +178,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   CheckBoxFadeInEnabled:SetValue(VisibilityConfig.FadeIn);
   CheckBoxFadeInEnabled:SetCallback("OnValueChanged", function(_, _, Value)
     VisibilityConfig.FadeIn = Value;
-    AuraFrames:CheckVisibility(ContainerInstance);
+    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
     AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId);
   end);
   GroupFade:AddChild(CheckBoxFadeInEnabled);
@@ -190,7 +191,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   SliderFadeInTime:SetValue(VisibilityConfig.FadeInTime);
   SliderFadeInTime:SetCallback("OnValueChanged", function(_, _, Value)
     VisibilityConfig.FadeInTime = Value;
-    AuraFrames:CheckVisibility(ContainerInstance);
+    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
   end);
   GroupFade:AddChild(SliderFadeInTime);
   
@@ -201,7 +202,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   CheckBoxFadeOutEnabled:SetValue(VisibilityConfig.FadeOut);
   CheckBoxFadeOutEnabled:SetCallback("OnValueChanged", function(_, _, Value)
     VisibilityConfig.FadeOut = Value;
-    AuraFrames:CheckVisibility(ContainerInstance);
+    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
     AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId);
   end);
   GroupFade:AddChild(CheckBoxFadeOutEnabled);
@@ -214,7 +215,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   SliderFadeOutTime:SetValue(VisibilityConfig.FadeOutTime);
   SliderFadeOutTime:SetCallback("OnValueChanged", function(_, _, Value)
     VisibilityConfig.FadeOutTime = Value;
-    AuraFrames:CheckVisibility(ContainerInstance);
+    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
   end);
   GroupFade:AddChild(SliderFadeOutTime);
   
