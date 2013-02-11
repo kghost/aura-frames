@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 226;
+AuraFrames.DatabaseVersion = 227;
 
 
 --[[
@@ -102,6 +102,9 @@ AuraFrames.DatabaseVersion = 226;
 
   Version 226:
     Added TooltipShowUnitName
+
+  Version 227:
+    Renamed unit boss to bossmod
 
 ]]--
 
@@ -857,4 +860,15 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
   
   end
   
+  if OldVersion < 227 then
+
+    if Container.Sources then
+
+      Container.Sources.bossmod = Container.Sources.boss;
+      Container.Sources.boss = nil;
+
+    end
+  
+  end
+
 end
