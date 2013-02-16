@@ -4,8 +4,6 @@
   <Script file="Module.lua" />
   
   <Script file="ContentLayout.lua" />
-  <Script file="ContentWarnings.lua" />
-  
   <Script file="ContentLayoutGeneral.lua" />
   <Script file="ContentLayoutSizeAndScale.lua" />
   <Script file="ContentLayoutDurationAndCount.lua" />

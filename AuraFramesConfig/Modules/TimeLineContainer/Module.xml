@@ -4,12 +4,12 @@
   <Script file="Module.lua" />
   
   <Script file="ContentLayout.lua" />
-  <Script file="ContentWarnings.lua" />
-
   <Script file="ContentLayoutGeneral.lua" />
   <Script file="ContentLayoutSizeAndScale.lua" />
   <Script file="ContentLayoutText.lua" />
   <Script file="ContentLayoutSkin.lua" />
   <Script file="ContentLayoutColorsAndBorder.lua" />
+
+  <Script file="Animations.lua" />
   
 </Ui>

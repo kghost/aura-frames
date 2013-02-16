@@ -8,14 +8,22 @@ local AceGUI = LibStub("AceGUI-3.0");
 -----------------------------------------------------------------
 function AuraFramesConfig:ContentGeneralSettings()
 
-  self.Content:SetLayout("List");
+  self.Content:SetLayout("Fill");
   
-  self.Content:AddText("General Settings\n", GameFontNormalLarge);
+  local Content = AceGUI:Create("ScrollFrame");
+  Content:SetLayout("List");
+  self:EnhanceContainer(Content);
+  self.Content:AddChild(Content);
 
-  self.Content:AddHeader("Blizzard Buff Frames");
+  Content:PauseLayout();
+  Content:ReleaseChildren();
+  
+  Content:AddText("General Settings\n", GameFontNormalLarge);
+  Content:AddSpace(2);
 
-  self.Content:AddText("Disable and hide the default frames that are used by Blizzard to display buff/debuff aura's. When you enable the Blizzard frames again you need to reload/relog to show them!\n");
 
+  Content:AddHeader("Blizzard Buff Frames");
+  Content:AddText("Disable and hide the default frames that are used by Blizzard to display buff/debuff aura's. When you enable the Blizzard frames again you need to reload/relog to show them!\n");
   local HideBlizzard = AceGUI:Create("CheckBox");
   HideBlizzard:SetLabel("Hide Blizzard aura frames");
   HideBlizzard:SetValue(AuraFrames.db.profile.HideBlizzardAuraFrames);
@@ -25,14 +33,12 @@ function AuraFramesConfig:ContentGeneralSettings()
       AuraFrames:CheckBlizzardAuraFrames();
     end
   end);
-  self.Content:AddChild(HideBlizzard);
+  Content:AddChild(HideBlizzard);
+  Content:AddSpace(2);
   
-  self.Content:AddSpace(2);
-  
-  self.Content:AddHeader("Boss Mods");
 
-  self.Content:AddText("Aura Frames can use different Boss Mods to display aura's. When using Aura Frames for showing Boss Mods information, then there is not always the need anymore to have the Boss Mods displaying there own bars.\n\nHiding Boss Mods Bars will only work when there is an active container that is using the Boss Mods source! At this moment, Deadly Boss Mods and Deus Vox Encounters are supported\n");
-
+  Content:AddHeader("Boss Mods");
+  Content:AddText("Aura Frames can use different Boss Mods to display aura's. When using Aura Frames for showing Boss Mods information, then there is not always the need anymore to have the Boss Mods displaying there own bars.\n\nHiding Boss Mods Bars will only work when there is an active container that is using the Boss Mods source! At this moment, Deadly Boss Mods and Deus Vox Encounters are supported\n");
   local HideBossModsBars = AceGUI:Create("CheckBox");
   HideBossModsBars:SetLabel("Hide Boss Mods Bars");
   HideBossModsBars:SetValue(AuraFrames.db.profile.HideBossModsBars);
@@ -40,14 +46,12 @@ function AuraFramesConfig:ContentGeneralSettings()
     AuraFrames.db.profile.HideBossModsBars = Value;
     LibStub("LibAura-1.0"):GetModule("BossMods-1.0"):SetBossModBarsVisibility(not Value);
   end);
-  self.Content:AddChild(HideBossModsBars);
-
-  self.Content:AddSpace(2);
+  Content:AddChild(HideBossModsBars);
+  Content:AddSpace(2);
   
-  self.Content:AddHeader("Pet Battles");
 
-  self.Content:AddText("Aura Frames can hide all aura containers automaticly upon entering pet battles. This will overrule the In Pet Battle option of the visibility options for containers.\n");
-
+  Content:AddHeader("Pet Battles");
+  Content:AddText("Aura Frames can hide all aura containers automaticly upon entering pet battles. This will overrule the In Pet Battle option of the visibility options for containers.\n");
   local HideInPetBattle = AceGUI:Create("CheckBox");
   HideInPetBattle:SetLabel("Hide in pet battle");
   HideInPetBattle:SetValue(AuraFrames.db.profile.HideInPetBattle);
@@ -57,6 +61,23 @@ function AuraFramesConfig:ContentGeneralSettings()
       AuraFrames:CheckVisibility(Container);
     end
   end);
-  self.Content:AddChild(HideInPetBattle);
+  Content:AddChild(HideInPetBattle);
+  Content:AddSpace(2);
+
+
+  Content:AddHeader("Bad Masque skins");
+  Content:AddText("Aura Frames try to detect bad Masque skins that can result in black buttons. You can disable those warning messages here.\n");
+  local DisableMasqueSkinWarnings = AceGUI:Create("CheckBox");
+  DisableMasqueSkinWarnings:SetLabel("Disable warnings");
+  DisableMasqueSkinWarnings:SetValue(AuraFrames.db.profile.DisableMasqueSkinWarnings);
+  DisableMasqueSkinWarnings:SetCallback("OnValueChanged", function(_, _, Value)
+    AuraFrames.db.profile.DisableMasqueSkinWarnings = Value;
+  end);
+  Content:AddChild(DisableMasqueSkinWarnings);
+  Content:AddSpace(2);
+
+  Content:ResumeLayout();
+  Content:DoLayout();
+  self.Content:DoLayout();
 
 end

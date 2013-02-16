@@ -127,47 +127,5 @@ function Module:ContentLayoutSkin(Content, ContainerId)
     ContainerInstance:Update("LAYOUT");
   end);
   BackgroundGroup:AddChild(BackgroundBorderColor);
-  
-  BackgroundGroup:AddSpace();
-  
-  local InactiveAlpha = AceGUI:Create("Slider");
-  InactiveAlpha:SetWidth(200);
-  InactiveAlpha:SetValue(LayoutConfig.InactiveAlpha);
-  InactiveAlpha:SetLabel("Inactive transparency");
-  InactiveAlpha:SetSliderValues(0, 1, 0.01);
-  InactiveAlpha:SetIsPercent(true);
-  InactiveAlpha:SetCallback("OnValueChanged", function(_, _, Value)
-    LayoutConfig.InactiveAlpha = Value;
-    ContainerInstance:Update("LAYOUT");
-    Module:Update(ContainerId);
-  end);
-  BackgroundGroup:AddChild(InactiveAlpha);
-  
-  Content:AddSpace();
-
---[[
-
-  Content:AddHeader("ButtonFacade");
-  
-  if not LBF then
-  
-    Content:AddText("ButtonFacade is used for skinning the buttons.\n\nThe ButtonFacade addon is not found, please install or enable ButtonFacade addon if you want to use custom button skinning.");
-  
-  else
-
-    Content:AddText("ButtonFacade is used for skinning the buttons.\n");
-    
-    local ContentButtonFacade = AceGUI:Create("SimpleGroup");
-    ContentButtonFacade:SetRelativeWidth(1);
-    Content:AddChild(ContentButtonFacade);
-    AuraFramesConfig:EnhanceContainer(ContentButtonFacade);
-
-    AuraFramesConfig:ContentButtonFacade(ContentButtonFacade, ContainerInstance.LBFGroup);
-  
-  end
-  
-  Content:AddSpace();
-
-]]--
 
 end

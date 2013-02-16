@@ -98,8 +98,7 @@ function Module:UnlockContainer(ContainerId, Unlock)
       
     end
     
-    Container._VisibleDoNotHide = true;
-    AuraFrames:UpdateVisibility(Container);
+    Container:UpdateVisibility(Container);
     
     Container.UnlockFrame:Show();
     
@@ -118,8 +117,7 @@ function Module:UnlockContainer(ContainerId, Unlock)
     
     Container.UnlockFrame:Hide();
     
-    Container._VisibleDoNotHide = nil;
-    AuraFrames:UpdateVisibility(Container);
+    Container:UpdateVisibility(Container);
   
   end
   
@@ -147,9 +145,9 @@ function Module:GetTree(ContainerId)
       execute = function() Module:ContentLayout(ContainerId); end,
     },
     {
-      value = "Warnings",
-      text = "Warnings",
-      execute = function() Module:ContentWarnings(ContainerId); end,
+      value = "Animations",
+      text = "Animations",
+      execute = function() AuraFramesConfig:ContentAnimations(ContainerId); end,
     },
     {
       value = "Visibility",

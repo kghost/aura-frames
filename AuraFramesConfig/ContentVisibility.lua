@@ -54,43 +54,11 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   Content:AddChild(CheckBoxAlwaysVisible);
   
   Content:AddSpace();
-
-  local GroupOpacity = AceGUI:Create("InlineGroup");
-  GroupOpacity:SetTitle("Opacity");
-  GroupOpacity:SetRelativeWidth(1);
-  GroupOpacity:SetLayout("Flow");
-  self:EnhanceContainer(GroupOpacity);
-  Content:AddChild(GroupOpacity);
   
-  local SliderOpacityVisible = AceGUI:Create("Slider");
-  SliderOpacityVisible:SetIsPercent(true);
-  SliderOpacityVisible:SetWidth(430);
-  SliderOpacityVisible:SetLabel("Opacity when visible");
-  SliderOpacityVisible:SetSliderValues(0, 1, 0.01);
-  SliderOpacityVisible:SetValue(VisibilityConfig.OpacityVisible);
-  SliderOpacityVisible:SetCallback("OnValueChanged", function(_, _, Value)
-    VisibilityConfig.OpacityVisible = Value;
-    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
-  end);
-  GroupOpacity:AddChild(SliderOpacityVisible);
-  
-  local SliderOpacityNotVisible = AceGUI:Create("Slider");
-  SliderOpacityNotVisible:SetIsPercent(true);
-  SliderOpacityNotVisible:SetDisabled(VisibilityConfig.AlwaysVisible);
-  SliderOpacityNotVisible:SetWidth(430);
-  SliderOpacityNotVisible:SetLabel("Opacity when not visible");
-  SliderOpacityNotVisible:SetSliderValues(0, 1, 0.01);
-  SliderOpacityNotVisible:SetValue(VisibilityConfig.OpacityNotVisible);
-  SliderOpacityNotVisible:SetCallback("OnValueChanged", function(_, _, Value)
-    VisibilityConfig.OpacityNotVisible = Value;
-    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
-  end);
-  GroupOpacity:AddChild(SliderOpacityNotVisible);
-  
-  GroupOpacity:AddText("\nNote: On circle shaped buttons, any opacity other than 0% or 100% may result in undesired effects.", nil, 500);
-  GroupOpacity:AddText("\nNote: If the opacity is 0% then the container will be hidden and the mouse will not have any effect (no tooltips).", nil, 500);
-  
-  Content:AddSpace();
+  if VisibilityConfig.AlwaysVisible ~= true then
+    Content:AddText("Note: Visibility is performed by an animation, make sure that the visibility animation is enabled for this container.");
+    Content:AddSpace();
+  end
 
   local GroupVisibility = AceGUI:Create("InlineGroup");
   GroupVisibility:SetTitle("Visibility");
@@ -178,64 +146,6 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
     Content:AddText("Note: The condition \"On Mouse Over\" is disabled because receive mouse events is disabled for this container. Enable receive mouse events before using the condition \"On Mouse Over\".\n");
 
   end
-
-  if AuraFrames.db.profile.HideInPetBattle == true or LayoutConfig.Clickable ~= true then
-    Content:AddSpace();
-  end
-
-  local GroupFade = AceGUI:Create("InlineGroup");
-  GroupFade:SetTitle("Fading");
-  GroupFade:SetRelativeWidth(1);
-  GroupFade:SetLayout("Flow");
-  Content:AddChild(GroupFade);
-  
-  local CheckBoxFadeInEnabled = AceGUI:Create("CheckBox");
-  CheckBoxFadeInEnabled:SetDisabled(VisibilityConfig.AlwaysVisible);
-  CheckBoxFadeInEnabled:SetWidth(140);
-  CheckBoxFadeInEnabled:SetLabel("Enable Fade In");
-  CheckBoxFadeInEnabled:SetValue(VisibilityConfig.FadeIn);
-  CheckBoxFadeInEnabled:SetCallback("OnValueChanged", function(_, _, Value)
-    VisibilityConfig.FadeIn = Value;
-    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
-    AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId);
-  end);
-  GroupFade:AddChild(CheckBoxFadeInEnabled);
-  
-  local SliderFadeInTime = AceGUI:Create("Slider");
-  SliderFadeInTime:SetDisabled(VisibilityConfig.AlwaysVisible or not VisibilityConfig.FadeIn);
-  SliderFadeInTime:SetWidth(300);
-  SliderFadeInTime:SetLabel("Fade in time");
-  SliderFadeInTime:SetSliderValues(0.1, 10, 0.1);
-  SliderFadeInTime:SetValue(VisibilityConfig.FadeInTime);
-  SliderFadeInTime:SetCallback("OnValueChanged", function(_, _, Value)
-    VisibilityConfig.FadeInTime = Value;
-    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
-  end);
-  GroupFade:AddChild(SliderFadeInTime);
-  
-  local CheckBoxFadeOutEnabled = AceGUI:Create("CheckBox");
-  CheckBoxFadeOutEnabled:SetDisabled(VisibilityConfig.AlwaysVisible);
-  CheckBoxFadeOutEnabled:SetWidth(140);
-  CheckBoxFadeOutEnabled:SetLabel("Enable Fade Out");
-  CheckBoxFadeOutEnabled:SetValue(VisibilityConfig.FadeOut);
-  CheckBoxFadeOutEnabled:SetCallback("OnValueChanged", function(_, _, Value)
-    VisibilityConfig.FadeOut = Value;
-    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
-    AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId);
-  end);
-  GroupFade:AddChild(CheckBoxFadeOutEnabled);
-  
-  local SliderFadeOutTime = AceGUI:Create("Slider");
-  SliderFadeOutTime:SetDisabled(VisibilityConfig.AlwaysVisible or not VisibilityConfig.FadeOut);
-  SliderFadeOutTime:SetWidth(300);
-  SliderFadeOutTime:SetLabel("Fade out time");
-  SliderFadeOutTime:SetSliderValues(0.1, 10, 0.1);
-  SliderFadeOutTime:SetValue(VisibilityConfig.FadeOutTime);
-  SliderFadeOutTime:SetCallback("OnValueChanged", function(_, _, Value)
-    VisibilityConfig.FadeOutTime = Value;
-    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
-  end);
-  GroupFade:AddChild(SliderFadeOutTime);
   
   Content:ResumeLayout();
   Content:DoLayout();
