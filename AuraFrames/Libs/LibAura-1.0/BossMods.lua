@@ -631,8 +631,6 @@ function Module.BigWigs_StartBar(...)
 
   local _, _, _, Key, Text, Time, Icon = ...;
   
-  af:Print("Start: ", Text);
-
   return Module.BigWigs_Bars.BigWigs_StartBarHooked(...);
 
 end
@@ -645,8 +643,6 @@ function Module.BigWigs_StopBar(...)
 
   local _, _, _, Text = ...;
   
-  af:Print("Stop: ", Text);
-
   return Module.BigWigs_Bars.BigWigs_StopBarHooked(...);
 
 end
@@ -656,8 +652,6 @@ end
 -- Function BigWigs_StopBars
 -----------------------------------------------------------------
 function Module.BigWigs_StopBars(...)
-
-  af:Print("Stop all bars");
 
   return Module.BigWigs_Bars.BigWigs_StopBarsHooked(...);
 

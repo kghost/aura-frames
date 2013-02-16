@@ -1,5 +1,8 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
+-- Import used global references into the local namespace.
+local setmetatable, ipairs, loadstring = setmetatable, ipairs, loadstring;
+
 AuraFrames.ColorsPrototype = {};
 
 -----------------------------------------------------------------

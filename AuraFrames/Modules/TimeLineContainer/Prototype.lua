@@ -22,7 +22,7 @@ local ButtonPool = {};
 -- All containers have also there own (smaller) pool.
 local ContainerButtonPoolSize = 5;
 
--- Counters for each butten type.
+-- Counters for each button type.
 local ButtonCounter = 0;
 
 -- Direction = Style = {Direction = {AnchorPoint, X Direction, Y Direction, Button Offset X, Button Offset Y}}
@@ -37,18 +37,11 @@ local DirectionMapping = {
   },
 };
 
--- How fast a button will get updated.
-local ButtonUpdatePeriod = 0.01; -- Max 100 times a second.
-
--- Pre calculate pi * 2 (used for flashing buttons).
-local PI2 = PI + PI;
-
--- Pre calculate pi / 2 (used for popup buttons).
-local PI_2 = PI / 2;
 
 -- Frame levels used for poping up buttons.
-local PopupFrameLevel = 9;
-local PopupFrameLevelNormal = 4;
+local FrameLevelLow = 3;
+local FrameLevelNormal = 6;
+local FrameLevelHigh = 9;
 
 
 -----------------------------------------------------------------
@@ -57,10 +50,11 @@ local PopupFrameLevelNormal = 4;
 local function ButtonOnUpdate(Container, Button, Elapsed)
 
   local Config = Container.Config;
-
-  local TimeLeft = Button.Aura.ExpirationTime ~= 0 and max(Button.Aura.ExpirationTime - GetTime(), 0) or 0;
+  local Scale;
 
   if Button.Aura.ExpirationTime ~= 0 then
+
+    local TimeLeft = max(Button.Aura.ExpirationTime - GetTime(), 0);
     
     if Config.Layout.ShowDuration == true then
     
@@ -77,110 +71,39 @@ local function ButtonOnUpdate(Container, Button, Elapsed)
       end
     
     end
-    
-    if Button.ExpireFlashTime and TimeLeft < Button.ExpireFlashTime then
+
+    if Container.AnimationAuraExpiring.TotalDuration ~= 0 and TimeLeft < Container.AnimationAuraExpiring.TotalDuration and Container.AnimationAuraExpiring:IsPlaying(Button) ~= true then
+
+      Container.AnimationAuraExpiring:Play(Button, function() Button:Hide(); end);
       
-      -- We need to flash for an aura that is expiring. Let's have some
-      -- geek match involved to make the flash look nice.
-      --
-      -- We are starting with Alpha(1.0) and going in a sinus down and up
-      -- and ending in a down. We don't go totally transpirant and the min
-      -- is Alpha(0.15);
-    
-      local Alpha = ((math_cos((((Button.ExpireFlashTime - TimeLeft) % Config.Warnings.Expire.FlashSpeed) / Config.Warnings.Expire.FlashSpeed) * PI2) / 2 + 0.5) * 0.85) + 0.15;
-      
-      Button.Icon:SetAlpha(Alpha);
-    
-    elseif Button.NewFlashTime and Button.Aura.Duration ~= 0 then
-    
-      local TimeFromStart = Button.Aura.Duration - TimeLeft;
-      
-      if TimeFromStart < Button.NewFlashTime then
-      
-        -- See the ExpireFlash. The only difference is that we start with
-        -- Alpha(0.15) and that we are ending with Alpha(1.0).
-      
-        local Alpha = ((math_cos((((TimeFromStart % Config.Warnings.New.FlashSpeed) / Config.Warnings.New.FlashSpeed) * PI2) + PI) / 2 + 0.5) * 0.85) + 0.15;
-      
-        Button.Icon:SetAlpha(Alpha);
-      
-      else
-        
-        -- At the end of the new flash animation make sure that we end
-        -- with SetAlpha(1.0) and that we stop the animation.
-      
-        Button.NewFlashTime = nil;
-        Button.Icon:SetAlpha(1.0);
-      
-      end
-    
     end
+
+    Scale = Button:GetScale();
     
+    if Config.Layout.MaxTime < TimeLeft then
+      Button.Offset = Container.ButtonIndent / Scale;
+    else
+      Button.Offset = (((Container.StepPerSecond * (Config.Layout.MaxTime - TimeLeft)) * Container:CalcPos(TimeLeft)) + Container.ButtonIndent) / Scale;
+    end
+
     Button:Show();
     
   else
   
     -- Hide aura's without an ExpirationTime.
     Button:Hide();
+    Button.Offset = Container.ButtonIndent;
     return;
   
   end
-  
-  if Button.PopupTime ~= nil and Config.Warnings.Changing.Popup == true then
-  
-    if Button.PopupTime == 0 then
-    
-      Button:SetFrameLevel(PopupFrameLevel);
-    
-    end
-  
-    Button.PopupTime = Button.PopupTime + Elapsed;
-  
-    if Button.PopupTime > Config.Warnings.Changing.PopupTime then
-    
-      Button.PopupTime = nil;
-      Button:SetScale(Container.ButtonScale);
-      Button:SetFrameLevel(PopupFrameLevelNormal);
-    
-    else
-    
-      local Scale = 1 + (((math_sin(-PI_2 + ((Button.PopupTime / Config.Warnings.Changing.PopupTime) * PI2)) + 1) / 2) * (Config.Warnings.Changing.PopupScale - 1));
-      
-      Button:SetScale(Container.ButtonScale * Scale);
-    
-    end
-  
-  end
-  
-  if TimeLeft < 0.3 then
-    
-    -- Part is going from 0 to 1.
-    local Part = (0.3 - TimeLeft) * (1 / 0.3);
-  
-    Button:SetScale(Container.ButtonScale * (1 + (Part * 2)));
-    Button.Icon:SetAlpha(1 - Part);
-    
-  end  
-  
-  local Scale = Button:GetScale();
-  
-  Button:ClearAllPoints();
-  
-  local Offset;
-  
-  if Button.Aura.ExpirationTime == 0 or Config.Layout.MaxTime < TimeLeft then
-    Offset = Container.ButtonIndent / Scale;
-  else
-    Offset = (((Container.StepPerSecond * (Config.Layout.MaxTime - TimeLeft)) * Container:CalcPos(TimeLeft)) + Container.ButtonIndent) / Scale;
-  end
-  
+
   -- Set the position.
   Button:SetPoint(
     "CENTER",
-    Container.Frame,
+    Container.Content,
     Container.Direction[1],
-    (Container.Direction[2] * Offset) + (Config.Layout.ButtonOffset * Container.Direction[4] / Scale),
-    (Container.Direction[3] * Offset) + (Config.Layout.ButtonOffset * Container.Direction[5] / Scale)
+    (Container.Direction[2] * Button.Offset) + (Config.Layout.ButtonOffset * Container.Direction[4] / Scale),
+    (Container.Direction[3] * Button.Offset) + (Config.Layout.ButtonOffset * Container.Direction[5] / Scale)
   );
 
 end
@@ -207,6 +130,169 @@ local function ButtonOnClick(Button)
 end
 
 
+local Clusters = {Size = 0};
+
+-----------------------------------------------------------------
+-- Function ClusterDetection
+-----------------------------------------------------------------
+function Prototype:ClusterDetection()
+
+  -- Clusters[Index] = {Start = x, End = y, Buttons = {Button1, Button2}}
+  -- Clusters.Size = num of clusters
+  -- Clusters[Index].Buttons.Size = num of buttons
+
+  -- Button.ClusterVisible:
+  --  nil = Not joined a cluster yet
+  --  false = Not visible in the cluster
+  --  true = Visible in the cluster
+
+  if self.AnimationClusterGoVisible.IsEmpty == true then
+    return;
+  end
+
+  Clusters.Size = 0;
+
+  for _, Button in pairs(self.Buttons) do
+  
+    -- Only detect collisions for buttons that are shown.
+    if Button:IsShown() then
+
+      local LastCluster;
+      
+      for Index = 1, Clusters.Size do
+
+        local Cluster = Clusters[Index];
+        Cluster.Used = true;
+      
+        if Cluster.Start <= Button.Offset and Cluster.End >= Button.Offset then
+          -- We got a collision.
+        
+          if LastCluster then
+            -- We had already a collision with an other cluster, so this button is having a collision with the LastCluster and
+            -- this cluster. We need to merge the clusters and add the current button to the merged cluster.
+          
+            for ButtonIndex = 1, Clusters[LastCluster].Buttons.Size do
+
+              Cluster.Buttons.Size = Cluster.Buttons.Size + 1;
+              Cluster.Buttons[Cluster.Buttons.Size] = Clusters[LastCluster].Buttons[ButtonIndex];
+
+            end
+            
+            Cluster.Start = min(Cluster.Start, Clusters[LastCluster].Start);
+            Cluster.End = max(Cluster.End, Clusters[LastCluster].End);
+            
+            Clusters[LastCluster].Used = false;
+            
+          else
+
+            Cluster.Start = min(Cluster.Start, Button.Offset - self.CollisionMargin);
+            Cluster.End = max(Cluster.End, Button.Offset + self.CollisionMargin);
+
+          end
+
+          Cluster.Buttons.Size = Cluster.Buttons.Size + 1;
+          Cluster.Buttons[Cluster.Buttons.Size] = Button;
+          
+          LastCluster = Index;
+        
+        end
+      
+      end
+      
+      if not LastCluster then
+        
+        Clusters.Size = Clusters.Size + 1;
+
+        if not Clusters[Clusters.Size] then
+
+          Clusters[Clusters.Size] = {Buttons = {}};
+
+          -- Make the table having weak keys, so that we dont have to clean up references to Button objects.
+          setmetatable(Clusters[Clusters.Size].Buttons, {__mode = "k"});
+
+        end
+
+        Clusters[Clusters.Size].Start = Button.Offset - self.CollisionMargin;
+        Clusters[Clusters.Size].End = Button.Offset + self.CollisionMargin;
+        Clusters[Clusters.Size].Buttons.Size = 1;
+        Clusters[Clusters.Size].Buttons[1] = Button;
+
+      end
+    
+    end
+  
+  end
+  
+  local CurrentTime = GetTime();
+
+  for Index = 1, Clusters.Size do
+
+    local Cluster = Clusters[Index];
+  
+    if Cluster.Used == true and Cluster.Buttons.Size > 1 then
+
+      local ActiveIndex = 1;
+    
+      for ButtonIndex = 1, Cluster.Buttons.Size do
+
+        local Button = Cluster.Buttons[ButtonIndex];
+      
+        if Button.ClusterVisible == nil then
+        
+          Button.ClusterVisible = false;
+          self.AnimationClusterGoVisible:ClearEffect(Button);
+          self.AnimationClusterGoInvisible:Play(Button);
+        
+        elseif Button.ClusterVisible == true then
+        
+          if self.AnimationClusterGoVisible:IsPlaying(Button) then
+        
+            ActiveIndex = nil;
+        
+          else
+          
+            Button.ClusterVisible = false;
+            self.AnimationClusterGoVisible:ClearEffect(Button);
+            self.AnimationClusterGoInvisible:Play(Button);
+            
+            ActiveIndex = ButtonIndex + 1 > Cluster.Buttons.Size and 1 or ButtonIndex + 1;
+            
+          end
+          
+        end
+
+      end
+      
+      if ActiveIndex then
+        
+        Cluster.Buttons[ActiveIndex].ClusterVisible = true;
+        
+        self.AnimationClusterGoInvisible:Stop(Cluster.Buttons[ActiveIndex]);
+        self.AnimationClusterGoInvisible:ClearEffect(Cluster.Buttons[ActiveIndex]);
+        self.AnimationClusterGoVisible:Play(Cluster.Buttons[ActiveIndex]);
+      
+      end
+    
+    elseif Cluster.Used == true then
+    
+      self.AnimationClusterGoInvisible:Stop(Cluster.Buttons[1]);
+      self.AnimationClusterGoInvisible:ClearEffect(Cluster.Buttons[1]);
+
+      if Cluster.Buttons[1].ClusterVisible == false and self.AnimationClusterGoVisible:IsPlaying(Cluster.Buttons[1]) ~= true then
+        
+        self.AnimationClusterGoVisible:Play(Cluster.Buttons[1]);
+
+      end
+
+      Cluster.Buttons[1].ClusterVisible = nil;
+
+    end
+  
+  end
+
+end
+
+
 -----------------------------------------------------------------
 -- Function Delete
 -----------------------------------------------------------------
@@ -215,6 +301,9 @@ function Prototype:Delete()
   self.AuraList:Delete();
   
   Module.Containers[self.Config.Id] = nil;
+
+  AuraFrames:StopAnimations(self.Frame);
+  AuraFrames:ClearAnimationEffects(self.Frame);
 
   self.Frame:Hide();
   self.Frame:UnregisterAllEvents();
@@ -241,7 +330,7 @@ function Prototype:ReleasePool()
     local Button = tremove(self.ButtonPool);
     
     if MSQ then
-      self.MSQGroup:RemoveButton(Button, true);
+      self.MSQGroup:RemoveButton(Button.Content, true);
     end
   
     Button:ClearAllPoints();
@@ -261,12 +350,14 @@ function Prototype:CalcPos(TimeLeft)
 
   -- We make here the calculations for nice time lines.
   -- This function will always return between 0 and 1.
-  -- So that the caller can do CalcPos() * width for
-  -- example.
+  -- So that the caller can do CalcPos() * width.
 
   if self.Config.Layout.TimeFlow == "POW" then
 
-    local Pos = math_pow(self.Config.Layout.MaxTime - TimeLeft, self.Config.Layout.TimeCompression) / math_pow(self.Config.Layout.MaxTime, self.Config.Layout.TimeCompression);
+    -- For more information about this formula (with a time line of 30 secs to 0 with a default compression of 0.3):
+    -- http://www.wolframalpha.com/input/?i=%2830+-+x%29+%5E+0.3+%2F+30+%5E+0.3+from+x+%3D+0+to+30
+
+    local Pos = math_pow(self.Config.Layout.MaxTime - TimeLeft, self.Config.Layout.TimeCompression) / self.PowTimeCompressionDivider ;
 
     return Pos > 1 and 1 or Pos;
   
@@ -343,14 +434,14 @@ function Prototype:UpdateButton(Button)
   if Button.Duration ~= nil and self.Config.Layout.ShowDuration == true then
     
     Button.Duration:ClearAllPoints();
-    Button.Duration:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.DurationPosX, self.Config.Layout.DurationPosY);
+    Button.Duration:SetPoint("CENTER", Button.Content, "CENTER", self.Config.Layout.DurationPosX, self.Config.Layout.DurationPosY);
   
   end
 
   if self.Config.Layout.ShowCount then
   
     Button.Count:ClearAllPoints();
-    Button.Count:SetPoint("CENTER", Button, "CENTER", self.Config.Layout.CountPosX, self.Config.Layout.CountPosY);
+    Button.Count:SetPoint("CENTER", Button.Content, "CENTER", self.Config.Layout.CountPosX, self.Config.Layout.CountPosY);
     
   end
   
@@ -369,6 +460,7 @@ function Prototype:UpdateButton(Button)
   if self.Config.Layout.Clickable then
     
     Button:EnableMouse(true);
+    Button.Content:EnableMouse(true);
     Button:RegisterForClicks("RightButtonUp");
     Button:SetScript("OnClick", ButtonOnClick);
     
@@ -377,12 +469,11 @@ function Prototype:UpdateButton(Button)
   else
     
     Button:EnableMouse(false);
+    Button.Content:EnableMouse(false);
     Button:SetScript("OnClick", nil);
     
   end
   
-  Button:SetScale(self.ButtonScale);
-
   if self.Config.Layout.ShowBorder == "ALWAYS" then
 
     Button.Border:Show();
@@ -394,6 +485,8 @@ function Prototype:UpdateButton(Button)
   end
   
   self:UpdateButtonDisplay(Button);
+
+  AuraFrames:UpdateAnimationRegionSize(Button);
 
 end
 
@@ -421,12 +514,12 @@ function Prototype:Update(...)
       
         self.Frame:SetWidth(self.Config.Layout.Length);
         self.Frame:SetHeight(self.Config.Layout.Width);
-      
+
       else
       
         self.Frame:SetWidth(self.Config.Layout.Width);
         self.Frame:SetHeight(self.Config.Layout.Length);
-      
+
       end
     
       self.Frame:ClearAllPoints();
@@ -435,8 +528,8 @@ function Prototype:Update(...)
     end
     
     self.FrameTexture:SetTexture(LSM:Fetch("statusbar", self.Config.Layout.BackgroundTexture));
-    self.FrameTexture:SetPoint("TOPLEFT", self.Frame, "TOPLEFT", self.Config.Layout.BackgroundTextureInsets, -self.Config.Layout.BackgroundTextureInsets);
-    self.FrameTexture:SetPoint("BOTTOMRIGHT", self.Frame, "BOTTOMRIGHT", -self.Config.Layout.BackgroundTextureInsets, self.Config.Layout.BackgroundTextureInsets);
+    self.FrameTexture:SetPoint("TOPLEFT", self.Content, "TOPLEFT", self.Config.Layout.BackgroundTextureInsets, -self.Config.Layout.BackgroundTextureInsets);
+    self.FrameTexture:SetPoint("BOTTOMRIGHT", self.Content, "BOTTOMRIGHT", -self.Config.Layout.BackgroundTextureInsets, self.Config.Layout.BackgroundTextureInsets);
     self.FrameTexture:SetVertexColor(unpack(self.Config.Layout.BackgroundTextureColor));
     
     local ULx, ULy, LLx, LLy, URx, URy, LRx, LRy = 0, 0, 0, 1, 1, 0, 1, 1;
@@ -473,11 +566,11 @@ function Prototype:Update(...)
     
     self.FrameTexture:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy);
     
-    self.Frame:SetBackdrop({
+    self.Content:SetBackdrop({
       edgeFile = LSM:Fetch("border", self.Config.Layout.BackgroundBorder), 
       edgeSize = self.Config.Layout.BackgroundBorderSize, 
     });
-    self.Frame:SetBackdropBorderColor(unpack(self.Config.Layout.BackgroundBorderColor));
+    self.Content:SetBackdropBorderColor(unpack(self.Config.Layout.BackgroundBorderColor));
     
     self.TooltipOptions = {
       ShowPrefix = self.Config.Layout.TooltipShowPrefix,
@@ -517,6 +610,7 @@ function Prototype:Update(...)
     self.Direction = DirectionMapping[self.Config.Layout.Style][self.Config.Layout.Direction];
     self.ButtonIndent = self.Config.Layout.ButtonIndent == true and ((self.Config.Layout.Style == "HORIZONTAL" and self.Config.Layout.ButtonSizeX or self.Config.Layout.ButtonSizeY) * self.Config.Layout.ButtonScale) / 2 or 0;
     self.StepPerSecond = ((self.Config.Layout.Length - (self.ButtonIndent * 2)) / self.Config.Layout.MaxTime);
+    self.CollisionMargin = (self.Config.Layout.Style == "HORIZONTAL" and self.Config.Layout.ButtonSizeX or self.Config.Layout.ButtonSizeY) * self.Config.Layout.ButtonScale;
     
     self.ButtonScale = self.Config.Layout.ButtonScale;
 
@@ -530,11 +624,11 @@ function Prototype:Update(...)
     if MSQ then
       self.MSQGroup:ReSkin();
     end
-    
+
     for _, Button in pairs(self.Buttons) do
       self:UpdateButton(Button);
     end
-    
+
     -- We have buttons in the container pool that doesn't match the settings anymore. Release them into the general pool.
     self:ReleasePool();
     
@@ -546,7 +640,7 @@ function Prototype:Update(...)
     
     if self.Config.Layout.ShowText == true then
     
-      local FrameId = self.Frame:GetName();
+      local FrameId = self.Content:GetName();
       
       if self.Config.Layout.TextLabelsAuto == true then
         
@@ -567,7 +661,7 @@ function Prototype:Update(...)
             
             Offset = NewOffset;
             
-            Label:SetPoint("CENTER", self.Frame, self.Direction[1], (Offset * self.Direction[2]) + (self.Config.Layout.TextOffset * self.Direction[4]), (Offset * self.Direction[3]) + (self.Config.Layout.TextOffset * self.Direction[5]));
+            Label:SetPoint("CENTER", self.Content, self.Direction[1], (Offset * self.Direction[2]) + (self.Config.Layout.TextOffset * self.Direction[4]), (Offset * self.Direction[3]) + (self.Config.Layout.TextOffset * self.Direction[5]));
             
             Label:SetFontObject(self.TextFontObject);
             Label:SetFormattedText(AuraFrames:FormatTimeLeft(self.Config.Layout.TextLayout, Time, false));
@@ -606,13 +700,13 @@ function Prototype:Update(...)
 
           if self.Config.Layout.MaxTime >= Time and Time >= 0 then
 
-            local Label = _G[FrameId.."_Label"..Index] or self.Frame:CreateFontString(FrameId.."_Label"..Index, "ARTWORK");
+            local Label = _G[FrameId.."_Label"..Index] or self.Content:CreateFontString(FrameId.."_Label"..Index, "ARTWORK");
             
             Label:ClearAllPoints();
             
             local Offset = self.ButtonIndent + (((self.Config.Layout.MaxTime - Time) * self.StepPerSecond) * self:CalcPos(Time));
             
-            Label:SetPoint("CENTER", self.Frame, self.Direction[1], (Offset * self.Direction[2]) + (self.Config.Layout.TextOffset * self.Direction[4]), (Offset * self.Direction[3]) + (self.Config.Layout.TextOffset * self.Direction[5]));
+            Label:SetPoint("CENTER", self.Content, self.Direction[1], (Offset * self.Direction[2]) + (self.Config.Layout.TextOffset * self.Direction[4]), (Offset * self.Direction[3]) + (self.Config.Layout.TextOffset * self.Direction[5]));
             
             Label:SetFontObject(self.TextFontObject);
             Label:SetFormattedText(AuraFrames:FormatTimeLeft(self.Config.Layout.TextLayout, Time, false));
@@ -628,31 +722,27 @@ function Prototype:Update(...)
     
     end
     
-    if next(self.Buttons) == nil then
-      self._VisibleMultiplier = self.Config.Layout.InactiveAlpha;
-    else
-      self._VisibleMultiplier = 1;
-    end
-    
-    AuraFrames:UpdateVisibility(self);
+    self:UpdateVisibility();
     
   end
 
-  if Changed == "ALL" or Changed == "WARNINGS" then
-
-    if self.Config.Warnings.New.Flash == true then
-      self.NewFlashTime = self.Config.Warnings.New.FlashSpeed * (self.Config.Warnings.New.FlashNumber + 0.5);
-    else
-      self.NewFlashTime = nil;
-    end
+  if Changed == "ALL" or Changed == "ANIMATIONS" then
     
-    if self.Config.Warnings.Expire.Flash == true then
-      self.ExpireFlashTime = self.Config.Warnings.Expire.FlashSpeed * (self.Config.Warnings.Expire.FlashNumber + 0.5);
-    else
-      self.ExpireFlashTime = nil;
-    end
+    self:UpdateAnimationConfig();
     
   end
+
+  if self.Config.Layout.Clickable then
+    
+    self.Frame:EnableMouse(true);
+    
+  else
+    
+    self.Frame:EnableMouse(false);
+    
+  end
+
+  self.PowTimeCompressionDivider = math_pow(self.Config.Layout.MaxTime, self.Config.Layout.TimeCompression);
 
 end
 
@@ -666,10 +756,6 @@ function Prototype:AuraEvent(Aura, Event, ...)
 
   if Event == "ColorChanged" and Button.Border ~= nil then
 
-    if MSQ then
-      --MSQ:SetNormalVertexColor(Button, unpack(Aura.Color));
-    end
-    
     Button.Border:SetVertexColor(unpack(Aura.Color));
   
   end
@@ -699,16 +785,19 @@ function Prototype:AuraNew(Aura)
     
       local ButtonId = "AuraFramesTimeLineButton"..ButtonCounter;
 
-      Button = CreateFrame("Button", ButtonId, self.Frame, "AuraFramesTimeLineTemplate");
+      Button = CreateFrame("Button", ButtonId, self.Content, "AuraFramesTimeLineTemplate");
       
-      Button.Duration = _G[ButtonId.."Duration"];
-      Button.Icon = _G[ButtonId.."Icon"];
-      Button.Count = _G[ButtonId.."Count"];
-      Button.Border = _G[ButtonId.."Border"];
+      Button.Content = _G[ButtonId.."Content"];
+      Button.Duration = _G[ButtonId.."ContentDuration"];
+      Button.Icon = _G[ButtonId.."ContentIcon"];
+      Button.Count = _G[ButtonId.."ContentCount"];
+      Button.Border = _G[ButtonId.."ContentBorder"];
+      
+      Button._AlphaRegion = Button.Icon;
     
     else
     
-      Button:SetParent(self.Frame);
+      Button:SetParent(self.Content);
     
     end
   
@@ -717,18 +806,18 @@ function Prototype:AuraNew(Aura)
     
     local Container = self;  
     Button:SetScript("OnUpdate", function(Button, Elapsed)
-      
-       Button.TimeSinceLastUpdate = Button.TimeSinceLastUpdate + Elapsed;
-       if Button.TimeSinceLastUpdate > ButtonUpdatePeriod then
-          ButtonOnUpdate(Container, Button, Button.TimeSinceLastUpdate);
-          Button.TimeSinceLastUpdate = 0.0;
-       end
-      
+      ButtonOnUpdate(Container, Button, Elapsed);
     end);
     
     Button:SetWidth(self.Config.Layout.ButtonSizeX);
     Button:SetHeight(self.Config.Layout.ButtonSizeY);
     
+    Button.Content:SetWidth(self.Config.Layout.ButtonSizeX);
+    Button.Content:SetHeight(self.Config.Layout.ButtonSizeY);
+
+    -- We need to update the animation region, otherwise Masque will generate wrong buttons.
+    AuraFrames:UpdateAnimationRegionSize(Button);
+
     -- Set the font from this container.
     Button.Duration:SetFontObject(self.DurationFontObject);
     Button.Count:SetFontObject(self.CountFontObject);
@@ -736,14 +825,19 @@ function Prototype:AuraNew(Aura)
     if MSQ then
     
       -- Don't skin the count text, we will take care of that.
-      self.MSQGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Count = false, Duration = false});
+      self.MSQGroup:AddButton(Button.Content, {Icon = Button.Icon, Border = Button.Border, Count = false, Duration = false});
       
-      local BlendMode = Button.Border:GetBlendMode();
-      if BlendMode ~= "ADD" and BlendMode ~= "MOD" then
+      if not AuraFrames.db.profile.DisableMasqueSkinWarnings then
 
-        if not Container.ComplainedAboutBlendMode then
-          af:Print("The Masque skin used for container \""..Container.Config.Name.."\" is using a wrong type of blendmode for the border. Please contact the skin author and request him to use \"ADD\" or \"MOD\" as blendmode for the border. Because of this, buttons can show up black.");
-          Container.ComplainedAboutBlendMode = true;
+        -- Warn the player for bad skins.
+        local BlendMode = Button.Border:GetBlendMode();
+        if BlendMode ~= "ADD" and BlendMode ~= "BLEND" then
+
+          if not Container.ComplainedAboutBlendMode then
+            AuraFrames:Print("The Masque skin used for container \""..Container.Config.Name.."\" is using a wrong type of blendmode (\""..BlendMode.."\") for the border. Please contact the skin author and request him to use \"ADD\" or \"BLEND\" as blendmode for the border. Because of this, buttons can show up black.");
+            Container.ComplainedAboutBlendMode = true;
+          end
+
         end
 
       end
@@ -755,20 +849,14 @@ function Prototype:AuraNew(Aura)
     end
     
   end
+
+  -- Make sure we dont have cluster info from an old aura.
+  Button.ClusterVisible = nil;
   
-  Button.NewFlashTime = self.NewFlashTime;
-  Button.ExpireFlashTime = self.ExpireFlashTime;
-  
-  Button.TimeSinceLastUpdate = 0.0;
   Button.TimeLeftSeconds = 0;
   
   Button.Aura = Aura;
   Button.Icon:SetTexture(Aura.Icon);
-  
-  if next(self.Buttons) == nil then
-    self._VisibleMultiplier = 1;
-    AuraFrames:UpdateVisibility(self);
-  end
   
   self.Buttons[Aura] = Button;
   
@@ -782,6 +870,19 @@ function Prototype:AuraNew(Aura)
     -- We need a full update.
     self:UpdateButton(Button);
 
+  end
+
+  self:UpdateVisibility();
+
+  Button:SetFrameStrata("MEDIUM");
+  Button:SetFrameLevel(FrameLevelNormal);
+
+  self.AnimationAuraNew:Play(Button);
+
+  self:ClusterDetection();
+
+  if self.AnimationGoingVisible:IsPlaying(self.Frame) then
+    self.AnimationGoingVisibleChild:Play(Button, nil, self.AnimationGoingVisible:GetProgression(self.Frame));
   end
   
 end
@@ -806,13 +907,9 @@ function Prototype:AuraOld(Aura)
     AuraFrames:HideTooltip();
   end
   
-  -- The warning system can have changed the alpha and scale. Set it back.
-  Button.Icon:SetAlpha(1.0);
-  Button:SetScale(self.ButtonScale);
-  
-  -- Reset popup animation trigger and restore the frame level.
-  Button.PopupTime = nil;
-  Button:SetFrameLevel(PopupFrameLevelNormal);
+  -- Reset animation settings.
+  AuraFrames:StopAnimations(Button);
+  AuraFrames:ClearAnimationEffects(Button);
   
   -- See in what pool we need to drop.
   if #self.ButtonPool >= ContainerButtonPoolSize then
@@ -820,7 +917,7 @@ function Prototype:AuraOld(Aura)
     -- General pool.
   
     if MSQ then
-      self.MSQGroup:RemoveButton(Button, true);
+      self.MSQGroup:RemoveButton(Button.Content, true);
     end
 
     Button:ClearAllPoints();
@@ -838,11 +935,8 @@ function Prototype:AuraOld(Aura)
   
   end
   
-  if next(self.Buttons) == nil then
-    self._VisibleMultiplier = self.Config.Layout.InactiveAlpha;
-    AuraFrames:UpdateVisibility(self);
-  end
-  
+  self:UpdateVisibility();
+
 end
 
 
@@ -880,8 +974,126 @@ function Prototype:AuraChanged(Aura)
     
   end
   
-  -- Start popup animation.
-  Button.PopupTime = 0.0;
+  if not self.AnimationAuraChanging:IsPlaying(Button) then
+    self.AnimationAuraChanging:Play(Button);
+  end
   
+end
+
+
+-----------------------------------------------------------------
+-- Function UpdateVisibility
+-----------------------------------------------------------------
+function Prototype:UpdateVisibility()
+
+  if self.Unlocked ~= true and (next(self.Buttons) == nil or self.ContainerVisibility == false) then
+    self:GoInvisible();
+  else
+    self:GoVisible();
+  end
+
+end
+
+-----------------------------------------------------------------
+-- Function GoVisible
+-----------------------------------------------------------------
+function Prototype:GoVisible()
+
+  if self.IsVisible == true then
+    return;
+  end
+
+  local Start = nil;
+
+  if self.AnimationGoingInvisible:IsPlaying(self.Frame) then
+    Start = self.AnimationGoingVisible.TotalDuration - self.AnimationGoingInvisible:GetProgression(self.Frame);
+    self.AnimationGoingInvisible:Stop(self.Frame);
+  end
+
+  self.AnimationGoingInvisible:ClearEffect(self.Frame);
+  self.AnimationGoingVisible:Play(self.Frame, nil, Start);
+
+  self.IsVisible = true;
+
+end
+
+
+-----------------------------------------------------------------
+-- Function GoInvisible
+-----------------------------------------------------------------
+function Prototype:GoInvisible()
+
+  if self.IsVisible == false then
+    return;
+  end
+
+  local Start = nil;
+
+  if self.AnimationGoingVisible:IsPlaying(self.Frame) then
+    Start = self.AnimationGoingInvisible.TotalDuration - self.AnimationGoingVisible:GetProgression(self.Frame);
+    self.AnimationGoingVisible:Stop(self.Frame);
+  end
+
+  self.AnimationGoingVisible:ClearEffect(self.Frame);
+  self.AnimationGoingInvisible:Play(self.Frame, nil, Start);
+
+  self.IsVisible = false;
+
+end
+
+
+-----------------------------------------------------------------
+-- Function UpdateAnimationConfig
+-----------------------------------------------------------------
+function Prototype:UpdateAnimationConfig(AnimationType)
+
+  local AnimationConfig = self.Config.Animations;
+
+  AnimationType = AnimationType or "ALL";
+
+  if AnimationType == "ALL" or AnimationType == "ContainerVisibility" then
+
+    -- Remove any animation effect on the TimeLine.
+    AuraFrames:StopAnimations(self.Frame);
+    AuraFrames:ClearAnimationEffects(self.Frame);
+    self.Frame:SetFrameStrata("MEDIUM");
+
+  end
+
+  if AnimationType == "ALL" or AnimationType == "AuraNew" or AnimationType == "AuraChanging" or AnimationType == "AuraExpiring" or AnimationType == "TimeLineCluster" then
+
+    for _, Button in pairs(self.Buttons) do
+
+      -- Remove any animation effect on the Button.
+      AuraFrames:StopAnimations(Button);
+      AuraFrames:ClearAnimationEffects(Button);
+      Button:SetFrameStrata("MEDIUM");
+      Button:SetFrameLevel(FrameLevelNormal);
+      Button.ClusterVisible = nil;
+
+    end
+
+  end
+
+  -- Update animation effects.
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraNew", self.AnimationAuraNew);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraChanging", self.AnimationAuraChanging);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraExpiring", self.AnimationAuraExpiring);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "TimeLineCluster", self.AnimationClusterGoVisible, self.AnimationClusterGoInvisible);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "ContainerVisibility", self.AnimationGoingVisible, self.AnimationGoingVisibleChild, self.AnimationGoingInvisible);
+
+  if AnimationType == "ALL" or AnimationType == "TimeLineCluster" then
+  
+    -- Detect clusters.
+    self:ClusterDetection();
+
+  end
+
+  -- Reset own status if needed.
+  if self.IsVisible == false and (AnimationType == "ALL" or AnimationType == "ContainerVisibility") then
+    self.IsVisible = true;
+    self:UpdateVisibility();
+  end
+
 end
 

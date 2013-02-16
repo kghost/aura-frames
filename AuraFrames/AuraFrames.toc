@@ -29,5 +29,8 @@ Masque\Skins.lua
 SpellCooldowns.lua
 Border.lua
 Visibility.lua
+AnimationSystem.lua
+AnimationEffects.lua
+Animations.lua
 
 Modules.xml

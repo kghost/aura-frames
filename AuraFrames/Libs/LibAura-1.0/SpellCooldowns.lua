@@ -30,13 +30,13 @@ LibAura:RegisterModuleSource(Module, "pet", "SPELLCOOLDOWN");
 
 
 -- Import used global references into the local namespace.
-local tinsert, tremove, tconcat, sort, tContains = tinsert, tremove, table.concat, sort, tContains;
+local tinsert, tremove, tconcat, sort, tContains, wipe = tinsert, tremove, table.concat, sort, tContains, wipe;
 local fmt, tostring = string.format, tostring;
 local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
 local GetTime, GetSpellBookItemInfo, UnitName, GetSpellInfo, GetSpellCooldown = GetTime, GetSpellBookItemInfo, UnitName, GetSpellInfo, GetSpellCooldown;
-local abs = abs;
+local abs, pcall = abs, pcall;
 
 -- Internal db used for storing auras, spellbooks and spell history.
 Module.db = Module.db or {};
@@ -324,6 +324,7 @@ function Module:UpdateSpellBook(Unit)
     if SpellId then
 
       local Aura = self.db[Unit][SpellId];
+      local _;
 
       Aura.Index = i;
       Aura.Name, _, Aura.Icon = GetSpellInfo(SpellId);

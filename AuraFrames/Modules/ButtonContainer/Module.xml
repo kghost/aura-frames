@@ -3,27 +3,35 @@
 
   <Script file="Module.lua" />
   <Script file="Prototype.lua" />
+  <Script file="Animations.lua" />
 
   <Frame name="AuraFramesButtonContainerTemplate" parent="UIParent" virtual="true" movable="true">
+    <Frames>
+      <Frame name="$parentContent" />
+    </Frames>
   </Frame>
 
-  <Button name="AuraFramesButtonTemplate" virtual="true" hidden="true">
-    <Layers>
-      <Layer level="BORDER">
-        <Texture name="$parentIcon" />
-      </Layer>
-      <Layer level="ARTWORK">
-        <FontString name="$parentCount" hidden="true" justifyH="RIGHT" />
-        <FontString name="$parentDuration" hidden="true" />
-        <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">
-          <TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>
-        </Texture>
-        <Texture name="$parentMiniBar" />
-      </Layer>
-    </Layers>
+  <Frame name="AuraFramesButtonTemplate" frameStrata="MEDIUM" frameLevel="6" virtual="true" hidden="true">
     <Frames>
-      <Cooldown name="$parentCooldown" level="BORDER" hidden="true" />
+      <Button name="$parentContent">
+        <Layers>
+          <Layer level="BORDER">
+            <Texture name="$parentIcon" />
+          </Layer>
+          <Layer level="ARTWORK">
+            <FontString name="$parentCount" hidden="true" justifyH="RIGHT" />
+            <FontString name="$parentDuration" hidden="true" />
+            <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">
+              <TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>
+            </Texture>
+            <Texture name="$parentMiniBar" />
+          </Layer>
+        </Layers>
+        <Frames>
+          <Cooldown name="$parentCooldown" level="BORDER" hidden="true" />
+        </Frames>
+      </Button>
     </Frames>
-  </Button>
+  </Frame>
 
 </Ui>

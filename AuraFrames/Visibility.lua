@@ -1,5 +1,14 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
-local LibAura = LibStub("LibAura-1.0");
+
+-- Import used global references into the local namespace.
+local pairs, GetTime, select = pairs, GetTime, select;
+local UnitAffectingCombat, GetActiveSpecGroup, IsMounted, UnitInVehicle, GetNumSubgroupMembers = UnitAffectingCombat, GetActiveSpecGroup, IsMounted, UnitInVehicle, GetNumSubgroupMembers;
+local GetInstanceInfo, GetNumGroupMembers, UnitInRaid, UnitIsUnit, C_PetBattles = GetInstanceInfo, GetNumGroupMembers, UnitInRaid, UnitIsUnit, C_PetBattles;
+
+-- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
+-- List them here for Mikk's FindGlobals script
+-- GLOBALS: 
+
 
 local FadeOutDelay = 0.5;
 
@@ -27,17 +36,15 @@ local Status = {
 
 
 -----------------------------------------------------------------
--- Local frames for handling events and updates
+-- Local frames for handling events
 -----------------------------------------------------------------
 local EventFrame = CreateFrame("Frame");
-local UpdateFrame = CreateFrame("Frame");
-UpdateFrame:Hide();
 
 
 -----------------------------------------------------------------
 -- Function CheckVisibility
 -----------------------------------------------------------------
-function AuraFrames:CheckVisibility(Container, IsMouseOver, SkipDelay)
+function AuraFrames:CheckVisibility(Container, IsMouseOver)
 
   Status.OnMouseOver = IsMouseOver or false;
 
@@ -77,95 +84,16 @@ function AuraFrames:CheckVisibility(Container, IsMouseOver, SkipDelay)
   
   end
   
-  if Container._Visible ~= Visible then
-  
-    Container._Visible = Visible;
+  if Container.ContainerVisibility ~= Visible then
+
+    Container.ContainerVisibility = Visible;
     
-    local x, y;
-
-    y = (1 / (Container.Config.Visibility.OpacityVisible - Container.Config.Visibility.OpacityNotVisible)) * (Container.Frame:GetAlpha() - Container.Config.Visibility.OpacityNotVisible);
-
-    if Container._Visible == true and Container.Config.Visibility.FadeIn == true then
-    
-      x = GetTime() - (Container.Config.Visibility.FadeInTime * y);
-    
-    elseif Container._Visible == false then
-    
-      if Container.Config.Visibility.OpacityVisible - Container.Frame:GetAlpha() < 0.005 and SkipDelay ~= true then
-
-        x = GetTime() + FadeOutDelay;
-
-      elseif Container.Config.Visibility.FadeOut == true then
-
-        x = GetTime() - (Container.Config.Visibility.FadeOutTime - (Container.Config.Visibility.FadeOutTime * y));
-
-      end
-    
+    if Container.UpdateVisibility then
+      Container:UpdateVisibility();
     end
-    
-    Container._VisibleTransitionStart = x;
 
-    UpdateFrame:Show();
-  
   end
 
-  self:UpdateVisibility(Container);
-
-end
-
-
------------------------------------------------------------------
--- Function UpdateVisibility
------------------------------------------------------------------
-function AuraFrames:UpdateVisibility(Container)
-
-  local Opacity = Container._Visible == true and Container.Config.Visibility.OpacityVisible or Container.Config.Visibility.OpacityNotVisible;
-  
-  if Container._VisibleTransitionStart then 
-  
-    local OpacityFrom = Container._Visible == true and Container.Config.Visibility.OpacityNotVisible or Container.Config.Visibility.OpacityVisible;
-  
-    local x, y;
-
-    x = GetTime() - Container._VisibleTransitionStart;
-  
-    if Container._Visible == true and Container.Config.Visibility.FadeIn == true then
-    
-      y = x / Container.Config.Visibility.FadeInTime;
-    
-    elseif Container._Visible == false and Container.Config.Visibility.FadeOut == true then
-    
-      y = x / Container.Config.Visibility.FadeOutTime;
-    
-    end
-    
-    if y >= 1 then
-      y = 1;
-      Container._VisibleTransitionStart = nil;
-    elseif y <= 0 then
-      y = 0;
-    end
-    
-    Opacity = OpacityFrom + ((Opacity - OpacityFrom) * y);
-  
-  end
-
-  Container.Frame:SetAlpha(Opacity * (Container._VisibleMultiplier or 1));
-
-  if Opacity == 0 and Container._VisibleDoNotHide ~= true and Container.Config.Visibility.VisibleWhen.OnMouseOver ~= true and Container.Config.Visibility.VisibleWhenNot.OnMouseOver ~= true then
-    
-    if Container.Frame:IsShown() then
-      Container.Frame:Hide();
-    end
-  
-  else
-    
-    if not Container.Frame:IsShown() then
-      Container.Frame:Show();
-    end
-    
-  end
-  
 end
 
 
@@ -301,31 +229,6 @@ local function ProcessStatusChanges(Event, Force)
   end
   
 end
-
-
------------------------------------------------------------------
--- Script OnUpdate
------------------------------------------------------------------
-UpdateFrame:SetScript("OnUpdate", function()
-
-  local Transitions = false;
-
-  for _, Container in pairs(AuraFrames.Containers) do
-    
-    if Container._VisibleTransitionStart then
-      AuraFrames:UpdateVisibility(Container);
-      Transitions = true;
-    end
-  
-  end
-  
-  if Transitions == false then
-  
-    UpdateFrame:Hide();
-  
-  end
-  
-end);
 
 
 -----------------------------------------------------------------

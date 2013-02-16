@@ -10,7 +10,7 @@ local GetTime, StaticPopupDialogs, StaticPopup_Show = GetTime, StaticPopupDialog
 
 -- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
 -- List them here for Mikk's FindGlobals script
--- GLOBALS: BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs
+-- GLOBALS: BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs, LibStub, StaticPopup_Hide
 
 local BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs = BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs;
 

@@ -2,6 +2,7 @@ local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local LibAura = LibStub("LibAura-1.0");
 
 -- Import used global references into the local namespace.
+local ipairs, unpack = ipairs, unpack;
 
 
 local TextureIds = {"_AFB_TR", "_AFB_TL", "_AFB_BR", "_AFB_BL", "_AFB_T", "_AFB_B", "_AFB_R", "_AFB_L"};

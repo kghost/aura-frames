@@ -7,7 +7,7 @@ local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, t
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
 local GetTime = GetTime;
-local tolower, toupper, tonumber, gsub, strlen = string.lower, string.upper, tonumber, string.gsub, strlen;
+local tolower, toupper, tonumber, gsub, strlen, abs = string.lower, string.upper, tonumber, string.gsub, strlen, abs;
 
 
 -----------------------------------------------------------------

@@ -68,6 +68,21 @@ end
 
 
 -----------------------------------------------------------------
+-- Function GetSupportedAnimationTypes
+-----------------------------------------------------------------
+function Module:GetSupportedAnimationTypes()
+
+  return {
+    "AuraNew",
+    "AuraChanging",
+    "AuraExpiring",
+    "ContainerVisibility",
+  };
+
+end
+
+
+-----------------------------------------------------------------
 -- Function GetDatabaseDefaults
 -----------------------------------------------------------------
 function Module:GetDatabaseDefaults()
@@ -135,32 +150,34 @@ function Module:GetDatabaseDefaults()
       MiniBarOffsetY = -25,
       
     },
-    Colors = AuraFrames:GetDatabaseDefaultColors(),
-    Warnings = {
-      New = {
-        Flash = false,
-        FlashNumber = 3.0,
-        FlashSpeed = 1.0,
+    Animations = {
+      AuraNew = {
+        Enabled = true,
+        Animation = "FadeIn",
+        Duration = 0.5,
       },
-      Expire = {
-        Flash = true,
-        FlashNumber = 5.0,
-        FlashSpeed = 1.0,
+      AuraChanging = {
+        Enabled = true,
+        Animation = "Popup",
+        Duration = 0.3,
+        Scale = 2.5,
       },
-      Changing = {
-        Popup = false,
-        PopupTime = 0.5,
-        PopupScale = 3.0,
+      AuraExpiring = {
+        Enabled = true,
+        Animation = "Flash",
+        Times = 3,
+        Duration = 1.0,
+      },
+      ContainerVisibility = {
+        Enabled = true,
+        Animation = "Fade",
+        Duration = 0.5,
+        InvisibleAlpha = 0.6,
       },
     },
+    Colors = AuraFrames:GetDatabaseDefaultColors(),
     Visibility = {
       AlwaysVisible = true,
-      FadeIn = true,
-      FadeInTime = 0.5,
-      FadeOut = true,
-      FadeOutTime = 0.5,
-      OpacityVisible = 1,
-      OpacityNotVisible = 0,
       VisibleWhen = {},
       VisibleWhenNot = {},
     },
@@ -192,7 +209,18 @@ function Module:New(Config)
     Container.Frame = CreateFrame("Frame", FrameId, UIParent, "AuraFramesButtonContainerTemplate");
     Container.Frame:SetClampedToScreen(true);
   end
+
+  Container.Module = self;
   
+  Container.Content = _G[FrameId.."Content"];
+
+  Container.AnimationAuraChanging = AuraFrames:NewAnimation();
+  Container.AnimationAuraExpiring = AuraFrames:NewAnimation();
+  Container.AnimationAuraNew = AuraFrames:NewAnimation();
+  Container.AnimationGoingVisible = AuraFrames:NewAnimation();
+  Container.AnimationGoingVisibleChild = AuraFrames:NewAnimation();
+  Container.AnimationGoingInvisible = AuraFrames:NewAnimation();
+
   Container.Frame:Show();
 
   Container.Id = Config.Id;
@@ -206,10 +234,15 @@ function Module:New(Config)
   
   Container.ButtonPool = {};
   
-  Container.MSQGroup = MSQ and MSQ:Group("AuraFrames", Config.Id) or null;
+  Container.MSQGroup = MSQ and MSQ:Group("AuraFrames", Config.Id) or nil;
   
   Container.DurationFontObject = _G[FrameId.."_DurationFont"] or CreateFont(FrameId..Config.Id.."_DurationFont");
   Container.CountFontObject = _G[FrameId.."_CountFont"] or CreateFont(FrameId..Config.Id.."_CountFont");
+  
+  Container.IsVisible = true;
+  Container.ContainerVisibility = true;
+
+  AuraFrames:UpdateAnimationRegionSize(Container.Frame);
 
   Container:Update();
 

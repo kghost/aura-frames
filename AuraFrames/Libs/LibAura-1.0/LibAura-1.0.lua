@@ -590,7 +590,7 @@ LibAura.EventFrame:SetScript("OnUpdate", function(Frame, Elapsed)
   
   Frame.TimeSinceLastUpdate = Frame.TimeSinceLastUpdate + Elapsed
   
-  if Frame.TimeSinceLastUpdate > 0.1 then
+  if Frame.TimeSinceLastUpdate > 0.05 then
     
     for _, Value in ipairs(Frame.Events.LIBAURA_UPDATE) do
     

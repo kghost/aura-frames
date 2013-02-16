@@ -21,7 +21,6 @@ Module.Prototype = {};
 -- List of all active containers that are based on this module.
 Module.Containers = {};
 
-
 -----------------------------------------------------------------
 -- Function OnInitialize
 -----------------------------------------------------------------
@@ -66,6 +65,21 @@ function Module:GetDescription()
 
 end
 
+
+-----------------------------------------------------------------
+-- Function GetSupportedAnimationTypes
+-----------------------------------------------------------------
+function Module:GetSupportedAnimationTypes()
+
+  return {
+    "AuraNew",
+    "AuraChanging",
+    "AuraExpiring",
+    "TimeLineCluster",
+    "ContainerVisibility",
+  };
+
+end
 
 -----------------------------------------------------------------
 -- Function GetDatabaseDefaults
@@ -148,8 +162,37 @@ function Module:GetDatabaseDefaults()
       BackgroundBorderColor = {0.05, 0.3, 0.8, 0.8},
       BackgroundBorderSize = 8,
       
-      InactiveAlpha = 0.65,
-      
+    },
+    Animations = {
+      AuraNew = {
+        Enabled = true,
+        Animation = "FadeIn",
+        Duration = 0.5,
+      },
+      AuraChanging = {
+        Enabled = true,
+        Animation = "Popup",
+        Duration = 0.3,
+        Scale = 2.5,
+      },
+      AuraExpiring = {
+        Enabled = true,
+        Animation = "Explode",
+        Duration = 0.5,
+        Scale = 3.5,
+      },
+      TimeLineCluster = {
+        Enabled = true,
+        Animation = "Fade",
+        Speed = 1.0,
+        Delay = 1.0,
+      },
+      ContainerVisibility = {
+        Enabled = true,
+        Animation = "Fade",
+        Duration = 0.5,
+        InvisibleAlpha = 0.6,
+      },
     },
     Colors = AuraFrames:GetDatabaseDefaultColors(),
     Warnings = {
@@ -164,19 +207,13 @@ function Module:GetDatabaseDefaults()
         FlashSpeed = 1.0,
       },
       Changing = {
-        Popup = true,
-        PopupTime = 0.5,
-        PopupScale = 3.0,
+        AnimationAuraChanged = true,
+        AnimationAuraChangedTime = 0.5,
+        AnimationAuraChangedScale = 3.0,
       },
     },
     Visibility = {
       AlwaysVisible = true,
-      FadeIn = true,
-      FadeInTime = 0.5,
-      FadeOut = true,
-      FadeOutTime = 0.5,
-      OpacityVisible = 1,
-      OpacityNotVisible = 0,
       VisibleWhen = {},
       VisibleWhenNot = {},
     },
@@ -207,13 +244,30 @@ function Module:New(Config)
     Container.Frame = CreateFrame("Frame", FrameId, UIParent, "AuraFramesTimeLineContainerTemplate");
     Container.Frame:SetClampedToScreen(true);
   end
+
+  Container.Module = self;
   
-  Container.FrameTexture = _G[FrameId.."Texture"];
-  
+  Container.Content = _G[FrameId.."Content"];
+  Container.FrameTexture = _G[FrameId.."ContentTexture"];
+
+  Container.AnimationClusterGoVisible = AuraFrames:NewAnimation();
+  Container.AnimationClusterGoInvisible = AuraFrames:NewAnimation();
+  Container.AnimationAuraChanging = AuraFrames:NewAnimation();
+  Container.AnimationAuraExpiring = AuraFrames:NewAnimation();
+  Container.AnimationAuraNew = AuraFrames:NewAnimation();
+  Container.AnimationGoingVisible = AuraFrames:NewAnimation();
+  Container.AnimationGoingVisibleChild = AuraFrames:NewAnimation();
+  Container.AnimationGoingInvisible = AuraFrames:NewAnimation();
+
   Container.Frame:Show();
 
   Container.Id = Config.Id;
-  Container.Config = Config;  
+  Container.Config = Config;
+
+  -- PowTimeCompressionDivider is used as soon as the AuraList gets active.
+  -- We can not do an container update (is use AuraList) before there is an AuraList object.
+  -- Just set an working value, it will get update before it get visible.
+  Container.PowTimeCompressionDivider = 1;
   
   Container.AuraList = AuraFrames:NewAuraList(Container, Config.Filter.Groups, nil, Config.Colors);
   
@@ -223,13 +277,18 @@ function Module:New(Config)
   
   Container.ButtonPool = {};
   
-  Container.MSQGroup = MSQ and MSQ:Group("AuraFrames", Config.Id) or null;
+  Container.MSQGroup = MSQ and MSQ:Group("AuraFrames", Config.Id) or nil;
   
-  Container.DurationFontObject = _G[FrameId.."_DurationFont"] or CreateFont(FrameId.."_DurationFont");
-  Container.CountFontObject = _G[FrameId.."_CountFont"] or CreateFont(FrameId.."_CountFont");
-  Container.TextFontObject = _G[FrameId.."_TextFont"] or CreateFont(FrameId.."_TextFont");
+  Container.DurationFontObject = _G[FrameId.."Content_DurationFont"] or CreateFont(FrameId.."Content_DurationFont");
+  Container.CountFontObject = _G[FrameId.."Content_CountFont"] or CreateFont(FrameId.."Content_CountFont");
+  Container.TextFontObject = _G[FrameId.."Content_TextFont"] or CreateFont(FrameId.."Content_TextFont");
 
   Container.TextLabels = {};
+
+  Container.IsVisible = true;
+  Container.ContainerVisibility = true;
+
+  AuraFrames:UpdateAnimationRegionSize(Container.Frame);
 
   Container:Update();
 
@@ -238,9 +297,20 @@ function Module:New(Config)
   Container.Frame:SetScript("OnLeave", function() Container:CheckVisibility(false); end);
   Container.Frame:RegisterEvent("PLAYER_ENTERING_WORLD");
   Container.Frame:RegisterEvent("ZONE_CHANGED");
+
+  Container.TimeSinceLastUpdate = 0;
+  Container.Frame:SetScript("OnUpdate", function(Button, Elapsed)
+    
+     Container.TimeSinceLastUpdate = Container.TimeSinceLastUpdate + Elapsed;
+     if Container.TimeSinceLastUpdate > 0.2 then
+        Container:ClusterDetection();
+        Container.TimeSinceLastUpdate = 0.0;
+     end
+    
+  end);
   
   AuraFrames:CheckVisibility(Container);
-  
+
   return Container;
 
 end

@@ -69,7 +69,7 @@ if not Module then return; end -- No upgrade needed.
 
 
 -- Import used global references into the local namespace.
-local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
+local tinsert, tremove, tconcat, sort, tContains = tinsert, tremove, table.concat, sort, tContains;
 local fmt, tostring = string.format, tostring;
 local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;

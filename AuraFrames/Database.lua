@@ -3,7 +3,7 @@ local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 -- Import used global references into the local namespace.
 local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
 local fmt, tostring = string.format, tostring;
-local select, pairs, next, type, unpack = select, pairs, next, type, unpack;
+local select, ipairs, pairs, next, type, unpack = select, ipairs, pairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
 local GetTime = GetTime;
@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 227;
+AuraFrames.DatabaseVersion = 229;
 
 
 --[[
@@ -106,6 +106,15 @@ AuraFrames.DatabaseVersion = 227;
   Version 227:
     Renamed unit boss to bossmod
 
+  Version 228:
+    Added DisableMasqueSkinWarnings
+
+  Version 229:
+    Removed Layout.InactiveAlpha for TimeLine
+    Removed unused Visibility settings
+    Migrate Warnings to Animations
+    Add to all timeline containers the animation Cluster:Fade
+  
 ]]--
 
 
@@ -341,12 +350,14 @@ function AuraFrames:DatabaseUpgrade()
   if self.db.profile.HideInPetBattle == nil then
     self.db.profile.HideInPetBattle = false;
   end
+
+  if self.db.profile.DisableMasqueSkinWarnings == nil then
+    self.db.profile.DisableMasqueSkinWarnings = false;
+  end
   
   -- Loop thru the containers and update the defaults.
   for _, Container in pairs(self.db.profile.Containers) do
-
     self:DatabaseContainerUpgrade(Container);
-
   end
   
   self.db.profile.DbVersion = AuraFrames.DatabaseVersion;
@@ -866,6 +877,92 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
 
       Container.Sources.bossmod = Container.Sources.boss;
       Container.Sources.boss = nil;
+
+    end
+  
+  end
+
+  if OldVersion < 229 then
+
+    if not Container.Animations then
+      Container.Animations = {};
+    end
+
+    if Container.Warnings then
+
+      local Warnings = Container.Warnings;
+
+      if Warnings.New and Warnings.New.Flash == true then
+
+        Container.Animations["AuraNew"] = {
+          Enabled = true,
+          Animation = "Flash",
+          Times = Warnings.New.FlashNumber,
+          Duration = Warnings.New.FlashSpeed,
+        };
+
+      end
+
+      if Warnings.Changing and Warnings.Changing.Popup == true then
+
+        Container.Animations["AuraChanging"] = {
+          Enabled = true,
+          Animation = "Popup",
+          Duration = Warnings.Changing.PopupTime,
+          Scale = Warnings.Changing.PopupScale,
+        };
+
+      end
+
+      if Warnings.Expire and Warnings.Expire.Flash == true then
+
+        Container.Animations["AuraExpiring"] = {
+          Enabled = true,
+          Animation = "Flash",
+          Times = Warnings.Expire.FlashNumber,
+          Duration = Warnings.Expire.FlashSpeed,
+        };
+
+      end
+
+    end
+
+    Container.Warnings = nil;
+
+    if Container.Type == "TimeLineContainer" then
+
+      Container.Animations["TimeLineCluster"] = {
+        Enabled = true,
+        Animation = "Fade",
+        Speed = 1.0,
+        Delay = 1.0,
+      };
+
+    end
+
+    if Container.Layout.InactiveAlpha and Container.Layout.InactiveAlpha ~= 1 then
+
+      Container.Animations["ContainerVisibility"] = {
+        Enabled = true,
+        Animation = "Fade",
+        Duration = 0.5,
+        InvisibleAlpha = Container.Layout.InactiveAlpha,
+      };
+
+    end
+
+    Container.Layout.InactiveAlpha = nil;
+
+    if Container.Visibility then
+
+      local Visibility = Container.Visibility;
+
+      Visibility.FadeIn = nil;
+      Visibility.FadeInTime = nil;
+      Visibility.FadeOut = nil;
+      Visibility.FadeOutTime = nil;
+      Visibility.OpacityVisible = nil;
+      Visibility.OpacityNotVisible = nil;
 
     end
   

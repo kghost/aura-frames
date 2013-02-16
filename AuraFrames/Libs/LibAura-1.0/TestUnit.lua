@@ -46,20 +46,20 @@ function Module:Enable()
 
   -- For the sake of ppl that wining about addon memory... We create the test data table when we are getting enabled.
   
-  -- [Type][SpellId] = {Classification, Duration, MaxStacks}
+  -- [Type][SpellId] = {Classification, Duration, MaxStacks, ChangedDuration}
   self.TestData = self.TestData or {};
   self.TestData["HELPFUL"] = Module.TestData["HELPFUL"] or {};
   self.TestData["HARMFUL"] = Module.TestData["HARMFUL"] or {};
 
-  self.TestData["HELPFUL"][21562] = {"Magic", 1800, 0}; -- Power Word: Fortitude
-  self.TestData["HELPFUL"][ 1706] = {"None", 15, 0}; -- Levitate
-  self.TestData["HELPFUL"][65007] = {"None", 10, 5}; -- Eye of the Broodmother
+  self.TestData["HELPFUL"][21562] = {"Magic", 1800, 0, 0}; -- Power Word: Fortitude
+  self.TestData["HELPFUL"][ 1706] = {"None", 15, 0, 0}; -- Levitate
+  self.TestData["HELPFUL"][65007] = {"None", 10, 5, 0}; -- Eye of the Broodmother
 
-  self.TestData["HARMFUL"][ 7386] = {"None", 3, 5}; -- Sunder Armor
-  self.TestData["HARMFUL"][  172] = {"Magic", 18, 0}; -- Corruption
-  self.TestData["HARMFUL"][69127] = {"None", 0, 0}; -- Chill of the Throne
-  self.TestData["HARMFUL"][59879] = {"Disease", 15, 0}; -- Blood Plague
-  self.TestData["HARMFUL"][ 1978] = {"Poison", 15, 0}; -- Serpent Sting
+  self.TestData["HARMFUL"][ 7386] = {"None", 3, 5, 0}; -- Sunder Armor
+  self.TestData["HARMFUL"][  172] = {"Magic", 18.5, 0, 6}; -- Corruption
+  self.TestData["HARMFUL"][69127] = {"None", 0, 0, 0}; -- Chill of the Throne
+  self.TestData["HARMFUL"][59879] = {"Disease", 15, 0, 3}; -- Blood Plague
+  self.TestData["HARMFUL"][ 1978] = {"Poison", 15, 0, 0}; -- Serpent Sting
   
   -- And no, no Module:Disabled. We even don't want to clean this up.
   
@@ -97,6 +97,7 @@ function Module:ActivateSource(Unit, Type)
       IsCancelable = false,
       IsDispellable = false,
       Duration = Options[2],
+      ChangedExpiration = (Options[4] ~= 0 and CurrentTime + Options[4]) or 0,
       ExpirationTime = (Options[2] ~= 0 and CurrentTime + Options[2]) or 0,
       Count = (Options[3] ~= 0 and 1) or 0,
       ItemId = 0,
@@ -162,6 +163,10 @@ function Module:Update()
         LibAura:FireAuraOld(Aura);
         
         Aura.ExpirationTime = CurrentTime + Module.TestData[Type][Aura.SpellId][2];
+
+        if Aura.ChangedExpiration ~= 0 then
+          Aura.ChangedExpiration = Module.TestData[Type][Aura.SpellId][4] and CurrentTime + Module.TestData[Type][Aura.SpellId][4] or 0;
+        end
         
         if Module.TestData[Type][Aura.SpellId][3] ~= 0 then
         
@@ -175,7 +180,14 @@ function Module:Update()
         
         LibAura:FireAuraNew(Aura);
         
+      elseif Aura.ChangedExpiration ~= 0 and Aura.ChangedExpiration <= CurrentTime then
+
+        Aura.ChangedExpiration = Module.TestData[Type][Aura.SpellId][4] and CurrentTime + Module.TestData[Type][Aura.SpellId][4] or 0;
+
+        LibAura:FireAuraChanged(Aura);
+
       end
+
     end
   
   end

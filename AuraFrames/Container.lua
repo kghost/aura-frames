@@ -96,6 +96,8 @@ function AuraFrames:CreateContainer(Id)
     end
 
   end
+
+  self.Containers[Id]:Update();
   
   return true;
 

@@ -1,5 +1,9 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
+-- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
+-- List them here for Mikk's FindGlobals script
+-- GLOBALS: LibStub
+
 local PlayerClass = select(2, UnitClass("player"));
 
 -----------------------------------------------------------------

@@ -25,13 +25,14 @@ LibAura:RegisterModuleSource(Module, "player", "ITEMCOOLDOWN");
 
 
 -- Import used global references into the local namespace.
-local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
+local tinsert, tremove, tconcat, sort, wipe = tinsert, tremove, table.concat, sort, wipe;
 local fmt, tostring = string.format, tostring;
 local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
-local loadstring, assert, error = loadstring, assert, error;
+local loadstring, assert, error, abs = loadstring, assert, error, abs;
 local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetInventoryItemID, GetContainerNumSlots, GetContainerItemID = GetInventoryItemID, GetContainerNumSlots, GetContainerItemID;
+local GetInventoryItemID, GetContainerNumSlots, GetContainerItemID, GetItemSpell = GetInventoryItemID, GetContainerNumSlots, GetContainerItemID, GetItemSpell;
 local UnitName, GetItemInfo, GetTime, GetItemCooldown = UnitName, GetItemInfo, GetTime, GetItemCooldown;
+
 
 -- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
 -- List them here for Mikk's FindGlobals script

@@ -3,30 +3,39 @@
 
   <Script file="Module.lua" />
   <Script file="Prototype.lua" />
+  <Script file="Animations.lua" />
 
-  <Frame name="AuraFramesTimeLineContainerTemplate" parent="UIParent" virtual="true" movable="true" resizable="true">
-    <Layers>
-      <Layer level="BACKGROUND">
-        <Texture name="$parentTexture" />
-      </Layer>
-    </Layers>
+  <Frame name="AuraFramesTimeLineContainerTemplate" frameStrata="MEDIUM" parent="UIParent" virtual="true" movable="true" resizable="true">
+    <Frames>
+      <Frame name="$parentContent">
+        <Layers>
+          <Layer level="BACKGROUND">
+            <Texture name="$parentTexture" />
+          </Layer>
+        </Layers>
+      </Frame>
+    </Frames>
   </Frame>
 
-  <Button name="AuraFramesTimeLineTemplate" virtual="true" hidden="true">
-    <Layers>
-      <Layer level="BORDER">
-        <Texture name="$parentIcon" />
-      </Layer>
-      <Layer level="ARTWORK">
-        <FontString name="$parentCount" hidden="true" justifyH="RIGHT" />
-        <FontString name="$parentDuration" hidden="true" />
-      </Layer>
-      <Layer level="OVERLAY">
-        <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">
-          <TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>
-        </Texture>
-      </Layer>
-    </Layers>
-  </Button>
+  <Frame name="AuraFramesTimeLineTemplate" frameStrata="MEDIUM" frameLevel="6" virtual="true" hidden="true">
+    <Frames>
+      <Button name="$parentContent">
+        <Layers>
+          <Layer level="BORDER">
+            <Texture name="$parentIcon" />
+          </Layer>
+          <Layer level="ARTWORK">
+            <FontString name="$parentCount" hidden="true" justifyH="RIGHT" />
+            <FontString name="$parentDuration" hidden="true" />
+          </Layer>
+          <Layer level="OVERLAY">
+            <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">
+              <TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>
+            </Texture>
+          </Layer>
+        </Layers>
+      </Button>
+    </Frames>
+  </Frame>
 
 </Ui>
