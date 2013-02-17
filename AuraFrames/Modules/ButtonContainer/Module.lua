@@ -116,6 +116,7 @@ function Module:GetDatabaseDefaults()
       DurationPosX = 0,
       DurationPosY = -25,
       DurationColor = {1, 1, 1, 1},
+      DurationAlignment = "CENTER",
 
       ShowCount = true,
       CountFont = "Friz Quadrata TT",
@@ -125,6 +126,7 @@ function Module:GetDatabaseDefaults()
       CountPosX = 10,
       CountPosY = -6,
       CountColor = {1, 1, 1, 1},
+      CountAlignment = "CENTER",
 
       Clickable = true,
       ShowTooltip = true,

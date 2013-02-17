@@ -19,7 +19,7 @@
             <Texture name="$parentIcon" />
           </Layer>
           <Layer level="ARTWORK">
-            <FontString name="$parentCount" hidden="true" justifyH="RIGHT" />
+            <FontString name="$parentCount" hidden="true" />
             <FontString name="$parentDuration" hidden="true" />
             <Texture name="$parentBorder" file="Interface\Buttons\UI-Debuff-Overlays" alphaMode="ADD">
               <TexCoords left="0.296875" right="0.5703125" top="0" bottom="0.515625"/>

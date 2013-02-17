@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 229;
+AuraFrames.DatabaseVersion = 230;
 
 
 --[[
@@ -114,7 +114,10 @@ AuraFrames.DatabaseVersion = 229;
     Removed unused Visibility settings
     Migrate Warnings to Animations
     Add to all timeline containers the animation Cluster:Fade
-  
+
+  Version 230:
+    Added DurationAlignment and CountAlignment to button container
+
 ]]--
 
 
@@ -963,6 +966,17 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
       Visibility.FadeOutTime = nil;
       Visibility.OpacityVisible = nil;
       Visibility.OpacityNotVisible = nil;
+
+    end
+  
+  end
+
+  if OldVersion < 230 then
+
+    if Container.Type == "ButtonContainer" then
+
+      Container.Layout.DurationAlignment = "CENTER";
+      Container.Layout.DurationAlignment = "CENTER";
 
     end
   

@@ -360,14 +360,16 @@ function Prototype:UpdateButton(Button)
   if Button.Duration ~= nil and self.Config.Layout.ShowDuration == true then
     
     Button.Duration:ClearAllPoints();
-    Button.Duration:SetPoint("CENTER", Button.Content, "CENTER", self.Config.Layout.DurationPosX, self.Config.Layout.DurationPosY);
+    Button.Duration:SetPoint(self.Config.Layout.DurationAlignment, Button.Content, "CENTER", self.Config.Layout.DurationPosX, self.Config.Layout.DurationPosY);
+    Button.Duration:SetJustifyH(self.Config.Layout.DurationAlignment);
   
   end
 
   if self.Config.Layout.ShowCount == true then
   
     Button.Count:ClearAllPoints();
-    Button.Count:SetPoint("CENTER", Button.Content, "CENTER", self.Config.Layout.CountPosX, self.Config.Layout.CountPosY);
+    Button.Count:SetPoint(self.Config.Layout.CountAlignment, Button.Content, "CENTER", self.Config.Layout.CountPosX, self.Config.Layout.CountPosY);
+    Button.Count:SetJustifyH(self.Config.Layout.CountAlignment);
     
   end
   
