@@ -221,6 +221,11 @@ function AuraFramesConfig:RefreshTree()
           text = "Spell Cooldowns",
           execute = function() AuraFramesConfig:ContentSpellCooldowns(); end,
         },
+        {
+          value = "InternalCooldowns",
+          text = "Internal Cooldowns",
+          execute = function() AuraFramesConfig:ContentInternalCooldowns(); end,
+        },
       },
     },
     {

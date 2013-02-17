@@ -148,6 +148,7 @@ do
 			end
 			Label_OnClick(this)
 		end)
+    return label;
 	end
 	
 	local function GetItem(self, text)  -- find an object based on the text parameter

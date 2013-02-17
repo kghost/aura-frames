@@ -352,6 +352,11 @@ local AllSources = {
         Type = "ITEMCOOLDOWN",
       },
       {
+        Name = "Internal Item Cooldowns",
+        Unit = "player",
+        Type = "INTERNALCOOLDOWNITEM",
+      },
+      {
         Name = "Totems",
         Unit = "player",
         Type = "TOTEM",

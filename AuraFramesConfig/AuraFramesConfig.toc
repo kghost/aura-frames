@@ -18,6 +18,7 @@ Import.lua
 ContentGeneral.lua
 ContentGeneralSettings.lua
 ContentSpellCooldowns.lua
+ContentInternalCooldowns.lua
 ContentContainers.lua
 ContentContainer.lua
 ContentSources.lua
