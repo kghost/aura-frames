@@ -48,6 +48,7 @@ function AuraFrames:OnEnable()
   self:RegisterBlizzardOptions();
   
   self:SetSpellCooldownList();
+  self:SetInternalCooldownList();
 
   self:CreateAllContainers();
 
@@ -260,7 +261,7 @@ function AuraFrames:Input(Message, EditBoxText, Func, ButtonText1, ButtonText2, 
           self:GetParent().button1:Disable();
         end
       end);
-      if FuncInputValidation(self.editBox, "") then
+      if FuncInputValidation(self.editBox, self.editBox:GetText()) then
         self.button1:Enable();
       else
         self.button1:Disable();

@@ -27,6 +27,7 @@ FormatTime.lua
 FontObject.lua
 Masque\Skins.lua
 SpellCooldowns.lua
+InternalCooldowns.lua
 Border.lua
 Visibility.lua
 AnimationSystem.lua

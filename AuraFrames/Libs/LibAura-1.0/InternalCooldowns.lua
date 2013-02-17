@@ -8,11 +8,6 @@
 --
 --
 -----------------------------------------------------------------
-
--- Support for internal cooldowns is currently disabled
-if true then return; end;
-
-
 local LibAura = LibStub("LibAura-1.0");
 
 local Major, Minor = "InternalCooldowns-1.0", 0;
@@ -25,25 +20,30 @@ LibAura:UnregisterModuleSource(Module, nil, nil);
 
 -- Register the test unit/types.
 LibAura:RegisterModuleSource(Module, "player", "INTERNALCOOLDOWNITEM");
-LibAura:RegisterModuleSource(Module, "player", "INTERNALCOOLDOWNTALENT");
+--LibAura:RegisterModuleSource(Module, "player", "INTERNALCOOLDOWNTALENT");
 
 -- Import used global references into the local namespace.
-local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
-local fmt, tostring = string.format, tostring;
-local select, pairs, ipairs, next, type, unpack = select, pairs, ipairs, next, type, unpack;
-local loadstring, assert, error = loadstring, assert, error;
-local setmetatable, getmetatable, rawset, rawget = setmetatable, getmetatable, rawset, rawget;
-local GetTime, UnitName, GetItemInfo, GetSpellInfo = GetTime, UnitName, GetItemInfo, GetSpellInfo;
+local wipe, pairs, tremove, tinsert = wipe, pairs, tremove, tinsert;
+local UnitName, GetItemInfo, GetInventoryItemID, GetContainerNumSlots, GetContainerItemID, NUM_BAG_SLOTS = UnitName, GetItemInfo, GetInventoryItemID, GetContainerNumSlots, GetContainerItemID, NUM_BAG_SLOTS;
+local floor, GetTime = floor, GetTime;
 
 -- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
 -- List them here for Mikk's FindGlobals script
 -- GLOBALS: LibStub
 
+-- We asume that 1 item can only have 1 internal cooldown.
+
+
 -- Internal db used for storing auras, spellbooks and spell history.
-Module.db = Module.db or {};
+Module.db = Module.db or {Auras = {}, ProcItems = {}, Equipped = {}};
 
 -- Pool used for storing unused auras.
 local AuraPool = {};
+
+local InternalCooldownList = {};
+
+
+local ScanEquippedItems = false;
 
 
 -----------------------------------------------------------------
@@ -51,32 +51,16 @@ local AuraPool = {};
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
 
-  self.ICD = self.ICD or LibStub("LibInternalCooldowns-1.0", true);
-  
-  -- No LibInternalCooldowns. Return :(
-  if not self.ICD then
-    return;
-  end
-  
-  -- Lib CallbackHandler (that is used by ICD) will prevent double registrations.
-  -- So no checks for that.
-  
-  if Type == "INTERNALCOOLDOWNITEM" then
+  LibAura:RegisterEvent("BAG_UPDATE", self, self.ScanEquippedItems);
+  LibAura:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", self, self.ScanEquippedItems);
 
-    self.db.Items = self.db.Items or {};
-    
-    self.ICD.RegisterCallback(self, "InternalCooldowns_Proc");
-    
-  elseif Type == "INTERNALCOOLDOWNTALENT" then
+  self:ScanEquippedItems();
 
-    self.db.Talents = self.db.Talents or {};
-    
-    self.ICD.RegisterCallback(self, "InternalCooldowns_TalentProc");
+  LibAura:RegisterObjectSource(self, "player", "HELPFUL");
+  LibAura:RegisterObjectSource(self, "player", "HARMFUL");
 
-  end
-  
-  LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.ScanCooldowns);
-  
+  LibAura:RegisterEvent("LIBAURA_UPDATE", self, self.Update);
+
 end
 
 
@@ -85,90 +69,240 @@ end
 -----------------------------------------------------------------
 function Module:DeactivateSource(Unit, Type)
 
-  if not self.ICD then
-    return;
+  LibAura:UnregisterEvent("BAG_UPDATE", self, self.ScanEquippedItems);
+  LibAura:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED", self, self.ScanEquippedItems);
+
+  LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.Update);
+
+  LibAura:UnregisterObjectSource(self, "player", "HELPFUL");
+  LibAura:UnregisterObjectSource(self, "player", "HARMFUL");
+
+  wipe(self.db.Equipped);
+
+  for _, Aura in pairs(self.db.Auras) do
+    LibAura:FireAuraOld(Aura);
   end
-  
-  if Type == "INTERNALCOOLDOWNITEM" then
 
-    self.ICD.UnregisterCallback(self, "InternalCooldowns_Proc");
-    
-    for _, Aura in ipairs(self.db.Items) do
-    
-      LibAura:FireAuraOld(Aura);
-    
-    end
-    
-    self.db.Items = nil;
-
-  elseif Type == "INTERNALCOOLDOWNTALENT" then
-
-    self.ICD.UnregisterCallback(self, "InternalCooldowns_TalentProc");
-    
-    for _, Aura in ipairs(self.db.Talents) do
-    
-      LibAura:FireAuraOld(Aura);
-    
-    end
-    
-    self.db.Talents = nil;
-
-  end
-  
-  if next(self.db) == nil then
-    
-    LibAura:UnregisterEvent("LIBAURA_UPDATE", self, self.ScanCooldowns);
-    
-  end
+  wipe(self.db.Auras);
 
 end
+
 
 -----------------------------------------------------------------
 -- Function GetAuras
 -----------------------------------------------------------------
 function Module:GetAuras(Unit, Type)
 
-  if Type == "INTERNALCOOLDOWNITEM" then
-
-    return self.db.Items or {};
-    
-  elseif Type == "INTERNALCOOLDOWNTALENT" then
-
-    return self.db.Talents or {};
-    
-  else
-  
-    return {};
-    
-  end
+  return {};
 
 end
 
 
 -----------------------------------------------------------------
--- Function ScanCooldowns
+-- Function SetConfig
 -----------------------------------------------------------------
-function Module:ScanCooldowns()
+function Module:SetInternalCooldownList(List)
+
+  InternalCooldownList = List;
+
+end
+
+
+-----------------------------------------------------------------
+-- Function AuraNew
+-----------------------------------------------------------------
+function Module:AuraNew(Aura)
+
+  -- Skip auras without time properties.
+  if Aura.ExpirationTime == nil or Aura.Duration == 0 then
+    return;
+  end
+
+  -- Skip auras that are not know to be used for internal cooldowns.
+  if not LibAura.ItemProcs[Aura.SpellId] then
+    return;
+  end
+
+  -- Set as default the first item associated with the spell.
+  local ItemId = LibAura.ItemProcs[Aura.SpellId][1];
+
+  -- Try to find the best associated item. self.db.Equipped is a list
+  -- of character + bag items. The items on the character have a weight
+  -- of 2, items in the bag have a weight 1. So prefer character items
+  -- over bag items.
+  local ItemWeight = 0;
+  for i = 1, #LibAura.ItemProcs[Aura.SpellId] do
+    
+    if self.db.Equipped[LibAura.ItemProcs[Aura.SpellId][i]] and ItemWeight < self.db.Equipped[LibAura.ItemProcs[Aura.SpellId][i]] then
+
+      ItemWeight = self.db.Equipped[LibAura.ItemProcs[Aura.SpellId][i]];
+      ItemId = LibAura.ItemProcs[Aura.SpellId][i];
+      break;
+
+    end
+
+  end
+
+  local SpellId = Aura.SpellId;
+  local SpellTime = Aura.ExpirationTime - Aura.Duration;
+
+  if not InternalCooldownList[ItemId] then
+
+    InternalCooldownList[ItemId] = {
+      ShortestCd = 0,
+      AverageCd = 0,
+      GuessedCd = 45,
+      OverruleCd = 0,
+      TimesSeen = 0,
+      SpellId = SpellId,
+    };
+
+  end
+
+  local ProcItem = InternalCooldownList[ItemId];
+
+  if self.db.ProcItems[ItemId] then
+
+    -- Calculate the time between the last proc and this proc.
+    local LastCd = SpellTime - self.db.ProcItems[ItemId];
+
+    -- Ignore all proc windows lower then 1 second (this can be server => client sync issues).
+    if LastCd < 1 then
+      return;
+    end
+
+    if LastCd ~= 0 and (ProcItem.ShortestCd == 0 or ProcItem.ShortestCd > LastCd) then
+      
+      -- Update ProcItem cooldown settings.
+      ProcItem.ShortestCd = LastCd;
+      ProcItem.GuessedCd = floor(LastCd);
+
+
+      if ProcItem.TimesSeen < 15 then
+        
+        -- Better guess if the test number is still quite low.
+        ProcItem.GuessedCd = ProcItem.GuessedCd - (ProcItem.GuessedCd % 5);
+
+      end
+
+    end
+
+    -- We only want to count the cooldowns that reasonable.
+    if LastCd ~= 0 and ProcItem.ShortestCd ~= 0 and LastCd < ProcItem.ShortestCd * 2 then
+
+      ProcItem.AverageCd = ((ProcItem.AverageCd * ProcItem.TimesSeen) + LastCd) / (ProcItem.TimesSeen + 1);
+      ProcItem.TimesSeen = ProcItem.TimesSeen + 1;
+
+    end
+
+  end
+
+  self.db.ProcItems[ItemId] = SpellTime;
+
+  -- Loop from the end to the begining so that tremove doesn't have to do more work then really needed.
+  for i = #self.db.Auras, 1, -1 do
+  
+    -- We only have auras of the player here, so its quite safe to detect same
+    -- on SpellId and ItemId.
+    if self.db.Auras[i].SpellId == SpellId and self.db.Auras[i].ItemId == ItemId then
+    
+      LibAura:FireAuraOld(self.db.Auras[i]);
+      tinsert(AuraPool, tremove(self.db.Auras, i));
+    
+    end
+    
+  end
+
+  if ProcItem.GuessedCd < 5 and ProcItem.OverruleCd == 0 then
+
+    -- Looks like a "on hit" equip effect, skip it.
+    return;
+
+  end
+
+  -- Get the correct cooldown to use.
+  local ItemCd = ProcItem.OverruleCd ~= 0 and ProcItem.OverruleCd or ProcItem.GuessedCd;
+
+  -- Get an aura table from the pool or create one.
+  local Aura = tremove(AuraPool) or {
+    Index = 0,
+    Type = "INTERNALCOOLDOWNITEM",
+    Unit = "player",
+    Classification = "None",
+    CasterUnit = "player",
+    CasterName = UnitName("player"),
+    IsStealable = false,
+    IsCancelable = true,
+    IsDispellable = false,
+    Count = 0,
+  };
+
+  -- Set the aura properties.
+  Aura.SpellId = SpellId;
+  Aura.ItemId = ItemId;
+  local _;
+  Aura.Name, _, _, _, _, _, _, _, _,  Aura.Icon, _ = GetItemInfo(ItemId);
+  Aura.ExpirationTime = SpellTime + ItemCd;
+  Aura.Duration = ItemCd;
+  Aura.CreationTime = SpellTime;
+  Aura.Id = "playerINTERNALCOOLDOWNITEM"..ItemId..Aura.ExpirationTime;
+  
+  -- Fire the aura to LibAura.
+  LibAura:FireAuraNew(Aura);
+  
+  -- Add the aura in our aura list.
+  tinsert(self.db.Auras, Aura);
+
+end
+
+-----------------------------------------------------------------
+-- Function AuraOld
+-----------------------------------------------------------------
+function Module:AuraOld()
+
+  -- Not used, but required as LibAura Source.
+
+end
+
+-----------------------------------------------------------------
+-- Function AuraChanged
+-----------------------------------------------------------------
+function Module:AuraChanged()
+
+  -- Not used, but required as LibAura Source.
+
+end
+
+-----------------------------------------------------------------
+-- Function Event
+-----------------------------------------------------------------
+function Module:Event()
+
+  -- Not used, but required as LibAura Source.
+
+end
+
+
+-----------------------------------------------------------------
+-- Function Update
+-----------------------------------------------------------------
+function Module:Update()
+
+  if ScanEquippedItems == true then
+    self:ScanEquippedItems();
+    ScanEquippedItems = false;
+  end
 
   local CurrentTime = GetTime();
+
+  -- Loop from the end to the begining so that tremove doesn't have to do more work then really needed.
+  for i = #self.db.Auras, 1, -1 do
   
-  for _, Auras in pairs(self.db) do
-  
-    local i = 1;
+    if self.db.Auras[i].ExpirationTime <= CurrentTime then
     
-    while Auras[i] do
+      LibAura:FireAuraOld(self.db.Auras[i]);
+      tinsert(AuraPool, tremove(self.db.Auras, i));
     
-      if Auras[i].ExpirationTime <= CurrentTime then
-      
-        LibAura:FireAuraOld(Auras[i]);
-        tinsert(AuraPool, tremove(Auras, i));
-      
-      else
-      
-        i = i + 1;
-      
-      end
-      
     end
     
   end
@@ -176,87 +310,53 @@ function Module:ScanCooldowns()
 end
 
 -----------------------------------------------------------------
--- Function InternalCooldowns_Proc
+-- Function QueueScanEquippedItems
 -----------------------------------------------------------------
-function Module:InternalCooldowns_Proc(_, ItemId, SpellId, Start, Duration)
+function Module:QueueScanEquippedItems()
 
-  local Aura = tremove(AuraPool);
-  
-  if not Aura then
-  
-    Aura = {
-      Index = 0,
-      Unit = "player",
-      Classification = "None",
-      CasterUnit = "player",
-      CasterName = UnitName("player"),
-      IsStealable = false,
-      IsCancelable = true,
-      IsDispellable = false,
-      Count = 0,
-    };
-  
-  end
-  
-  Aura.Type = "INTERNALCOOLDOWNITEM";
-  Aura.SpellId = SpellId;
-  Aura.ItemId = ItemId;
-  Aura.Name, _, _, _, _, _, _, _, _,  Aura.Icon, _ = GetItemInfo(ItemId);
-  Aura.ExpirationTime = Start + Duration;
-  Aura.Duration = Duration;
-  
-  if Start then
-    Aura.CreationTime = Start;
-  end
-  
-  Aura.Id = "playerINTERNALCOOLDOWNITEM"..ItemId..Aura.ExpirationTime;
-  
-  LibAura:FireAuraNew(Aura);
-  
-  tinsert(self.db.Items, Aura);
+  ScanEquippedItems = true;
 
 end
 
 
------------------------------------------------------------------
--- Function InternalCooldowns_TalentProc
------------------------------------------------------------------
-function Module:InternalCooldowns_TalentProc(_, SpellId, Start, Duration)
 
-  local Aura = tremove(AuraPool);
-  
-  if not Aura then
-  
-    Aura = {
-      Index = 0,
-      Unit = "player",
-      Classification = "None",
-      CasterUnit = "player",
-      CasterName = UnitName("player"),
-      IsStealable = false,
-      IsCancelable = true,
-      IsDispellable = false,
-      Count = 0,
-      ItemId = 0,
-    };
-  
+-----------------------------------------------------------------
+-- Function ScanEquippedItems
+-----------------------------------------------------------------
+function Module:ScanEquippedItems()
+
+  wipe(self.db.Equipped);
+
+  -- Scan equiped items.
+  for i = 1, 17 do
+    
+    local ItemId = GetInventoryItemID("player", i);
+    
+    -- ItemId is nil for non equiped slots.
+    if ItemId then
+      
+      self.db.Equipped[ItemId] = 2;
+      
+    end
+    
   end
   
-  Aura.Type = "INTERNALCOOLDOWNITEM";
-  Aura.SpellId = SpellId;
-  Aura.Name, _, Aura.Icon, _, _, _, _, _, _ = GetSpellInfo(SpellId);
-  Aura.ExpirationTime = Start + Duration;
-  Aura.Duration = Duration;
+  -- Scan bag.
+  for ContainerId = 0, NUM_BAG_SLOTS do
   
-  if Start then
-    Aura.CreationTime = Start;
+    for i = 1, GetContainerNumSlots(ContainerId) do
+    
+      local ItemId = GetContainerItemID(ContainerId, i)
+    
+      -- ItemId is nil for empty slots.
+      if ItemId then
+        
+        self.db.Equipped[ItemId] = 1;
+        
+      end
+    
+    end
+  
   end
-  
-  Aura.Id = "playerINTERNALCOOLDOWNTALENT"..SpellId..Aura.ExpirationTime;
-  
-  LibAura:FireAuraNew(Aura);
-
-  tinsert(self.db.Talents, Aura);
 
 end
-

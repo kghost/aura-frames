@@ -36,6 +36,7 @@ AuraFrames.AuraDefinition = {
       WEAPON = "Weapon enchantment",
       SPELLCOOLDOWN = "Spell Cooldown",
       ITEMCOOLDOWN = "Item Cooldown",
+      INTERNALCOOLDOWNITEM = "Internal Item Cooldown",
       TOTEM = "Totem",
       ALERT = "Boss Mod Alert",
     },

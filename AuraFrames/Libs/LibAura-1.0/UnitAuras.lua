@@ -400,6 +400,8 @@ function Module:ScanUnitAurasChanges(Unit, Type)
     - Blizzard will put new auras always at the end of the list
     - The order of the list will not change
     - On reloads or on zone transfer the order can change
+
+    There seems to be 1 exception of new auras at the end of the list, and that is refreshing buffs.
     
     We will have 2 lists, 1 of the new/current auras and 1 of the last scan. We will loop thro the
     blizz list and the last scan list at the same , while we are not at the end of last scan we
@@ -430,11 +432,11 @@ function Module:ScanUnitAurasChanges(Unit, Type)
           Id = nil;
           break;
         end
-      
+
       end
-      
+
       if Id then
-      
+
         -- Pop an aura table out the pool or create an new one.
         local Aura = tremove(AuraPool) or {
           ItemId = 0,
@@ -468,21 +470,42 @@ function Module:ScanUnitAurasChanges(Unit, Type)
       
       i = i + 1;
     
-    elseif Auras[j].Name ~= Name or Auras[j].CasterUnit ~= CasterUnit or Auras[j].ExpirationTime ~= ExpirationTime then -- removed aura
+    elseif Auras[j].ExpirationTime ~= ExpirationTime then
     
-      Auras[j].Index = 0;
+      if Auras[j].SpellId == SpellId and Auras[j].CasterUnit == CasterUnit then
+    
+        -- Updated aura ExpirationTime, fire old & new.
+        LibAura:FireAuraOld(Auras[j]);
+
+        -- Update any properties that can be changed.
+        Auras[j].Count = Count;
+        Auras[j].Duration = Duration or 0;
+        Auras[j].ExpirationTime = ExpirationTime;
+
+        LibAura:FireAuraNew(Auras[j]);
+
+        i = i + 1;
+        j = j + 1;
       
-      LibAura:FireAuraOld(Auras[j]);
-      
-      -- Release the old aura table in the pool for later use.
-      tinsert(AuraPool, tremove(Auras, j));
+      else
+    
+        -- Old aura, fire old.
+
+        Auras[j].Index = 0;
+        
+        LibAura:FireAuraOld(Auras[j]);
+        
+        -- Release the old aura table in the pool for later use.
+        tinsert(AuraPool, tremove(Auras, j));
+
+      end
     
     else -- Same aura, but can be changed.
     
       Auras[j].Index = i;
       
       if (Auras[j].Count ~= Count) then
-        
+
         Auras[j].Count = Count;
         
         LibAura:FireAuraChanged(Auras[j]);
@@ -505,7 +528,7 @@ function Module:ScanUnitAurasChanges(Unit, Type)
     if j >= #Auras + 1 then break end;
     
     local Aura = tremove(Auras);
-    
+
     Aura.Index = 0;
     
     LibAura:FireAuraOld(Aura);

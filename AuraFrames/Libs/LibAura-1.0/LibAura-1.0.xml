@@ -13,6 +13,8 @@
   <Script file="InternalCooldowns.lua"/>
   <Script file="BossMods.lua"/>
   
+  <Script file="ItemProcData.lua"/>
+
   <!--
   <Script file="OldAuras.lua"/>
   -->

@@ -56,7 +56,37 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
   
   elseif Aura.Type == "INTERNALCOOLDOWNITEM" or Aura.Type == "INTERNALCOOLDOWNITEMOLD" then
   
-    GameTooltip:SetInventoryItem(Aura.RealUnit or Aura.Unit, Aura.Index);
+    GameTooltip:SetInventoryItemByID(Aura.ItemId);
+    
+    if self.db.global.InternalCooldowns[Aura.ItemId] then
+
+      local ProcItem = self.db.global.InternalCooldowns[Aura.ItemId];
+
+      GameTooltip:AddLine(" ");
+      GameTooltip:AddLine("|cffff0000Internal Cooldown Information:|r");
+      GameTooltip:AddLine("  Shortest cd: "..(ProcItem.ShortestCd and (ProcItem.ShortestCd == 0 and "Unknown" or ProcItem.ShortestCd) or ""));
+      GameTooltip:AddLine("  Average cd: "..(ProcItem.AverageCd and (ProcItem.AverageCd == 0 and "Unknown" or ProcItem.AverageCd) or ""));
+      GameTooltip:AddLine("  Guessed cd: "..(ProcItem.GuessedCd or ""));
+      GameTooltip:AddLine("  Overrule cd: "..(ProcItem.OverruleCd and (ProcItem.OverruleCd == 0 and "Not set" or ProcItem.OverruleCd) or ""));
+      GameTooltip:AddLine("  Times Seen: "..(ProcItem.TimesSeen and (ProcItem.TimesSeen == 0 and "Not seen the cooldown time yet" or ProcItem.TimesSeen) or ""));
+
+      local SpellDisplay = "";
+
+      if ProcItem.SpellId then
+
+        local SpellName = GetSpellInfo(ProcItem.SpellId);
+
+        if SpellName then
+          SpellDisplay = SpellName.." ("..ProcItem.SpellId..")";
+        else
+          SpellDisplay = ProcItem.SpellId;
+        end
+
+      end
+
+      GameTooltip:AddLine("  Spell: "..SpellDisplay);
+
+    end
   
   elseif Aura.Type == "INTERNALCOOLDOWNTALENT" or Aura.Type == "INTERNALCOOLDOWNTALENTOLD" then
   
@@ -77,7 +107,7 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
   end
   
   if Options.ShowUnit == true or Options.ShowCaster == true or Options.ShowAuraId == true or Options.ShowClassification then
-    GameTooltip:AddLine(" ")
+    GameTooltip:AddLine(" ");
   end
 
   if Options.ShowUnit == true then
