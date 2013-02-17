@@ -45,24 +45,6 @@ function AuraFramesConfig:ContentGeneral()
   self:EnhanceContainer(SupportGroup)
   self.Content:AddChild(SupportGroup);
   
-  SupportGroup:AddText("Forum: ", nil, 60);
-
-  local ForumTextBox = AceGUI:Create("EditBox");
-  ForumTextBox:SetWidth(450);
-  ForumTextBox:SetText("http://forums.curseforge.com/showthread.php?t=1886");
-  ForumTextBox:DisableButton(true);
-  ForumTextBox:SetCallback("OnTextChanged", function()
-    ForumTextBox:SetText("http://forums.curseforge.com/showthread.php?t=1886");
-    ForumTextBox.editbox:HighlightText(0, ForumTextBox.editbox:GetNumLetters());
-  end);
-  ForumTextBox:SetCallback("OnEnter", function()
-    ForumTextBox.editbox:HighlightText(0, ForumTextBox.editbox:GetNumLetters());
-    ForumTextBox:SetFocus();
-  end);
-  SupportGroup:AddChild(ForumTextBox);
-  
-  
-  SupportGroup:AddText("");
   SupportGroup:AddText("Tickets:", nil, 60);
   
   local TicketsTextBox = AceGUI:Create("EditBox");
@@ -87,6 +69,10 @@ function AuraFramesConfig:ContentGeneral()
   self.Content:AddHeader("Credits");
 
   self.Content:AddText("This addon is developed and mainted by |cff0070DDBeautiuz|r (|cff9382C9Nexiuz|r) @ Bloodhoof EU.\n\nThe two most important addons that helped me and inspired me are SatrinaBuffFrame and LibBuffet.\n\nSpecial thanks goes to |cff9382C9Ripsomeone|r @ Bloodhoof EU for testing and helping me giving the addon his current form.");
+
+  self.Content:AddSpace();
+
+  self.Content:AddText("Also thanks goes to Chaud from Curse for helping me out with compiling internal data from WoWDB.com used for internal cooldowns.");
 
   self.Content:AddSpace();
 

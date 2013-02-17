@@ -80,4 +80,37 @@ function AuraFramesConfig:ContentGeneralSettings()
   Content:DoLayout();
   self.Content:DoLayout();
 
+  Content:AddHeader("Timer precision");
+  Content:AddText("Aura Frames allow you to use 1/10th of second in different containers. 1/10th of a second is mostly needed when the time left is getting under the 10 seconds. You can override here when you see the 1/10th of a second.\n");
+
+  local TimeExtRequirement;
+
+  local EnableTimeExtOverrule = AceGUI:Create("CheckBox");
+  EnableTimeExtOverrule:SetWidth(300);
+  EnableTimeExtOverrule:SetLabel("Override 1/10th of a second");
+  EnableTimeExtOverrule:SetValue(AuraFrames.db.profile.EnableTimeExtOverrule);
+  EnableTimeExtOverrule:SetCallback("OnValueChanged", function(_, _, Value)
+    AuraFrames.db.profile.EnableTimeExtOverrule = Value;
+    TimeExtRequirement:SetDisabled(not Value);
+  end);
+  Content:AddChild(EnableTimeExtOverrule);
+
+  Content:AddSpace();
+
+  TimeExtRequirement = AceGUI:Create("Slider");
+  TimeExtRequirement:SetDisabled(not AuraFrames.db.profile.EnableTimeExtOverrule);
+  TimeExtRequirement:SetLabel("Show 1/10th of a second under");
+  TimeExtRequirement:SetSliderValues(1, 60, 1);
+  TimeExtRequirement:SetValue(AuraFrames.db.profile.TimeExtRequirement);
+  TimeExtRequirement:SetCallback("OnValueChanged", function(_, _, Value)
+    AuraFrames.db.profile.TimeExtRequirement = Value;
+  end);
+  Content:AddChild(TimeExtRequirement);
+
+  Content:AddSpace(2);
+
+  Content:ResumeLayout();
+  Content:DoLayout();
+  self.Content:DoLayout();
+
 end

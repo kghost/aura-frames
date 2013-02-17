@@ -45,6 +45,7 @@ function Module:ContentLayoutText(Content, ContainerId)
     SEPCOLEXT     = "10:15.9",
     SEPDOTEXT     = "10.15.9",
     NONE          = "615",
+    NONEEXT       = "615.9",
   });
   TextLayout:SetLabel("Time layout");
   TextLayout:SetDisabled(not LayoutConfig.ShowText);
