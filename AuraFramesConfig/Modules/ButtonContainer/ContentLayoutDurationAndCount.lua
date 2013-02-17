@@ -34,9 +34,13 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   Content:AddChild(ShowDuration);
   
   Content:AddSpace();
+
+  local DurationGroup = AceGUI:Create("SimpleGroup");
+  DurationGroup:SetLayout("Flow");
+  DurationGroup:SetRelativeWidth(1);
+  Content:AddChild(DurationGroup);
   
   local DurationLayout = AceGUI:Create("Dropdown");
-  DurationLayout:SetWidth(150);
   DurationLayout:SetList({
     ABBREVSPACE   = "10 m",
     ABBREV        = "10m",
@@ -53,12 +57,22 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
     LayoutConfig.DurationLayout = Value;
     ContainerInstance:Update("LAYOUT");
   end);
-  Content:AddChild(DurationLayout);
-  
-  local DurationGroup = AceGUI:Create("SimpleGroup");
-  DurationGroup:SetLayout("Flow");
-  DurationGroup:SetRelativeWidth(1);
-  Content:AddChild(DurationGroup);
+  DurationGroup:AddChild(DurationLayout);
+
+  local DurationAlignment = AceGUI:Create("Dropdown");
+  DurationAlignment:SetList({
+    CENTER = "Center",
+    RIGHT  = "Right",
+    LEFT   = "Left",
+  });
+  DurationAlignment:SetLabel("Alignment");
+  DurationAlignment:SetDisabled(not LayoutConfig.ShowDuration);
+  DurationAlignment:SetValue(LayoutConfig.DurationAlignment);
+  DurationAlignment:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.DurationAlignment = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  DurationGroup:AddChild(DurationAlignment);
   
   local DurationFont = AceGUI:Create("LSM30_Font");
   DurationFont:SetList(LSM:HashTable("font"));
@@ -220,6 +234,21 @@ function Module:ContentLayoutDurationAndCount(Content, ContainerId)
   
   Content:AddSpace();
   
+  local CountAlignment = AceGUI:Create("Dropdown");
+  CountAlignment:SetList({
+    CENTER = "Center",
+    RIGHT  = "Right",
+    LEFT   = "Left",
+  });
+  CountAlignment:SetLabel("Alignment");
+  CountAlignment:SetDisabled(not LayoutConfig.ShowCount);
+  CountAlignment:SetValue(LayoutConfig.CountAlignment);
+  CountAlignment:SetCallback("OnValueChanged", function(_, _, Value)
+    LayoutConfig.CountAlignment = Value;
+    ContainerInstance:Update("LAYOUT");
+  end);
+  Content:AddChild(CountAlignment);
+
   local CountGroup = AceGUI:Create("SimpleGroup");
   CountGroup:SetLayout("Flow");
   CountGroup:SetRelativeWidth(1);
