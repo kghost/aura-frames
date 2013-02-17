@@ -1,7 +1,7 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
 -- Import used global references into the local namespace.
-local math_sin, math_cos, math_floor, math_ceil = math.sin, math.cos, math.floor, math.ceil;
+local math_floor, math_ceil = math.floor, math.ceil;
 
 --[[
 
@@ -14,6 +14,7 @@ local math_sin, math_cos, math_floor, math_ceil = math.sin, math.cos, math.floor
     SEPCOLEXT
     SEPDOTEXT
     NONE
+    NONEEXT
 
 ]]--
 
@@ -53,7 +54,18 @@ local Lookup = {
     Hours   = "%d.%.2d.%.2d.%.1d",
     Minutes = "%d.%.2d.%.1d",
   },
-  
+
+  NONE = "%d",
+  NONEEXT = "%d.%.1d",
+
+};
+
+local TranslationToNoExt = {
+
+  SEPCOLEXT = "SEPCOL",
+  SEPDOTEXT = "SEPDOT",
+  NONEEXT = "NONE",
+
 };
 
 -----------------------------------------------------------------
@@ -70,6 +82,10 @@ end
 -- Function FormatTimeLeft
 -----------------------------------------------------------------
 function AuraFrames:FormatTimeLeft(Format, TimeLeft, HideZero)
+
+  if self.db.profile.EnableTimeExtOverrule and TranslationToNoExt[Format] and TimeLeft >= self.db.profile.TimeExtRequirement then
+    Format = TranslationToNoExt[Format];
+  end
 
   local String;
 
@@ -125,12 +141,22 @@ function AuraFrames:FormatTimeLeft(Format, TimeLeft, HideZero)
       end
     end
   
+  elseif Format == "NONEEXT" then
+
+    local Ext = (TimeLeft % 1) * 10;
+
+    if HideZero == true and TimeLeft < 0.1 then
+      return "";
+    else
+      return Lookup[Format], TimeLeft, Ext;
+    end
+
   else -- NONE or invalid format.
   
     if HideZero == true and TimeLeft < 1 then
       return "";
     else
-      return "%d", TimeLeft;
+      return Lookup[Format], TimeLeft;
     end
   
   end

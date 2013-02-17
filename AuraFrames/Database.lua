@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 230;
+AuraFrames.DatabaseVersion = 231;
 
 
 --[[
@@ -117,6 +117,9 @@ AuraFrames.DatabaseVersion = 230;
 
   Version 230:
     Added DurationAlignment and CountAlignment to button container
+
+  Version 231:
+    Added EnableTimeExtOverrule and TimeExtRequirement
 
 ]]--
 
@@ -361,6 +364,14 @@ function AuraFrames:DatabaseUpgrade()
   -- Loop thru the containers and update the defaults.
   for _, Container in pairs(self.db.profile.Containers) do
     self:DatabaseContainerUpgrade(Container);
+  end
+
+  if self.db.profile.EnableTimeExtOverrule == nil then
+    self.db.profile.EnableTimeExtOverrule = false;
+  end
+
+  if self.db.profile.TimeExtRequirement == nil then
+    self.db.profile.TimeExtRequirement = 10;
   end
   
   self.db.profile.DbVersion = AuraFrames.DatabaseVersion;
