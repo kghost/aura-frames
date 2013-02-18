@@ -11,4 +11,6 @@
   <Script file="ContentLayoutColorsAndBorder.lua" />
   <Script file="ContentLayoutMiniBar.lua" />
   
+  <Script file="Animations.lua" />
+
 </Ui>

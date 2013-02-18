@@ -38,7 +38,6 @@ function Module:Update(ContainerId)
   if Container.Unlocked == true and Container.UnlockFrame then
   
     Container.UnlockText:SetText("Container "..Config.Name.."\n"..Container.Config.Layout.NumberOfBars);
-    Container.UnlockTextFrame:SetScale(1 / Config.Layout.Scale);
   
   end
 

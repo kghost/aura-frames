@@ -47,7 +47,6 @@ function Module:Update(ContainerId)
   if Container.Unlocked == true and Container.UnlockFrame then
   
     Container.UnlockFrame.Text:SetText("Container "..Config.Name);
-    Container.UnlockFrame.TextFrame:SetScale(1 / Config.Layout.Scale);
   
   end
 

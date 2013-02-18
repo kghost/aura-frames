@@ -9,5 +9,7 @@
   <Script file="ContentLayoutText.lua" />
   <Script file="ContentLayoutSkin.lua" />
   <Script file="ContentLayoutColorsAndBorder.lua" />
+
+  <Script file="Animations.lua" />
   
 </Ui>
