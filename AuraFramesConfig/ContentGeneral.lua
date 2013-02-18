@@ -72,7 +72,7 @@ function AuraFramesConfig:ContentGeneral()
 
   self.Content:AddSpace();
 
-  self.Content:AddText("Also thanks goes to Chaud from Curse for helping me out with compiling internal data from WoWDB.com used for internal cooldowns.");
+  self.Content:AddText("Also thanks goes to Chaud from Curse for helping me out with compiling internal data from WoWDB.com that is used for internal cooldowns.");
 
   self.Content:AddSpace();
 

@@ -226,6 +226,11 @@ function AuraFramesConfig:RefreshTree()
           text = "Internal Cooldowns",
           execute = function() AuraFramesConfig:ContentInternalCooldowns(); end,
         },
+        {
+          value = "CancelCombatAura",
+          text = "Cancel Combat Aura",
+          execute = function() AuraFramesConfig:ContentCancelCombatAura(); end,
+        },
       },
     },
     {

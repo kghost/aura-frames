@@ -19,6 +19,7 @@ ContentGeneral.lua
 ContentGeneralSettings.lua
 ContentSpellCooldowns.lua
 ContentInternalCooldowns.lua
+ContentCancelCombatAura.lua
 ContentContainers.lua
 ContentContainer.lua
 ContentSources.lua
