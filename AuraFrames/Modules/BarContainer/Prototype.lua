@@ -655,6 +655,12 @@ function Prototype:Update(...)
     -- We have bars in the container pool that doesn't match the settings anymore. Release them into the general pool.
     self:ReleasePool();
 
+    if Changed == "LAYOUT" then
+
+      self:UpdateAnimationConfig("BarContainerMove");
+
+    end
+
   end
 
   if Changed == "ALL" or Changed == "ANIMATIONS" then
@@ -883,6 +889,9 @@ function Prototype:AuraOld(Aura)
   -- Reset animation settings.
   AuraFrames:StopAnimations(Bar);
   AuraFrames:ClearAnimationEffects(Bar);
+
+  -- Reset order pos.
+  Bar.OrderPos = nil;
   
   -- See in what pool we need to drop.
   if #self.BarPool >= ContainerBarPoolSize then
@@ -952,6 +961,11 @@ function Prototype:AuraAnchor(Aura, Index)
 
   local Bar = self.Bars[Aura];
 
+  Bar.FromX = Bar.ToX;
+  Bar.FromY = Bar.ToY;
+
+  local OldPos = Bar.OrderPos;
+
   -- Save the order position.
   Bar.OrderPos = Index;
 
@@ -963,20 +977,32 @@ function Prototype:AuraAnchor(Aura, Index)
     
   end
   
-  local Scale = Bar:GetScale();
-  
-  Bar:ClearAllPoints();
+  local x = (Bar:GetWidth() / 2);
+  local y = ((self.Direction[2] * ((Index - 1) * (self.Config.Layout.BarHeight + self.Config.Layout.Space))) + ((self.Config.Layout.BarHeight / 2) * self.Direction[2]));
   
   Bar:SetPoint(
     "CENTER",
     self.Content,
     self.Direction[1],
-    (Bar:GetWidth() / 2) / Scale,
-    ((self.Direction[2] * ((Index - 1) * (self.Config.Layout.BarHeight + self.Config.Layout.Space))) + ((self.Config.Layout.BarHeight / 2) * self.Direction[2])) / Scale
+    x,
+    y
   );
 
+  Bar.ToX = x;
+  Bar.ToY = y;
+
   Bar:Show();
-  
+
+  if OldPos and OldPos ~= Index and Bar.FromX and Bar.FromY then
+
+    local CurrentEffects = self.AnimationMoveBar:GetCurrentEffects(Button);
+
+    Bar.MoveX = Bar.FromX + (CurrentEffects and CurrentEffects.XOffset or 0) - Bar.ToX;
+    Bar.MoveY = Bar.FromY + (CurrentEffects and CurrentEffects.YOffset or 0) - Bar.ToY;
+    self.AnimationMoveBar:Play(Bar);
+
+  end
+
 end
 
 
@@ -1086,10 +1112,11 @@ function Prototype:UpdateAnimationConfig(AnimationType)
   end
 
   -- Update animation effects.
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraNew", self.AnimationAuraNew);
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraChanging", self.AnimationAuraChanging);
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraExpiring", self.AnimationAuraExpiring);
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "ContainerVisibility", self.AnimationGoingVisible, self.AnimationGoingVisibleChild, self.AnimationGoingInvisible);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraNew", self, self.AnimationAuraNew);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraChanging", self, self.AnimationAuraChanging);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraExpiring", self, self.AnimationAuraExpiring);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "ContainerVisibility", self, self.AnimationGoingVisible, self.AnimationGoingVisibleChild, self.AnimationGoingInvisible);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "BarContainerMove", self, self.AnimationMoveBar);
 
   -- Reset own status if needed.
   if self.IsVisible == false and (AnimationType == "ALL" or AnimationType == "ContainerVisibility") then

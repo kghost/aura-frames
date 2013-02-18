@@ -187,10 +187,10 @@ end
 -----------------------------------------------------------------
 -- Local Function EffectCallBack
 -----------------------------------------------------------------
-local function EffectCallBack(Region, RegionEffect, Properties)
+local function EffectCallBack(Region, RegionEffect, Properties, Progression)
   
   if Properties.CallBack then
-    Properties.CallBack(Region:GetParent());
+    Properties.CallBack(Region:GetParent(), Progression);
   end
 
 end
@@ -203,9 +203,44 @@ function EffectConstructors:CallBack(Properties)
 
   local CallBackProperties = {
     Start = Properties.Start or 0,
+    Times = Properties.Times or 0,
     CallBack = Properties.CallBack or nil,
   };
   
   return EffectCallBack, CallBackProperties;
+
+end
+
+
+-----------------------------------------------------------------
+-- Local Function EffectExternal
+-----------------------------------------------------------------
+local function EffectExternal(Region, RegionEffect, Properties, Progression)
+  
+  if Properties.External then
+    Properties.External(Region, RegionEffect, Properties, Progression);
+  end
+
+end
+
+
+-----------------------------------------------------------------
+-- Function EffectExternal
+-----------------------------------------------------------------
+function EffectConstructors:External(Properties)
+  
+  local ExternalProperties = {
+    Start = 0,
+    Times = 1,
+  };
+
+  -- Copy all properties, the external effect may use it for his own.
+  for Key, Value in pairs(Properties) do
+    
+    ExternalProperties[Key] = Value;
+
+  end
+  
+  return EffectExternal, ExternalProperties;
 
 end

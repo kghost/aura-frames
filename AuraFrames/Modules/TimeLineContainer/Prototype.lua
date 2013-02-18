@@ -1076,11 +1076,11 @@ function Prototype:UpdateAnimationConfig(AnimationType)
   end
 
   -- Update animation effects.
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraNew", self.AnimationAuraNew);
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraChanging", self.AnimationAuraChanging);
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraExpiring", self.AnimationAuraExpiring);
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "TimeLineCluster", self.AnimationClusterGoVisible, self.AnimationClusterGoInvisible);
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "ContainerVisibility", self.AnimationGoingVisible, self.AnimationGoingVisibleChild, self.AnimationGoingInvisible);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraNew", self, self.AnimationAuraNew);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraChanging", self, self.AnimationAuraChanging);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraExpiring", self, self.AnimationAuraExpiring);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "TimeLineCluster", self, self.AnimationClusterGoVisible, self.AnimationClusterGoInvisible);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "ContainerVisibility", self, self.AnimationGoingVisible, self.AnimationGoingVisibleChild, self.AnimationGoingInvisible);
 
   if AnimationType == "ALL" or AnimationType == "TimeLineCluster" then
   

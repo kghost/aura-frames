@@ -77,6 +77,7 @@ function Module:GetSupportedAnimationTypes()
     "AuraChanging",
     "AuraExpiring",
     "ContainerVisibility",
+    "ButtonContainerMove",
   };
 
 end
@@ -222,6 +223,7 @@ function Module:New(Config)
   Container.AnimationGoingVisible = AuraFrames:NewAnimation();
   Container.AnimationGoingVisibleChild = AuraFrames:NewAnimation();
   Container.AnimationGoingInvisible = AuraFrames:NewAnimation();
+  Container.AnimationMoveButton = AuraFrames:NewAnimation();
 
   Container.Frame:Show();
 

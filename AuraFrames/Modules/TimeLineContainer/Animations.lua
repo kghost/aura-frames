@@ -17,7 +17,7 @@ local FrameLevelHigh = 9;
 -----------------------------------------------------------------
 -- Function TimeLineCluster:Swap
 -----------------------------------------------------------------
-function AuraFrames.Animations.TimeLineCluster.Swap(Properties, AnimationGoVisible, AnimationGoInvisible)
+function AuraFrames.Animations.TimeLineCluster.Swap(Properties, Container, AnimationGoVisible, AnimationGoInvisible)
 
   local DirectionTranslations = {
     UP = {0, 1},
@@ -85,7 +85,7 @@ end
 -----------------------------------------------------------------
 -- Function TimeLineCluster:Fade
 -----------------------------------------------------------------
-function AuraFrames.Animations.TimeLineCluster.Fade(Properties, AnimationGoVisible, AnimationGoInvisible)
+function AuraFrames.Animations.TimeLineCluster.Fade(Properties, Container, AnimationGoVisible, AnimationGoInvisible)
 
   AnimationGoVisible:SetConfig({
     KeepEffects = true,

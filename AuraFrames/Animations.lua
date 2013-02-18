@@ -26,7 +26,7 @@ local pairs = pairs;
 -----------------------------------------------------------------
 -- Function AuraNew:Flash
 -----------------------------------------------------------------
-function AuraFrames.Animations.AuraNew.Flash(Properties, Animation)
+function AuraFrames.Animations.AuraNew.Flash(Properties, Container, Animation)
 
   -- Alpha = (0.0 => 1.0) + (1.0 => 0.15 => 1.0) * Properties.Times
 
@@ -43,7 +43,7 @@ end
 -----------------------------------------------------------------
 -- Function AuraNew:JumpIn
 -----------------------------------------------------------------
-function AuraFrames.Animations.AuraNew.JumpIn(Properties, Animation)
+function AuraFrames.Animations.AuraNew.JumpIn(Properties, Container, Animation)
 
   Animation:SetConfig({
     Effects = {
@@ -59,7 +59,7 @@ end
 -----------------------------------------------------------------
 -- Function AuraNew:FadeIn
 -----------------------------------------------------------------
-function AuraFrames.Animations.AuraNew.FadeIn(Properties, Animation)
+function AuraFrames.Animations.AuraNew.FadeIn(Properties, Container, Animation)
 
   -- Alpha = (0.0 => 1.0)
 
@@ -75,7 +75,7 @@ end
 -----------------------------------------------------------------
 -- Function AuraChanging:Flash
 -----------------------------------------------------------------
-function AuraFrames.Animations.AuraChanging.Flash(Properties, Animation)
+function AuraFrames.Animations.AuraChanging.Flash(Properties, Container, Animation)
 
   -- Alpha = (1.0 => 0.15 => 1.0) * Properties.Times
 
@@ -91,7 +91,7 @@ end
 -----------------------------------------------------------------
 -- Function AuraChanging:Popup
 -----------------------------------------------------------------
-function AuraFrames.Animations.AuraChanging.Popup(Properties, Animation)
+function AuraFrames.Animations.AuraChanging.Popup(Properties, Container, Animation)
 
   Animation:SetConfig({
     Effects = {
@@ -107,7 +107,7 @@ end
 -----------------------------------------------------------------
 -- Function AuraExpiring:Flash
 -----------------------------------------------------------------
-function AuraFrames.Animations.AuraExpiring.Flash(Properties, Animation)
+function AuraFrames.Animations.AuraExpiring.Flash(Properties, Container, Animation)
 
   -- Alpha = (1.0 => 0.15 => 1.0) * Properties.Times + (1.0 => 0.0)
 
@@ -124,7 +124,7 @@ end
 -----------------------------------------------------------------
 -- Function AuraExpiring:FadeOut
 -----------------------------------------------------------------
-function AuraFrames.Animations.AuraExpiring.FadeOut(Properties, Animation)
+function AuraFrames.Animations.AuraExpiring.FadeOut(Properties, Container, Animation)
 
   -- Alpha = (1.0 => 0.0)
 
@@ -140,7 +140,7 @@ end
 -----------------------------------------------------------------
 -- Function AuraExpiring:Explode
 -----------------------------------------------------------------
-function AuraFrames.Animations.AuraExpiring.Explode(Properties, Animation)
+function AuraFrames.Animations.AuraExpiring.Explode(Properties, Container, Animation)
 
   Animation:SetConfig({
     Effects = {
@@ -157,7 +157,7 @@ end
 -----------------------------------------------------------------
 -- Function AuraExpiring:JumpOut
 -----------------------------------------------------------------
-function AuraFrames.Animations.AuraExpiring.JumpOut(Properties, Animation)
+function AuraFrames.Animations.AuraExpiring.JumpOut(Properties, Container, Animation)
 
   Animation:SetConfig({
     Effects = {
@@ -173,7 +173,7 @@ end
 -----------------------------------------------------------------
 -- Function ContainerVisibility:Jump
 -----------------------------------------------------------------
-function AuraFrames.Animations.ContainerVisibility.Jump(Properties, AnimationGoingVisible, AnimationGoingVisibleChild, AnimationGoingInvisible)
+function AuraFrames.Animations.ContainerVisibility.Jump(Properties, Container, AnimationGoingVisible, AnimationGoingVisibleChild, AnimationGoingInvisible)
 
   AnimationGoingVisible:SetConfig({
     KeepEffects = true,
@@ -211,7 +211,7 @@ end
 -----------------------------------------------------------------
 -- Function ContainerVisibility:Fade
 -----------------------------------------------------------------
-function AuraFrames.Animations.ContainerVisibility.Fade(Properties, AnimationGoingVisible, AnimationGoingVisibleChild, AnimationGoingInvisible)
+function AuraFrames.Animations.ContainerVisibility.Fade(Properties, Container, AnimationGoingVisible, AnimationGoingVisibleChild, AnimationGoingInvisible)
 
   AnimationGoingVisible:SetConfig({
     KeepEffects = true,
@@ -236,11 +236,11 @@ end
 -----------------------------------------------------------------
 -- Function UpdateAnimationConfig
 -----------------------------------------------------------------
-function AuraFrames:UpdateAnimationConfig(AnimationConfig, AnimationType, ...)
+function AuraFrames:UpdateAnimationConfig(AnimationConfig, AnimationType, Container, ...)
 
   if AnimationConfig[AnimationType] and AnimationConfig[AnimationType].Enabled == true and self.Animations[AnimationType][AnimationConfig[AnimationType].Animation] then
 
-    self.Animations[AnimationType][AnimationConfig[AnimationType].Animation](AnimationConfig[AnimationType], ...);
+    self.Animations[AnimationType][AnimationConfig[AnimationType].Animation](AnimationConfig[AnimationType], Container, ...);
 
   else
 

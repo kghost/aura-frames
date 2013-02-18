@@ -537,6 +537,12 @@ function Prototype:Update(...)
     
     -- We have buttons in the container pool that doesn't match the settings anymore. Release them into the general pool.
     self:ReleasePool();
+
+    if Changed == "LAYOUT" then
+
+      self:UpdateAnimationConfig("ButtonContainerMove");
+
+    end
     
   end
   
@@ -716,6 +722,9 @@ function Prototype:AuraOld(Aura)
   -- Reset animation settings.
   AuraFrames:StopAnimations(Button);
   AuraFrames:ClearAnimationEffects(Button);
+
+  -- Reset order pos.
+  Button.OrderPos = nil;
   
   -- See in what pool we need to drop.
   if #self.ButtonPool >= ContainerButtonPoolSize then
@@ -780,6 +789,11 @@ function Prototype:AuraAnchor(Aura, Index)
 
   local Button = self.Buttons[Aura];
 
+  Button.FromX = Button.ToX;
+  Button.FromY = Button.ToY;
+
+  local OldPos = Button.OrderPos;
+
   -- Save the order position.
   Button.OrderPos = Index;
 
@@ -799,22 +813,35 @@ function Prototype:AuraAnchor(Aura, Index)
   else
     x, y = math_floor((Index - 1) / self.Config.Layout.VerticalSize), ((Index - 1) % self.Config.Layout.VerticalSize);
   end
-  
-  local Scale = Button:GetScale();
-  
-  Button:ClearAllPoints();
+
+  x = self.Direction[3] * ((x * (self.Config.Layout.ButtonSizeX + (x and self.Config.Layout.SpaceX))) + (self.Config.Layout.ButtonSizeX / 2));
+  y = self.Direction[4] * ((y * (self.Config.Layout.ButtonSizeY + (y and self.Config.Layout.SpaceY))) + (self.Config.Layout.ButtonSizeY / 2));
   
   -- Set the position.
   Button:SetPoint(
     "CENTER",
     self.Content,
     self.Direction[1],
-    (self.Direction[3] * ((x * (self.Config.Layout.ButtonSizeX + (x and self.Config.Layout.SpaceX))) + (self.Config.Layout.ButtonSizeX / 2))) / Scale,
-    (self.Direction[4] * ((y * (self.Config.Layout.ButtonSizeY + (y and self.Config.Layout.SpaceY))) + (self.Config.Layout.ButtonSizeY / 2))) / Scale
+    x,
+    y
   );
+
+  Button.ToX = x;
+  Button.ToY = y;
 
   -- Make sure the button is showned.
   Button:Show();
+
+  if OldPos and OldPos ~= Index and Button.FromX and Button.FromY then
+
+    local CurrentEffects = self.AnimationMoveButton:GetCurrentEffects(Button);
+
+    Button.MoveX = Button.FromX + (CurrentEffects and CurrentEffects.XOffset or 0) - Button.ToX;
+    Button.MoveY = Button.FromY + (CurrentEffects and CurrentEffects.YOffset or 0) - Button.ToY;
+
+    self.AnimationMoveButton:Play(Button);
+
+  end
 
 end
 
@@ -925,10 +952,11 @@ function Prototype:UpdateAnimationConfig(AnimationType)
   end
 
   -- Update animation effects.
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraNew", self.AnimationAuraNew);
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraChanging", self.AnimationAuraChanging);
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraExpiring", self.AnimationAuraExpiring);
-  AuraFrames:UpdateAnimationConfig(AnimationConfig, "ContainerVisibility", self.AnimationGoingVisible, self.AnimationGoingVisibleChild, self.AnimationGoingInvisible);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraNew", self, self.AnimationAuraNew);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraChanging", self, self.AnimationAuraChanging);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "AuraExpiring", self, self.AnimationAuraExpiring);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "ContainerVisibility", self, self.AnimationGoingVisible, self.AnimationGoingVisibleChild, self.AnimationGoingInvisible);
+  AuraFrames:UpdateAnimationConfig(AnimationConfig, "ButtonContainerMove", self, self.AnimationMoveButton);
 
   -- Reset own status if needed.
   if self.IsVisible == false and (AnimationType == "ALL" or AnimationType == "ContainerVisibility") then

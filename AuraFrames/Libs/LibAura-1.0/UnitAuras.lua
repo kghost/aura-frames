@@ -17,7 +17,9 @@ Blizzard unit aura order:
   The Blizzard aura order is simple, the last aura a unit gains will be added to the
   end of the list. This order can be changed by a ui reload or a zone transfer. To
   make it as fast as posible, we dont scan the whole list but we compare the Blizzard
-  list with the internal list by walking thru both lists at the same time.
+  list with the internal list by walking thru both lists at the same time. There is one
+  exception, which is that when an aura gets a refresh, it can stay on the same place
+  in the order.
 
 
 Duplicated auras:

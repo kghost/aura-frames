@@ -60,6 +60,7 @@ function Module:GetSupportedAnimationTypes()
     "AuraChanging",
     "AuraExpiring",
     "ContainerVisibility",
+    "BarContainerMove",
   };
 
 end
@@ -211,6 +212,7 @@ function Module:New(Config)
   Container.AnimationGoingVisible = AuraFrames:NewAnimation();
   Container.AnimationGoingVisibleChild = AuraFrames:NewAnimation();
   Container.AnimationGoingInvisible = AuraFrames:NewAnimation();
+  Container.AnimationMoveBar = AuraFrames:NewAnimation();
 
   Container.Frame:Show();
 

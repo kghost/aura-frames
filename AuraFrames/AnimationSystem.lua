@@ -49,17 +49,22 @@ local _G, CreateFrame = _G, CreateFrame;
 local pairs, ipairs, tinsert, wipe, setmetatable, next, tremove = pairs, ipairs, tinsert, wipe, setmetatable, next, tremove;
 local math_cos, PI = math.cos, PI;
 
-
 -- Pre calculate pi * 2 and pi / 2
 local PI2 = PI + PI;
 local PI_2 = PI / 2;
 
-
 local PoolRegionEffects = {};
-
-
 local AnimationPrototype = {};
 
+local Animations = {};
+
+local UpdateRegions = {};
+
+local UpdateFrame = CreateFrame("Frame");
+UpdateFrame:Hide();
+UpdateFrame:SetScript("OnUpdate", function(_, Elapsed)
+  AuraFrames:AnimationUpdate(Elapsed);
+end);
 
 -----------------------------------------------------------------
 -- Local Function RegionUpdateSize
@@ -76,6 +81,7 @@ local function RegionUpdateSize(Region)
   Region._AnimationRegion:SetHeight(Region:GetHeight());
 
 end
+
 
 -----------------------------------------------------------------
 -- Function AddEffect
@@ -219,9 +225,9 @@ function AnimationPrototype:Play(Region, CallBack, StartTime)
   Region._Animations[self].YOffset = 0;
   Region._Animations[self].CallBack = CallBack;
   
-  self:Update(0);
-  self.Frame:Show();
-  
+AuraFrames:AnimationUpdate(0);
+  UpdateFrame:Show();
+
 end
 
 
@@ -241,6 +247,16 @@ end
 function AnimationPrototype:GetProgression(Region)
 
   return self.Regions[Region] and self.Regions[Region].Time or 0;
+
+end
+
+
+-----------------------------------------------------------------
+-- Function GetCurrentEffects
+-----------------------------------------------------------------
+function AnimationPrototype:GetCurrentEffects(Region)
+
+  return Region and Region._Animations and Region._Animations[self] or nil;
 
 end
 
@@ -321,116 +337,6 @@ end
 
 local EffectResult = {};
 
------------------------------------------------------------------
--- Function Update
------------------------------------------------------------------
-function AnimationPrototype:Update(Elapsed)
-
-  for Region, _ in pairs(self.Regions) do
-  
-    local RegionData = self.Regions[Region];
-    
-    EffectResult.Scale = 1;
-    EffectResult.Alpha = 1;
-    EffectResult.XOffset = 0;
-    EffectResult.YOffset = 0;
-  
-    RegionData.Time = RegionData.Time + (Elapsed * self.Speed);
-
-    local IsRunning = RegionData.Time <= self.TotalDuration + self.EndDelay;
-    local InProgress = RegionData.Time <= self.TotalDuration;
-    local HaveEffects = false;
-    
-    for i, Effect in ipairs(self.Effects) do
-
-      local Properties = Effect.Properties;
-    
-      if Properties.Duration then
-    
-        local Progression = (RegionData.Time - Properties.Start) / (Properties.Duration * Properties.Times);
-        if Progression > 1 and RegionData.State[Properties] ~= true then
-
-          RegionData.State[Properties] = true;
-
-          if not InProgress and Effect.NextTypeEffect == nil then
-            Progression = 1;
-          end
-
-        end
-
-        if Progression <= 1 and Progression >= 0 then
-        
-          Progression = Progression * Properties.Times;
-          
-          if Progression > 1 then
-          
-            local Fraction = Progression % 1;
-            
-            Progression = Properties.Bounce == true and (Progression % 2 > 1 and 1 - Fraction or Fraction) or Fraction;
-            
-          end
-
-          if Properties.Smoothing == "SinSNS" then
-          
-            -- Sinus: Slow - Normal - Slow
-            -- plot x=-1..1, p=(cos(PI + (PI * x)) + 1) / 2
-            Progression = (math_cos(PI + (PI * Progression)) + 1) / 2;
-          
-          elseif Properties.Smoothing == "SinSN" then
-          
-            -- Sinus: Slow - Normal
-            -- plot x=-1..1, p=(cos(PI + (PI * x)/2) + 1)
-            Progression = math_cos(PI + (PI * Progression) / 2) + 1;
-          
-          elseif Properties.Smoothing == "SinNS" then
-          
-            -- Sinus: Normal - Slow
-            -- plot x=-1..1, p=cos(PI + (PI/2) + (PI * (x/2)))
-            Progression = math_cos(PI + PI_2 + (PI * (Progression / 2)));
-          
-          end
-
-          Effect.Function(Region._AnimationRegion, EffectResult, Properties, Progression);
-          HaveEffects = true;
-            
-        end
-        
-      elseif RegionData.Time > Properties.Start and RegionData.State[Properties] ~= true then
-        
-        RegionData.State[Properties] = true;
-        Effect.Function(Region._AnimationRegion, EffectResult, Properties);
-        HaveEffects = true;
-
-      end
-    
-    end
-
-    if HaveEffects == true and Region._Animations[self] then
-
-      Region._Animations[self].Scale = EffectResult.Scale;
-      Region._Animations[self].Alpha = EffectResult.Alpha;
-      Region._Animations[self].XOffset = EffectResult.XOffset;
-      Region._Animations[self].YOffset = EffectResult.YOffset;
-
-      AuraFrames:ApplyAnimationEffects(Region);
-
-    end
-
-    if IsRunning ~= true then
-    
-      self:Stop(Region, true);
-
-    end
-    
-  end
-  
-  if next(self.Regions) == nil then
-    self.Frame:Hide();
-  end
-
-end
-
-
 
 -----------------------------------------------------------------
 -- Function ApplyAnimationEffects
@@ -447,6 +353,7 @@ function AuraFrames:ApplyAnimationEffects(Region)
     YOffset = YOffset + EffectProperties.YOffset;
   
   end
+
 
   if Region._ScaleRegion then
     Region._ScaleRegion:SetScale(Scale);
@@ -511,8 +418,136 @@ function AuraFrames:NewAnimation(Config)
   end);
 
   Animation:SetConfig(Config or {});
+
+  tinsert(Animations, Animation);
   
   return Animation;
+
+end
+
+
+
+-----------------------------------------------------------------
+-- Function AnimationUpdate
+-----------------------------------------------------------------
+function AuraFrames:AnimationUpdate(Elapsed)
+
+  local HaveRunningAnimations = false;
+
+  for _, Animation in pairs(Animations) do
+
+    for Region, _ in pairs(Animation.Regions) do
+    
+      local RegionData = Animation.Regions[Region];
+      
+      EffectResult.Scale = 1;
+      EffectResult.Alpha = 1;
+      EffectResult.XOffset = 0;
+      EffectResult.YOffset = 0;
+    
+      RegionData.Time = RegionData.Time + (Elapsed * Animation.Speed);
+
+      local IsRunning = RegionData.Time <= Animation.TotalDuration + Animation.EndDelay;
+      local InProgress = RegionData.Time <= Animation.TotalDuration;
+      local HaveEffects = false;
+      
+      for i, Effect in ipairs(Animation.Effects) do
+
+        local Properties = Effect.Properties;
+      
+        if Properties.Duration then
+      
+          local Progression = (RegionData.Time - Properties.Start) / (Properties.Duration * Properties.Times);
+          if Progression > 1 and RegionData.State[Properties] ~= true then
+
+            RegionData.State[Properties] = true;
+
+            if not InProgress and Effect.NextTypeEffect == nil then
+              Progression = 1;
+            end
+
+          end
+
+          if Progression <= 1 and Progression >= 0 then
+          
+            Progression = Progression * Properties.Times;
+            
+            if Progression > 1 then
+            
+              local Fraction = Progression % 1;
+              
+              Progression = Properties.Bounce == true and (Progression % 2 > 1 and 1 - Fraction or Fraction) or Fraction;
+              
+            end
+
+            if Properties.Smoothing == "SinSNS" then
+            
+              -- Sinus: Slow - Normal - Slow
+              -- plot x=-1..1, p=(cos(PI + (PI * x)) + 1) / 2
+              Progression = (math_cos(PI + (PI * Progression)) + 1) / 2;
+            
+            elseif Properties.Smoothing == "SinSN" then
+            
+              -- Sinus: Slow - Normal
+              -- plot x=-1..1, p=(cos(PI + (PI * x)/2) + 1)
+              Progression = math_cos(PI + (PI * Progression) / 2) + 1;
+            
+            elseif Properties.Smoothing == "SinNS" then
+            
+              -- Sinus: Normal - Slow
+              -- plot x=-1..1, p=cos(PI + (PI/2) + (PI * (x/2)))
+              Progression = math_cos(PI + PI_2 + (PI * (Progression / 2)));
+            
+            end
+
+            Effect.Function(Region._AnimationRegion, EffectResult, Properties, Progression);
+            HaveEffects = true;
+              
+          end
+          
+        elseif RegionData.Time > Properties.Start and RegionData.State[Properties] ~= true then
+          
+          RegionData.State[Properties] = true;
+          Effect.Function(Region._AnimationRegion, EffectResult, Properties);
+          HaveEffects = true;
+
+        end
+      
+      end
+
+      if HaveEffects == true and Region._Animations[Animation] then
+
+        Region._Animations[Animation].Scale = EffectResult.Scale;
+        Region._Animations[Animation].Alpha = EffectResult.Alpha;
+        Region._Animations[Animation].XOffset = EffectResult.XOffset;
+        Region._Animations[Animation].YOffset = EffectResult.YOffset;
+      
+        UpdateRegions[Region] = true;
+        --AuraFrames:ApplyAnimationEffects(Region);
+
+      end
+
+      if IsRunning ~= true then
+      
+        Animation:Stop(Region, true);
+
+      end
+      
+    end
+
+    if next(Animation.Regions) ~= nil then
+      HaveRunningAnimations = true
+    end
+
+  end
+  
+  if HaveRunningAnimations == false then
+    UpdateFrame:Hide();
+  end
+
+  for Region, _ in pairs(UpdateRegions) do
+    AuraFrames:ApplyAnimationEffects(Region);
+  end
 
 end
 

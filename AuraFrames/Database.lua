@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 231;
+AuraFrames.DatabaseVersion = 232;
 
 
 --[[
@@ -120,6 +120,9 @@ AuraFrames.DatabaseVersion = 231;
 
   Version 231:
     Added EnableTimeExtOverrule and TimeExtRequirement
+
+  Version 232:
+    Fixed a bug with database upgrade 230. CountAlignment didnt get upgraded
 
 ]]--
 
@@ -987,7 +990,19 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
     if Container.Type == "ButtonContainer" then
 
       Container.Layout.DurationAlignment = "CENTER";
-      Container.Layout.DurationAlignment = "CENTER";
+      Container.Layout.CountAlignment = "CENTER";
+
+    end
+  
+  end
+
+  if OldVersion < 232 then
+
+    if Container.Type == "ButtonContainer" then
+
+      if not Container.Layout.CountAlignment then
+        Container.Layout.CountAlignment = "CENTER";
+      end
 
     end
   

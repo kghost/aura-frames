@@ -42,14 +42,19 @@ local AuraPool = {};
 
 local InternalCooldownList = {};
 
-
 local ScanEquippedItems = false;
+
+local ItemProcs;
 
 
 -----------------------------------------------------------------
 -- Function ActivateSource
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
+
+  if not ItemProcs then
+    ItemProcs = LibAura:GetItemProcs();
+  end
 
   LibAura:RegisterEvent("BAG_UPDATE", self, self.ScanEquippedItems);
   LibAura:RegisterEvent("PLAYER_EQUIPMENT_CHANGED", self, self.ScanEquippedItems);
@@ -119,24 +124,24 @@ function Module:AuraNew(Aura)
   end
 
   -- Skip auras that are not know to be used for internal cooldowns.
-  if not LibAura.ItemProcs[Aura.SpellId] then
+  if not ItemProcs[Aura.SpellId] then
     return;
   end
 
   -- Set as default the first item associated with the spell.
-  local ItemId = LibAura.ItemProcs[Aura.SpellId][1];
+  local ItemId = ItemProcs[Aura.SpellId][1];
 
   -- Try to find the best associated item. self.db.Equipped is a list
   -- of character + bag items. The items on the character have a weight
   -- of 2, items in the bag have a weight 1. So prefer character items
   -- over bag items.
   local ItemWeight = 0;
-  for i = 1, #LibAura.ItemProcs[Aura.SpellId] do
+  for i = 1, #ItemProcs[Aura.SpellId] do
     
-    if self.db.Equipped[LibAura.ItemProcs[Aura.SpellId][i]] and ItemWeight < self.db.Equipped[LibAura.ItemProcs[Aura.SpellId][i]] then
+    if self.db.Equipped[ItemProcs[Aura.SpellId][i]] and ItemWeight < self.db.Equipped[ItemProcs[Aura.SpellId][i]] then
 
-      ItemWeight = self.db.Equipped[LibAura.ItemProcs[Aura.SpellId][i]];
-      ItemId = LibAura.ItemProcs[Aura.SpellId][i];
+      ItemWeight = self.db.Equipped[ItemProcs[Aura.SpellId][i]];
+      ItemId = ItemProcs[Aura.SpellId][i];
       break;
 
     end
