@@ -1,6 +1,12 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local MSQ = LibStub("Masque", true);
 
+-- Import used global references into the local namespace.
+local SetOverrideBindingClick, CreateFont, GameFontNormal, GameTooltip = SetOverrideBindingClick, CreateFont, GameFontNormal, GameTooltip;
+local pairs, tinsert, max, ceil, _G = pairs, tinsert, max, ceil, _G;
+local GetTime, GetInventoryItemTexture, GetWeaponEnchantInfo, UnitAura = GetTime, GetInventoryItemTexture, GetWeaponEnchantInfo, UnitAura;
+
+
 AuraFrames.CancelCombatAura = {};
 local CancelCombatAura = AuraFrames.CancelCombatAura;
 
