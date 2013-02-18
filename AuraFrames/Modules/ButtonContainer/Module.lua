@@ -240,8 +240,8 @@ function Module:New(Config)
   
   Container.MSQGroup = MSQ and MSQ:Group("AuraFrames", Config.Id) or nil;
   
-  Container.DurationFontObject = _G[FrameId.."_DurationFont"] or CreateFont(FrameId..Config.Id.."_DurationFont");
-  Container.CountFontObject = _G[FrameId.."_CountFont"] or CreateFont(FrameId..Config.Id.."_CountFont");
+  Container.DurationFontObject = _G[FrameId.."_DurationFont"] or CreateFont(FrameId.."_DurationFont");
+  Container.CountFontObject = _G[FrameId.."_CountFont"] or CreateFont(FrameId.."_CountFont");
   
   Container.IsVisible = true;
   Container.ContainerVisibility = true;

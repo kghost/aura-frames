@@ -857,7 +857,9 @@ function Prototype:AuraNew(Aura)
   Bar:SetFrameStrata("MEDIUM");
   Bar:SetFrameLevel(FrameLevelNormal);
 
-  self.AnimationAuraNew:Play(Bar);
+  if not Aura.IsRefired then
+    self.AnimationAuraNew:Play(Bar);
+  end
 
   if self.AnimationGoingVisible:IsPlaying(self.Frame) then
     self.AnimationGoingVisibleChild:Play(Bar, nil, self.AnimationGoingVisible:GetProgression(self.Frame));

@@ -22,6 +22,7 @@ local UnitClass, UnitName = UnitClass, UnitName;
 function AuraFrames:ShowTooltip(Aura, Frame, Options)
 
   GameTooltip:SetOwner(Frame, "ANCHOR_BOTTOMLEFT");
+  GameTooltip:SetFrameLevel(Frame:GetFrameLevel() + 2);
   
   if Aura.Unit == "bossmod" and Aura.Type == "ALERT" then
   

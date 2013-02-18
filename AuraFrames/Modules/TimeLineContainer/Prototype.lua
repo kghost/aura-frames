@@ -877,7 +877,9 @@ function Prototype:AuraNew(Aura)
   Button:SetFrameStrata("MEDIUM");
   Button:SetFrameLevel(FrameLevelNormal);
 
-  self.AnimationAuraNew:Play(Button);
+  if not Aura.IsRefired then
+    self.AnimationAuraNew:Play(Button);
+  end
 
   self:ClusterDetection();
 

@@ -50,6 +50,8 @@ function AuraFrames:OnEnable()
   self:SetSpellCooldownList();
   self:SetInternalCooldownList();
 
+  self.CancelCombatAura:Update();
+
   self:CreateAllContainers();
 
 end

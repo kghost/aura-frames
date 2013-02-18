@@ -34,4 +34,8 @@ AnimationSystem.lua
 AnimationEffects.lua
 Animations.lua
 
+CancelCombatAura.xml
+CancelCombatAura.lua
+
+
 Modules.xml

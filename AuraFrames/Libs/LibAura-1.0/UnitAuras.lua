@@ -130,10 +130,8 @@ for Unit, _ in pairs(Module.EventsToMonitor) do
 
 end
 
-
 -- Internal db used for storing auras.
 Module.db = Module.db or {};
-
 
 -----------------------------------------------------------------
 -- UnitTranslations
@@ -461,6 +459,7 @@ function Module:ScanUnitAurasChanges(Unit, Type)
         Aura.IsDispellable = false;
         Aura.SpellId = SpellId;
         Aura.Id = Id;
+        Aura.IsRefired = false;
         
         tinsert(Auras, Aura);
         
@@ -483,6 +482,7 @@ function Module:ScanUnitAurasChanges(Unit, Type)
         Auras[j].Count = Count;
         Auras[j].Duration = Duration or 0;
         Auras[j].ExpirationTime = ExpirationTime;
+        Auras[j].IsRefired = true;
 
         LibAura:FireAuraNew(Auras[j]);
 
@@ -636,6 +636,7 @@ function Module:ScanUnitAuras(Unit, Type)
         Aura.SpellId = SpellId;
         Aura.Id = Id;
         Aura.Scanned = true;
+        Aura.IsRefired = false;
         
         if Duration and ExpirationTime then
           Aura.CreationTime = ExpirationTime - Duration;

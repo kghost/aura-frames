@@ -20,7 +20,7 @@ local DestroyTotem = DestroyTotem;
 local RestoreHandlers, BackupHandlers, FireHandler;
 
 -- Create the secure button we use for canceling auras.
-local CancelAuraButton = CreateFrame("Button", "AuraFramesButtonContainerActionButton", UIParent, "SecureActionButtonTemplate");
+local CancelAuraButton = CreateFrame("Button", "AuraFramesCancelAuraButton", UIParent, "SecureActionButtonTemplate");
 CancelAuraButton:Hide();
 CancelAuraButton:SetFrameStrata("HIGH")
 CancelAuraButton:RegisterForClicks("RightButtonUp");

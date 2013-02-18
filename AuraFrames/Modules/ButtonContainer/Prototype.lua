@@ -690,7 +690,9 @@ function Prototype:AuraNew(Aura)
   Button:SetFrameStrata("MEDIUM");
   Button:SetFrameLevel(FrameLevelNormal);
 
-  self.AnimationAuraNew:Play(Button);
+  if not Aura.IsRefired then
+    self.AnimationAuraNew:Play(Button);
+  end
 
   if self.AnimationGoingVisible:IsPlaying(self.Frame) then
     self.AnimationGoingVisibleChild:Play(Button, nil, self.AnimationGoingVisible:GetProgression(self.Frame));

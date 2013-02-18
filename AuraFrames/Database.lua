@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 232;
+AuraFrames.DatabaseVersion = 233;
 
 
 --[[
@@ -124,6 +124,10 @@ AuraFrames.DatabaseVersion = 232;
   Version 232:
     Fixed a bug with database upgrade 230. CountAlignment didnt get upgraded
 
+  Version 233:
+    Added CancelCombatAura
+
+
 ]]--
 
 
@@ -141,6 +145,46 @@ local DatabaseDefaults = {
     },
     HideBlizzardAuraFrames = true,
     HideBossModsBars = false,
+    HideInPetBattle = true,
+    EnableTimeExtOverrule = false,
+    TimeExtRequirement = 10,
+    CancelCombatAura = {
+
+      Enabled = false,
+      IncludeWeaponEnchantments = true,
+      ShowTooltip = true,
+      Order = "NAME",
+      OrderReverse = false,
+      HorizontalSize = 8,
+      VerticalSize = 4,
+      SpaceX = 10,
+      SpaceY = 30,
+      OnlyRightButton = false,
+      Keybinding = nil,
+      ToggleMode = false,
+
+      ShowDuration = true,
+      DurationFont = "Friz Quadrata TT",
+      DurationOutline = "OUTLINE",
+      DurationMonochrome = false,
+      DurationLayout = "ABBREVSPACE",
+      DurationSize = 16,
+      DurationPosX = 0,
+      DurationPosY = -47,
+      DurationColor = {1, 1, 1, 1},
+      DurationAlignment = "CENTER",
+
+      ShowCount = true,
+      CountFont = "Friz Quadrata TT",
+      CountOutline = "OUTLINE",
+      CountMonochrome = false,
+      CountSize = 16,
+      CountPosX = 20,
+      CountPosY = -20,
+      CountColor = {1, 1, 1, 1},
+      CountAlignment = "CENTER",
+
+    },
   },
   global = {
     SpellCooldowns = {
@@ -364,11 +408,6 @@ function AuraFrames:DatabaseUpgrade()
     self.db.profile.DisableMasqueSkinWarnings = false;
   end
   
-  -- Loop thru the containers and update the defaults.
-  for _, Container in pairs(self.db.profile.Containers) do
-    self:DatabaseContainerUpgrade(Container);
-  end
-
   if self.db.profile.EnableTimeExtOverrule == nil then
     self.db.profile.EnableTimeExtOverrule = false;
   end
@@ -376,7 +415,16 @@ function AuraFrames:DatabaseUpgrade()
   if self.db.profile.TimeExtRequirement == nil then
     self.db.profile.TimeExtRequirement = 10;
   end
-  
+
+  if self.db.profile.CancelCombatAura == nil then
+    self.db.profile.CancelCombatAura = DatabaseDefaults.profile.CancelCombatAura;
+  end
+
+  -- Loop thru the containers and update the defaults.
+  for _, Container in pairs(self.db.profile.Containers) do
+    self:DatabaseContainerUpgrade(Container);
+  end
+
   self.db.profile.DbVersion = AuraFrames.DatabaseVersion;
   
 end
