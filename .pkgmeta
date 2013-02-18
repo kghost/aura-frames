@@ -7,7 +7,7 @@ move-folders:
     AuraFrames/AuraFramesConfig: AuraFramesConfig
 
 required-dependencies:
-    - buttonfacade
+    - masque
     - colorpickerplus
 
 externals:
