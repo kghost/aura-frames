@@ -475,8 +475,12 @@ function Module:ScanUnitAurasChanges(Unit, Type)
     
       if Auras[j].SpellId == SpellId and Auras[j].CasterUnit == CasterUnit then
     
+        Auras[j].GoingRefire = true;
+
         -- Updated aura ExpirationTime, fire old & new.
         LibAura:FireAuraOld(Auras[j]);
+
+        Auras[j].GoingRefire = false;
 
         -- Update any properties that can be changed.
         Auras[j].Count = Count;

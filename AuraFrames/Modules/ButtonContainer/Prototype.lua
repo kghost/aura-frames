@@ -836,12 +836,19 @@ function Prototype:AuraAnchor(Aura, Index)
 
   if OldPos and OldPos ~= Index and Button.FromX and Button.FromY then
 
-    local CurrentEffects = self.AnimationMoveButton:GetCurrentEffects(Button);
-
     Button.MoveX = Button.FromX + (CurrentEffects and CurrentEffects.XOffset or 0) - Button.ToX;
     Button.MoveY = Button.FromY + (CurrentEffects and CurrentEffects.YOffset or 0) - Button.ToY;
 
-    self.AnimationMoveButton:Play(Button);
+    -- If not moving then stop the animation (no need to check if it is playing).
+    if Button.MoveX == 0 and Button.MoveY == 0 then
+
+      self.AnimationMoveButton:Stop(Button);
+
+    else
+
+      self.AnimationMoveButton:Play(Button);
+
+    end
 
   end
 

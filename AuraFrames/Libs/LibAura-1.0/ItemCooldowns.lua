@@ -109,7 +109,9 @@ end
 function Module:DeactivateSource(Unit, Type)
 
   for _, Aura in pairs(self.db) do
-    LibAura:FireAuraOld(Aura);
+    if Aura.Active == true and Aura.RefItemId == 0 then
+      LibAura:FireAuraOld(Aura);
+    end
   end
   
   wipe(self.db);

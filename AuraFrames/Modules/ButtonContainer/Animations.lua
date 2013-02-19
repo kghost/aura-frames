@@ -16,10 +16,10 @@ local FrameLevelHigh = 9;
 
 local function ExternalTranslationDirect(Region, RegionEffect, Properties, Progression)
 
-  local Bar = Region:GetParent();
+  local Button = Region:GetParent();
 
-  RegionEffect.XOffset = RegionEffect.XOffset + (Bar.MoveX * (1 - Progression));
-  RegionEffect.YOffset = RegionEffect.YOffset + (Bar.MoveY * (1 - Progression));
+  RegionEffect.XOffset = RegionEffect.XOffset + (Button.MoveX * (1 - Progression));
+  RegionEffect.YOffset = RegionEffect.YOffset + (Button.MoveY * (1 - Progression));
 
 end
 

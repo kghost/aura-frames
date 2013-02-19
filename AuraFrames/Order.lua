@@ -342,6 +342,7 @@ end
 function AuraFrames.OrderPrototype:Add(Item)
 
   if tContains(self, Item) ~= nil then
+    self:Update(Item, true);
     return;
   end
 
@@ -372,6 +373,11 @@ end
 -----------------------------------------------------------------
 function AuraFrames.OrderPrototype:Remove(Item)
 
+  if Item.GoingRefire == true then
+    -- Item/Aura is going to get refired directly, let the :Add() update the item.
+    return;
+  end
+
   local Index = self:Find(Item);
   
   if Index ~= nil then
@@ -390,7 +396,7 @@ end
 -----------------------------------------------------------------
 -- Function Update
 -----------------------------------------------------------------
-function AuraFrames.OrderPrototype:Update(Item)
+function AuraFrames.OrderPrototype:Update(Item, Force)
 
   if not self.Compare then
     return;
@@ -457,6 +463,10 @@ function AuraFrames.OrderPrototype:Update(Item)
     
     return;
     
+  end
+
+  if Force == true then
+    self.NotifyFunc(Item, Index);
   end
   
   return;

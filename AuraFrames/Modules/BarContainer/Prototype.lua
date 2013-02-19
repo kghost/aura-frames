@@ -1001,7 +1001,17 @@ function Prototype:AuraAnchor(Aura, Index)
 
     Bar.MoveX = Bar.FromX + (CurrentEffects and CurrentEffects.XOffset or 0) - Bar.ToX;
     Bar.MoveY = Bar.FromY + (CurrentEffects and CurrentEffects.YOffset or 0) - Bar.ToY;
-    self.AnimationMoveBar:Play(Bar);
+
+    -- If not moving then stop the animation (no need to check if it is playing).
+    if Button.MoveX == 0 and Button.MoveY == 0 then
+
+      self.AnimationMoveBar:Stop(Bar);
+
+    else
+
+      self.AnimationMoveBar:Play(Bar);
+
+    end
 
   end
 

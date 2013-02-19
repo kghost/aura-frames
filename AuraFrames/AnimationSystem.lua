@@ -53,12 +53,21 @@ local math_cos, PI = math.cos, PI;
 local PI2 = PI + PI;
 local PI_2 = PI / 2;
 
+local PoolRegionEffectsMaxSize = 50;
 local PoolRegionEffects = {};
+
+local PoolRegionDataMaxSize = 50;
+
 local AnimationPrototype = {};
 
 local Animations = {};
 
+-- List of regions that need to be updated.
 local UpdateRegions = {};
+
+-- Make the table having weak keys, so that we dont have to clean up references to animation objects.
+setmetatable(UpdateRegions, {__mode = "k"});
+
 
 local UpdateFrame = CreateFrame("Frame");
 UpdateFrame:Hide();
@@ -103,7 +112,7 @@ function AnimationPrototype:AddEffect(Type, Properties)
     self.TotalDuration = EndTime;
   end
 
-  local EffectIndex = nil;
+  local EffectIndex;
 
   for i, Effect in ipairs(self.Effects) do
 
@@ -191,11 +200,15 @@ function AnimationPrototype:Play(Region, CallBack, StartTime)
   end
 
   if not self.Regions[Region] then
-    self.Regions[Region] = {};
+    self.Regions[Region] = tremove(self.PoolRegionData) or {State = {}};
   end
 
   self.Regions[Region].Time = StartTime or -self.StartDelay;
-  self.Regions[Region].State = {};
+
+  -- Reset states.
+  for Key, _ in ipairs(self.Regions[Region].State) do
+    self.Regions[Region].State[Key] = false;
+  end
 
   if not Region._Animations then
 
@@ -225,7 +238,7 @@ function AnimationPrototype:Play(Region, CallBack, StartTime)
   Region._Animations[self].YOffset = 0;
   Region._Animations[self].CallBack = CallBack;
   
-AuraFrames:AnimationUpdate(0);
+  AuraFrames:AnimationUpdate(0);
   UpdateFrame:Show();
 
 end
@@ -270,6 +283,10 @@ function AnimationPrototype:Stop(Region, Finished)
     return;
   end
   
+  if #self.PoolRegionData <= PoolRegionDataMaxSize then
+    tinsert(self.PoolRegionData, self.Regions[Region]);
+  end
+
   self.Regions[Region] = nil;
   
   if Region._Animations[self] and Region._Animations[self].CallBack then
@@ -279,7 +296,9 @@ function AnimationPrototype:Stop(Region, Finished)
   if self.KeepEffects ~= true then
 
     if Region._Animations[self] then
-      tinsert(PoolRegionEffects, Region._Animations[self]);
+      if #PoolRegionEffects <= PoolRegionEffectsMaxSize then
+        tinsert(PoolRegionEffects, Region._Animations[self]);
+      end
       Region._Animations[self] = nil;
     end
 
@@ -295,7 +314,7 @@ end
 -----------------------------------------------------------------
 function AnimationPrototype:StopAll()
 
-  for Region, _ in pairs(self.Regions) do
+  for Region, RegionData in pairs(self.Regions) do
 
     if Region._Animations[self].CallBack then
       Region._Animations[self].CallBack(Region, false);
@@ -303,11 +322,18 @@ function AnimationPrototype:StopAll()
 
     if self.KeepEffects ~= true then
 
-      tinsert(PoolRegionEffects, Region._Animations[self]);
+      if #PoolRegionEffects <= PoolRegionEffectsMaxSize then
+        tinsert(PoolRegionEffects, Region._Animations[self]);
+      end
+
       Region._Animations[self] = nil;
 
       AuraFrames:ApplyAnimationEffects(Region);
     
+    end
+
+    if #self.PoolRegionData <= PoolRegionDataMaxSize then
+      tinsert(PoolRegionData, RegionData);
     end
 
   end
@@ -324,7 +350,9 @@ function AnimationPrototype:ClearEffect(Region)
 
   if Region._Animations and Region._Animations[self] then
   
-    tinsert(PoolRegionEffects, Region._Animations[self]);
+    if #PoolRegionEffects <= PoolRegionEffectsMaxSize then
+      tinsert(PoolRegionEffects, Region._Animations[self]);
+    end
     Region._Animations[self] = nil;
   
   end
@@ -411,11 +439,7 @@ function AuraFrames:NewAnimation(Config)
   
   Animation.Regions = {};
 
-  Animation.Frame = CreateFrame("Frame");
-  Animation.Frame:Hide();
-  Animation.Frame:SetScript("OnUpdate", function(_, Elapsed)
-    Animation:Update(Elapsed);
-  end);
+  Animation.PoolRegionData = {};
 
   Animation:SetConfig(Config or {});
 
@@ -458,9 +482,9 @@ function AuraFrames:AnimationUpdate(Elapsed)
         if Properties.Duration then
       
           local Progression = (RegionData.Time - Properties.Start) / (Properties.Duration * Properties.Times);
-          if Progression > 1 and RegionData.State[Properties] ~= true then
+          if Progression > 1 and RegionData.State[Effect] ~= true then
 
-            RegionData.State[Properties] = true;
+            RegionData.State[Effect] = true;
 
             if not InProgress and Effect.NextTypeEffect == nil then
               Progression = 1;
@@ -505,7 +529,7 @@ function AuraFrames:AnimationUpdate(Elapsed)
               
           end
           
-        elseif RegionData.Time > Properties.Start and RegionData.State[Properties] ~= true then
+        elseif RegionData.Time > Properties.Start and RegionData.State[Effect] ~= true then
           
           RegionData.State[Properties] = true;
           Effect.Function(Region._AnimationRegion, EffectResult, Properties);
@@ -545,8 +569,11 @@ function AuraFrames:AnimationUpdate(Elapsed)
     UpdateFrame:Hide();
   end
 
-  for Region, _ in pairs(UpdateRegions) do
-    AuraFrames:ApplyAnimationEffects(Region);
+  for Region, Value in pairs(UpdateRegions) do
+    if Value == true then
+      AuraFrames:ApplyAnimationEffects(Region);
+      UpdateRegions[Region] = false;
+    end
   end
 
 end
@@ -578,7 +605,11 @@ function AuraFrames:ClearAnimationEffects(Region)
   if Region._Animations then
 
     for _, Effects in pairs(Region._Animations) do
-      tinsert(PoolRegionEffects, Effects);
+      if #PoolRegionEffects <= PoolRegionEffectsMaxSize then
+        tinsert(PoolRegionEffects, Effects);
+      else
+        break;
+      end
     end
 
     Region._Animations = nil;
@@ -606,3 +637,4 @@ function AuraFrames:GetSupportedAnimationSmoothing()
   };
 
 end
+
