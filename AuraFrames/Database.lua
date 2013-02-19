@@ -131,8 +131,10 @@ AuraFrames.DatabaseVersion = 233;
 ]]--
 
 
--- The default database.
-local DatabaseDefaults = {
+-----------------------------------------------------------------
+-- Database defaults
+-----------------------------------------------------------------
+DatabaseDefaults = {
   profile = {
     DbVersion = 0;
     Containers = {

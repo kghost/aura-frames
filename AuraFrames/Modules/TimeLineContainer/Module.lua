@@ -195,23 +195,6 @@ function Module:GetDatabaseDefaults()
       },
     },
     Colors = AuraFrames:GetDatabaseDefaultColors(),
-    Warnings = {
-      New = {
-        Flash = false,
-        FlashNumber = 3.0,
-        FlashSpeed = 1.0,
-      },
-      Expire = {
-        Flash = false,
-        FlashNumber = 5.0,
-        FlashSpeed = 1.0,
-      },
-      Changing = {
-        AnimationAuraChanged = true,
-        AnimationAuraChangedTime = 0.5,
-        AnimationAuraChangedScale = 3.0,
-      },
-    },
     Visibility = {
       AlwaysVisible = true,
       VisibleWhen = {},

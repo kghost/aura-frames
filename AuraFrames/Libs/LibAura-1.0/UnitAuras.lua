@@ -640,6 +640,8 @@ function Module:ScanUnitAuras(Unit, Type)
         
         if Duration and ExpirationTime then
           Aura.CreationTime = ExpirationTime - Duration;
+        else
+          Aura.CreationTime = 0;
         end
         
         tinsert(Auras, Aura);
