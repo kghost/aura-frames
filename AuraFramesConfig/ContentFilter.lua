@@ -140,6 +140,17 @@ function AuraFramesConfig:ContentFilterRefresh(Content, ContainerId)
 
     end);
     Content:AddChild(CheckBoxExpert);
+
+    Content:AddSpace();
+    Content:AddText("TIP: Shift right click an aura to dump the properties to the chat window. This will help you to create filters. (This only works when an container can be clicked).");
+    Content:AddSpace();
+
+    local ButtonHelp = AceGUI:Create("Button");
+    ButtonHelp:SetText("Open Help");
+    ButtonHelp:SetCallback("OnClick", function()
+      AuraFramesConfig:AuraDefinitionHelpShow();
+    end);
+    Content:AddChild(ButtonHelp);
   
   else
   

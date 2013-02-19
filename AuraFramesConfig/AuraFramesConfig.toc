@@ -31,6 +31,8 @@ ContentColors.lua
 ContentVisibility.lua
 ContentAnimations.lua
 
+AuraDefinitionHelp.lua
+
 AceGUIContainer-AuraFramesWindow.lua
 AceGUI-3.0-Spell-EditBox-Fix.lua
 AceGUIWidget-MultiSelect.lua

@@ -156,10 +156,65 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
   Content:AddChild(CheckBoxEnabled);
   
   Content:AddSpace();
+
+  local ContainerInfo = AceGUI:Create("SimpleGroup");
+  ContainerInfo:SetRelativeWidth(1);
+  ContainerInfo:SetLayout("Flow");
+  AuraFramesConfig:EnhanceContainer(ContainerInfo);
+  Content:AddChild(ContainerInfo);
   
-  Content:AddText("Container ID: "..ContainerId);
+  ContainerInfo:AddText("Container ID: "..ContainerId, nil, 200);
+
+  local ButtonDelete = AceGUI:Create("Button");
+  ButtonDelete:SetText("Delete container");
+  ButtonDelete:SetCallback("OnClick", function()
   
-  Content:AddSpace();
+    AuraFramesConfig:Close();
+    
+    AuraFrames:Confirm("Are you sure you want to delete the container?", function(Result)
+      if Result == true then
+      
+        -- Make sure the container is not unlocked.
+        self:GetModule(AuraFrames.db.profile.Containers[ContainerId].Type):UnlockContainer(ContainerId, false);
+        
+        -- Delete container instance if it exists.
+        AuraFrames:DeleteContainer(ContainerId);
+        
+        -- Delete configuration.
+        AuraFrames.db.profile.Containers[ContainerId] = nil;
+        
+        -- Refesh configuration tree.
+        AuraFramesConfig:RefreshTree();
+        
+        -- Select "Containers" page.
+        AuraFramesConfig:SelectByPath("Containers");
+        
+      end
+      
+      AuraFramesConfig:Show();
+      
+    end);
+    
+  end);
+  ContainerInfo:AddChild(ButtonDelete);
+
+  Content:AddSpace(1);
+
+  local UnlockInfo = AceGUI:Create("SimpleGroup");
+  UnlockInfo:SetRelativeWidth(1);
+  UnlockInfo:SetLayout("Flow");
+  AuraFramesConfig:EnhanceContainer(UnlockInfo);
+  Content:AddChild(UnlockInfo);
+
+  UnlockInfo:AddText("Containers can only be moved when they are unlocked. Unlock all containers by clicking the following button in the titlebar:", nil, 400);
+  local UnlockIcon = AceGUI:Create("Label");
+  UnlockIcon:SetText("");
+  UnlockIcon:SetWidth(50);
+  UnlockIcon:SetImage("Interface\\Buttons\\UI-Panel-CollapseButton-Up");
+  UnlockIcon:SetImageSize(32, 32);
+  UnlockInfo:AddChild(UnlockIcon);
+
+  Content:AddSpace(2);
   
   if ContainerConfig.Enabled == true then
   
@@ -191,7 +246,7 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
     end);
     ExportImport:AddChild(ButtonImport);
 
-    Content:AddSpace();
+    Content:AddSpace(2);
     
     Content:AddHeader("Copy Settings");
     Content:AddText("You can only copy settings from the same type of container.\n");
@@ -264,56 +319,9 @@ function AuraFramesConfig:ContentContainerRefresh(Content, ContainerId)
       
     end
     
-    Content:AddSpace();
-    
-    Content:AddHeader("Move containers");
-    Content:AddText("Containers can only be moved when they are unlocked. Unlock/lock the containers by using the button below:\n\n");
-    
-    local ButtonMove = AceGUI:Create("Button");
-    ButtonMove:SetText(AuraFramesConfig.ContainersUnlocked and "Lock containers" or "Unlock containers");
-    ButtonMove:SetCallback("OnClick", function()
-      AuraFramesConfig:UnlockContainers(not AuraFramesConfig.ContainersUnlocked);
-    end);
-    Content:AddChild(ButtonMove);
-  
   end
   
   Content:AddSpace();
-  Content:AddHeader("Miscellaneous");
-  Content:AddText("");
-  
-  local ButtonDelete = AceGUI:Create("Button");
-  ButtonDelete:SetText("Delete container");
-  ButtonDelete:SetCallback("OnClick", function()
-  
-    AuraFramesConfig:Close();
-    
-    AuraFrames:Confirm("Are you sure you want to delete the container?", function(Result)
-      if Result == true then
-      
-        -- Make sure the container is not unlocked.
-        self:GetModule(AuraFrames.db.profile.Containers[ContainerId].Type):UnlockContainer(ContainerId, false);
-        
-        -- Delete container instance if it exists.
-        AuraFrames:DeleteContainer(ContainerId);
-        
-        -- Delete configuration.
-        AuraFrames.db.profile.Containers[ContainerId] = nil;
-        
-        -- Refesh configuration tree.
-        AuraFramesConfig:RefreshTree();
-        
-        -- Select "Containers" page.
-        AuraFramesConfig:SelectByPath("Containers");
-        
-      end
-      
-      AuraFramesConfig:Show();
-      
-    end);
-    
-  end);
-  Content:AddChild(ButtonDelete);
 
   Content:ResumeLayout();
   Content:DoLayout();

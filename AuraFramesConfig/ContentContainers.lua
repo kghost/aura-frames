@@ -87,7 +87,23 @@ function AuraFramesConfig:ContentContainersRefresh(Content)
   
   Content:AddText("Containers\n", GameFontNormalLarge);
   Content:AddText("Containers are used for grouping aura's together. There are different kind of containers, every type with there own ways of displaying aura's. You can create multiple containers.\n\n");
+
+  local UnlockInfo = AceGUI:Create("SimpleGroup");
+  UnlockInfo:SetRelativeWidth(1);
+  UnlockInfo:SetLayout("Flow");
+  AuraFramesConfig:EnhanceContainer(UnlockInfo);
+  Content:AddChild(UnlockInfo);
+
+  UnlockInfo:AddText("Containers can only be moved when they are unlocked. Unlock all containers by clicking the following button in the titlebar:", nil, 400);
+  local UnlockIcon = AceGUI:Create("Label");
+  UnlockIcon:SetText("");
+  UnlockIcon:SetWidth(50);
+  UnlockIcon:SetImage("Interface\\Buttons\\UI-Panel-CollapseButton-Up");
+  UnlockIcon:SetImageSize(32, 32);
+  UnlockInfo:AddChild(UnlockIcon);
   
+  Content:AddSpace(2);
+
   Content:AddHeader("Create new container");
   
   Content:AddText("Every container must have is own unique name. This name is used to identity the container.\n");
@@ -145,22 +161,13 @@ function AuraFramesConfig:ContentContainersRefresh(Content)
   Content:AddSpace();
 
   local ButtonCreate = AceGUI:Create("Button");
-  ButtonCreate:SetText("Create");
+  ButtonCreate:SetText("Create new container");
   ButtonCreate:SetCallback("OnClick", function()
     CreateContainerConfig();
   end);
   Content:AddChild(ButtonCreate);
   
   Content:AddSpace();
-  Content:AddHeader("Move containers");
-  Content:AddText("Containers can only be moved when they are unlocked. Unlock/lock the containers by using the button below:\n\n");
-  
-  local ButtonMove = AceGUI:Create("Button");
-  ButtonMove:SetText(AuraFramesConfig.ContainersUnlocked and "Lock containers" or "Unlock containers");
-  ButtonMove:SetCallback("OnClick", function()
-    AuraFramesConfig:UnlockContainers(not AuraFramesConfig.ContainersUnlocked);
-  end);
-  Content:AddChild(ButtonMove);
 
   Content:ResumeLayout();
   Content:DoLayout();

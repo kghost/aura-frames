@@ -19,7 +19,7 @@ local function ShowUnlockDialog()
     f:EnableMouse(true)
     f:SetClampedToScreen(true)
     f:SetWidth(360)
-    f:SetHeight(110)
+    f:SetHeight(150)
     f:SetBackdrop{
       bgFile="Interface\\DialogFrame\\UI-DialogBox-Background" ,
       edgeFile="Interface\\DialogFrame\\UI-DialogBox-Border",
@@ -52,7 +52,7 @@ local function ShowUnlockDialog()
     desc:SetJustifyH("LEFT")
     desc:SetPoint("TOPLEFT", 18, -32)
     desc:SetPoint("BOTTOMRIGHT", -18, 48)
-    desc:SetText("Containers unlocked. Move them now and click Lock when you are done.")
+    desc:SetText("Containers unlocked. Move them now and click Lock when you are done.\n\nYou can right click on a container to directly open the container configuration.")
 
     local lockBars = CreateFrame("CheckButton", nil, f, "OptionsButtonTemplate")
     lockBars:SetText("Lock");

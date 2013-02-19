@@ -55,13 +55,8 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   
   Content:AddSpace();
   
-  if VisibilityConfig.AlwaysVisible ~= true then
-    Content:AddText("Note: Visibility is performed by an animation, make sure that the visibility animation is enabled for this container.");
-    Content:AddSpace();
-  end
-
   local GroupVisibility = AceGUI:Create("InlineGroup");
-  GroupVisibility:SetTitle("Visibility");
+  GroupVisibility:SetTitle("Visibility conditions");
   GroupVisibility:SetRelativeWidth(1);
   GroupVisibility:SetLayout("Flow");
   Content:AddChild(GroupVisibility);
@@ -133,7 +128,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   ExplainDisabled:SetText("None of these conditions must be met");
   Content:AddChild(ExplainDisabled);
 
-  Content:AddSpace();
+  Content:AddSpace(2);
 
   if AuraFrames.db.profile.HideInPetBattle == true then
 
@@ -146,6 +141,13 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
     Content:AddText("Note: The condition \"On Mouse Over\" is disabled because receive mouse events is disabled for this container. Enable receive mouse events before using the condition \"On Mouse Over\".\n");
 
   end
+
+  if AuraFrames.db.profile.Containers[ContainerId].Animations.ContainerVisibility.Enabled ~= true or not AuraFrames.db.profile.Containers[ContainerId].Animations.ContainerVisibility.Animation then
+
+    Content:AddText("Note: Visibility is performed by an animation, make sure that the visibility animation is enabled for this container.\n");
+
+  end
+
   
   Content:ResumeLayout();
   Content:DoLayout();
