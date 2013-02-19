@@ -10,7 +10,7 @@ if not AuraFramesConfig.Animations.ButtonContainerMove then
   AuraFramesConfig.Animations.ButtonContainerMove = {};
 end
 
-AuraFramesConfig.Animations.ButtonContainerMove.DisplayName = "Move Bars";
+AuraFramesConfig.Animations.ButtonContainerMove.DisplayName = "Move Buttons";
 AuraFramesConfig.Animations.ButtonContainerMove.Description = "An animation can be played when a button moves between positions";
 AuraFramesConfig.Animations.ButtonContainerMove.List = AuraFramesConfig.Animations.ButtonContainerMove.List or {};
 
@@ -33,7 +33,7 @@ function AuraFramesConfig.Animations.ButtonContainerMove.List.Direct:Content(Con
   SliderDuration:SetValue(Config.Duration);
   SliderDuration:SetCallback("OnValueChanged", function(_, _, Value)
     Config.Duration = Value;
-    ContainerInstance:UpdateAnimationConfig("BarContainerMove");
+    ContainerInstance:UpdateAnimationConfig("BUttonContainerMove");
   end);
   Content:AddChild(SliderDuration);
 

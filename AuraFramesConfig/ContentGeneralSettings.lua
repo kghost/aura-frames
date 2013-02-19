@@ -51,7 +51,7 @@ function AuraFramesConfig:ContentGeneralSettings()
   
 
   Content:AddHeader("Pet Battles");
-  Content:AddText("Aura Frames can hide all aura containers automaticly upon entering pet battles. This will overrule the In Pet Battle option of the visibility options for containers.\n");
+  Content:AddText("Aura Frames can hide all aura containers automaticly upon entering pet battles. This will overrule the In Pet Battle option of the visibility options for containers. For this to work, the animation \"Container Visibility\" must be enabled on all containers.\n");
   local HideInPetBattle = AceGUI:Create("CheckBox");
   HideInPetBattle:SetLabel("Hide in pet battle");
   HideInPetBattle:SetValue(AuraFrames.db.profile.HideInPetBattle);
