@@ -1003,7 +1003,7 @@ function Prototype:AuraAnchor(Aura, Index)
     Bar.MoveY = Bar.FromY + (CurrentEffects and CurrentEffects.YOffset or 0) - Bar.ToY;
 
     -- If not moving then stop the animation (no need to check if it is playing).
-    if Button.MoveX == 0 and Button.MoveY == 0 then
+    if Bar.MoveX == 0 and Bar.MoveY == 0 then
 
       self.AnimationMoveBar:Stop(Bar);
 
