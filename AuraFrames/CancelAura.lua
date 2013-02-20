@@ -8,13 +8,12 @@ anymore. This script allows the user to cancel auras without using
 secure templates. This is only working outside combat!
 
 This script also handles the normal canceling of auras that are still
-working like totem auras.
+working like nothing...
 
 ]]--
 
 -- Import used global references into the local namespace.
 local pairs, ipairs = pairs, ipairs;
-local DestroyTotem = DestroyTotem;
 
 
 local RestoreHandlers, BackupHandlers, FireHandler;
@@ -159,7 +158,20 @@ function AuraFrames:SetCancelAuraFrame(Frame, Aura)
     -- We are directly restoring the old handlers and leave it.
     
     RestoreHandlers();
+    return;
   
+  end
+
+  if Frame._CancelAuraHook ~= true then
+
+    Frame:HookScript("OnHide", function(Frame)
+      if Frame == CancelAuraFrame and InCombat == false then
+        CancelAuraButton:Hide();
+      end
+    end);
+
+    Frame._CancelAuraHook = true;
+
   end
   
 end
