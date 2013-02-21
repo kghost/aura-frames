@@ -471,7 +471,7 @@ function Module:ScanUnitAurasChanges(Unit, Type)
       
       i = i + 1;
     
-    elseif Auras[j].ExpirationTime ~= ExpirationTime then
+    elseif Auras[j].ExpirationTime ~= ExpirationTime or Auras[j].SpellId ~= SpellId or Auras[j].CasterUnit ~= CasterUnit then
     
       if Auras[j].SpellId == SpellId and Auras[j].CasterUnit == CasterUnit then
     

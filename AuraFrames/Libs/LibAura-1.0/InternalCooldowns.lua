@@ -104,7 +104,7 @@ end
 
 
 -----------------------------------------------------------------
--- Function SetConfig
+-- Function SetInternalCooldownList
 -----------------------------------------------------------------
 function Module:SetInternalCooldownList(List)
 

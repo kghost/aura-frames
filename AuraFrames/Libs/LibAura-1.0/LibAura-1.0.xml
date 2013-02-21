@@ -10,10 +10,10 @@
   <Script file="Totems.lua"/>
   <Script file="SpellCooldowns.lua"/>
   <Script file="ItemCooldowns.lua"/>
-  <Script file="InternalCooldowns.lua"/>
   <Script file="BossMods.lua"/>
   
   <Script file="ItemProcData.lua"/>
+  <Script file="InternalCooldowns.lua"/>
 
   <!--
   <Script file="OldAuras.lua"/>
