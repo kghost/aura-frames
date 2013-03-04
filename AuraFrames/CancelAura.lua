@@ -131,12 +131,6 @@ function AuraFrames:SetCancelAuraFrame(Frame, Aura)
     return;
   end
 
-  CancelAuraFrame = Frame;
-  
-  BackupHandlers();
-  
-  CancelAuraButton:SetAllPoints(Frame);
-
   if Aura.Type == "HELPFUL" then
   
     CancelAuraButton:SetAttribute("unit", Aura.Unit);
@@ -151,6 +145,16 @@ function AuraFrames:SetCancelAuraFrame(Frame, Aura)
     
   end
 
+  -- Check if we are already on the frame.
+  if CancelAuraFrame == Frame then
+    return;
+  end
+
+  CancelAuraFrame = Frame;
+  
+  BackupHandlers();
+  
+  CancelAuraButton:SetAllPoints(Frame);
   CancelAuraButton:Show();
   
   if CancelAuraButton:IsShown() == nil then
@@ -167,6 +171,9 @@ function AuraFrames:SetCancelAuraFrame(Frame, Aura)
     Frame:HookScript("OnHide", function(Frame)
       if Frame == CancelAuraFrame and InCombat == false then
         CancelAuraButton:Hide();
+        CancelAuraButton:ClearAllPoints();
+        RestoreHandlers();
+        CancelAuraFrame = nil;
       end
     end);
 

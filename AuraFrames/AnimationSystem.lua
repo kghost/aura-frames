@@ -206,7 +206,7 @@ function AnimationPrototype:Play(Region, CallBack, StartTime)
   self.Regions[Region].Time = StartTime or -self.StartDelay;
 
   -- Reset states.
-  for Key, _ in ipairs(self.Regions[Region].State) do
+  for Key, _ in pairs(self.Regions[Region].State) do
     self.Regions[Region].State[Key] = false;
   end
 
@@ -531,7 +531,7 @@ function AuraFrames:AnimationUpdate(Elapsed)
           
         elseif RegionData.Time > Properties.Start and RegionData.State[Effect] ~= true then
           
-          RegionData.State[Properties] = true;
+          RegionData.State[Effect] = true;
           Effect.Function(Region._AnimationRegion, EffectResult, Properties);
           HaveEffects = true;
 

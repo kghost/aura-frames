@@ -373,14 +373,14 @@ function Prototype:UpdateButton(Button)
     
   end
   
-  if self.Config.Layout.ShowTooltip == true then
+  if self.Config.Layout.Clickable == true and self.Config.Layout.ShowTooltip == true then
   
-    Button:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Button.Aura, Button, Container.TooltipOptions); self:CheckVisibility(true); end);
+    Button:SetScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Button, Button.Aura); AuraFrames:ShowTooltip(Button.Aura, Button, Container.TooltipOptions); self:CheckVisibility(true); end);
     Button:SetScript("OnLeave", function() AuraFrames:HideTooltip(); self:CheckVisibility(false); end);
   
   else
   
-    Button:SetScript("OnEnter", function() self:CheckVisibility(true); end);
+    Button:SetScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Button, Button.Aura); self:CheckVisibility(true); end);
     Button:SetScript("OnLeave", function() self:CheckVisibility(false); end);
   
   end
@@ -391,8 +391,6 @@ function Prototype:UpdateButton(Button)
     Button.Content:EnableMouse(true);
     Button:RegisterForClicks("RightButtonUp");
     Button:SetScript("OnClick", ButtonOnClick);
-    
-    Button:HookScript("OnEnter", function(Button) AuraFrames:SetCancelAuraFrame(Button, Button.Aura); end);
     
   else
     
@@ -689,6 +687,7 @@ function Prototype:AuraNew(Aura)
 
   Button:SetFrameStrata("MEDIUM");
   Button:SetFrameLevel(FrameLevelNormal);
+  Button.Content:SetFrameLevel(FrameLevelNormal);
 
   if not Aura.IsRefired then
     self.AnimationAuraNew:Play(Button);

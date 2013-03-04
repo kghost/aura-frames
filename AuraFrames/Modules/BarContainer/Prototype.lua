@@ -491,20 +491,20 @@ function Prototype:UpdateBar(Bar)
 
   end
   
-  if self.Config.Layout.ShowTooltip then
+  if self.Config.Layout.Clickable and self.Config.Layout.ShowTooltip then
   
-    Bar:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); self:CheckVisibility(true); end);
+    Bar:SetScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Bar, Bar.Aura); AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); self:CheckVisibility(true); end);
     Bar:SetScript("OnLeave", function() AuraFrames:HideTooltip(); self:CheckVisibility(false); end);
   
-    Bar.Button:SetScript("OnEnter", function() AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); self:CheckVisibility(true); end);
+    Bar.Button:SetScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Bar, Bar.Aura); AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); self:CheckVisibility(true); end);
     Bar.Button:SetScript("OnLeave", function() AuraFrames:HideTooltip(); self:CheckVisibility(false); end);
-  
+
   else
   
-    Bar:SetScript("OnEnter", function() self:CheckVisibility(true); end);
+    Bar:SetScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Bar, Bar.Aura); self:CheckVisibility(true); end);
     Bar:SetScript("OnLeave", function() self:CheckVisibility(false); end);
-  
-    Bar.Button:SetScript("OnEnter", function() self:CheckVisibility(true); end);
+
+    Bar.Button:SetScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Bar, Bar.Aura); self:CheckVisibility(true); end);
     Bar.Button:SetScript("OnLeave", function() self:CheckVisibility(false); end);
   
   end
@@ -515,18 +515,13 @@ function Prototype:UpdateBar(Bar)
     
     Bar:EnableMouse(true);
     Bar:SetScript("OnMouseUp", BarOnMouseUp);
-    Bar:HookScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Bar, Bar.Aura); end);
-
     Bar.Button:EnableMouse(true);
     Bar.Button:RegisterForClicks("RightButtonUp");
-    Bar.Button:SetScript("OnClick", function(_, Button) BarOnMouseUp(Bar, Button) end);
-    Bar.Button:HookScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Bar.Button, Bar.Aura); end);
 
   else
     
     Bar:EnableMouse(false);
     Bar:SetScript("OnMouseUp", nil);
-    
     Bar.Button:EnableMouse(false);
     Bar.Button:SetScript("OnClick", nil);
     
@@ -856,6 +851,7 @@ function Prototype:AuraNew(Aura)
 
   Bar:SetFrameStrata("MEDIUM");
   Bar:SetFrameLevel(FrameLevelNormal);
+  Bar.Content:SetFrameLevel(FrameLevelNormal);
 
   if not Aura.IsRefired then
     self.AnimationAuraNew:Play(Bar);
