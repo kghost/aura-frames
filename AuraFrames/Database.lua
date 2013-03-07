@@ -1,7 +1,7 @@
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 
 -- Import used global references into the local namespace.
-local tinsert, tremove, tconcat, sort = tinsert, tremove, table.concat, sort;
+local tinsert, tremove, tconcat, sort, tContains = tinsert, tremove, table.concat, sort, tContains;
 local fmt, tostring = string.format, tostring;
 local select, ipairs, pairs, next, type, unpack = select, ipairs, pairs, next, type, unpack;
 local loadstring, assert, error = loadstring, assert, error;
@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 233;
+AuraFrames.DatabaseVersion = 234;
 
 
 --[[
@@ -127,6 +127,8 @@ AuraFrames.DatabaseVersion = 233;
   Version 233:
     Added CancelCombatAura
 
+  Version 234:
+    Added 129249 & 129250
 
 ]]--
 
@@ -134,7 +136,7 @@ AuraFrames.DatabaseVersion = 233;
 -----------------------------------------------------------------
 -- Database defaults
 -----------------------------------------------------------------
-DatabaseDefaults = {
+local DatabaseDefaults = {
   profile = {
     DbVersion = 0;
     Containers = {
@@ -194,6 +196,8 @@ DatabaseDefaults = {
         88625,
         88684,
         88685,
+        129249,
+        129250,
       },
     },
   },
@@ -400,6 +404,18 @@ function AuraFrames:DatabaseUpgrade()
       },
     };
   
+  end
+
+  if OldVersion < 234 and self.db.global.SpellCooldowns.PRIEST then
+
+    if not tContains(self.db.global.SpellCooldowns.PRIEST, 129249) then
+      tinsert(self.db.global.SpellCooldowns.PRIEST, 129249);
+    end
+
+    if not tContains(self.db.global.SpellCooldowns.PRIEST, 129250) then
+      tinsert(self.db.global.SpellCooldowns.PRIEST, 129250);
+    end
+
   end
 
   if self.db.profile.HideInPetBattle == nil then
