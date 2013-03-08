@@ -47,7 +47,7 @@ function CancelCombatAura:Update()
   if self.OldKeybinding ~= Config.Keybinding then
 
     if self.OldKeybinding then
-      SetOverrideBindingClick(self.CombatFrame, true, self.OldKeybinding, "AuraFramesCancelCombatAuraVisibility");
+      SetOverrideBindingClick(self.CombatFrame, true, self.OldKeybinding, nil);
     end
 
     if Config.Keybinding then

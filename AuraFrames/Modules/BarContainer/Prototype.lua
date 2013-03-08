@@ -959,6 +959,10 @@ function Prototype:AuraAnchor(Aura, Index)
 
   local Bar = self.Bars[Aura];
 
+  if not Bar then
+    return;
+  end
+
   Bar.FromX = Bar.ToX;
   Bar.FromY = Bar.ToY;
 

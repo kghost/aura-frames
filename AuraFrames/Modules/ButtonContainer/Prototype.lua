@@ -790,6 +790,10 @@ function Prototype:AuraAnchor(Aura, Index)
 
   local Button = self.Buttons[Aura];
 
+  if not Button then
+    return;
+  end
+
   Button.FromX = Button.ToX;
   Button.FromY = Button.ToY;
 
