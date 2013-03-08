@@ -289,13 +289,13 @@ function AnimationPrototype:Stop(Region, Finished)
 
   self.Regions[Region] = nil;
   
-  if Region._Animations[self] and Region._Animations[self].CallBack then
+  if Region._Animations and Region._Animations[self] and Region._Animations[self].CallBack then
     Region._Animations[self].CallBack(Region, Finished == true);
   end
 
   if self.KeepEffects ~= true then
 
-    if Region._Animations[self] then
+    if Region._Animations and Region._Animations[self] then
       if #PoolRegionEffects <= PoolRegionEffectsMaxSize then
         tinsert(PoolRegionEffects, Region._Animations[self]);
       end
@@ -316,17 +316,21 @@ function AnimationPrototype:StopAll()
 
   for Region, RegionData in pairs(self.Regions) do
 
-    if Region._Animations[self].CallBack then
+    if Region._Animations and Region._Animations[self].CallBack then
       Region._Animations[self].CallBack(Region, false);
     end
 
     if self.KeepEffects ~= true then
 
-      if #PoolRegionEffects <= PoolRegionEffectsMaxSize then
-        tinsert(PoolRegionEffects, Region._Animations[self]);
-      end
+      if Region._Animations and Region._Animations[self] then
 
-      Region._Animations[self] = nil;
+        if #PoolRegionEffects <= PoolRegionEffectsMaxSize then
+          tinsert(PoolRegionEffects, Region._Animations[self]);
+        end
+
+        Region._Animations[self] = nil;
+
+      end
 
       AuraFrames:ApplyAnimationEffects(Region);
     
