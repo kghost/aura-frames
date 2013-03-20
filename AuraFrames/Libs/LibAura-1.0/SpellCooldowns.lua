@@ -426,12 +426,12 @@ function Module:ScanSpellCooldowns()
     
     for _, SpellId in ipairs(CooldownsNew) do
     
-      local Aura, HistoryIndex = self.db[Unit][SpellId], SpellMaxHistory + 1;
+      local Aura, HistoryIndex = self.db[Unit][SpellId], nil;
       
       -- Check if the new cooldown is located in the history.
-      for Index, HistorySpellId in ipairs(self.History[Unit]) do
+      for Index, HistorySpell in ipairs(self.History[Unit]) do
         
-        if HistorySpellId == SpellId then
+        if SpellId == HistorySpell[1] and CurrentTime < HistorySpell[2] + 1.5 then
           HistoryIndex = Index;
           break;
         end
@@ -442,13 +442,13 @@ function Module:ScanSpellCooldowns()
       
       for _, Group in ipairs(CooldownsGroup) do
         
-        if abs(Group.Duration - Aura.Duration) < GroupDurationRange then -- Accept a small difference
+        if (HistoryIndex == nil or Group.PrimaryIndex == nil) and abs(Group.Duration - Aura.Duration) < GroupDurationRange then -- Accept a small difference
         
           GroupMatch = true;
         
           tinsert(Group.SpellIds, SpellId);
           
-          if Group.PrimaryIndex > HistoryIndex then
+          if HistoryIndex ~= nil and (Group.PrimaryIndex == nil or Group.PrimaryIndex > HistoryIndex) then
             Group.PrimaryIndex = HistoryIndex;
             Group.Primary = SpellId;
           end
@@ -570,12 +570,12 @@ function Module:ScanAllSpellCooldowns()
     
     for _, SpellId in ipairs(CooldownsNew) do
     
-      local Aura, HistoryIndex = self.db[Unit][SpellId], SpellMaxHistory + 1;
+      local Aura, HistoryIndex = self.db[Unit][SpellId], nil;
       
       -- Check if the new cooldown is located in the history.
-      for Index, HistorySpellId in ipairs(self.History[Unit]) do
+      for Index, HistorySpell in ipairs(self.History[Unit]) do
         
-        if HistorySpellId == SpellId then
+        if SpellId == HistorySpell[1] and CurrentTime < HistorySpell[2] + 1.5 then
           HistoryIndex = Index;
           break;
         end
@@ -586,13 +586,13 @@ function Module:ScanAllSpellCooldowns()
       
       for _, Group in ipairs(CooldownsGroup) do
         
-        if abs(Group.Duration - Aura.Duration) < GroupDurationRange then -- Accept a small difference
+        if (HistoryIndex == nil or Group.PrimaryIndex == nil) and abs(Group.Duration - Aura.Duration) < GroupDurationRange then -- Accept a small difference
         
           GroupMatch = true;
         
           tinsert(Group.SpellIds, SpellId);
           
-          if Group.PrimaryIndex > HistoryIndex then
+          if HistoryIndex ~= nil and (Group.PrimaryIndex == nil or Group.PrimaryIndex > HistoryIndex) then
             Group.PrimaryIndex = HistoryIndex;
             Group.Primary = SpellId;
           end
@@ -653,7 +653,7 @@ function Module:SpellCasted(Unit, _, _, _, SpellId)
     return;
   end
   
-  tinsert(self.History[Unit], 1, SpellId);
+  tinsert(self.History[Unit], 1, {SpellId, GetTime()});
   
   if #self.History[Unit] > SpellMaxHistory then
     tremove(self.History[Unit]);
