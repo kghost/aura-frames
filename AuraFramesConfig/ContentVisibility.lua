@@ -142,7 +142,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
 
   end
 
-  if AuraFrames.db.profile.Containers[ContainerId].Animations.ContainerVisibility.Enabled ~= true or not AuraFrames.db.profile.Containers[ContainerId].Animations.ContainerVisibility.Animation then
+  if not AuraFrames.db.profile.Containers[ContainerId].Animations or not AuraFrames.db.profile.Containers[ContainerId].Animations.ContainerVisibility or AuraFrames.db.profile.Containers[ContainerId].Animations.ContainerVisibility.Enabled ~= true or not AuraFrames.db.profile.Containers[ContainerId].Animations.ContainerVisibility.Animation then
 
     Content:AddText("Note: Visibility is performed by an animation, make sure that the visibility animation is enabled for this container.\n");
 
