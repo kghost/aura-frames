@@ -373,11 +373,6 @@ end
 -----------------------------------------------------------------
 function AuraFrames.OrderPrototype:Remove(Item)
 
-  if Item.GoingRefire == true then
-    -- Item/Aura is going to get refired directly, let the :Add() update the item.
-    return;
-  end
-
   local Index = self:Find(Item);
   
   if Index ~= nil then
