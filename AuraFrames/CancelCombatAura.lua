@@ -288,10 +288,10 @@ function CancelCombatAura:RegisterButton(Button)
 
     self.MSQGroup:AddButton(Button, {Icon = Button.Icon, Border = Button.Border, Duration = false, Count = false});
 
-  end
+    -- Work around for Masque bug. See http://www.wowace.com/addons/masque/tickets/145-bug-with-secure-action-button-template/
+    Button.__MSQ_BaseFrame:SetFrameLevel(2);
 
-  -- Work around for Masque bug. See http://www.wowace.com/addons/masque/tickets/145-bug-with-secure-action-button-template/
-  Button.__MSQ_BaseFrame:SetFrameLevel(2);
+  end
 
   self:UpdateButtonDisplay(Button);
 
