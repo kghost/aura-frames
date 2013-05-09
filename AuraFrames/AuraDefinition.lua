@@ -363,7 +363,7 @@ AuraFrames.AuraDefinition = {
   CastByGroupPet = {
     Type = "Boolean",
     Name = "Cast by group pet",
-    Code = "Object.CasterUnit and (Object.CasterUnit == \"pet\" or string.match(Object.CasterUnit, \"partypet%d\") or string.match(Object.CasterUnit, \"raidpet%d\") or string.match(Object.CasterUnit, \"arenapet%d\")) and true or false",
+    Code = "(Object.CasterUnit and (Object.CasterUnit == \"pet\" or string.match(Object.CasterUnit, \"partypet%d\") or string.match(Object.CasterUnit, \"raidpet%d\") or string.match(Object.CasterUnit, \"arenapet%d\")) and true or false)",
     Order = false,
     Filter = true,
     Weight = 4,
