@@ -369,7 +369,19 @@ function Module:ScanSpellCooldowns()
       
       if Aura then
     
-        local Start, Duration, Active = GetSpellCooldown(SpellId);
+        local Charges, MaxCharges, Start, Duration, Active;
+
+        Charges, MaxCharges, Start, Duration = GetSpellCharges(SpellId);
+
+        if Start and Duration and Start + Duration > CurrentTime then
+
+          Active = true;
+
+        else
+
+          Start, Duration, Active = GetSpellCooldown(SpellId);
+
+        end
         
         if Aura.Active == true then
           
@@ -395,6 +407,7 @@ function Module:ScanSpellCooldowns()
           
             local OldExpirationTime = Aura.ExpirationTime;
             Aura.ExpirationTime = Start + Duration;
+            Aura.Count = Charges;
             
             if Aura.RefSpellId == 0 and abs(Aura.ExpirationTime - OldExpirationTime) > 0.1 then
               LibAura:FireAuraChanged(Aura);
@@ -409,6 +422,7 @@ function Module:ScanSpellCooldowns()
             Aura.Duration = Duration;
             Aura.ExpirationTime = Start + Duration;
             Aura.Active = true;
+            Aura.Count = Charges;
             
             if Start then
               Aura.CreationTime = Start;
@@ -512,8 +526,20 @@ function Module:ScanAllSpellCooldowns()
     wipe(CooldownsNew);
   
     for SpellId, Aura in pairs(self.db[Unit]) do
-    
-      local Start, Duration, Active = GetSpellCooldown(SpellId);
+
+      local Charges, MaxCharges, Start, Duration, Active;
+
+      Charges, MaxCharges, Start, Duration = GetSpellCharges(SpellId);
+
+      if Start and Duration and Start + Duration > CurrentTime then
+
+        Active = true;
+
+      else
+
+        Start, Duration, Active = GetSpellCooldown(SpellId);
+
+      end
       
       if Aura.Active == true then
         
@@ -539,6 +565,7 @@ function Module:ScanAllSpellCooldowns()
         
           local OldExpirationTime = Aura.ExpirationTime;
           Aura.ExpirationTime = Start + Duration;
+          Aura.Count = Charges;
           
           if Aura.RefSpellId == 0 and abs(Aura.ExpirationTime - OldExpirationTime) > 0.1 then
             LibAura:FireAuraChanged(Aura);
@@ -555,6 +582,7 @@ function Module:ScanAllSpellCooldowns()
           Aura.Duration = Duration;
           Aura.ExpirationTime = Start + Duration;
           Aura.Active = true;
+          Aura.Count = Charges;
           
           if Start then
             Aura.CreationTime = Start;
