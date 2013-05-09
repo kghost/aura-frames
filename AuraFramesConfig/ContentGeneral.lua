@@ -23,16 +23,20 @@ function AuraFramesConfig:ContentGeneral()
   VersionGroup:AddText("You are running the following version of Aura Frames:");
   VersionGroup:AddSpace();
   
-  VersionGroup:AddText("Version", nil, 100);
-  VersionGroup:AddText(": |cffff0000"..AuraFrames.Version.String.."|r", nil, 450);
+  VersionGroup:AddText("Version", nil, 120);
+  VersionGroup:AddText(": |cffff0000"..AuraFrames.Version.String.."|r", nil, 430);
   
-  VersionGroup:AddText("Revision", nil, 100);
-  VersionGroup:AddText(": "..AuraFrames.Version.Revision, nil, 450);
+  VersionGroup:AddText("Revision", nil, 120);
+  VersionGroup:AddText(": "..AuraFrames.Version.Revision, nil, 430);
   
-  VersionGroup:AddText("Date", nil, 100);
-  VersionGroup:AddText(": "..AuraFrames.Version.Date, nil, 450);
-  
+  VersionGroup:AddText("Date", nil, 120);
+  VersionGroup:AddText(": "..AuraFrames.Version.Date, nil, 430);
 
+  self.Content:AddSpace(1);
+
+  VersionGroup:AddText("Database version", nil, 120);
+  VersionGroup:AddText(": "..AuraFrames.DatabaseVersion, nil, 430);
+  
   self.Content:AddSpace(2);
   
   self.Content:AddHeader("Support");
