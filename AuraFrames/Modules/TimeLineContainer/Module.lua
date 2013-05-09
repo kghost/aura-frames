@@ -126,8 +126,8 @@ function Module:GetDatabaseDefaults()
       CountOutline = "OUTLINE",
       CountMonochrome = false,
       CountSize = 10,
-      CountPosX = 10,
-      CountPosY = 7.5,
+      CountPosX = 8,
+      CountPosY = 4,
       CountColor = {1, 1, 1, 1},
 
       ShowText = true,

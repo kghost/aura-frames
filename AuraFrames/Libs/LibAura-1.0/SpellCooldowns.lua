@@ -373,9 +373,10 @@ function Module:ScanSpellCooldowns()
 
         Charges, MaxCharges, Start, Duration = GetSpellCharges(SpellId);
 
-        if Start and Duration and Start + Duration > CurrentTime then
+        if Start and Duration and Start + Duration > CurrentTime and Charges ~= MaxCharges then
 
-          Active = true;
+          Active = 1;
+          Aura.ForceCountShow = true;
 
         else
 
@@ -407,10 +408,17 @@ function Module:ScanSpellCooldowns()
           
             local OldExpirationTime = Aura.ExpirationTime;
             Aura.ExpirationTime = Start + Duration;
+
+            local OldCharges = Aura.Count;
             Aura.Count = Charges;
-            
+              
             if Aura.RefSpellId == 0 and abs(Aura.ExpirationTime - OldExpirationTime) > 0.1 then
               LibAura:FireAuraChanged(Aura);
+            end
+
+            if Aura.RefSpellId == 0 and Aura.Count ~= OldCharges then
+              LibAura:FireAuraOld(Aura);
+              LibAura:FireAuraNew(Aura);
             end
           
           end
@@ -531,9 +539,10 @@ function Module:ScanAllSpellCooldowns()
 
       Charges, MaxCharges, Start, Duration = GetSpellCharges(SpellId);
 
-      if Start and Duration and Start + Duration > CurrentTime then
+      if Start and Duration and Start + Duration > CurrentTime and Charges ~= MaxCharges then
 
-        Active = true;
+        Active = 1;
+        Aura.ForceCountShow = true;
 
       else
 
@@ -550,7 +559,6 @@ function Module:ScanAllSpellCooldowns()
           -- if the cooldown it not active or when we have lesser then
           -- "UnderMin" left and we are passed the last ExpirationTime
           -- then deactive it.
-        
           if Aura.RefSpellId == 0 then
             LibAura:FireAuraOld(Aura);
           end
@@ -559,24 +567,30 @@ function Module:ScanAllSpellCooldowns()
           Aura.Active = false;
         
         elseif UnderMin == false then
-        
           -- We update only the cooldown when a minimum of "UnderMin"
           -- is still left. This to prevent the gcd to bump the spell cd.
         
           local OldExpirationTime = Aura.ExpirationTime;
           Aura.ExpirationTime = Start + Duration;
+
+          local OldCharges = Aura.Count;
           Aura.Count = Charges;
           
           if Aura.RefSpellId == 0 and abs(Aura.ExpirationTime - OldExpirationTime) > 0.1 then
             LibAura:FireAuraChanged(Aura);
           end
+
+          if Aura.RefSpellId == 0 and Aura.Count ~= OldCharges then
+            LibAura:FireAuraOld(Aura);
+            LibAura:FireAuraNew(Aura);
+          end
         
         end
       
       else
-      
+
         if Active == 1 and Start > 0 and Duration > SpellMinimumCooldown then
-        
+
           ScanList[Unit][SpellId] = true;
         
           Aura.Duration = Duration;
