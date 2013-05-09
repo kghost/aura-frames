@@ -44,6 +44,7 @@ local AuraDefinitionHelp = {
   DetectionTime = "The absolute time the aura is detected in the addon.",
   Unit = "The unit the aura is cast on. The units with Party, Boss, Arenateam or Raid in the name are groups of units. If you want to specify a single unit of a group, use then \"Real Unit\"",
   RealUnit = "The units with Party, Boss, Arenateam or Raid in the name are groups of units. \"Real Unit\" will for those units contain the real unit and not the group unit.",
+  CastByGroupPet = "Any aura that is cast by your pet or an pet from your group/raid/arena group.",
 };
 
 
