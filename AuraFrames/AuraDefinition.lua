@@ -312,7 +312,7 @@ AuraFrames.AuraDefinition = {
       boss = "Bosses",
       bosstarget = "Boss Targets",
       arena = "Arenateam Members",
-      arenatargets = "Arenateam Targets",
+7      arenatargets = "Arenateam Targets",
       raid = "Raid Members",
       raidtarget = "Raid Targets",
       raidpet = "Raid Pets",
@@ -359,6 +359,14 @@ AuraFrames.AuraDefinition = {
     Order = true,
     Filter = true,
     Weight = 3,
+  },
+  CastByGroupPet = {
+    Type = "Boolean",
+    Name = "Cast by group pet",
+    Code = "Object.CasterUnit and (Object.CasterUnit == \"pet\" or string.match(Object.CasterUnit, \"partypet%d\") or string.match(Object.CasterUnit, \"raidpet%d\") or string.match(Object.CasterUnit, \"arenapet%d\")) and true or false",
+    Order = false,
+    Filter = true,
+    Weight = 4,
   },
 };
 
