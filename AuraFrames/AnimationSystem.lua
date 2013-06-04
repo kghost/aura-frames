@@ -543,7 +543,7 @@ function AuraFrames:AnimationUpdate(Elapsed)
       
       end
 
-      if HaveEffects == true and Region._Animations[Animation] then
+      if HaveEffects == true and Region._Animations and Region._Animations[Animation] then
 
         Region._Animations[Animation].Scale = EffectResult.Scale;
         Region._Animations[Animation].Alpha = EffectResult.Alpha;
