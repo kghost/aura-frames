@@ -37,7 +37,7 @@ function AuraFramesConfig:ContentGeneral()
   VersionGroup:AddText("Database version", nil, 120);
   VersionGroup:AddText(": "..AuraFrames.DatabaseVersion, nil, 430);
   
-  self.Content:AddSpace(2);
+  self.Content:AddSpace(1);
   
   self.Content:AddHeader("Support");
 
@@ -68,7 +68,7 @@ function AuraFramesConfig:ContentGeneral()
   SupportGroup:AddText(" ", nil, 65);
   SupportGroup:AddText("Mouse over an URL to select it and press then CTRL+C to copy the text to the clipboard.", GameFontHighlightSmall, 450);
 
-  self.Content:AddSpace(2);
+  self.Content:AddSpace(1);
   
   self.Content:AddHeader("Credits");
 
