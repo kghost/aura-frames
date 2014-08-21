@@ -227,18 +227,37 @@ local function CreateRules(Content, ContentRules, Config, NotifyFunc, Rules)
         
       elseif ValueType == "Boolean" and (Operator == "Equal" or Operator == "NotEqual") then
       
-        local Value = AceGUI:Create("Dropdown");
-        Value:SetList({["true"] = "True", ["false"] = "False"});
-        if Rule.Args[ValueType] then
-          Value:SetValue(Rule.Args[ValueType]);
+        if AuraFrames.AuraDefinition[Rule.Subject].List then
+        
+          local Value = AceGUI:Create("Dropdown");
+          Value:SetList(AuraFrames.AuraDefinition[Rule.Subject].List);
+          if Rule.Args[ValueType] then
+            Value:SetValue(Rule.Args[ValueType]);
+          end
+          Value:SetLabel("Value");
+          Value:SetWidth(150);
+          Value:SetCallback("OnValueChanged", function(_, _, Value)
+            Rule.Args[ValueType] = Value;
+            NotifyFunc();
+          end);
+          Container:AddChild(Value);
+          
+        else
+      
+          local Value = AceGUI:Create("Dropdown");
+          Value:SetList({["true"] = "True", ["false"] = "False"});
+          if Rule.Args[ValueType] then
+            Value:SetValue(Rule.Args[ValueType]);
+          end
+          Value:SetLabel("Value");
+          Value:SetWidth(150);
+          Value:SetCallback("OnValueChanged", function(_, _, Value)
+            Rule.Args[ValueType] = Value;
+            NotifyFunc();
+          end);
+          Container:AddChild(Value);
+        
         end
-        Value:SetLabel("Value");
-        Value:SetWidth(150);
-        Value:SetCallback("OnValueChanged", function(_, _, Value)
-          Rule.Args[ValueType] = Value;
-          NotifyFunc();
-        end);
-        Container:AddChild(Value);
         
       elseif (Operator == "InList" or Operator == "NotInList") then
       
