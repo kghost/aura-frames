@@ -368,6 +368,19 @@ AuraFrames.AuraDefinition = {
     Filter = true,
     Weight = 4,
   },
+  Specialization = {
+    Type = "Boolean",
+    Name = "Specialization",
+    List = {
+      [1] = "Primary",
+      [2] = "Secondary",
+    },
+    Code = "(GetActiveSpecGroup() == 1)",
+    Order = false,
+    Filter = true,
+    Dynamic = true,
+    Weight = 4,
+  },
 };
 
 
