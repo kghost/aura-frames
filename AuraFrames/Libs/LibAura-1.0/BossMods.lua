@@ -310,7 +310,7 @@ function Module:DBM_Scan()
       _G[Bar.frame:GetName().."Bar"]:Hide();
     end
   
-    local Name, Icon = _G[Bar.frame:GetName().."BarName"]:GetText(), _G[Bar.frame:GetName().."BarIcon1"]:IsShown() == 1 and _G[Bar.frame:GetName().."BarIcon1"]:GetTexture() or nil;
+    local Name, Icon = _G[Bar.frame:GetName().."BarName"]:GetText(), _G[Bar.frame:GetName().."BarIcon1"]:IsShown() == true and _G[Bar.frame:GetName().."BarIcon1"]:GetTexture() or nil;
     
     if not Bar.dummy and Name then
     

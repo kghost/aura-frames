@@ -110,7 +110,7 @@ local function ProcessStatusChanges(Event, Force)
 
   if Event == "ALL" or Event == "PLAYER_REGEN_ENABLED" or Event == "PLAYER_REGEN_DISABLED" then
 
-    StatusChanges.InCombat = UnitAffectingCombat("player") == 1;
+    StatusChanges.InCombat = UnitAffectingCombat("player") == true;
     StatusChanges.OutOfCombat = not StatusChanges.InCombat;
   
   end
@@ -126,13 +126,13 @@ local function ProcessStatusChanges(Event, Force)
   
   if Event == "ALL" or Event == "COMPANION_UPDATE" then
   
-    StatusChanges.Mounted = IsMounted() == 1;
+    StatusChanges.Mounted = IsMounted() == true;
   
   end
   
   if Event == "ALL" or Event == "UNIT_ENTERED_VEHICLE" or Event == "UNIT_EXITED_VEHICLE" then
   
-    StatusChanges.Vehicle = UnitInVehicle("player") == 1;
+    StatusChanges.Vehicle = UnitInVehicle("player") == true;
   
   end
   
@@ -190,7 +190,7 @@ local function ProcessStatusChanges(Event, Force)
   
   if Event == "ALL" or Event == "PLAYER_FOCUS_CHANGED" or Event == "PLAYER_TARGET_CHANGED" then
   
-    StatusChanges.FocusEqualsTarget = UnitIsUnit("focus", "target") == 1;
+    StatusChanges.FocusEqualsTarget = UnitIsUnit("focus", "target") == true;
   
   end
 
