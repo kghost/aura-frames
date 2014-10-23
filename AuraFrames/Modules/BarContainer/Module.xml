@@ -27,7 +27,7 @@
               </Layer>
             </Layers>
             <Frames>
-              <Cooldown name="$parentCooldown" level="BORDER" hidden="true" />
+              <Cooldown name="$parentCooldown" level="BORDER" hidden="true" inherts="CooldownFrameTemplate" />
             </Frames>
           </Button>
           <Frame level="BACKGROUND" frameStrata="BACKGROUND" name="$parentBarBackground">

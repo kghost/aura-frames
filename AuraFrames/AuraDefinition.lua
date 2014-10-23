@@ -193,7 +193,7 @@ AuraFrames.AuraDefinition = {
   CastByParty = {
     Type = "Boolean",
     Name = "Cast by party",
-    Code = "(Object.CasterUnit and UnitInParty(Object.CasterUnit) == 1)",
+    Code = "(Object.CasterUnit and UnitInParty(Object.CasterUnit) == true)",
     Order = true,
     Filter = true,
     Weight = 3,
@@ -217,7 +217,7 @@ AuraFrames.AuraDefinition = {
   CastByPlayer = {
     Type = "Boolean",
     Name = "Cast by a player",
-    Code = "(Object.CasterUnit and UnitIsPlayer(Object.CasterUnit) == 1)",
+    Code = "(Object.CasterUnit and UnitIsPlayer(Object.CasterUnit) == true)",
     Order = true,
     Filter = true,
     Weight = 3,
@@ -225,7 +225,7 @@ AuraFrames.AuraDefinition = {
   CastByMyPet = {
     Type = "Boolean",
     Name = "Cast by my pet",
-    Code = "(Object.CasterUnit and UnitIsUnit(Object.CasterUnit, \"playerpet\") == 1)",
+    Code = "(Object.CasterUnit and UnitIsUnit(Object.CasterUnit, \"playerpet\") == true)",
     Order = true,
     Filter = true,
     Weight = 3,
@@ -241,7 +241,7 @@ AuraFrames.AuraDefinition = {
   TargetIsHostile = {
     Type = "Boolean",
     Name = "Unit Is hostile",
-    Code = "(Object.Unit and UnitIsEnemy(\"player\", Object.Unit) == 1)",
+    Code = "(Object.Unit and UnitIsEnemy(\"player\", Object.Unit) == true)",
     Order = false,
     Filter = true,
     Weight = 3,
@@ -249,7 +249,7 @@ AuraFrames.AuraDefinition = {
   CastByHostile = {
     Type = "Boolean",
     Name = "Cast by hostile",
-    Code = "(Object.CasterUnit and UnitIsEnemy(\"player\", Object.CasterUnit) == 1)",
+    Code = "(Object.CasterUnit and UnitIsEnemy(\"player\", Object.CasterUnit) == true)",
     Order = true,
     Filter = true,
     Weight = 3,
@@ -257,7 +257,7 @@ AuraFrames.AuraDefinition = {
   TargetIsFriendly = {
     Type = "Boolean",
     Name = "Unit Is friendly",
-    Code = "(Object.Unit and UnitIsFriend(\"player\", Object.Unit) == 1)",
+    Code = "(Object.Unit and UnitIsFriend(\"player\", Object.Unit) == true)",
     Order = false,
     Filter = true,
     Weight = 3,
@@ -265,7 +265,7 @@ AuraFrames.AuraDefinition = {
   CastByFriendly = {
     Type = "Boolean",
     Name = "Cast by friendly",
-    Code = "(Object.CasterUnit and UnitIsFriend(\"player\", Object.CasterUnit) == 1)",
+    Code = "(Object.CasterUnit and UnitIsFriend(\"player\", Object.CasterUnit) == true)",
     Order = true,
     Filter = true,
     Weight = 3,

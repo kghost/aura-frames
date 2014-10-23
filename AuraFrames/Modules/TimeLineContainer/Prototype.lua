@@ -117,7 +117,7 @@ local function ButtonOnClick(Button)
   -- When a key modifier is pressed, dump the aura to the
   -- chat window, otherwise just try to cancel the aura.
 
-  if IsModifierKeyDown() == 1 then
+  if IsModifierKeyDown() == true then
   
     AuraFrames:DumpAura(Button.Aura);
 

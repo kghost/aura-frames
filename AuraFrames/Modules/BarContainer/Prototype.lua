@@ -43,43 +43,6 @@ local FrameLevelLow = 3;
 local FrameLevelNormal = 6;
 local FrameLevelHigh = 9;
 
------------------------------------------------------------------
--- Cooldown Fix
------------------------------------------------------------------
-local CooldownFrame = CreateFrame("Frame");
-CooldownFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
-CooldownFrame:SetScript("OnEvent", function(self, event)
-
-  local TimePast = 0;
-
-  self:SetScript("OnUpdate", function(self, Elapsed)
-
-    TimePast = TimePast + Elapsed;
-    
-    if TimePast > 10 then
-      self:SetScript("OnUpdate", nil);
-    end
-    
-    for _, Container in pairs(Module.Containers) do
-    
-      for _, Bar in pairs(Container.Bars) do
-      
-        if Bar.Button.Cooldown:IsShown() == 1 then
-        
-          -- Trigger animation code.
-          Bar.Button.Cooldown:Hide();
-          Bar.Button.Cooldown:Show();
-        
-        end
-      
-      end
-    
-    end
-    
-  end);
-
-end);
-
 
 -----------------------------------------------------------------
 -- Local Function SetBarCoords
@@ -251,7 +214,7 @@ local function BarOnMouseUp(Bar, Button)
     return;
   end
 
-  if IsModifierKeyDown() == 1 then
+  if IsModifierKeyDown() == true then
   
     AuraFrames:DumpAura(Bar.Aura);
 
@@ -802,17 +765,17 @@ function Prototype:AuraNew(Aura)
     
     end
     
-    -- Set cooldown options
-    if Bar.Button.Cooldown.SetDrawEdge then
-      Bar.Button.Cooldown:SetDrawEdge(self.Config.Layout.CooldownDrawEdge);
-    end
-    Bar.Button.Cooldown:SetReverse(self.Config.Layout.CooldownReverse);
+    Bar.Button.Cooldown.currentCooldownType = COOLDOWN_TYPE_NORMAL;
+    Bar.Button.Cooldown:SetSwipeColor(0.5, 0.5, 0.5);
+    Bar.Button.Cooldown:SetHideCountdownNumbers(false);
+    Bar.Button.Cooldown:SetEdgeTexture("Interface\\Cooldown\\edge");
   
   end
   
   Bar.TimeSinceLastUpdate = 0.0;
   Bar.TimeLeftSeconds = 0;
   
+  Bar.Button.Cooldown:SetSwipeTexture(Aura.Icon);
   Bar.Button.Icon:SetTexture(Aura.Icon);
     
   Bar.Aura = Aura;

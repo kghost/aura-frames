@@ -82,6 +82,7 @@ local FrameLevelHigh = 9;
 -----------------------------------------------------------------
 -- Cooldown Fix
 -----------------------------------------------------------------
+--[[
 local CooldownFrame = CreateFrame("Frame");
 CooldownFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 CooldownFrame:SetScript("OnEvent", function(self, event)
@@ -110,7 +111,7 @@ CooldownFrame:SetScript("OnEvent", function(self, event)
     
       for _, Button in pairs(Container.Buttons or {}) do
       
-        if Button.Cooldown:IsShown() == 1 then
+        if Button.Cooldown:IsShown() == true then
         
           -- Try trigger animation code.
           Button.Cooldown:Hide();
@@ -125,7 +126,7 @@ CooldownFrame:SetScript("OnEvent", function(self, event)
   end);
 
 end);
-
+]]--
 
 -----------------------------------------------------------------
 -- Local Function ButtonOnUpdate
@@ -214,7 +215,7 @@ local function ButtonOnClick(Button)
   -- When a key modifier is pressed, dump the aura to the
   -- chat window, otherwise just try to cancel the aura.
 
-  if IsModifierKeyDown() == 1 then
+  if IsModifierKeyDown() == true then
   
     AuraFrames:DumpAura(Button.Aura);
 
@@ -662,12 +663,18 @@ function Prototype:AuraNew(Aura)
     
     end
     
+    Button.Cooldown.currentCooldownType = COOLDOWN_TYPE_NORMAL;
+    Button.Cooldown:SetSwipeColor(0.5, 0.5, 0.5);
+    Button.Cooldown:SetHideCountdownNumbers(false);
+    Button.Cooldown:SetEdgeTexture("Interface\\Cooldown\\edge");
+    
   end
   
   Button.TimeSinceLastUpdate = 0.0;
   Button.TimeLeftSeconds = 0;
   
   Button.Aura = Aura;
+  Button.Cooldown:SetSwipeTexture(Aura.Icon);
   Button.Icon:SetTexture(Aura.Icon);
 
   
