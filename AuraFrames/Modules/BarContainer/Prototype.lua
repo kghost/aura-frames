@@ -775,7 +775,9 @@ function Prototype:AuraNew(Aura)
   Bar.TimeSinceLastUpdate = 0.0;
   Bar.TimeLeftSeconds = 0;
   
-  Bar.Button.Cooldown:SetSwipeTexture(Aura.Icon);
+  if Aura.Icon ~= nil then
+    Bar.Button.Cooldown:SetSwipeTexture(Aura.Icon);
+  end
   Bar.Button.Icon:SetTexture(Aura.Icon);
     
   Bar.Aura = Aura;

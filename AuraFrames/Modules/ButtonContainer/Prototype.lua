@@ -674,7 +674,9 @@ function Prototype:AuraNew(Aura)
   Button.TimeLeftSeconds = 0;
   
   Button.Aura = Aura;
-  Button.Cooldown:SetSwipeTexture(Aura.Icon);
+  if Aura.Icon ~= nil then
+    Button.Cooldown:SetSwipeTexture(Aura.Icon);
+  end
   Button.Icon:SetTexture(Aura.Icon);
 
   

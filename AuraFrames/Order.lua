@@ -54,7 +54,7 @@ local OrderOperatorMappings = {
   ListDesc        = ">",
 };
 
--- List of all the operators with there description. Used by the configuration.
+-- List of all the operators with their description. Used by the configuration.
 AuraFrames.OrderOperatorDescriptions = {
   First = "First",
   Last = "Last",

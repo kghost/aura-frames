@@ -104,7 +104,7 @@ function AnimationPrototype:AddEffect(Type, Properties)
   local EffectFunction, EffectProperties = AuraFrames.Animations.EffectConstructors[Type](AuraFrames.Animations.EffectConstructors, Properties);
 
   -- Sort the effects on end time, so if we have a gap in time, that we can run the missed effects
-  -- in the correct order (this is done by the Updte function).
+  -- in the correct order (this is done by the Update function).
 
   local EndTime = EffectProperties.Start + (EffectProperties.Duration and EffectProperties.Duration * EffectProperties.Times or 0);
 
@@ -385,7 +385,6 @@ function AuraFrames:ApplyAnimationEffects(Region)
     YOffset = YOffset + EffectProperties.YOffset;
   
   end
-
 
   if Region._ScaleRegion then
     Region._ScaleRegion:SetScale(Scale);
