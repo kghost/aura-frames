@@ -19,7 +19,11 @@ function AuraFrames:SetFontObjectProperties(FontObject, Font, Size, Outline, Mon
     Flags = (Flags ~= nil and (Flags .. ",") or "") .. "MONOCHROME";
   end
   
-  FontObject:SetFont(LSM:Fetch("font", Font), Size, Flags);
+  local LsmFont = LSM:Fetch("font", Font);
+  
+  if LsmFont then
+    FontObject:SetFont(LSM:Fetch("font", Font), Size, Flags);
+  end
   
   if Color then
     FontObject:SetTextColor(unpack(Color));

@@ -125,6 +125,7 @@ function AuraFrames:Confirm(Message, Func, ButtonText1, ButtonText2)
   if not StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] then
 
     StaticPopupDialogs["AURAFRAMESCONFIG_CONFIRM_DIALOG"] = {
+      preferredIndex = 3,
       timeout = 0,
       whileDead = 1,
       hideOnEscape = 1,
@@ -167,6 +168,7 @@ function AuraFrames:Message(Message, Func, ButtonText)
   if not StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"] then
 
     StaticPopupDialogs["AURAFRAMESCONFIG_MESSAGE_DIALOG"] = {
+      preferredIndex = 3,
       button1 = "Okay",
       timeout = 0,
       whileDead = 1,
@@ -201,6 +203,7 @@ function AuraFrames:Input(Message, EditBoxText, Func, ButtonText1, ButtonText2, 
   if not StaticPopupDialogs["AURAFRAMESCONFIG_INPUT_DIALOG"] then
 
     StaticPopupDialogs["AURAFRAMESCONFIG_INPUT_DIALOG"] = {
+      preferredIndex = 3,
       timeout = 0,
       whileDead = 1,
       hideOnEscape = 1,
