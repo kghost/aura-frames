@@ -725,6 +725,9 @@ function Prototype:AuraOld(Aura)
   
   Button:Hide();
   
+  -- Sometimes the cooldown frame will be stuck showing.
+  Button.Cooldown:Hide();
+  
   if AuraFrames:IsTooltipOwner(Button) == true then
     AuraFrames:HideTooltip();
   end
