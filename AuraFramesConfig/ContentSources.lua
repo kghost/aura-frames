@@ -366,6 +366,11 @@ local AllSources = {
         Unit = "bossmod",
         Type = "ALERT",
       },
+      {
+        Name = "Stances",
+        Unit = "player",
+        Type = "STANCE",
+      },
     }
   },
 };
