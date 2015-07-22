@@ -38,6 +38,7 @@ AuraFrames.AuraDefinition = {
       ITEMCOOLDOWN = "Item Cooldown",
       INTERNALCOOLDOWNITEM = "Internal Item Cooldown",
       TOTEM = "Totem",
+      STANCE = "Stance",
       ALERT = "Boss Mod Alert",
     },
     Order = true,
@@ -369,13 +370,13 @@ AuraFrames.AuraDefinition = {
     Weight = 4,
   },
   Specialization = {
-    Type = "Boolean",
+    Type = "Number",
     Name = "Specialization",
     List = {
       [1] = "Primary",
       [2] = "Secondary",
     },
-    Code = "(GetActiveSpecGroup() == 1)",
+    Code = "GetActiveSpecGroup()",
     Order = false,
     Filter = true,
     Dynamic = true,

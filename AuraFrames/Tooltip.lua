@@ -97,6 +97,10 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
   
     GameTooltip:SetHyperlink("spell:"..Aura.SpellId);
   
+  elseif (Aura.Type == "STANCE" or Aura.Type == "STANCEOLD") and Aura.SpellId then
+  
+    GameTooltip:SetHyperlink("spell:"..Aura.SpellId);
+
   elseif Aura.Type == "HARMFUL" or Aura.Type == "HELPFUL" then
   
     GameTooltip:SetUnitAura(Aura.RealUnit or Aura.Unit, Aura.Index, Aura.Type);
