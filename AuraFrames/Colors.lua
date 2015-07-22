@@ -110,7 +110,7 @@ end
 -----------------------------------------------------------------
 function AuraFrames.ColorsPrototype:Build()
 
-  local Code = "";
+  local Code = "\nif Object.ColorOverride then return Object.ColorOverride; end;";
   
   self.Dynamic = false;
   
@@ -125,6 +125,8 @@ function AuraFrames.ColorsPrototype:Build()
   end
   
   Code = "return function(Object) "..Code.."\nreturn {"..self.Config.DefaultColor[1]..","..self.Config.DefaultColor[2]..","..self.Config.DefaultColor[3]..","..self.Config.DefaultColor[4].."}; end;";
+  
+  af:Print(Code);
   
   local Function, ErrorMessage = loadstring(Code);
   
