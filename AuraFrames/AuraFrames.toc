@@ -1,4 +1,4 @@
-## Interface: 60000
+## Interface: 60200
 ## Title: Aura Frames
 ## Notes: Managing your aura frames
 ## Author: Alex <Beautiuz> Elderson
