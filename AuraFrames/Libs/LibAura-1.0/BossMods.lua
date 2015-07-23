@@ -342,7 +342,7 @@ function Module:DBM_Scan()
         db[Id].Duration = Bar.totalTime;
         db[Id].ExpirationTime = CurrentTime + Bar.timer;
         db[Id].Id = "bossmodALERT_DBM"..Id;
-        db[Id].ColorOverride = Bar.colorType >= 1 and {r, g, b} or nil;
+        db[Id].ColorOverride = Bar.colorType and Bar.colorType >= 1 and {r, g, b} or nil;
         
         if Bar.totalTime and Bar.timer then
           db[Id].CreationTime = CurrentTime + Bar.timer - Bar.totalTime;
