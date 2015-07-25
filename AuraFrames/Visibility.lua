@@ -148,9 +148,7 @@ local function ProcessStatusChanges(Event, Force)
   
   if Event == "ALL" then
   
-    InstanceType = InstanceType or select(2, GetInstanceInfo());
-    
-    StatusChanges.InInstance = InstanceType == "party" or InstanceType == "raid";
+    StatusChanges.InInstance = IsInInstance();
     StatusChanges.NotInInstance = not StatusChanges.InInstance;
   
   end
