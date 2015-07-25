@@ -48,7 +48,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
   CheckBoxAlwaysVisible:SetValue(VisibilityConfig.AlwaysVisible);
   CheckBoxAlwaysVisible:SetCallback("OnValueChanged", function(_, _, Value)
     VisibilityConfig.AlwaysVisible = Value;
-    AuraFrames:CheckVisibility(ContainerInstance, nil, true);
+    AuraFrames:CheckVisibility(ContainerInstance, false);
     AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId);
   end);
   Content:AddChild(CheckBoxAlwaysVisible);
@@ -99,7 +99,7 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
         VisibilityConfig.VisibleWhenNot[Option[1]] = nil
         Status:SetImage(IconEnabled);
       end
-      AuraFrames:CheckVisibility(ContainerInstance, nil, true);
+      AuraFrames:CheckVisibility(ContainerInstance, false);
     end);
     GroupVisibility:AddChild(Status);
 
