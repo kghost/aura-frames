@@ -451,6 +451,7 @@ function AuraFramesConfig.Animations.ContainerVisibility.List.Jump:SetDefaults(P
   Properties.InvisibleAlpha = 0.0;
   Properties.InvisibleX = 0;
   Properties.InvisibleY = -400;
+  Properties.MouseEventsWhenInactive = false;
 
 end
 
@@ -464,7 +465,7 @@ function AuraFramesConfig.Animations.ContainerVisibility.List.Jump:Content(Conte
   SliderDuration:SetValue(Config.Duration);
   SliderDuration:SetCallback("OnValueChanged", function(_, _, Value)
     Config.Duration = Value;
-    ContainerInstance:UpdateAnimationConfig("TimeLineVisibility");
+    ContainerInstance:UpdateAnimationConfig("ContainerVisibility");
   end);
   Content:AddChild(SliderDuration);
 
@@ -476,7 +477,7 @@ function AuraFramesConfig.Animations.ContainerVisibility.List.Jump:Content(Conte
   SliderInvisibleScale:SetValue(Config.InvisibleScale);
   SliderInvisibleScale:SetCallback("OnValueChanged", function(_, _, Value)
     Config.InvisibleScale = Value;
-    ContainerInstance:UpdateAnimationConfig("TimeLineVisibility");
+    ContainerInstance:UpdateAnimationConfig("ContainerVisibility");
   end);
   Content:AddChild(SliderInvisibleScale);
 
@@ -486,7 +487,7 @@ function AuraFramesConfig.Animations.ContainerVisibility.List.Jump:Content(Conte
   SliderInvisibleAlpha:SetValue(Config.InvisibleAlpha);
   SliderInvisibleAlpha:SetCallback("OnValueChanged", function(_, _, Value)
     Config.InvisibleAlpha = Value;
-    ContainerInstance:UpdateAnimationConfig("TimeLineVisibility");
+    ContainerInstance:UpdateAnimationConfig("ContainerVisibility");
   end);
   Content:AddChild(SliderInvisibleAlpha);
 
@@ -496,7 +497,7 @@ function AuraFramesConfig.Animations.ContainerVisibility.List.Jump:Content(Conte
   SliderInvisibleX:SetValue(Config.InvisibleX);
   SliderInvisibleX:SetCallback("OnValueChanged", function(_, _, Value)
     Config.InvisibleX = Value;
-    ContainerInstance:UpdateAnimationConfig("TimeLineVisibility");
+    ContainerInstance:UpdateAnimationConfig("ContainerVisibility");
   end);
   Content:AddChild(SliderInvisibleX);
 
@@ -506,9 +507,19 @@ function AuraFramesConfig.Animations.ContainerVisibility.List.Jump:Content(Conte
   SliderInvisibleY:SetValue(Config.InvisibleY);
   SliderInvisibleY:SetCallback("OnValueChanged", function(_, _, Value)
     Config.InvisibleY = Value;
-    ContainerInstance:UpdateAnimationConfig("TimeLineVisibility");
+    ContainerInstance:UpdateAnimationConfig("ContainerVisibility");
   end);
   Content:AddChild(SliderInvisibleY);
+  
+  local CheckBoxMouseEventsWhenInactive = AceGUI:Create("CheckBox");
+  CheckBoxMouseEventsWhenInactive:SetWidth(400);
+  CheckBoxMouseEventsWhenInactive:SetLabel("Receive mouse events when invisible or inactive");
+  CheckBoxMouseEventsWhenInactive:SetValue(Config.MouseEventsWhenInactive);
+  CheckBoxMouseEventsWhenInactive:SetCallback("OnValueChanged", function(_, _, Value)
+    Config.MouseEventsWhenInactive = Value;
+    ContainerInstance:UpdateAnimationConfig("ContainerVisibility");
+  end);
+  Content:AddChild(CheckBoxMouseEventsWhenInactive);
 
 end
 
@@ -522,6 +533,7 @@ function AuraFramesConfig.Animations.ContainerVisibility.List.Fade:SetDefaults(P
 
   Properties.Duration = 0.5;
   Properties.InvisibleAlpha = 0.0;
+  Properties.MouseEventsWhenInactive = false;
 
 end
 
@@ -535,7 +547,7 @@ function AuraFramesConfig.Animations.ContainerVisibility.List.Fade:Content(Conte
   SliderDuration:SetValue(Config.Duration);
   SliderDuration:SetCallback("OnValueChanged", function(_, _, Value)
     Config.Duration = Value;
-    ContainerInstance:UpdateAnimationConfig("TimeLineVisibility");
+    ContainerInstance:UpdateAnimationConfig("ContainerVisibility");
   end);
   Content:AddChild(SliderDuration);
 
@@ -545,9 +557,19 @@ function AuraFramesConfig.Animations.ContainerVisibility.List.Fade:Content(Conte
   SliderInvisibleAlpha:SetValue(Config.InvisibleAlpha);
   SliderInvisibleAlpha:SetCallback("OnValueChanged", function(_, _, Value)
     Config.InvisibleAlpha = Value;
-    ContainerInstance:UpdateAnimationConfig("TimeLineVisibility");
+    ContainerInstance:UpdateAnimationConfig("ContainerVisibility");
   end);
   Content:AddChild(SliderInvisibleAlpha);
+  
+  local CheckBoxMouseEventsWhenInactive = AceGUI:Create("CheckBox");
+  CheckBoxMouseEventsWhenInactive:SetWidth(400);
+  CheckBoxMouseEventsWhenInactive:SetLabel("Receive mouse events when invisible or inactive");
+  CheckBoxMouseEventsWhenInactive:SetValue(Config.MouseEventsWhenInactive);
+  CheckBoxMouseEventsWhenInactive:SetCallback("OnValueChanged", function(_, _, Value)
+    Config.MouseEventsWhenInactive = Value;
+    ContainerInstance:UpdateAnimationConfig("ContainerVisibility");
+  end);
+  Content:AddChild(CheckBoxMouseEventsWhenInactive);
 
 end
 
@@ -678,15 +700,25 @@ function AuraFramesConfig:ContentAnimations(ContainerId)
   local SupportedAnimationTypes = ContainerInstance.Module:GetSupportedAnimationTypes();
 
   local Tabs = {};
+  
+  local SelectedAnimationTabFound = false;
 
   for _, Type in pairs(SupportedAnimationTypes) do
 
     if AuraFramesConfig.Animations[Type] and AuraFramesConfig.Animations[Type] then
 
       tinsert(Tabs, {value = Type, text = AuraFramesConfig.Animations[Type].DisplayName});
+      
+      if AuraFramesConfig.SelectedAnimationTab == Type then
+        SelectedAnimationTabFound = true;
+      end
 
     end
 
+  end
+  
+  if not SelectedAnimationTabFound then
+    AuraFramesConfig.SelectedAnimationTab = nil;
   end
 
   self.Content:SetLayout("Fill");
@@ -707,10 +739,11 @@ function AuraFramesConfig:ContentAnimations(ContainerId)
   Tab:SetCallback("OnGroupSelected", function(_, _, Value)
 
     AuraFramesConfig:ContentAnimationsRefresh(Content, ContainerId, Value);
+    AuraFramesConfig.SelectedAnimationTab = Value;
 
   end);
 
-  -- Select the first tab.
-  Tab:SelectTab(Tabs[1] and Tabs[1].value or nil);
+  AuraFramesConfig.SelectedAnimationTab = AuraFramesConfig.SelectedAnimationTab or (Tabs[1] and Tabs[1].value or nil);
+  Tab:SelectTab(AuraFramesConfig.SelectedAnimationTab);
 
 end

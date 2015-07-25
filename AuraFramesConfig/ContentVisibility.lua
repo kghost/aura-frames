@@ -147,6 +147,21 @@ function AuraFramesConfig:ContentVisibilityRefresh(Content, ContainerId)
     Content:AddText("Note: Visibility is performed by an animation, make sure that the visibility animation is enabled for this container.\n");
 
   end
+  
+  Content:AddSpace();
+  
+  local ButtonGoToAnimation = AceGUI:Create("Button");
+  ButtonGoToAnimation:SetWidth(350);
+  ButtonGoToAnimation:SetText("Go to the animation that is used for visibility");
+  ButtonGoToAnimation:SetCallback("OnClick", function()
+    
+    AuraFramesConfig.SelectedAnimationTab = "ContainerVisibility";
+    AuraFramesConfig:SelectByPath("Containers", ContainerId, "Animations");
+    
+  end);
+  Content:AddChild(ButtonGoToAnimation);
+  
+  Content:AddSpace();
 
   
   Content:ResumeLayout();

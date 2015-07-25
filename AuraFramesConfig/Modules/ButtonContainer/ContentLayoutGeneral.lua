@@ -31,6 +31,7 @@ function Module:ContentLayoutGeneral(Content, ContainerId)
   Clickable:SetValue(LayoutConfig.Clickable);
   Clickable:SetCallback("OnValueChanged", function(_, _, Value)
     LayoutConfig.Clickable = Value;
+    ContainerInstance.RecieveMouseEvents = LayoutConfig.Clickable and ContainerInstance.VisibilityClickable;
     VisibilityConfig.VisibleWhen.OnMouseOver = nil;
     VisibilityConfig.VisibleWhenNot.OnMouseOver = nil;
     ContainerInstance:Update("LAYOUT");

@@ -2,6 +2,11 @@ local AuraFramesConfig = LibStub("AceAddon-3.0"):GetAddon("AuraFramesConfig");
 local AuraFrames = LibStub("AceAddon-3.0"):GetAddon("AuraFrames");
 local AceGUI = LibStub("AceGUI-3.0");
 
+-- Expose the addon to the global namespace for debugging.
+_G["AuraFramesConfig"] = AuraFramesConfig;
+_G["afc"] = AuraFramesConfig;
+
+
 AuraFramesConfig.Tree = {};
 AuraFramesConfig.TreeSelectedPath = nil;
 
