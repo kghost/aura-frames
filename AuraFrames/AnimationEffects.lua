@@ -138,7 +138,7 @@ local function EffectFrameLevel(Region, RegionEffect, Properties)
 
   Level = Level + Properties.Change;
 
-  Region:SetFrameLevel(Level);
+  Region:SetFrameLevel(Level > 0 and Level or 1);
 
 end
 

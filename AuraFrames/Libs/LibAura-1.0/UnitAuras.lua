@@ -175,7 +175,7 @@ function Module:ActivateSource(Unit, Type)
   
   if next(self.db) == nil then
     self:RegisterEvent("PLAYER_ENTERING_WORLD", "ScanAllUnits");
-    self:RegisterEvent("ZONE_CHANGED", "ScanAllUnits");
+    self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "ScanAllUnits");
   end
 
   for Key, Value in pairs(Module.UnitTranslations) do
@@ -232,7 +232,7 @@ function Module:DeactivateSource(Unit, Type)
   
   if next(self.db) == nil then
     self:UnregisterEvent("PLAYER_ENTERING_WORLD", "ScanAllUnits");
-    self:UnregisterEvent("ZONE_CHANGED", "ScanAllUnits");
+    self:UnregisterEvent("ZONE_CHANGED_NEW_AREA", "ScanAllUnits");
   end
 
 end
@@ -341,7 +341,7 @@ function Module:PLAYER_ENTERING_WORLD()
   Module:ScanAllUnits();
 end
 
-function Module:ZONE_CHANGED()
+function Module:ZONE_CHANGED_NEW_AREA()
   Module:ScanAllUnits();
 end
 

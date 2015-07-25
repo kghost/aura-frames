@@ -2,6 +2,8 @@ local LibAura = LibStub("LibAura-1.0");
 
 function LibAura:GetItemProcs()
 
+  -- In the form of [SpellId] = {ItemId1, ItemId2, ...}
+
   return {
 
     [44270] = {40389, 34082},
@@ -553,7 +555,8 @@ function LibAura:GetItemProcs()
     [109854] = {78475},
     [24405] = {20035},
     [29640] = {13040},
-
+    [146250] = {102305},
+    
   };
 
 end

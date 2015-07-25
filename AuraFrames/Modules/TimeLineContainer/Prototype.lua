@@ -502,8 +502,6 @@ function Prototype:Update(...)
 
   local Changed = select(1, ...) or "ALL";
   
-  af:Print("Update", Changed);
-
   if Changed == "ALL" or Changed == "LAYOUT" then
 
     self.Frame:SetScale(self.Config.Layout.Scale);

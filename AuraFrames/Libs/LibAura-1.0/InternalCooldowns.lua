@@ -98,7 +98,7 @@ end
 -----------------------------------------------------------------
 function Module:GetAuras(Unit, Type)
 
-  return {};
+  return self.db.Auras;
 
 end
 
@@ -229,7 +229,7 @@ function Module:AuraNew(Aura)
   local ItemCd = ProcItem.OverruleCd ~= 0 and ProcItem.OverruleCd or ProcItem.GuessedCd;
 
   -- Get an aura table from the pool or create one.
-  local Aura = tremove(AuraPool) or {
+  local NewAura = tremove(AuraPool) or {
     Index = 0,
     Type = "INTERNALCOOLDOWNITEM",
     Unit = "player",
@@ -243,22 +243,23 @@ function Module:AuraNew(Aura)
   };
 
   -- Set the aura properties.
-  Aura.SpellId = SpellId;
-  Aura.ItemId = ItemId;
+  NewAura.SpellId = SpellId;
+  NewAura.ItemId = ItemId;
   local _;
-  Aura.Name, _, _, _, _, _, _, _, _,  Aura.Icon, _ = GetItemInfo(ItemId);
-  Aura.ExpirationTime = SpellTime + ItemCd;
-  Aura.Duration = ItemCd;
-  Aura.CreationTime = SpellTime;
-  Aura.Id = "playerINTERNALCOOLDOWNITEM"..ItemId..Aura.ExpirationTime;
+  NewAura.Name, _, _, _, _, _, _, _, _,  NewAura.Icon, _ = GetItemInfo(ItemId);
+  NewAura.ExpirationTime = SpellTime + ItemCd;
+  NewAura.Duration = ItemCd;
+  NewAura.CreationTime = SpellTime;
+  NewAura.Id = "playerINTERNALCOOLDOWNITEM"..ItemId..NewAura.ExpirationTime;
   
-  -- Fire the aura to LibAura.
-  LibAura:FireAuraNew(Aura);
+  -- Fire the new aura to LibAura.
+  LibAura:FireAuraNew(NewAura);
   
-  -- Add the aura in our aura list.
-  tinsert(self.db.Auras, Aura);
+  -- Add the new aura in our aura list.
+  tinsert(self.db.Auras, NewAura);
 
 end
+
 
 -----------------------------------------------------------------
 -- Function AuraOld
@@ -269,6 +270,7 @@ function Module:AuraOld()
 
 end
 
+
 -----------------------------------------------------------------
 -- Function AuraChanged
 -----------------------------------------------------------------
@@ -277,6 +279,7 @@ function Module:AuraChanged()
   -- Not used, but required as LibAura Source.
 
 end
+
 
 -----------------------------------------------------------------
 -- Function Event
@@ -314,6 +317,7 @@ function Module:Update()
 
 end
 
+
 -----------------------------------------------------------------
 -- Function QueueScanEquippedItems
 -----------------------------------------------------------------
@@ -322,7 +326,6 @@ function Module:QueueScanEquippedItems()
   ScanEquippedItems = true;
 
 end
-
 
 
 -----------------------------------------------------------------
