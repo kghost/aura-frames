@@ -157,7 +157,7 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
   
   if Options.ShowAuraId == true then
   
-    if Aura.SpellId ~= 0 then
+    if Aura.SpellId and Aura.SpellId ~= 0 then
     
       if Options.ShowPrefix == true then
         GameTooltip:AddLine("Spell ID: |cffff0000"..Aura.SpellId.."|r");
@@ -167,7 +167,7 @@ function AuraFrames:ShowTooltip(Aura, Frame, Options)
     
     end
     
-    if Aura.ItemId ~= 0 then
+    if Aura.ItemId and Aura.ItemId ~= 0 then
     
       if Options.ShowPrefix == true then
         GameTooltip:AddLine("Item ID: |cffff0000"..Aura.ItemId.."|r");

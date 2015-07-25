@@ -165,7 +165,7 @@ function Module:GetDatabaseDefaults()
         Animation = "Fade",
         Duration = 0.5,
         InvisibleAlpha = 0.6,
-        MouseEventsWhenInactive = true,
+        MouseEventsWhenInactive = false,
       },
     },
     Colors = AuraFrames:GetDatabaseDefaultColors(),
@@ -243,7 +243,7 @@ function Module:New(Config)
   
   Container.Frame:SetScript("OnEvent", function() Container:Update(); end);
   Container.Frame:RegisterEvent("PLAYER_ENTERING_WORLD");
-  Container.Frame:RegisterEvent("ZONE_CHANGED");
+  Container.Frame:RegisterEvent("ZONE_CHANGED_NEW_AREA");
   
   AuraFrames:CheckVisibility(Container);
 

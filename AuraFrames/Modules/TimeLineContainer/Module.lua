@@ -192,7 +192,7 @@ function Module:GetDatabaseDefaults()
         Animation = "Fade",
         Duration = 0.5,
         InvisibleAlpha = 0.6,
-        MouseEventsWhenInactive = true,
+        MouseEventsWhenInactive = false,
       },
     },
     Colors = AuraFrames:GetDatabaseDefaultColors(),
@@ -269,7 +269,7 @@ function Module:New(Config)
 
   Container.TextLabels = {};
 
-  Container.IsVisible = true;
+  Container.IsVisible = false;
   Container.ContainerVisibility = true;
   Container.VisibilityClickable = true;
   Container.RecieveMouseEvents = Config.Layout.Clickable;
@@ -282,7 +282,7 @@ function Module:New(Config)
   Container.Frame:SetScript("OnEnter", function() Container:CheckVisibility(true); end);
   Container.Frame:SetScript("OnLeave", function() Container:CheckVisibility(false); end);
   Container.Frame:RegisterEvent("PLAYER_ENTERING_WORLD");
-  Container.Frame:RegisterEvent("ZONE_CHANGED");
+  Container.Frame:RegisterEvent("ZONE_CHANGED_NEW_AREA");
 
   Container.TimeSinceLastUpdate = 0;
   Container.Frame:SetScript("OnUpdate", function(Button, Elapsed)

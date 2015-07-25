@@ -185,7 +185,9 @@ local function ContainerVisibilityMouseEvents(Region, RegionEffect, Properties, 
     GameTooltip:Hide();
   end
   
-  Properties.Container:Update("LAYOUT");
+  if OldRecieveMouseEvents ~= Properties.Container.RecieveMouseEvents then
+    Properties.Container:Update("LAYOUT");
+  end
 
 end
 

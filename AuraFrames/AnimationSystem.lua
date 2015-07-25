@@ -183,27 +183,28 @@ function AnimationPrototype:SetConfig(Config)
 
 end
 
+
 -----------------------------------------------------------------
--- Function Play
+-- Function PreparePlay
 -----------------------------------------------------------------
-function AnimationPrototype:Play(Region, CallBack, StartTime)
+function AnimationPrototype:PreparePlay(Region)
 
   if self.IsEmpty == true then
-    return;
+    return false;
   end
 
   -- This will update the size and also create Region._AnimationRegion if it doesn't exists.
   AuraFrames:UpdateAnimationRegionSize(Region);
 
   if not Region._AnimationRegion then
-    return;
+    return false;
   end
 
   if not self.Regions[Region] then
     self.Regions[Region] = tremove(self.PoolRegionData) or {State = {}};
   end
-
-  self.Regions[Region].Time = StartTime or -self.StartDelay;
+  
+  self.Regions[Region].Time = -self.StartDelay;
 
   -- Reset states.
   for Key, _ in pairs(self.Regions[Region].State) do
@@ -236,9 +237,43 @@ function AnimationPrototype:Play(Region, CallBack, StartTime)
   Region._Animations[self].Alpha = 1;
   Region._Animations[self].XOffset = 0;
   Region._Animations[self].YOffset = 0;
+  Region._Animations[self].CallBack = nil;
+
+  return true;
+
+end
+
+
+-----------------------------------------------------------------
+-- Function Apply
+-----------------------------------------------------------------
+function AnimationPrototype:Apply(Region)
+
+  -- This function will directly set the result of an animation. If the animation was playing, it's stopped.
+  
+  if not self:PreparePlay(Region) then
+    return;
+  end
+  
+  self.Regions[Region].Time = self.TotalDuration;
+  
+  UpdateFrame:Show();
+
+end
+
+
+-----------------------------------------------------------------
+-- Function Play
+-----------------------------------------------------------------
+function AnimationPrototype:Play(Region, CallBack, StartTime)
+
+  if not self:PreparePlay(Region) then
+    return;
+  end
+
+  self.Regions[Region].Time = StartTime or -self.StartDelay;
   Region._Animations[self].CallBack = CallBack;
   
-  AuraFrames:AnimationUpdate(0);
   UpdateFrame:Show();
 
 end
@@ -550,7 +585,6 @@ function AuraFrames:AnimationUpdate(Elapsed)
         Region._Animations[Animation].YOffset = EffectResult.YOffset;
       
         UpdateRegions[Region] = true;
-        --AuraFrames:ApplyAnimationEffects(Region);
 
       end
 

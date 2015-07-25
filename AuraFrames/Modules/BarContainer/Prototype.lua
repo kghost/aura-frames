@@ -1017,7 +1017,13 @@ end
 function Prototype:GoVisible()
 
   if self.IsVisible == true then
+  
+    if not self.AnimationGoingVisible:IsPlaying(self.Frame) then
+      self.AnimationGoingVisible:Apply(self.Frame);
+    end
+  
     return;
+    
   end
 
   local Start = nil;
@@ -1041,7 +1047,13 @@ end
 function Prototype:GoInvisible()
 
   if self.IsVisible == false then
+  
+    if not self.AnimationGoingInvisible:IsPlaying(self.Frame) then
+      self.AnimationGoingInvisible:Apply(self.Frame);
+    end
+    
     return;
+    
   end
 
   local Start = nil;

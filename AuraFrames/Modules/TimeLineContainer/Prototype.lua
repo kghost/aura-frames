@@ -501,6 +501,8 @@ function Prototype:Update(...)
   -- ALL, LAYOUT or WARNINGS.
 
   local Changed = select(1, ...) or "ALL";
+  
+  af:Print("Update", Changed);
 
   if Changed == "ALL" or Changed == "LAYOUT" then
 
@@ -1001,7 +1003,13 @@ end
 function Prototype:GoVisible()
 
   if self.IsVisible == true then
+    
+    if not self.AnimationGoingVisible:IsPlaying(self.Frame) then
+      self.AnimationGoingVisible:Apply(self.Frame);
+    end
+    
     return;
+    
   end
 
   local Start = nil;
@@ -1025,7 +1033,13 @@ end
 function Prototype:GoInvisible()
 
   if self.IsVisible == false then
+  
+    if not self.AnimationGoingInvisible:IsPlaying(self.Frame) then
+      self.AnimationGoingInvisible:Apply(self.Frame);
+    end
+    
     return;
+    
   end
 
   local Start = nil;
@@ -1090,9 +1104,7 @@ function Prototype:UpdateAnimationConfig(AnimationType)
 
   end
 
-  -- Reset own status if needed.
-  if self.IsVisible == false and (AnimationType == "ALL" or AnimationType == "ContainerVisibility") then
-    self.IsVisible = true;
+  if AnimationType == "ALL" or AnimationType == "ContainerVisibility" then
     self:UpdateVisibility();
   end
 
