@@ -171,6 +171,26 @@ end
 
 
 -----------------------------------------------------------------
+-- Local Function ContainerVisibilityMouseEvents
+-----------------------------------------------------------------
+local function ContainerVisibilityMouseEvents(Region, RegionEffect, Properties, Progression)
+  
+  local OldRecieveMouseEvents = Properties.Container.RecieveMouseEvents;
+
+  Properties.Container.VisibilityClickable = Properties.Visible or Properties.MouseEventsWhenInactive;
+  Properties.Container.RecieveMouseEvents = Properties.Container.Config.Layout.Clickable and Properties.Container.VisibilityClickable;
+  
+  if not Properties.Container.RecieveMouseEvents and (OldRecieveMouseEvents ~= Properties.Container.RecieveMouseEvents) then
+    -- Make sure we don't have stuck tooltips.
+    GameTooltip:Hide();
+  end
+  
+  Properties.Container:Update("LAYOUT");
+
+end
+
+
+-----------------------------------------------------------------
 -- Function ContainerVisibility:Jump
 -----------------------------------------------------------------
 function AuraFrames.Animations.ContainerVisibility.Jump(Properties, Container, AnimationGoingVisible, AnimationGoingVisibleChild, AnimationGoingInvisible)
@@ -178,6 +198,7 @@ function AuraFrames.Animations.ContainerVisibility.Jump(Properties, Container, A
   AnimationGoingVisible:SetConfig({
     KeepEffects = true,
     Effects = {
+      {Type = "External", External = ContainerVisibilityMouseEvents, Container = Container, Visible = true, MouseEventsWhenInactive = Properties.MouseEventsWhenInactive},
       {Type = "FrameStrata", Start = 0, Strata = "BACKGROUND"},
       {Type = "Alpha", From = Properties.InvisibleAlpha, To = 1, Duration = Properties.Duration, Smoothing = "SinSNS"},
       {Type = "Scale", From = Properties.InvisibleScale, To = 1, Duration = Properties.Duration, Smoothing = "SinSNS"},
@@ -197,11 +218,13 @@ function AuraFrames.Animations.ContainerVisibility.Jump(Properties, Container, A
     KeepEffects = true,
     StartDelay = 1.0,
     Effects = {
+      {Type = "External", External = ContainerVisibilityMouseEvents, Container = Container, Visible = true, MouseEventsWhenInactive = Properties.MouseEventsWhenInactive},
       {Type = "FrameStrata", Start = 0, Strata = "BACKGROUND"},
       {Type = "Alpha", From = 1, To = Properties.InvisibleAlpha, Duration = Properties.Duration, Smoothing = "SinSNS"},
       {Type = "Scale", From = 1, To = Properties.InvisibleScale, Duration = Properties.Duration, Smoothing = "SinSNS"},
       {Type = "Translation", ToY = Properties.InvisibleY, ToX = Properties.InvisibleX, Duration = Properties.Duration, Smoothing = "SinSNS", IgnoreParent = true},
       {Type = "FrameStrata", Start = Properties.Duration, Strata = "BACKGROUND"},
+      {Type = "External", Start = Properties.Duration, External = ContainerVisibilityMouseEvents, Container = Container, Visible = false, MouseEventsWhenInactive = Properties.MouseEventsWhenInactive},
     },
   });
 
@@ -216,6 +239,7 @@ function AuraFrames.Animations.ContainerVisibility.Fade(Properties, Container, A
   AnimationGoingVisible:SetConfig({
     KeepEffects = true,
     Effects = {
+      {Type = "External", External = ContainerVisibilityMouseEvents, Container = Container, Visible = true, MouseEventsWhenInactive = Properties.MouseEventsWhenInactive},
       {Type = "Alpha", From = Properties.InvisibleAlpha, To = 1, Duration = Properties.Duration, Smoothing = "SinSNS"},
     },
   });
@@ -226,7 +250,9 @@ function AuraFrames.Animations.ContainerVisibility.Fade(Properties, Container, A
     KeepEffects = true,
     StartDelay = 1.0,
     Effects = {
+      {Type = "External", External = ContainerVisibilityMouseEvents, Container = Container, Visible = true, MouseEventsWhenInactive = Properties.MouseEventsWhenInactive},
       {Type = "Alpha", From = 1, To = Properties.InvisibleAlpha, Duration = Properties.Duration, Smoothing = "SinSNS"},
+      {Type = "External", Start = Properties.Duration, External = ContainerVisibilityMouseEvents, Container = Container, Visible = false, MouseEventsWhenInactive = Properties.MouseEventsWhenInactive},
     },
   });
 

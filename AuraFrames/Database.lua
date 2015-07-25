@@ -13,7 +13,7 @@ local GetTime = GetTime;
 -- GLOBALS: LibStub
 
 -- This version will be used to trigger database upgrades
-AuraFrames.DatabaseVersion = 234;
+AuraFrames.DatabaseVersion = 235;
 
 
 --[[
@@ -128,7 +128,10 @@ AuraFrames.DatabaseVersion = 234;
     Added CancelCombatAura
 
   Version 234:
-    Added 129249 & 129250
+    Added 129249 & 129250 to the Priest SpellCooldowns
+  
+  Version 235:
+    Added MouseEventsWhenInactive to ContainerVisibility animation.
 
 ]]--
 
@@ -1072,6 +1075,14 @@ function AuraFrames:DatabaseContainerUpgrade(Container)
 
     end
   
+  end
+  
+  if OldVersion < 235 then
+  
+    if Container.Animations and Container.Animations["ContainerVisibility"] then
+      Container.Animations["ContainerVisibility"].MouseEventsWhenInactive = true;
+    end
+
   end
 
 end

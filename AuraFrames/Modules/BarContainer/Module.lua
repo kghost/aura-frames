@@ -165,6 +165,7 @@ function Module:GetDatabaseDefaults()
         Animation = "Fade",
         Duration = 0.5,
         InvisibleAlpha = 0.6,
+        MouseEventsWhenInactive = true,
       },
     },
     Colors = AuraFrames:GetDatabaseDefaultColors(),
@@ -233,6 +234,8 @@ function Module:New(Config)
   
   Container.IsVisible = true;
   Container.ContainerVisibility = true;
+  Container.VisibilityClickable = true;
+  Container.RecieveMouseEvents = Config.Layout.Clickable;
 
   AuraFrames:UpdateAnimationRegionSize(Container.Frame);
 

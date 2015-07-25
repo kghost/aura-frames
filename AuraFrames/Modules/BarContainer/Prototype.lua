@@ -454,7 +454,7 @@ function Prototype:UpdateBar(Bar)
 
   end
   
-  if self.Config.Layout.Clickable and self.Config.Layout.ShowTooltip then
+  if self.RecieveMouseEvents and self.Config.Layout.ShowTooltip then
   
     Bar:SetScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Bar, Bar.Aura); AuraFrames:ShowTooltip(Bar.Aura, Bar, self.TooltipOptions); self:CheckVisibility(true); end);
     Bar:SetScript("OnLeave", function() AuraFrames:HideTooltip(); self:CheckVisibility(false); end);
@@ -474,7 +474,7 @@ function Prototype:UpdateBar(Bar)
   
   Bar.Bar.Background:SetWidth(self.Config.Layout.BarWidth);
   
-  if self.Config.Layout.Clickable then
+  if self.RecieveMouseEvents then
     
     Bar:EnableMouse(true);
     Bar:SetScript("OnMouseUp", BarOnMouseUp);
@@ -1050,7 +1050,7 @@ function Prototype:GoInvisible()
     Start = self.AnimationGoingInvisible.TotalDuration - self.AnimationGoingVisible:GetProgression(self.Frame);
     self.AnimationGoingVisible:Stop(self.Frame);
   end
-
+  
   self.AnimationGoingVisible:ClearEffect(self.Frame);
   self.AnimationGoingInvisible:Play(self.Frame, nil, Start);
 
@@ -1070,7 +1070,7 @@ function Prototype:UpdateAnimationConfig(AnimationType)
 
   if AnimationType == "ALL" or AnimationType == "ContainerVisibility" then
 
-    -- Remove any animation effect on the TimeLine.
+    -- Remove any animation effect on the container.
     AuraFrames:StopAnimations(self.Frame);
     AuraFrames:ClearAnimationEffects(self.Frame);
     self.Frame:SetFrameStrata("MEDIUM");
@@ -1081,7 +1081,7 @@ function Prototype:UpdateAnimationConfig(AnimationType)
 
     for _, Bar in pairs(self.Bars) do
 
-      -- Remove any animation effect on the Button.
+      -- Remove any animation effect on the bars.
       AuraFrames:StopAnimations(Bar);
       AuraFrames:ClearAnimationEffects(Bar);
       Bar:SetFrameStrata("MEDIUM");

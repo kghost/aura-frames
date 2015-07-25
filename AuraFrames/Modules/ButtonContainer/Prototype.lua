@@ -374,7 +374,7 @@ function Prototype:UpdateButton(Button)
     
   end
   
-  if self.Config.Layout.Clickable == true and self.Config.Layout.ShowTooltip == true then
+  if self.RecieveMouseEvents == true and self.Config.Layout.ShowTooltip == true then
   
     Button:SetScript("OnEnter", function() AuraFrames:SetCancelAuraFrame(Button, Button.Aura); AuraFrames:ShowTooltip(Button.Aura, Button, Container.TooltipOptions); self:CheckVisibility(true); end);
     Button:SetScript("OnLeave", function() AuraFrames:HideTooltip(); self:CheckVisibility(false); end);
@@ -386,7 +386,7 @@ function Prototype:UpdateButton(Button)
   
   end
   
-  if self.Config.Layout.Clickable == true then
+  if self.RecieveMouseEvents == true then
     
     Button:EnableMouse(true);
     Button.Content:EnableMouse(true);
