@@ -1018,6 +1018,8 @@ function Prototype:GoVisible()
 
   if self.IsVisible == true then
   
+    self.AnimationGoingInvisible:Stop(self.Frame);
+  
     if not self.AnimationGoingVisible:IsPlaying(self.Frame) then
       self.AnimationGoingVisible:Apply(self.Frame);
     end
@@ -1047,6 +1049,8 @@ end
 function Prototype:GoInvisible()
 
   if self.IsVisible == false then
+  
+    self.AnimationGoingVisible:Stop(self.Frame);
   
     if not self.AnimationGoingInvisible:IsPlaying(self.Frame) then
       self.AnimationGoingInvisible:Apply(self.Frame);
