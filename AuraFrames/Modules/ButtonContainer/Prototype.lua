@@ -887,7 +887,7 @@ end
 -----------------------------------------------------------------
 function Prototype:UpdateVisibility()
 
-  if self.Unlocked ~= true and (next(self.Buttons) == nil or self.ContainerVisibility == false) then
+  if self.Unlocked ~= true and self.ContainerVisibility == false then
     self:GoInvisible();
   else
     self:GoVisible();
