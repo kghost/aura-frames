@@ -1,8 +1,8 @@
-## Interface: 60200
+## Interface: 70000
 ## Title: Aura Frames
 ## Notes: Managing your aura frames
 ## Author: Alex <Beautiuz> Elderson
-## Version: 1.2.4
+## Version: 1.5.3
 ## SavedVariables: AuraFramesDB
 ## OptionalDeps: Ace3, Masque
 

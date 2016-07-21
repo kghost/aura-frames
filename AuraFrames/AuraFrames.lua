@@ -10,9 +10,9 @@ local GetTime, StaticPopupDialogs, StaticPopup_Show = GetTime, StaticPopupDialog
 
 -- Global vars/functions that we don't upvalue since they might get hooked, or upgraded
 -- List them here for Mikk's FindGlobals script
--- GLOBALS: BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs, LibStub, StaticPopup_Hide
+-- GLOBALS: BuffFrame, TemporaryEnchantFrame, LibStub, StaticPopup_Hide
 
-local BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs = BuffFrame, TemporaryEnchantFrame, ConsolidatedBuffs;
+local BuffFrame, TemporaryEnchantFrame = BuffFrame, TemporaryEnchantFrame;
 
 -- Expose the addon to the global namespace for debugging.
 _G["AuraFrames"] = AuraFrames;
@@ -92,12 +92,10 @@ function AuraFrames:CheckBlizzardAuraFrames()
   -- Hide the default Blizz buff frame
   BuffFrame:Hide();
   TemporaryEnchantFrame:Hide();
-  ConsolidatedBuffs:Hide();
   
   -- Hook the onShow script so we can hide it again.
   BuffFrame:HookScript("OnShow", AuraFrames.BlizzardFrameOnShow);
   TemporaryEnchantFrame:HookScript("OnShow", AuraFrames.BlizzardFrameOnShow);
-  ConsolidatedBuffs:HookScript("OnShow", AuraFrames.BlizzardFrameOnShow);
   
 end
 

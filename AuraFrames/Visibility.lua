@@ -204,9 +204,9 @@ local function ProcessStatusChanges(Event, Force)
   
     if Status[Key] ~= Value then
     
-      Status[Key] = Value;
+      --af:Print(Key, "changed value from", Status[Key], "To", Value);
       
-      --af:Print(Key, "changed to", Value);
+      Status[Key] = Value;
       
       Changed = true;
     

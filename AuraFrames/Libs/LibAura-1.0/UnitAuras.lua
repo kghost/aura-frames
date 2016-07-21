@@ -96,6 +96,7 @@ Module.EventsToMonitor = {
   mouseover     = {"UNIT_AURA", "UPDATE_MOUSEOVER_UNIT", "LIBAURA_UPDATE"}
 };
 
+
 for i = 1, 4 do
   Module.EventsToMonitor["party"..i]           = {"UNIT_AURA", "PARTY_MEMBERS_CHANGED"};
   Module.EventsToMonitor["party"..i.."target"] = {"UNIT_AURA", "UNIT_TARGET", "PARTY_MEMBERS_CHANGED", "LIBAURA_UPDATE"};
