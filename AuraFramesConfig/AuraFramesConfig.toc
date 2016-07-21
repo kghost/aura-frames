@@ -1,8 +1,8 @@
-## Interface: 60200
+## Interface: 70000
 ## Title: Aura Frames Options (Load on Demand)
 ## Notes: Options for AuraFrames
 ## Author: Alex <Beautiuz> Elderson
-## Version: 1.2
+## Version: 1.5.3
 ## Dependencies: AuraFrames
 ## LoadOnDemand: 1
 
