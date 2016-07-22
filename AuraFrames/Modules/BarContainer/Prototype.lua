@@ -450,7 +450,7 @@ function Prototype:UpdateBar(Bar)
     
   else
   
-    Bar.Bar.Background.Texture:SetTexture(1.0, 1.0, 1.0, 1.0);
+    Bar.Bar.Background.Texture:SetColorTexture(1.0, 1.0, 1.0, 1.0);
 
   end
   
