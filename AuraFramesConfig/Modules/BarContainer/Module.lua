@@ -85,7 +85,7 @@ function Module:UnlockContainer(ContainerId, Unlock)
       end);
       
       Container.UnlockBackground = Container.UnlockFrame:CreateTexture();
-      Container.UnlockBackground:SetTexture(0.5, 0.8, 1.0, 0.8);
+      Container.UnlockBackground:SetColorTexture(0.5, 0.8, 1.0, 0.8);
       Container.UnlockBackground:SetAllPoints(Container.UnlockFrame);
       
       Container.UnlockTextFrame = CreateFrame("Frame", nil, Container.UnlockFrame);
