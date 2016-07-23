@@ -51,12 +51,12 @@ function Module:Enable()
   self.TestData["HELPFUL"] = Module.TestData["HELPFUL"] or {};
   self.TestData["HARMFUL"] = Module.TestData["HARMFUL"] or {};
 
-  self.TestData["HELPFUL"][21562] = {"Magic", 1800, 0, 0}; -- Power Word: Fortitude
-  self.TestData["HELPFUL"][ 1706] = {"None", 15, 0, 0}; -- Levitate
-  self.TestData["HELPFUL"][65007] = {"None", 10, 5, 0}; -- Eye of the Broodmother
+  self.TestData["HELPFUL"][203538] = {"Magic", 3600, 0, 0}; -- Greater Blessing of Kings
+  self.TestData["HELPFUL"][  1706] = {"None", 15, 0, 0}; -- Levitate
+  self.TestData["HELPFUL"][ 65007] = {"None", 10, 5, 0}; -- Eye of the Broodmother
 
-  self.TestData["HARMFUL"][  172] = {"Magic", 18.5, 0, 6}; -- Corruption
-  self.TestData["HARMFUL"][69127] = {"None", 0, 0, 0}; -- Chill of the Throne
+  self.TestData["HARMFUL"][   172] = {"Magic", 18.5, 0, 6}; -- Corruption
+  self.TestData["HARMFUL"][ 69127] = {"None", 0, 0, 0}; -- Chill of the Throne
   
   -- And no, no Module:Disabled. We even don't want to clean this up.
   
@@ -101,11 +101,16 @@ function Module:ActivateSource(Unit, Type)
     };
     
     Aura.Name, _, Aura.Icon = GetSpellInfo(SpellId);
-    Aura.Id = Aura.Unit..Aura.Name..Aura.ExpirationTime;
     
-    tinsert(self.db[Type], Aura);
+    if Aura.Name ~= nil then
     
-    LibAura:FireAuraNew(Aura);
+      Aura.Id = Aura.Unit..Aura.Name..Aura.ExpirationTime;
+      
+      tinsert(self.db[Type], Aura);
+      
+      LibAura:FireAuraNew(Aura);
+    
+    end
   
   end
 
