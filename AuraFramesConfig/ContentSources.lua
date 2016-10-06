@@ -205,7 +205,7 @@ local AllSources = {
   },
   {
     Group = true,
-    Title = "|cff6af36aGroups buffs|r |cffffffff(warning, this can be slowdown the game!)|r",
+    Title = "|cff6af36aGroups buffs|r |cffffffff(warning, this can have a more noticeable impact on the game performance!)|r",
     Width = 175,
     Childeren = {
       {
@@ -265,7 +265,7 @@ local AllSources = {
   },
   {
     Group = true,
-    Title = "|cfff36a6aGroups debuffs|r |cffffffff(warning, this can be slowdown the game!)|r",
+    Title = "|cfff36a6aGroups debuffs|r |cffffffff(warning, this can have a more noticeable impact on the game performance!)|r",
     Width = 175,
     Childeren = {
       {
