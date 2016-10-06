@@ -120,20 +120,6 @@ local ScanOnLibUpdate = {};
 
 local AuraPool =  {};
 
--- Make sure that we dont have old unit/types if we upgrade.
-LibAura:UnregisterModuleSource(Module, nil, nil);
-
--- Register the unit/types.
-for Unit, _ in pairs(Module.EventsToMonitor) do
-
-  LibAura:RegisterModuleSource(Module, Unit, "HELPFUL");
-  LibAura:RegisterModuleSource(Module, Unit, "HARMFUL");
-
-end
-
--- Internal db used for storing auras.
-Module.db = Module.db or {};
-
 -----------------------------------------------------------------
 -- UnitTranslations
 -----------------------------------------------------------------
@@ -169,33 +155,84 @@ for i = 1, 40 do
   Module.UnitTranslations["raidpet"..i]         = "raidpet";
 end
 
+
+-----------------------------------------------------------------
+-- UnitSourceTranslations
+-----------------------------------------------------------------
+Module.UnitSourceTranslations = {}
+
+Module.UnitSourceTranslations["party"]       = {};
+Module.UnitSourceTranslations["partytarget"] = {};
+Module.UnitSourceTranslations["partypet"]    = {};
+Module.UnitSourceTranslations["boss"]        = {};
+Module.UnitSourceTranslations["bosstarget"]  = {};
+
+for i = 1, 4 do
+  table.insert(Module.UnitSourceTranslations["party"], "party"..i);
+  table.insert(Module.UnitSourceTranslations["partytarget"], "party"..i.."target");
+  table.insert(Module.UnitSourceTranslations["partypet"], "partypet"..i);
+  table.insert(Module.UnitSourceTranslations["boss"], "boss"..i);
+  table.insert(Module.UnitSourceTranslations["bosstarget"], "boss"..i.."target");
+end
+
+Module.UnitSourceTranslations["arena"]       = {};
+Module.UnitSourceTranslations["arenatarget"] = {};
+
+for i = 0, 5 do
+  table.insert(Module.UnitSourceTranslations["arena"], "arena"..i);
+  table.insert(Module.UnitSourceTranslations["arenatarget"], "arena"..i.."target");
+end
+
+Module.UnitSourceTranslations["raid"]       = {};
+Module.UnitSourceTranslations["raidtarget"] = {};
+Module.UnitSourceTranslations["raidpet"]    = {};
+
+for i = 1, 40 do
+  table.insert(Module.UnitSourceTranslations["raid"], "raid"..i);
+  table.insert(Module.UnitSourceTranslations["raidtarget"], "raid"..i.."target");
+  table.insert(Module.UnitSourceTranslations["raidpet"], "raidpet"..i);
+end
+
+-----------------------------------------------------------------
+-- Function Registration of Sources
+-----------------------------------------------------------------
+-- Make sure that we dont have old unit/types if we upgrade.
+LibAura:UnregisterModuleSource(Module, nil, nil);
+
+-- Register the unit/types.
+for Unit, _ in pairs(Module.EventsToMonitor) do
+  LibAura:RegisterModuleSource(Module, Unit, "HELPFUL");
+  LibAura:RegisterModuleSource(Module, Unit, "HARMFUL");
+end
+
+for Unit, _ in pairs(Module.UnitSourceTranslations) do
+  LibAura:RegisterModuleSource(Module, Unit, "HELPFUL");
+  LibAura:RegisterModuleSource(Module, Unit, "HARMFUL");
+end
+
+-- Internal db used for storing auras.
+Module.db = Module.db or {};
+
+
 -----------------------------------------------------------------
 -- Function ActivateSource
 -----------------------------------------------------------------
 function Module:ActivateSource(Unit, Type)
+
+  if Module.UnitSourceTranslations[Unit] then
+  
+    for _, RealUnit in ipairs(Module.UnitSourceTranslations[Unit]) do
+      Module:ActivateSource(RealUnit, Type)
+    end
+
+    return
+  
+  end
   
   if next(self.db) == nil then
     self:RegisterEvent("PLAYER_ENTERING_WORLD", "ScanAllUnits");
     self:RegisterEvent("ZONE_CHANGED_NEW_AREA", "ScanAllUnits");
   end
-
-  for Key, Value in pairs(Module.UnitTranslations) do
-  
-    if Unit == Value then
-      self:ProcessActivateSource(Key, Type);
-    end
-
-  end
-
-  self:ScanUnit(Unit);
-
-end
-
-
------------------------------------------------------------------
--- Function ProcessActivateSource
------------------------------------------------------------------
-function Module:ProcessActivateSource(Unit, Type)
 
   if not self.db[Unit] then
   
@@ -215,6 +252,8 @@ function Module:ProcessActivateSource(Unit, Type)
 
   end
 
+  self:ScanUnit(Unit);
+
 end
 
 
@@ -223,26 +262,15 @@ end
 -----------------------------------------------------------------
 function Module:DeactivateSource(Unit, Type)
 
-  for Key, Value in pairs(Module.UnitTranslations) do
+  if Module.UnitSourceTranslations[Unit] then
   
-    if Unit == Value then
-      self:ProcessDeactivateSource(Key, Type);
+    for _, RealUnit in ipairs(Module.UnitSourceTranslations[Unit]) do
+      Module:DeactivateSource(RealUnit, Type)
     end
 
-  end
+    return
   
-  if next(self.db) == nil then
-    self:UnregisterEvent("PLAYER_ENTERING_WORLD", "ScanAllUnits");
-    self:UnregisterEvent("ZONE_CHANGED_NEW_AREA", "ScanAllUnits");
   end
-
-end
-
-
------------------------------------------------------------------
--- Function ProcessDeactivateSource
------------------------------------------------------------------
-function Module:ProcessDeactivateSource(Unit, Type)
 
   for _, Aura in ipairs(self.db[Unit][Type]) do
     LibAura:FireAuraOld(Aura);
@@ -261,6 +289,11 @@ function Module:ProcessDeactivateSource(Unit, Type)
     ScanOnLibUpdate[Unit] = nil;
     
   end
+  
+  if next(self.db) == nil then
+    self:UnregisterEvent("PLAYER_ENTERING_WORLD", "ScanAllUnits");
+    self:UnregisterEvent("ZONE_CHANGED_NEW_AREA", "ScanAllUnits");
+  end
 
 end
 
@@ -270,6 +303,21 @@ end
 -----------------------------------------------------------------
 function Module:GetAuras(Unit, Type)
 
+  if Module.UnitSourceTranslations[Unit] then
+  
+    local Results = {}
+  
+    for _, RealUnit in ipairs(Module.UnitSourceTranslations[Unit]) do
+      local UnitResults = Module:GetAuras(RealUnit, Type)
+      for _, Aura in ipairs(UnitResults) do
+        table.insert(Results, Aura)
+      end
+    end
+
+    return Results;
+  
+  end
+  
   return self.db[Unit][Type];
 
 end
