@@ -45,8 +45,6 @@ Module.TimeSinceLastUpdate = 1;
 -----------------------------------------------------------------
 function Module:Enable()
 
-  -- For the sake of ppl that wining about addon memory... We create the db table when we are getting enabled.
-
   self.db = {
     MainHand = {
       Id = "PlayerWEAPONMainHand",
@@ -79,23 +77,7 @@ function Module:Enable()
       IsDispellable = false,
       SpellId = 0,
       ItemId = 0,
-    },
-    Thrown = {
-      Id = "PlayerWEAPONThrown",
-      Active = false, -- Used internaly to see if its an active enchantment.
-      Type = "WEAPON",
-      Index = 18,
-      Unit = "player",
-      Classification = "None",
-      CasterUnit = "player",
-      CasterName = UnitName("player"),
-      ExpirationTime = 0,
-      IsStealable = false,
-      IsCancelable = true,
-      IsDispellable = false,
-      SpellId = 0,
-      ItemId = 0,
-    },
+    }
   };
   
   return true;
@@ -185,7 +167,7 @@ function Module:Update(Elapsed)
     return;
   end
 
-  local HasMainHandEnchant, MainHandExpiration, MainHandCharges, HasOffHandEnchant, OffHandExpiration, OffHandCharges, HasThrownEnchant, ThrownExpiration, ThrownCharges = GetWeaponEnchantInfo();
+  local HasMainHandEnchant, MainHandExpiration, MainHandCharges, MainHandEnchantId, HasOffHandEnchant, OffHandExpiration, OffHandCharges, OffHandEnchantId = GetWeaponEnchantInfo();
 
   local CurrentTime;
   
@@ -198,15 +180,9 @@ function Module:Update(Elapsed)
     CurrentTime = CurrentTime or GetTime();
     OffHandExpiration = ceil(CurrentTime + (OffHandExpiration / 1000));
   end
-  
-  if ThrownExpiration then
-    CurrentTime = CurrentTime or GetTime();
-    ThrownExpiration = ceil(CurrentTime + (ThrownExpiration / 1000));
-  end
 
   self:ScanWeapon("MainHand", HasMainHandEnchant, MainHandExpiration or 0, MainHandCharges or 0);
   self:ScanWeapon("OffHand", HasOffHandEnchant, OffHandExpiration or 0, OffHandCharges or 0);
-  self:ScanWeapon("Thrown", HasThrownEnchant, ThrownExpiration or 0, ThrownCharges or 0);
 
 end
 
