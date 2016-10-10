@@ -87,6 +87,7 @@ function Module:UnlockContainer(ContainerId, Unlock)
         if Button == "LeftButton" then
           Container.Frame:StopMovingOrSizing();
         elseif Button == "RightButton" then
+          Container.Frame:StopMovingOrSizing();
           AuraFramesConfig:UnlockContainers(false);
           AuraFramesConfig:SelectByPath("Containers", ContainerId);
         end
