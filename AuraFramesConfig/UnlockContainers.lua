@@ -33,9 +33,6 @@ local function ShowUnlockDialog()
     f:SetScript("OnShow", function() PlaySound("igMainMenuOption") end)
     f:SetScript("OnHide", function() PlaySound("gsTitleOptionExit") end)
 
-    local tr = f:CreateTitleRegion()
-    tr:SetAllPoints(f)
-
     local header = f:CreateTexture(nil, "ARTWORK")
     header:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Header")
     header:SetWidth(256); header:SetHeight(64)
