@@ -24,3 +24,20 @@ Long story, short version: If static data is returned by a function then it will
 
 
 We use this trick a few times in a few modules. It's not faster but we also use it wisely :) On a few Module:Enable() functions we create the static data, so if we are not using the module then that there is no memory used and the global memory usage is lower.
+
+
+
+
+------------ even beter ------------
+
+  Module.StaticData;
+
+  function Module:GetStaticData()
+  
+    return Module.StaticData = Module.StaticData or {
+      Data1 = {},
+      Data2 = {},
+      Data3 = {},
+    };
+  
+  end

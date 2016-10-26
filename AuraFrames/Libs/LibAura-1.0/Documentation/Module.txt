@@ -9,7 +9,7 @@ Start every module with the following code:
   if not Module then return; end -- No upgrade needed.
 
 
-OldMinor will containt he old minor version of the module if it is a upgrade, otherwise it's nil. LibAura will create an table which you can extend with your own functions. The table also contains 4 variables that are used by LibAura to keep track of different things. The module may use those variables but is never allowed to change them! The following variables are defined on the module table by LibAura:
+OldMinor will containt the old minor version of the module if it is a upgrade, otherwise it's nil. LibAura will create an table which you can extend with your own functions. The table also contains 4 variables that are used by LibAura to keep track of different things. The module may use those variables but is never allowed to change them! The following variables are defined on the module table by LibAura:
 
   Module.Major -- The major version that is used with LibAura:NewModule
   Module.Minor -- The minor version that is used with LibAura:NewModule (This is always your own minor version)
