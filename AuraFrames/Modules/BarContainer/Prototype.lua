@@ -766,7 +766,7 @@ function Prototype:AuraNew(Aura)
     end
     
     Bar.Button.Cooldown.currentCooldownType = COOLDOWN_TYPE_NORMAL;
-    Bar.Button.Cooldown:SetSwipeColor(0.5, 0.5, 0.5);
+    Bar.Button.Cooldown:SetSwipeColor(0, 0, 0, 0.5);
     Bar.Button.Cooldown:SetHideCountdownNumbers(false);
     Bar.Button.Cooldown:SetEdgeTexture("Interface\\Cooldown\\edge");
   
