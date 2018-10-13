@@ -466,7 +466,7 @@ function Module:ScanUnitAurasChanges(Unit, Type)
 
   while true do
 
-    local Name, _, Icon, Count, Classification, Duration, ExpirationTime, CasterUnit, IsStealable, _, SpellId = UnitAura(Unit, i, Type);
+    local Name, Icon, Count, Classification, Duration, ExpirationTime, CasterUnit, IsStealable, _, SpellId = UnitAura(Unit, i, Type);
 
     -- Break out of the while when we are at the end of the list.
     if not Name then break end;
@@ -623,7 +623,7 @@ function Module:ScanUnitAuras(Unit, Type)
 
   while true do
 
-    local Name, _, Icon, Count, Classification, Duration, ExpirationTime, CasterUnit, IsStealable, _, SpellId = UnitAura(Unit, i, Type);
+    local Name, Icon, Count, Classification, Duration, ExpirationTime, CasterUnit, IsStealable, _, SpellId = UnitAura(Unit, i, Type);
     
     if not Name then break end;
     

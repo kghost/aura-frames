@@ -242,7 +242,7 @@ function CancelCombatAura:UpdateButton(Button)
 
     if Id then
 
-      local Name, _, Icon, Count, Classification, Duration, ExpirationTime, CasterUnit, IsStealable, _, SpellId = UnitAura("player", Id, Filter);
+      local Name, Icon, Count, Classification, Duration, ExpirationTime, CasterUnit, IsStealable, _, SpellId = UnitAura("player", Id, Filter);
 
       if Name then
 

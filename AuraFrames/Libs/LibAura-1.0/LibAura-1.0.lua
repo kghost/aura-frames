@@ -140,7 +140,7 @@ function LibAura:RegisterModuleSource(Module, Unit, Type)
     self:FireEvent("LIBAURA_MODULE_SOURCE_CREATED", Unit, Type, Module);
   end
 
-  if tContains(self.db[Unit][Type].Modules, Module) == nil then
+  if not tContains(self.db[Unit][Type].Modules, Module) then
     tinsert(self.db[Unit][Type].Modules, Module);
   end
 
@@ -258,7 +258,7 @@ function LibAura:RegisterObjectSource(Object, Unit, Type)
   
   end
 
-  if tContains(self.db[Unit][Type].Objects, Object) == nil then
+  if not tContains(self.db[Unit][Type].Objects, Object) then
     tinsert(self.db[Unit][Type].Objects, Object);
   end
   

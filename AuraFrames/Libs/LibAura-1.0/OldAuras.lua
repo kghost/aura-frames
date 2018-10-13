@@ -45,7 +45,7 @@ LibAura:UnregisterModuleSource(Module, nil, nil);
 -- the register/deregister source functions to keep track of everything.
 for Unit, _ in pairs(LibAura.db) do
   for Type, _ in pairs(LibAura.db[Unit]) do
-    if tContains(LibAura.db[Unit][Type].Modules, Module) == nil then
+    if not tContains(LibAura.db[Unit][Type].Modules, Module) then
       LibAura:RegisterModuleSource(Module, Unit, Type.."OLD");
     end
   end

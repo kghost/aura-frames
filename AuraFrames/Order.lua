@@ -341,7 +341,7 @@ end
 -----------------------------------------------------------------
 function AuraFrames.OrderPrototype:Add(Item)
 
-  if tContains(self, Item) ~= nil then
+  if tContains(self, Item) then
     self:Update(Item, true);
     return;
   end

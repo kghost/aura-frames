@@ -108,7 +108,7 @@ function AuraFrames:BuildValue(RequestedType, Value)
     
     elseif RequestedType == "Boolean" then
     
-      return "(tContains({\"true\", \"on\", \"yes\", \"1\"}, string.lower("..Value.."())) == true)";
+      return "(tContains({\"true\", \"on\", \"yes\", \"1\"}, string.lower("..Value.."())))";
     
     else
     

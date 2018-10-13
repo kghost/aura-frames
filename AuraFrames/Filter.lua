@@ -116,7 +116,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
 
       end
     
-      return "tContains({"..List.."}, string.lower("..SubjectCode.." or \"\")) "..FilterOperatorMappings[Operator].." 1";
+      return "tContains({"..List.."}, string.lower("..SubjectCode.." or \"\")) "..FilterOperatorMappings[Operator].." true";
     
     else
     
@@ -144,7 +144,7 @@ local function BuildExpresion(Type, Operator, Subject, Args)
 
       end
     
-      return "tContains({"..List.."}, "..SubjectCode..") "..FilterOperatorMappings[Operator].." 1";
+      return "tContains({"..List.."}, "..SubjectCode..") "..FilterOperatorMappings[Operator].." true";
 
     else
     

@@ -249,7 +249,7 @@ EventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED");
 EventFrame:RegisterEvent("COMPANION_UPDATE");
 EventFrame:RegisterEvent("UNIT_ENTERED_VEHICLE");
 EventFrame:RegisterEvent("UNIT_EXITED_VEHICLE");
-EventFrame:RegisterEvent("PARTY_MEMBERS_CHANGED");
+EventFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
 EventFrame:RegisterEvent("PLAYER_FOCUS_CHANGED");
 EventFrame:RegisterEvent("PLAYER_TARGET_CHANGED");
 EventFrame:RegisterEvent("PET_BATTLE_OPENING_START");

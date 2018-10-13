@@ -1,6 +1,6 @@
 package-as: AuraFrames
 
-enable-nolib-creation: no
+enable-nolib-creation: yes
 
 move-folders:
     AuraFrames/AuraFrames: AuraFrames
